@@ -6,7 +6,6 @@ JOBBOX
    ├─ .expo
    │  ├─ README.md
    │  └─ devices.json
-   ├─ README.md
    ├─ app
    │  ├─ assets
    │  │  ├─ fonts
@@ -26,6 +25,8 @@ JOBBOX
    │  │  ├─ Home
    │  │  │  ├─ Hire.js
    │  │  │  └─ Work.js
+   │  │  ├─ Messages.js
+   │  │  ├─ Notifications.js
    │  │  ├─ Profile.js
    │  │  └─ Services.js
    │  ├─ services
