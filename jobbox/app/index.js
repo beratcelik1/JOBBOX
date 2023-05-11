@@ -1,34 +1,35 @@
-import { StyleSheet, Text, View } from "react-native";
+import React from 'react';
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
-export default function Page() {
+import Activity from './app/screens/Activity';
+import Profile from './app/screens/Profile';
+import Services from './app/screens/Services';
+import Hire from './app/screens/Home/Hire';
+import Work from './app/screens/Home/Work';
+
+const Stack = createStackNavigator();
+const Tab = createBottomTabNavigator();
+
+function HomeTabs() {
   return (
-    <View style={styles.container}>
-      <View style={styles.main}>
-        <Text style={styles.title}>Hello World</Text>
-        <Text style={styles.subtitle}>This is the first page of your app.</Text>
-      </View>
-    </View>
+    <Tab.Navigator>
+      <Tab.Screen name="Hire" component={Hire} />
+      <Tab.Screen name="Work" component={Work} />
+    </Tab.Navigator>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: "center",
-    padding: 24,
-  },
-  main: {
-    flex: 1,
-    justifyContent: "center",
-    maxWidth: 960,
-    marginHorizontal: "auto",
-  },
-  title: {
-    fontSize: 64,
-    fontWeight: "bold",
-  },
-  subtitle: {
-    fontSize: 36,
-    color: "#38434D",
-  },
-});
+export default function App() {
+  return (
+    <NavigationContainer>
+      <Stack.Navigator initialRouteName="Home">
+        <Stack.Screen name="Home" component={HomeTabs} options={{title: 'Home'}} />
+        <Stack.Screen name="Activity" component={Activity} options={{title: 'Activity'}} />
+        <Stack.Screen name="Profile" component={Profile} options={{title: 'Profile'}} />
+        <Stack.Screen name="Services" component={Services} options={{title: 'Services'}} />
+      </Stack.Navigator>
+    </NavigationContainer>
+  );
+}
