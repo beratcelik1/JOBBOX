@@ -9,9 +9,13 @@ JOBBOX
    ├─ app
    │  ├─ assets
    │  │  ├─ fonts
-   │  │  │  └─ fonts.js
+   │  │  │  └─ Raleway-Medium.ttf
    │  │  └─ images
-   │  │     └─ jobboxlogo.png
+   │  │     ├─ jobboxlogo.png
+   │  │     ├─ jobboxlogo2.png
+   │  │     ├─ jobboxlogo3.png
+   │  │     ├─ jobboxlogo4.png
+   │  │     └─ jobboxlogotek.png
    │  ├─ components
    │  │  ├─ JobList.js
    │  │  ├─ JobPost.js
@@ -47,6 +51,7 @@ JOBBOX
    ├─ babel.config.js
    ├─ index.js
    ├─ package-lock.json
-   └─ package.json
+   ├─ package.json
+   └─ react-native.config.js
 
 ```
