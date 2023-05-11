@@ -30,116 +30,126 @@ function HomeTopTabs() {
   );
 }
 
-export default function App() {
+function MyTabs() {
   const navigation = useNavigation();
   return (
+    <BottomTab.Navigator initialRouteName="Home">
+    <BottomTab.Screen 
+      name="Home" 
+      component={HomeTopTabs} 
+      options={{ 
+        headerTitle: () => (
+          <View style={{ alignItems: 'center' }}>
+            <Image source={logo} style={{ width: 170, height: 30 }} />
+          </View>
+        ),
+        headerLeft: () => (
+          <View style={{ marginLeft: 10 }}>
+            <Image source={logo2} style={{ width: 30, height: 30 }} />
+          </View>
+        ),
+        headerRight: () => (
+          <View style={{ flexDirection: 'row', marginRight: 10 }}>
+            <TouchableOpacity onPress={() => navigation.navigate("Messages")}>
+              <Icon name="chatbox-outline" size={24} />
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => navigation.navigate("Notifications")}>
+              <Icon name="notifications-outline" size={24} style={{ marginLeft: 10 }} />
+            </TouchableOpacity>
+          </View>
+        ),
+      }}
+    />
+    <BottomTab.Screen 
+      name="Services" 
+      component={Services} 
+      options={{ 
+        headerTitle: () => (
+          <View style={{ alignItems: 'center' }}>
+            <Image source={logo} style={{ width: 170, height: 30 }} />
+          </View>
+        ),
+        headerLeft: () => (
+          <View style={{ marginLeft: 10 }}>
+            <Image source={logo2} style={{ width: 30, height: 30 }} />
+          </View>
+        ),
+        headerRight: () => (
+          <View style={{ flexDirection: 'row', marginRight: 10 }}>
+            <TouchableOpacity onPress={() => navigation.navigate("Messages")}>
+              <Icon name="chatbox-outline" size={24} />
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => navigation.navigate("Notifications")}>
+              <Icon name="notifications-outline" size={24} style={{ marginLeft: 10 }} />
+            </TouchableOpacity>
+          </View>
+        ),
+      }}
+    />
+    <BottomTab.Screen 
+      name="Activity" 
+      component={Activity} 
+      options={{ 
+        headerTitle: () => (
+          <View style={{ alignItems: 'center' }}>
+            <Image source={logo} style={{ width: 170, height: 30 }} />
+          </View>
+        ),
+        headerLeft: () => (
+          <View style={{ marginLeft: 10 }}>
+            <Image source={logo2} style={{ width: 30, height: 30 }} />
+          </View>
+        ),
+        headerRight: () => (
+          <View style={{ flexDirection: 'row', marginRight: 10 }}>
+            <TouchableOpacity onPress={() => navigation.navigate("Messages")}>
+              <Icon name="chatbox-outline" size={24} />
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => navigation.navigate("Notifications")}>
+              <Icon name="notifications-outline" size={24} style={{ marginLeft: 10 }} />
+            </TouchableOpacity>
+          </View>
+        ),
+      }}
+    />
+    <BottomTab.Screen 
+      name="Profile" 
+      component={Profile} 
+      options={{ 
+        headerTitle: () => (
+          <View style={{ alignItems: 'center' }}>
+            <Image source={logo} style={{ width: 170, height: 30 }} />
+          </View>
+        ),
+        headerLeft: () => (
+          <View style={{ marginLeft: 10 }}>
+            <Image source={logo2} style={{ width: 30, height: 30 }} />
+          </View>
+        ),
+        headerRight: () => (
+          <View style={{ flexDirection: 'row', marginRight: 10 }}>
+            <TouchableOpacity onPress={() => navigation.navigate("Messages")}>
+              <Icon name="chatbox-outline" size={24} />
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => navigation.navigate("Notifications")}>
+              <Icon name="notifications-outline" size={24} style={{ marginLeft: 10 }} />
+            </TouchableOpacity>
+          </View>
+        ),
+      }}
+    />
+    </BottomTab.Navigator>
+  );
+}
+
+export default function App() {
+  return (
     <NavigationContainer independent={true}>
-      <BottomTab.Navigator initialRouteName="Home">
-        <BottomTab.Screen 
-          name="Home" 
-          component={HomeTopTabs} 
-          options={{ 
-            headerTitle: () => (
-              <View style={{ alignItems: 'center' }}>
-                <Image source={logo} style={{ width: 170, height: 30 }} />
-              </View>
-            ),
-            headerLeft: () => (
-              <View style={{ marginLeft: 10 }}>
-                <Image source={logo2} style={{ width: 30, height: 30 }} />
-              </View>
-            ),
-            headerRight: () => (
-              <View style={{ flexDirection: 'row', marginRight: 10 }}>
-                <TouchableOpacity onPress={() => navigation.navigate("Messages")}>
-                  <Icon name="chatbox-outline" size={24} />
-                </TouchableOpacity>
-                <TouchableOpacity onPress={() => navigation.navigate("Notifications")}>
-                  <Icon name="notifications-outline" size={24} style={{ marginLeft: 10 }} />
-                </TouchableOpacity>
-              </View>
-            ),
-          }}
-        />
-        <BottomTab.Screen 
-          name="Services" 
-          component={Services} 
-          options={{ 
-            headerTitle: () => (
-              <View style={{ alignItems: 'center' }}>
-                <Image source={logo} style={{ width: 170, height: 30 }} />
-              </View>
-            ),
-            headerLeft: () => (
-              <View style={{ marginLeft: 10 }}>
-                <Image source={logo2} style={{ width: 30, height: 30 }} />
-              </View>
-            ),
-            headerRight: () => (
-              <View style={{ flexDirection: 'row', marginRight: 10 }}>
-                <TouchableOpacity onPress={() => navigation.navigate('Messages.js')}>
-                  <Icon name="chatbox-outline" size={24} />
-                </TouchableOpacity>
-                <TouchableOpacity onPress={() => navigation.navigate('Notifications.js')}>
-                  <Icon name="notifications-outline" size={24} style={{ marginLeft: 10 }} />
-                </TouchableOpacity>
-              </View>
-            ),
-          }}
-        />
-        <BottomTab.Screen 
-          name="Activity" 
-          component={Activity} 
-          options={{ 
-            headerTitle: () => (
-              <View style={{ alignItems: 'center' }}>
-                <Image source={logo} style={{ width: 170, height: 30 }} />
-              </View>
-            ),
-            headerLeft: () => (
-              <View style={{ marginLeft: 10 }}>
-                <Image source={logo2} style={{ width: 30, height: 30 }} />
-              </View>
-            ),
-            headerRight: () => (
-              <View style={{ flexDirection: 'row', marginRight: 10 }}>
-                <TouchableOpacity onPress={() => navigation.navigate('Messages.js')}>
-                  <Icon name="chatbox-outline" size={24} />
-                </TouchableOpacity>
-                <TouchableOpacity onPress={() => navigation.navigate('Notifications.js')}>
-                  <Icon name="notifications-outline" size={24} style={{ marginLeft: 10 }} />
-                </TouchableOpacity>
-              </View>
-            ),
-          }}
-        />
-        <BottomTab.Screen 
-          name="Profile" 
-          component={Profile} 
-          options={{ 
-            headerTitle: () => (
-              <View style={{ alignItems: 'center' }}>
-                <Image source={logo} style={{ width: 170, height: 30 }} />
-              </View>
-            ),
-            headerLeft: () => (
-              <View style={{ marginLeft: 10 }}>
-                <Image source={logo2} style={{ width: 30, height: 30 }} />
-              </View>
-            ),
-            headerRight: () => (
-              <View style={{ flexDirection: 'row', marginRight: 10 }}>
-                <TouchableOpacity onPress={() => navigation.navigate('Messages.js')}>
-                  <Icon name="chatbox-outline" size={24} />
-                </TouchableOpacity>
-                <TouchableOpacity onPress={() => navigation.navigate('Notifications.js')}>
-                  <Icon name="notifications-outline" size={24} style={{ marginLeft: 10 }} />
-                </TouchableOpacity>
-              </View>
-            ),
-          }}
-        />
-      </BottomTab.Navigator>
+      <Stack.Navigator screenOptions={{ headerShown: false }}>
+        <Stack.Screen name="MyTabs" component={MyTabs} />
+        <Stack.Screen name="Messages" component={Messages} />
+        <Stack.Screen name="Notifications" component={Notifications} />
+      </Stack.Navigator>
     </NavigationContainer>
   );
 }
