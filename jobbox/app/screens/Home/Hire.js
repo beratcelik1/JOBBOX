@@ -1,7 +1,8 @@
 // screens/Home/Hire.js
 import React, { useState } from 'react';
 import { View, Text, TextInput, Button, StyleSheet } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import { createStackNavigator, useNavigation } from '@react-navigation/native';
+import PostJob from '../screens/Home/PostJob'; 
 
 export default function Hire() {
     const navigation = useNavigation();
@@ -28,7 +29,7 @@ export default function Hire() {
                 />
             </View>
             <Button 
-                onPress={() => navigation.navigate('PostJob')}
+                onPress={() => navigation.navigate("PostJob")}
                 title="Post a Job"
             />
         </View>
