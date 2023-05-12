@@ -6,6 +6,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
 import Icon from 'react-native-vector-icons/Ionicons';
 
+import { RootNavigationContext } from './navigation/RootNavigationContext';
 import Activity from './screens/Activity';
 import Profile from './screens/Profile';
 import Services from './screens/Services';
@@ -13,6 +14,7 @@ import Hire from './screens/Home/Hire';
 import Work from './screens/Home/Work';
 import Messages from './screens/Messages';
 import Notifications from './screens/Notifications';
+import PostJob from './screens/Home/PostJob';
 
 const logo = require('./assets/images/jobboxlogo4.png');
 const logo2 = require('./assets/images/jobboxlogotek.png');
@@ -170,29 +172,35 @@ function MyTabs() {
     </BottomTab.Navigator>
   );
 }
-
 export default function App() {
+  const navigationRef = React.useRef();
   return (
-    <NavigationContainer independent={true}>
-      <Stack.Navigator>
-        <Stack.Screen 
-          name="MyTabs" 
-          component={MyTabs} 
-          options={{ headerShown: false }} 
-        />
-        <Stack.Screen 
-          name="Messages" 
-          component={Messages} 
-          options={{ headerBackTitle: '', headerBackTitleVisible: false }} 
-        />
-        <Stack.Screen 
-          name="Notifications" 
-          component={Notifications} 
-          options={{ headerBackTitle: '', headerBackTitleVisible: false }} 
-        />
-      </Stack.Navigator>
+    <NavigationContainer ref={navigationRef} independent={true}>
+      <RootNavigationContext.Provider value={navigationRef}>
+        <Stack.Navigator>
+          <Stack.Screen 
+            name="MyTabs" 
+            component={MyTabs} 
+            options={{ headerShown: false }} 
+          />
+          <Stack.Screen 
+            name="Messages" 
+            component={Messages} 
+            options={{ headerBackTitle: '', headerBackTitleVisible: false }} 
+          />
+          <Stack.Screen 
+            name="Notifications" 
+            component={Notifications} 
+            options={{ headerBackTitle: '', headerBackTitleVisible: false }} 
+          />
+          <Stack.Screen 
+            name="PostJob" 
+            component={PostJob} 
+            options={{headerBackTitle: '', headerBackTitleVisible: false
+            }} 
+          />
+        </Stack.Navigator>
+      </RootNavigationContext.Provider>
     </NavigationContainer>
   );
 }
-
-

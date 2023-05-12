@@ -1,11 +1,14 @@
-// screens/Home/Hire.js
 import React, { useState } from 'react';
 import { View, Text, TextInput, Button, StyleSheet } from 'react-native';
-import { createStackNavigator, useNavigation } from '@react-navigation/native';
-import PostJob from '../screens/Home/PostJob'; 
+import { useNavigation } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
+import PostJob from '../Home/PostJob';
+import { useContext } from 'react';
+import { RootNavigationContext } from '../../navigation/RootNavigationContext';
 
-export default function Hire() {
-    const navigation = useNavigation();
+function HireScreen({ navigation }) {
+    const navigationRef = useContext(RootNavigationContext);
+    navigationRef.current?.navigate('PostJob');
     const [searchQuery, setSearchQuery] = useState('');
 
     const handleSearch = () => {
@@ -15,7 +18,6 @@ export default function Hire() {
 
     return (
         <View style={styles.container}>
-            <Text> scream H </Text>
             <View style={styles.searchSection}>
                 <TextInput
                     style={styles.searchInput}
@@ -36,7 +38,17 @@ export default function Hire() {
     );
 }
 
-// ... rest of your code
+const HireStack = createStackNavigator();
+
+export default function Hire() {
+    return (
+        <HireStack.Navigator initialRouteName="HireScreen">
+            <HireStack.Screen name="HireScreen" component={HireScreen} options={{headerShown: false}} />
+            <HireStack.Screen name="PostJob" component={PostJob} options={{headerShown: true, headerBackTitle: '', headerBackTitleVisible: false}} />
+        </HireStack.Navigator>
+    );
+}
+
 
 const styles = StyleSheet.create({
     container: {
@@ -57,4 +69,3 @@ const styles = StyleSheet.create({
         paddingLeft: 10,
     },
 });
-
