@@ -4,7 +4,7 @@ import { View, Text } from 'react-native';
 export default function Hire() {
     return (
         <View>
-            <Text>Hire Screen</Text>
+            <Text> scream Hire </Text>
         </View>
     );
 }
