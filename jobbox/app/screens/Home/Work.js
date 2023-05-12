@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, FlatList, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons'; // you might need to install this package
 
 export default function Work() {
@@ -8,8 +8,30 @@ export default function Work() {
     const handleSearch = () => {
         // handle search logic here
         console.log(searchQuery);
-    };
+    }; 
 
+    // Sample job data
+    const jobs = [
+        {id: '1', title: 'Software Developer', company: 'Company A', location: 'City A', posted: '2 days ago'},
+        {id: '2', title: 'Product Manager', company: 'Company B', location: 'City B', posted: '3 days ago'},
+        // More jobs...
+    ]; 
+
+    const renderJob = ({item}) => (
+        <View style={styles.jobCard}>
+            <View style={styles.jobDetails}>
+                <Text style={styles.jobTitle}>{item.title}</Text>
+                <Text style={styles.jobCompany}>{item.company}</Text>
+                <Text style={styles.jobLocation}>{item.location}</Text>
+                <Text style={styles.jobPosted}>{item.posted}</Text>
+            </View>
+            <View style={styles.jobExtras}>
+                <Text style={styles.jobExtra}><Ionicons name="time-outline" size={14} color="gray" /> {item.estimatedTime}</Text>
+                <Text style={styles.jobExtra}><Ionicons name="cash-outline" size={14} color="green" /> {item.pay}</Text>
+                <Text style={styles.jobExtra}><Ionicons name="star-outline" size={14} color="gold" /> {item.rating}</Text>
+            </View>
+        </View>
+    );
     return (
         <View style={styles.container}>
             <View style={styles.searchSection}>
@@ -43,6 +65,13 @@ export default function Work() {
                     <Text style={styles.filterOption}>Pay</Text>
                 </TouchableOpacity>
             </View>
+
+            <FlatList
+                data={jobs}
+                renderItem={renderJob}
+                keyExtractor={item => item.id}
+            />
+
         </View>
     );
 }
@@ -97,10 +126,57 @@ const styles = StyleSheet.create({
         justifyContent: 'space-around',
         alignItems: 'center',
         marginTop: 20,
+        marginBottom: 20,
     },
     filterOption: {
         color: '#4683fc',
         fontWeight: 'bold',
         fontSize: 16,
+    },
+    jobCard: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        backgroundColor: '#fff',
+        padding: 15,
+        marginBottom: 10,
+        borderRadius: 5,
+        shadowColor: "#000",
+        shadowOffset: {
+            width: 0,
+            height: 2,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 3.84,
+        elevation: 5,
+    },
+    jobDetails: {
+        flex: 1,
+    },
+    jobTitle: {
+        fontSize: 18,
+        fontWeight: 'bold',
+        marginBottom: 5,
+    },
+    jobCompany: {
+        color: 'gray',
+        fontSize: 14,
+    },
+    jobLocation: {
+        color: 'gray',
+        fontSize: 14,
+    },
+    jobPosted: {
+        color: 'gray',
+        fontSize: 14,
+        marginTop: 5,
+    },
+    jobExtras: {
+        flex: 1,
+        alignItems: 'flex-end', // This aligns the extra details to the right
+    },
+    jobExtra: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginBottom: 5,
     },
 });
