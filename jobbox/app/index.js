@@ -33,59 +33,88 @@ function HomeTopTabs() {
 function MyTabs() {
   const navigation = useNavigation();
   return (
-    <BottomTab.Navigator initialRouteName="Home">
-    <BottomTab.Screen 
-      name="Home" 
-      component={HomeTopTabs} 
-      options={{ 
-        headerTitle: () => (
-          <View style={{ alignItems: 'center' }}>
-            <Image source={logo} style={{ width: 170, height: 30 }} />
-          </View>
-        ),
-        headerLeft: () => (
-          <View style={{ marginLeft: 10 }}>
-            <Image source={logo2} style={{ width: 30, height: 30 }} />
-          </View>
-        ),
-        headerRight: () => (
-          <View style={{ flexDirection: 'row', marginRight: 10 }}>
-            <TouchableOpacity onPress={() => navigation.navigate("Messages")}>
-              <Icon name="chatbox-outline" size={24} />
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() => navigation.navigate("Notifications")}>
-              <Icon name="notifications-outline" size={24} style={{ marginLeft: 10 }} />
-            </TouchableOpacity>
-          </View>
-        ),
+    <BottomTab.Navigator
+      initialRouteName="Home"
+      screenOptions={({ route }) => ({
+        tabBarIcon: ({ focused, color, size }) => {
+          let iconName;
+
+          if (route.name === 'Home') {
+            iconName = focused ? 'home' : 'home-outline';
+          } else if (route.name === 'Services') {
+            iconName = focused ? 'construct' : 'construct-outline';
+          } else if (route.name === 'Activity') {
+            iconName = focused ? 'wallet' : 'wallet-outline';
+          } else if (route.name === 'Profile') {
+            iconName = focused ? 'person' : 'person-outline';
+          }
+
+          return <Icon name={iconName} size={size} color={color} />;
+        },
+      })}
+      tabBarOptions={{
+        tabBarActiveTintColor: 'tomato',
+        tabBarInactiveTintColor: 'gray',
+        tabBarStyle: [
+          {
+            display: 'flex'
+          },
+          null
+        ]
       }}
-    />
-    <BottomTab.Screen 
-      name="Services" 
-      component={Services} 
-      options={{ 
-        headerTitle: () => (
-          <View style={{ alignItems: 'center' }}>
-            <Image source={logo} style={{ width: 170, height: 30 }} />
-          </View>
-        ),
-        headerLeft: () => (
-          <View style={{ marginLeft: 10 }}>
-            <Image source={logo2} style={{ width: 30, height: 30 }} />
-          </View>
-        ),
-        headerRight: () => (
-          <View style={{ flexDirection: 'row', marginRight: 10 }}>
-            <TouchableOpacity onPress={() => navigation.navigate("Messages")}>
-              <Icon name="chatbox-outline" size={24} />
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() => navigation.navigate("Notifications")}>
-              <Icon name="notifications-outline" size={24} style={{ marginLeft: 10 }} />
-            </TouchableOpacity>
-          </View>
-        ),
-      }}
-    />
+    >
+      <BottomTab.Screen 
+        name="Home" 
+        component={HomeTopTabs} 
+        options={{ 
+          headerTitle: () => (
+            <View style={{ alignItems: 'center' }}>
+              <Image source={logo} style={{ width: 170, height: 30 }} />
+            </View>
+          ),
+          headerLeft: () => (
+            <View style={{ marginLeft: 10 }}>
+              <Image source={logo2} style={{ width: 30, height: 30 }} />
+            </View>
+          ),
+          headerRight: () => (
+            <View style={{ flexDirection: 'row', marginRight: 10 }}>
+              <TouchableOpacity onPress={() => navigation.navigate("Messages")}>
+                <Icon name="chatbox-outline" size={24} />
+              </TouchableOpacity>
+              <TouchableOpacity onPress={() => navigation.navigate("Notifications")}>
+                <Icon name="notifications-outline" size={24} style={{ marginLeft: 10 }} />
+              </TouchableOpacity>
+            </View>
+          ),
+        }}
+      />
+      <BottomTab.Screen 
+        name="Services" 
+        component={Services} 
+        options={{ 
+          headerTitle: () => (
+            <View style={{ alignItems: 'center' }}>
+              <Image source={logo} style={{ width: 170, height: 30 }} />
+            </View>
+          ),
+          headerLeft: () => (
+            <View style={{ marginLeft: 10 }}>
+              <Image source={logo2} style={{ width: 30, height: 30 }} />
+            </View>
+          ),
+          headerRight: () => (
+            <View style={{ flexDirection: 'row', marginRight: 10 }}>
+              <TouchableOpacity onPress={() => navigation.navigate("Messages")}>
+                <Icon name="chatbox-outline" size={24} />
+              </TouchableOpacity>
+              <TouchableOpacity onPress={() => navigation.navigate("Notifications")}>
+                <Icon name="notifications-outline" size={24} style={{ marginLeft: 10 }} />
+              </TouchableOpacity>
+            </View>
+          ),
+        }}
+      />
     <BottomTab.Screen 
       name="Activity" 
       component={Activity} 
@@ -145,11 +174,25 @@ function MyTabs() {
 export default function App() {
   return (
     <NavigationContainer independent={true}>
-      <Stack.Navigator screenOptions={{ headerShown: false }}>
-        <Stack.Screen name="MyTabs" component={MyTabs} />
-        <Stack.Screen name="Messages" component={Messages} />
-        <Stack.Screen name="Notifications" component={Notifications} />
+      <Stack.Navigator>
+        <Stack.Screen 
+          name="MyTabs" 
+          component={MyTabs} 
+          options={{ headerShown: false }} 
+        />
+        <Stack.Screen 
+          name="Messages" 
+          component={Messages} 
+          options={{ headerBackTitle: '', headerBackTitleVisible: false }} 
+        />
+        <Stack.Screen 
+          name="Notifications" 
+          component={Notifications} 
+          options={{ headerBackTitle: '', headerBackTitleVisible: false }} 
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );
 }
+
+
