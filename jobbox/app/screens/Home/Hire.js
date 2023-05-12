@@ -23,7 +23,7 @@ function HireScreen({ navigation }) {
                     style={styles.searchInput}
                     onChangeText={text => setSearchQuery(text)}
                     value={searchQuery}
-                    placeholder="Search..."
+                    placeholder="Search foor a job template"
                 />
                 <Button 
                     onPress={handleSearch}
