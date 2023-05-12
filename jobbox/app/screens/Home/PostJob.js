@@ -1,48 +1,79 @@
 // screens/PostJob.js
 
 import React, { useState } from 'react';
-import { View, TextInput, Button, StyleSheet } from 'react-native';
+import { View, ScrollView, StyleSheet } from 'react-native';
+import { TextInput, Button } from 'react-native-paper';
 
-export default function PostJob() {
+export default function PostJob({ navigation }) {
     const [jobTitle, setJobTitle] = useState('');
     const [jobDescription, setJobDescription] = useState('');
+    const [skills, setSkills] = useState('');
+    const [location, setLocation] = useState('');
+    const [pay, setPay] = useState('');
+    const [estimatedTime, setEstimatedTime] = useState('');
 
     const handlePost = () => {
         // handle job posting logic here
-        console.log(`Job Title: ${jobTitle}, Job Description: ${jobDescription}`);
+        console.log(`Job Title: ${jobTitle}, Job Description: ${jobDescription}, Skills: ${skills}, Location: ${location}, Pay: ${pay}, Estimated Time: ${estimatedTime}`);
+        navigation.goBack(); // navigate back to the previous screen
     };
 
     return (
-        <View style={styles.container}>
+        <ScrollView style={styles.container}>
             <TextInput
-                style={styles.input}
-                onChangeText={setJobTitle}
+                label="Job Title"
                 value={jobTitle}
-                placeholder="Job Title"
+                onChangeText={setJobTitle}
+                style={styles.input}
             />
             <TextInput
-                style={styles.input}
-                onChangeText={setJobDescription}
+                label="Job Description"
                 value={jobDescription}
-                placeholder="Job Description"
+                onChangeText={setJobDescription}
+                style={styles.input}
+                multiline
             />
-            <Button
-                onPress={handlePost}
-                title="Post Job"
+            <TextInput
+                label="Skills Required"
+                value={skills}
+                onChangeText={setSkills}
+                style={styles.input}
             />
-        </View>
+            <TextInput
+                label="Location"
+                value={location}
+                onChangeText={setLocation}
+                style={styles.input}
+            />
+            <TextInput
+                label="Pay"
+                value={pay}
+                onChangeText={setPay}
+                style={styles.input}
+            />
+            <TextInput
+                label="Estimated Time"
+                value={estimatedTime}
+                onChangeText={setEstimatedTime}
+                style={styles.input}
+            />
+            <Button mode="contained" onPress={handlePost} style={styles.button}>
+                Post Job
+            </Button>
+        </ScrollView>
     );
 }
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
-        padding: 10,
+        padding: 15,
     },
     input: {
-        height: 40,
-        borderColor: 'gray',
-        borderWidth: 1,
         marginBottom: 10,
+        backgroundColor: '#fff',
+    },
+    button: {
+        marginTop: 10,
+        backgroundColor: '#4683FC', 
     },
 });
