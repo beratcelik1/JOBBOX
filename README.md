@@ -1,3 +1,4 @@
+
 ```
 JOBBOX
 ├─ .DS_Store
@@ -28,6 +29,7 @@ JOBBOX
    │  │  ├─ Activity.js
    │  │  ├─ Home
    │  │  │  ├─ Hire.js
+   │  │  │  ├─ PostJob.js
    │  │  │  └─ Work.js
    │  │  ├─ Messages.js
    │  │  ├─ Notifications.js
