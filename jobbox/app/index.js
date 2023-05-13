@@ -194,10 +194,9 @@ export default function App() {
             options={{ headerBackTitle: '', headerBackTitleVisible: false }} 
           />
           <Stack.Screen 
-            name="PostJob" 
+           name="PostJob" 
             component={PostJob} 
-            options={{headerBackTitle: '', headerBackTitleVisible: false
-            }} 
+            options={{headerTitle: ' ', headerBackTitle: '', headerBackTitleVisible: false,}} 
           />
         </Stack.Navigator>
       </RootNavigationContext.Provider>
