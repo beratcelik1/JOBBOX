@@ -9,12 +9,14 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import { RootNavigationContext } from './navigation/RootNavigationContext';
 import Activity from './screens/Activity';
 import Profile from './screens/Profile';
-import Services from './screens/Services';
+import Services from './screens/Services/Services';
 import Hire from './screens/Home/Hire';
 import Work from './screens/Home/Work';
 import Messages from './screens/Messages';
 import Notifications from './screens/Notifications';
 import PostJob from './screens/Home/PostJob';
+import Category from './screens/Services/Category';
+import JobScreen from './screens/JobScreen';
 
 const logo = require('./assets/images/jobboxlogo4.png');
 const logo2 = require('./assets/images/jobboxlogotek.png');
@@ -198,6 +200,13 @@ export default function App() {
             component={PostJob} 
             options={{headerTitle: ' ', headerBackTitle: '', headerBackTitleVisible: false,}} 
           />
+          <Stack.Screen 
+          name="Category"
+          component={Category} 
+          options={{ headerBackTitle: '', headerBackTitleVisible: false }} 
+          />
+        <Stack.Screen name="Job" component={JobScreen}
+         options={{headerTitle: ' ', headerBackTitle: '', headerBackTitleVisible: false,}}  />
         </Stack.Navigator>
       </RootNavigationContext.Provider>
     </NavigationContainer>
