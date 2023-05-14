@@ -8,8 +8,6 @@ import { RootNavigationContext } from '../../navigation/RootNavigationContext';
 import { Ionicons } from '@expo/vector-icons'; // you might need to install this package
 
 function HireScreen({ navigation }) {
-    const navigationRef = useContext(RootNavigationContext);
-    navigationRef.current?.navigate('PostJob');
     const [searchQuery, setSearchQuery] = useState('');
 
     const handleSearch = () => {
