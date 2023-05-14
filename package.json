@@ -2,6 +2,7 @@
   "dependencies": {
     "@expo/vector-icons": "^13.0.0",
     "@react-native-firebase/app": "^17.5.0",
-    "@react-native-firebase/auth": "^17.5.0"
+    "@react-native-firebase/auth": "^17.5.0",
+    "expo-firebase-core": "^6.0.0"
   }
 }

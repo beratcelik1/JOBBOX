@@ -1,13 +1,33 @@
 {
   "expo": {
     "scheme": "acme",
-    "web": {
-      "bundler": "metro"
-    },
     "name": "jobbox",
-    "slug": "jobbox", 
+    "slug": "jobbox",
+    "ios": {
+      "bundleIdentifier": "com.domain.jobbox",
+      "config": {
+        "googleSignIn": {
+          "reservedClientId": "com.googleusercontent.apps.336768061417-qa9dt083leshob66iqd5ml8offoc3po8"
+        }
+      }
+    },
     "android": {
       "package": "com.domain.jobbox"
+    },
+    "web": {
+      "bundler": "metro",
+      "config": {
+        "firebase": {
+          "apiKey": "AIzaSyA4-qjFOwO00m1siyVnQyrU3HSdyeVDR1s",
+          "authDomain": "jobbox-d937e.firebaseapp.com",
+          "databaseURL": "https://jobbox-d937e.firebaseio.com",
+          "projectId": "jobbox-d937e",
+          "storageBucket": "jobbox-d937e.appspot.com",
+          "messagingSenderId": "336768061417",
+          "appId": "1:336768061417:android:475307605d96af03e64578",
+          "measurementId": "<your-measurement-id>" 
+        }
+      }
     }
   }
 }

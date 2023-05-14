@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { StyleSheet, View, Image } from 'react-native';
 import { TextInput, Button, Text } from 'react-native-paper';
+import firebase from 'firebase';
 
 const logo = require('../assets/images/jobboxlogo2.png');
 
@@ -13,10 +14,27 @@ export default function Signup({ navigation }) {
     const [password, setPassword] = useState('');
 
     const handleSignup = () => {
-        // handle signup logic here
-        console.log(`FirstName:${firstname}, LastName: ${lastname}, Email: ${email}, Password: ${password}`);
-        navigation.navigate('MyTabs'); // navigate to the main tabs after signup
+        firebase.auth().createUserWithEmailAndPassword(email, password)
+        .then((userCredential) => {
+            // Signed in 
+            var user = userCredential.user;
+            // You can also update the user's details
+            user.updateProfile({
+                displayName: firstname + ' ' + lastname,
+            }).then(() => {
+                console.log(`User created: ${user.displayName}`);
+                navigation.navigate('MyTabs');
+            }).catch((error) => {
+                console.error('Error updating user: ', error);
+            });
+        })
+        .catch((error) => {
+            var errorCode = error.code;
+            var errorMessage = error.message;
+            console.error('Error signing up: ', errorCode, errorMessage);
+        });
     };
+    
 
     return (
         <View style={styles.container}>

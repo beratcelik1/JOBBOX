@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { StyleSheet, View, Image, Switch, TouchableOpacity} from 'react-native';
 import { TextInput, Button, Text } from 'react-native-paper';
-
+import firebase from 'firebase';
 
 const logo = require('../assets/images/jobboxlogo2.png');
 
@@ -13,12 +13,21 @@ export default function Login({ navigation, setIsAuthenticated }) {
     const [isRemembered, setIsRemembered] = useState(false);
 
     const handleLogin = () => {
-        // handle login logic here
-        console.log(`Username: ${username}, Password: ${password}`);
-        setIsAuthenticated(true); // set isAuthenticated to true when the login button is pressed
+        firebase.auth().signInWithEmailAndPassword(username, password)
+        .then((userCredential) => {
+            // Signed in
+            var user = userCredential.user;
+            console.log(`User signed in: ${user.displayName}`);
+            setIsAuthenticated(true);
+        })
+        .catch((error) => {
+            var errorCode = error.code;
+            var errorMessage = error.message;
+            console.error('Error signing in: ', errorCode, errorMessage);
+        });
     };
     
-      
+     
     return (
         <View style={styles.container}>
             <View style={styles.logoContainer}>
