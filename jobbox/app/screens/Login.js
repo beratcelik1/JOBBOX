@@ -4,9 +4,10 @@ import React, { useState } from 'react';
 import { StyleSheet, View, Image, Switch, TouchableOpacity} from 'react-native';
 import { TextInput, Button, Text } from 'react-native-paper';
 
+
 const logo = require('../assets/images/jobboxlogo2.png');
 
-export default function Login({ navigation }) {
+export default function Login({ navigation, setIsAuthenticated }) {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [isRemembered, setIsRemembered] = useState(false);
@@ -15,8 +16,9 @@ export default function Login({ navigation }) {
         // handle login logic here
         console.log(`Username: ${username}, Password: ${password}`);
         navigation.navigate('MyTabs'); // navigate to the main tabs after login
+        setIsAuthenticated(true); // set isAuthenticated to true when the login button is pressed
     };
-
+      
     return (
         <View style={styles.container}>
             <View style={styles.logoContainer}>
