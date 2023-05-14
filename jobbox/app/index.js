@@ -8,7 +8,7 @@ import Icon from 'react-native-vector-icons/Ionicons';
 
 import { RootNavigationContext } from './navigation/RootNavigationContext';
 import Activity from './screens/Activity';
-import Profile from './screens/Profile';
+import Profile from './screens/Profile/Profile';
 import Services from './screens/Services/Services';
 import Hire from './screens/Home/Hire';
 import Work from './screens/Home/Work';
@@ -17,6 +17,7 @@ import Notifications from './screens/Notifications';
 import PostJob from './screens/Home/PostJob';
 import Category from './screens/Services/Category';
 import JobScreen from './screens/JobScreen';
+import ProfileSection from './screens/Profile/ProfileSection';
 
 import { useState } from 'react';
 import Login from './screens/Login';
@@ -224,6 +225,7 @@ export default function App() {
         component={JobScreen}
         options={{headerTitle: ' ', headerBackTitle: '', headerBackTitleVisible: false,}}  
       />
+       <Stack.Screen name="ProfileSection" component={ProfileSection} />
     </Stack.Navigator>
   );
 

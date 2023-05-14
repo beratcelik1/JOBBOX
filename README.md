@@ -1,4 +1,3 @@
-
 ```
 JOBBOX
 ├─ .DS_Store
@@ -28,15 +27,20 @@ JOBBOX
 │  │  │  └─ RootNavigationContext.js
 │  │  ├─ screens
 │  │  │  ├─ Activity.js
-│  │  │  ├─ Category.js
 │  │  │  ├─ Home
 │  │  │  │  ├─ Hire.js
 │  │  │  │  ├─ PostJob.js
 │  │  │  │  └─ Work.js
+│  │  │  ├─ JobScreen.js
+│  │  │  ├─ Login.js
 │  │  │  ├─ Messages.js
 │  │  │  ├─ Notifications.js
 │  │  │  ├─ Profile.js
-│  │  │  └─ Services.js
+│  │  │  ├─ Services
+│  │  │  │  ├─ Category.js
+│  │  │  │  ├─ CategoryItem.js
+│  │  │  │  └─ Services.js
+│  │  │  └─ Signup.js
 │  │  ├─ services
 │  │  │  ├─ JobService.js
 │  │  │  ├─ PaymentService.js
@@ -53,7 +57,6 @@ JOBBOX
 │  │     └─ utilities.js
 │  ├─ app.json
 │  ├─ babel.config.js
-│  ├─ index.js
 │  ├─ package-lock.json
 │  ├─ package.json
 │  └─ react-native.config.js
