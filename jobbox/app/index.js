@@ -21,14 +21,6 @@ import JobScreen from './screens/JobScreen';
 import { useState } from 'react';
 import Login from './screens/Login';
 import Signup from './screens/Signup';
-// other imports... 
-
-
-import { useState } from 'react';
-import Login from './screens/Login';
-import Signup from './screens/Signup';
-// other imports... 
-
 
 const logo = require('./assets/images/jobboxlogo4.png');
 const logo2 = require('./assets/images/jobboxlogotek.png');
@@ -227,9 +219,9 @@ export default function App() {
                       }} 
                   />
                 <Stack.Screen 
-          name="Category"
-          component={Category} 
-          options={{ headerBackTitle: '', headerBackTitleVisible: false }} 
+                   name="Category"
+                   component={Category} 
+                  options={{ headerBackTitle: '', headerBackTitleVisible: false }} 
           />
         <Stack.Screen name="Job" component={JobScreen}
          options={{headerTitle: ' ', headerBackTitle: '', headerBackTitleVisible: false,}}  />
