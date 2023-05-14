@@ -18,6 +18,10 @@ import PostJob from './screens/Home/PostJob';
 import Category from './screens/Services/Category';
 import JobScreen from './screens/JobScreen';
 
+import { useState } from 'react';
+import Login from './screens/Login';
+import Signup from './screens/Signup';
+
 const logo = require('./assets/images/jobboxlogo4.png');
 const logo2 = require('./assets/images/jobboxlogotek.png');
 
@@ -175,40 +179,61 @@ function MyTabs() {
   );
 }
 export default function App() {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const navigationRef = React.useRef();
+
+  if (!isAuthenticated) {
+      return (
+          <NavigationContainer ref={navigationRef} independent={true}>
+              <Stack.Navigator>
+                  <Stack.Screen name="Login" 
+                                component={(props) => <Login {...props} setIsAuthenticated={setIsAuthenticated} />} 
+                                options={{ headerShown: false }} />
+                  <Stack.Screen name="Signup" component={Signup} options={{ headerShown: false }} />
+              </Stack.Navigator>
+          </NavigationContainer>
+      );
+  }
+
   return (
-    <NavigationContainer ref={navigationRef} independent={true}>
-      <RootNavigationContext.Provider value={navigationRef}>
-        <Stack.Navigator>
-          <Stack.Screen 
-            name="MyTabs" 
-            component={MyTabs} 
-            options={{ headerShown: false }} 
+      <NavigationContainer ref={navigationRef} independent={true}>
+          <RootNavigationContext.Provider value={navigationRef}>
+              <Stack.Navigator>
+                  <Stack.Screen 
+                      name="MyTabs" 
+                      component={MyTabs} 
+                      options={{ headerShown: false }} 
+                  />
+                  <Stack.Screen 
+                      name="Messages" 
+                      component={Messages} 
+                      options={{ headerBackTitle: '', headerBackTitleVisible: false }} 
+                  />
+                  <Stack.Screen 
+                      name="Notifications" 
+                      component={Notifications} 
+                      options={{ headerBackTitle: '', headerBackTitleVisible: false }} 
+                  />
+                  <Stack.Screen 
+                      name="PostJob" 
+                      component={PostJob} 
+                      options={{headerBackTitle: '', headerBackTitleVisible: false
+                      }} 
+                  />
+                <Stack.Screen 
+                   name="Category"
+                   component={Category} 
+                  options={{ headerBackTitle: '', headerBackTitleVisible: false }} 
           />
-          <Stack.Screen 
-            name="Messages" 
-            component={Messages} 
-            options={{ headerBackTitle: '', headerBackTitleVisible: false }} 
-          />
-          <Stack.Screen 
-            name="Notifications" 
-            component={Notifications} 
-            options={{ headerBackTitle: '', headerBackTitleVisible: false }} 
-          />
-          <Stack.Screen 
-           name="PostJob" 
-            component={PostJob} 
-            options={{headerTitle: ' ', headerBackTitle: '', headerBackTitleVisible: false,}} 
-          />
-          <Stack.Screen 
-          name="Category"
-          component={Category} 
-          options={{ headerBackTitle: '', headerBackTitleVisible: false }} 
-          />
-        <Stack.Screen name="Job" component={JobScreen}
-         options={{headerTitle: ' ', headerBackTitle: '', headerBackTitleVisible: false,}}  />
+                <Stack.Screen name="Job" component={JobScreen}
+                options={{headerTitle: ' ', headerBackTitle: '', headerBackTitleVisible: false,}}  />
+              <Stack.Screen 
+              name="Login" 
+               options={{ headerShown: false }}>
+            {props => <Login {...props} setIsAuthenticated={setIsAuthenticated} />}
+            </Stack.Screen>
         </Stack.Navigator>
-      </RootNavigationContext.Provider>
-    </NavigationContainer>
+          </RootNavigationContext.Provider>
+      </NavigationContainer>
   );
 }
