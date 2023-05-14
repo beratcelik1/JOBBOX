@@ -220,18 +220,18 @@ export default function App() {
                       options={{headerBackTitle: '', headerBackTitleVisible: false
                       }} 
                   />
-                <Stack.Screen 
-                   name="Category"
-                   component={Category} 
-                  options={{ headerBackTitle: '', headerBackTitleVisible: false }} 
-          />
-                <Stack.Screen name="Job" component={JobScreen}
-                options={{headerTitle: ' ', headerBackTitle: '', headerBackTitleVisible: false,}}  />
-              <Stack.Screen 
-              name="Login" 
-               options={{ headerShown: false }}>
-            {props => <Login {...props} setIsAuthenticated={setIsAuthenticated} />}
-            </Stack.Screen>
+                  <Stack.Screen 
+                      name="Category"
+                      component={Category} 
+                      options={{ headerBackTitle: '', headerBackTitleVisible: false }} 
+                  />
+                  <Stack.Screen name="Job" component={JobScreen}
+                      options={{headerTitle: ' ', headerBackTitle: '', headerBackTitleVisible: false,}}  />
+                  <Stack.Screen 
+                      name="Login" 
+                      options={{ headerShown: false }}>
+                      {props => <Login {...props} setIsAuthenticated={setIsAuthenticated} />}
+                  </Stack.Screen>
         </Stack.Navigator>
           </RootNavigationContext.Provider>
       </NavigationContainer>

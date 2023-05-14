@@ -5,6 +5,9 @@
       "bundler": "metro"
     },
     "name": "jobbox",
-    "slug": "jobbox"
+    "slug": "jobbox", 
+    "android": {
+      "package": "com.domain.jobbox"
+    }
   }
 }
