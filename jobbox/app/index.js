@@ -186,7 +186,9 @@ export default function App() {
       return (
           <NavigationContainer ref={navigationRef} independent={true}>
               <Stack.Navigator>
-                  <Stack.Screen name="Login" component={Login} options={{ headerShown: false }} />
+                  <Stack.Screen name="Login" 
+                                component={(props) => <Login {...props} setIsAuthenticated={setIsAuthenticated} />} 
+                                options={{ headerShown: false }} />
                   <Stack.Screen name="Signup" component={Signup} options={{ headerShown: false }} />
               </Stack.Navigator>
           </NavigationContainer>
@@ -223,8 +225,13 @@ export default function App() {
                    component={Category} 
                   options={{ headerBackTitle: '', headerBackTitleVisible: false }} 
           />
-        <Stack.Screen name="Job" component={JobScreen}
-         options={{headerTitle: ' ', headerBackTitle: '', headerBackTitleVisible: false,}}  />
+                <Stack.Screen name="Job" component={JobScreen}
+                options={{headerTitle: ' ', headerBackTitle: '', headerBackTitleVisible: false,}}  />
+              <Stack.Screen 
+              name="Login" 
+               options={{ headerShown: false }}>
+            {props => <Login {...props} setIsAuthenticated={setIsAuthenticated} />}
+            </Stack.Screen>
         </Stack.Navigator>
           </RootNavigationContext.Provider>
       </NavigationContainer>
