@@ -15,9 +15,9 @@ export default function Login({ navigation, setIsAuthenticated }) {
     const handleLogin = () => {
         // handle login logic here
         console.log(`Username: ${username}, Password: ${password}`);
-        navigation.navigate('MyTabs'); // navigate to the main tabs after login
         setIsAuthenticated(true); // set isAuthenticated to true when the login button is pressed
     };
+    
       
     return (
         <View style={styles.container}>
