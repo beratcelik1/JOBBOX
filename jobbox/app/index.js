@@ -42,35 +42,33 @@ function MyTabs() {
   const navigation = useNavigation();
   return (
     <BottomTab.Navigator
-      initialRouteName="Home"
-      screenOptions={({ route }) => ({
-        tabBarIcon: ({ focused, color, size }) => {
-          let iconName;
-
-          if (route.name === 'Home') {
-            iconName = focused ? 'home' : 'home-outline';
-          } else if (route.name === 'Services') {
-            iconName = focused ? 'construct' : 'construct-outline';
-          } else if (route.name === 'Activity') {
-            iconName = focused ? 'wallet' : 'wallet-outline';
-          } else if (route.name === 'Profile') {
-            iconName = focused ? 'person' : 'person-outline';
-          }
-
-          return <Icon name={iconName} size={size} color={color} />;
+    initialRouteName="Home"
+    screenOptions={({ route }) => ({
+      tabBarIcon: ({ focused, color, size }) => {
+        let iconName;
+  
+        if (route.name === 'Home') {
+          iconName = focused ? 'home' : 'home-outline';
+        } else if (route.name === 'Services') {
+          iconName = focused ? 'construct' : 'construct-outline';
+        } else if (route.name === 'Activity') {
+          iconName = focused ? 'wallet' : 'wallet-outline';
+        } else if (route.name === 'Profile') {
+          iconName = focused ? 'person' : 'person-outline';
+        }
+  
+        return <Icon name={iconName} size={size} color={color} />;
+      },
+      tabBarActiveTintColor: '#4683fc',
+      tabBarInactiveTintColor: 'gray',
+      tabBarStyle: [
+        {
+          display: 'flex'
         },
-      })}
-      tabBarOptions={{
-        tabBarActiveTintColor: 'tomato',
-        tabBarInactiveTintColor: 'gray',
-        tabBarStyle: [
-          {
-            display: 'flex'
-          },
-          null
-        ]
-      }}
-    >
+        null
+      ]
+    })}
+  >
       <BottomTab.Screen 
         name="Home" 
         component={HomeTopTabs} 
@@ -182,58 +180,59 @@ export default function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const navigationRef = React.useRef();
 
-  if (!isAuthenticated) {
-      return (
-          <NavigationContainer ref={navigationRef} independent={true}>
-              <Stack.Navigator>
-                  <Stack.Screen name="Login" 
-                                component={(props) => <Login {...props} setIsAuthenticated={setIsAuthenticated} />} 
-                                options={{ headerShown: false }} />
-                  <Stack.Screen name="Signup" component={Signup} options={{ headerShown: false }} />
-              </Stack.Navigator>
-          </NavigationContainer>
-      );
-  }
+  const AuthStack = () => (
+    <Stack.Navigator>
+      <Stack.Screen 
+        name="Login" 
+        options={{ headerShown: false }}>
+        {props => <Login {...props} setIsAuthenticated={setIsAuthenticated} />}
+      </Stack.Screen>
+      <Stack.Screen name="Signup" component={Signup} options={{ headerShown: false }} />
+    </Stack.Navigator>
+  );
+  
+  const MainStack = () => (
+    <Stack.Navigator>
+      <Stack.Screen 
+        name="MyTabs" 
+        component={MyTabs} 
+        options={{ headerShown: false }} 
+      />
+      <Stack.Screen 
+        name="Messages" 
+        component={Messages} 
+        options={{ headerBackTitle: '', headerBackTitleVisible: false }} 
+      />
+      <Stack.Screen 
+        name="Notifications" 
+        component={Notifications} 
+        options={{ headerBackTitle: '', headerBackTitleVisible: false }} 
+      />
+      <Stack.Screen 
+        name="PostJob" 
+        component={PostJob} 
+        options={{headerBackTitle: '', headerBackTitleVisible: false
+        }} 
+      />
+      <Stack.Screen 
+        name="Category"
+        component={Category} 
+        options={{ headerBackTitle: '', headerBackTitleVisible: false }} 
+      />
+      <Stack.Screen 
+        name="Job" 
+        component={JobScreen}
+        options={{headerTitle: ' ', headerBackTitle: '', headerBackTitleVisible: false,}}  
+      />
+    </Stack.Navigator>
+  );
 
   return (
-      <NavigationContainer ref={navigationRef} independent={true}>
-          <RootNavigationContext.Provider value={navigationRef}>
-              <Stack.Navigator>
-                  <Stack.Screen 
-                      name="MyTabs" 
-                      component={MyTabs} 
-                      options={{ headerShown: false }} 
-                  />
-                  <Stack.Screen 
-                      name="Messages" 
-                      component={Messages} 
-                      options={{ headerBackTitle: '', headerBackTitleVisible: false }} 
-                  />
-                  <Stack.Screen 
-                      name="Notifications" 
-                      component={Notifications} 
-                      options={{ headerBackTitle: '', headerBackTitleVisible: false }} 
-                  />
-                  <Stack.Screen 
-                      name="PostJob" 
-                      component={PostJob} 
-                      options={{headerBackTitle: '', headerBackTitleVisible: false
-                      }} 
-                  />
-                  <Stack.Screen 
-                      name="Category"
-                      component={Category} 
-                      options={{ headerBackTitle: '', headerBackTitleVisible: false }} 
-                  />
-                  <Stack.Screen name="Job" component={JobScreen}
-                      options={{headerTitle: ' ', headerBackTitle: '', headerBackTitleVisible: false,}}  />
-                  <Stack.Screen 
-                      name="Login" 
-                      options={{ headerShown: false }}>
-                      {props => <Login {...props} setIsAuthenticated={setIsAuthenticated} />}
-                  </Stack.Screen>
-        </Stack.Navigator>
-          </RootNavigationContext.Provider>
-      </NavigationContainer>
+    <NavigationContainer ref={navigationRef} independent={true}>
+      <RootNavigationContext.Provider value={navigationRef}>
+        {isAuthenticated ? <MainStack /> : <AuthStack />}
+      </RootNavigationContext.Provider>
+    </NavigationContainer>
   );
 }
+
