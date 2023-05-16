@@ -1,7 +1,6 @@
 // screens/Login.js
-
 import React, { useState } from 'react';
-import { StyleSheet, View, Image, Switch, TouchableOpacity} from 'react-native';
+import { StyleSheet, View, Image, Switch, TouchableOpacity, Pressable, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
 import { TextInput, Button, Text } from 'react-native-paper';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -44,49 +43,69 @@ export default function Login({ navigation, setIsAuthenticated }) {
     
     
       
-    return (
-        <View style={styles.container}>
-            <View style={styles.logoContainer}>
-                <Image source={logo} style={styles.logo} />
-            </View>
+    return ( 
 
-            <TextInput
-                label="Username"
-                value={username}
-                onChangeText={setUsername}
-                style={styles.input}
-            />
-            <TextInput
-                label="Password"
-                value={password}
-                onChangeText={setPassword}
-                secureTextEntry
-                style={styles.input}
-            />
 
-            <View style={styles.rememberForgotContainer}>
-                <View style={styles.rememberContainer}>
-                    <Switch
-                        value={isRemembered}
-                        onValueChange={setIsRemembered}
-                    />
-                    <Text style={styles.noBtn}> Remember me</Text>
+    <ScrollView contentContainerStyle={styles.container}>
+    <KeyboardAvoidingView 
+        behavior={Platform.OS === 'ios' ? 'padding' : null}
+        style={{ flex: 1 }}
+    >
+            <View style={styles.container}>
+                <View style={styles.logoContainer}>
+                    <Image source={logo} style={styles.logo} />
                 </View>
-                <TouchableOpacity onPress={() => {/* handle forgot password */}}>
-                    <Text style={styles.forgotPassword}>Forgot password?</Text>
-                </TouchableOpacity>
+
+                <TextInput
+                    label="Email"
+                    value={username}
+                    onChangeText={setUsername}
+                    style={styles.input}
+                />
+                <TextInput
+                    label="Password"
+                    value={password}
+                    onChangeText={setPassword}
+                    secureTextEntry
+                    style={styles.input}
+                />
+
+                <View style={styles.rememberForgotContainer}>
+                    <View style={styles.rememberContainer}>
+                        <Switch
+                            value={isRemembered}
+                            onValueChange={setIsRemembered}
+                        />
+                        <Text style={styles.noBtn}> Remember me</Text>
+                    </View>
+                    <TouchableOpacity onPress={() => {/* handle forgot password */}}>
+                        <Text style={styles.forgotPassword}>Forgot password?</Text>
+                    </TouchableOpacity>
+                </View>
+
+                <Pressable
+                    style={({ pressed }) => [
+                        {
+                            opacity: pressed ? 0.5 : 1,
+                        },
+                        styles.pressable,
+                    ]}
+                    onPress={handleLogin}
+                >
+                    <Button mode="contained" style={styles.button}>
+                        <Text style={styles.Btn}>Login</Text>
+                    </Button>
+                </Pressable>
+
+                <Button onPress={() => navigation.navigate('Signup')}>
+                    <Text style={styles.noBtn}>Don't have an account? 
+                        <Text style={styles.forgotPassword}> Sign up.</Text> 
+                    </Text>
+                </Button>
             </View>
-
-
-            <Button mode="contained" onPress={handleLogin} style={styles.button} >
-                <Text style={styles.Btn}>Login</Text>
-            </Button>
-            <Button onPress={() => navigation.navigate('Signup')}>
-                <Text style={styles.noBtn}>Don't have an account? 
-                    <Text style={styles.forgotPassword}> Sign up.</Text> 
-                </Text>
-            </Button>
-        </View>
+    </KeyboardAvoidingView>
+    </ScrollView>
+        
     );
 }
 

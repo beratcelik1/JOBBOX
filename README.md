@@ -5,11 +5,11 @@ JOBBOX-1
 ├─ jobbox
 │  ├─ .expo
 │  │  ├─ devices.json
-│  │  ├─ README.md
-│  │  └─ settings.json
+│  │  └─ README.md
 │  ├─ app
 │  │  ├─ assets
 │  │  │  ├─ fonts
+│  │  │  │  └─ Raleway-Medium.ttf
 │  │  │  └─ images
 │  │  │     ├─ jobboxlogo.png
 │  │  │     ├─ jobboxlogo2.png
@@ -29,6 +29,7 @@ JOBBOX-1
 │  │  │  ├─ Activity.js
 │  │  │  ├─ Home
 │  │  │  │  ├─ Hire.js
+│  │  │  │  ├─ JobDetails.js
 │  │  │  │  ├─ PostJob.js
 │  │  │  │  └─ Work.js
 │  │  │  ├─ JobScreen.js
@@ -47,23 +48,28 @@ JOBBOX-1
 │  │  │  ├─ JobService.js
 │  │  │  ├─ PaymentService.js
 │  │  │  └─ UserService.js
-│  │  └─ state
-│  │     ├─ actions
-│  │     │  └─ jobActions.js
-│  │     └─ store.js
+│  │  ├─ state
+│  │  │  ├─ actions
+│  │  │  │  ├─ jobActions.js
+│  │  │  │  └─ userActions.js
+│  │  │  ├─ reducers
+│  │  │  │  ├─ jobReducer.js
+│  │  │  │  └─ userReducer.js
+│  │  │  └─ store.js
+│  │  └─ utilities
+│  │     └─ utilities.js
 │  ├─ app.json
 │  ├─ babel.config.js
 │  ├─ package-lock.json
 │  ├─ package.json
 │  ├─ react-native.config.js
 │  └─ server
-│     ├─ .env
-│     ├─ Procfile
 │     ├─ index.js
 │     ├─ models
 │     │  └─ User.js
 │     ├─ package-lock.json
 │     ├─ package.json
+│     ├─ Procfile
 │     └─ routes
 │        └─ auth.js
 ├─ package-lock.json
