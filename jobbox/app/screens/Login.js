@@ -13,9 +13,26 @@ export default function Login({ navigation, setIsAuthenticated }) {
     const [isRemembered, setIsRemembered] = useState(false);
 
     const handleLogin = () => {
-        // handle login logic here
-        console.log(`Username: ${username}, Password: ${password}`);
-        setIsAuthenticated(true); // set isAuthenticated to true when the login button is pressed
+        fetch('http://localhost:5001/auth/login', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ 
+                email: username, 
+                password: password 
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log(data);
+            if (data.token) {
+                setIsAuthenticated(true);
+            } else {
+                // handle error, show a message to the user
+            }
+        })
+        .catch(error => console.log('Error:', error));
     };
     
       

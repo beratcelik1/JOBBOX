@@ -1,3 +1,4 @@
+
 ```
 JOBBOX
 ├─ .DS_Store
@@ -35,7 +36,9 @@ JOBBOX
 │  │  │  ├─ Login.js
 │  │  │  ├─ Messages.js
 │  │  │  ├─ Notifications.js
-│  │  │  ├─ Profile.js
+│  │  │  ├─ Profile
+│  │  │  │  ├─ Profile.js
+│  │  │  │  └─ ProfileSection.js
 │  │  │  ├─ Services
 │  │  │  │  ├─ Category.js
 │  │  │  │  ├─ CategoryItem.js
@@ -59,7 +62,16 @@ JOBBOX
 │  ├─ babel.config.js
 │  ├─ package-lock.json
 │  ├─ package.json
-│  └─ react-native.config.js
+│  ├─ react-native.config.js
+│  └─ server
+│     ├─ index.js
+│     ├─ models
+│     │  └─ User.js
+│     ├─ package-lock.json
+│     ├─ package.json
+│     ├─ pass.env
+│     └─ routes
+│        └─ auth.js
 ├─ package-lock.json
 └─ package.json
 
