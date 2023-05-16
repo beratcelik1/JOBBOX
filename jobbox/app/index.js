@@ -189,7 +189,13 @@ export default function App() {
         {props => <Login {...props} setIsAuthenticated={setIsAuthenticated} />}
       </Stack.Screen>
       <Stack.Screen name="Signup" component={Signup} options={{ headerShown: false }} />
+      <Stack.Screen 
+        name="MyTabs" 
+        component={MyTabs} 
+        options={{ headerShown: false }} 
+      />
     </Stack.Navigator>
+
   );
   
   const MainStack = () => (

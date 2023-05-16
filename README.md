@@ -38,10 +38,11 @@ JOBBOX-1
 │  │  │  ├─ Profile
 │  │  │  │  ├─ Profile.js
 │  │  │  │  └─ ProfileSection.js
-│  │  │  └─ Services
-│  │  │     ├─ Category.js
-│  │  │     ├─ CategoryItem.js
-│  │  │     └─ Services.js
+│  │  │  ├─ Services
+│  │  │  │  ├─ Category.js
+│  │  │  │  ├─ CategoryItem.js
+│  │  │  │  └─ Services.js
+│  │  │  └─ Signup.js
 │  │  ├─ services
 │  │  │  ├─ JobService.js
 │  │  │  ├─ PaymentService.js
@@ -54,7 +55,17 @@ JOBBOX-1
 │  ├─ babel.config.js
 │  ├─ package-lock.json
 │  ├─ package.json
-│  └─ react-native.config.js
+│  ├─ react-native.config.js
+│  └─ server
+│     ├─ .env
+│     ├─ Procfile
+│     ├─ index.js
+│     ├─ models
+│     │  └─ User.js
+│     ├─ package-lock.json
+│     ├─ package.json
+│     └─ routes
+│        └─ auth.js
 ├─ package-lock.json
 ├─ package.json
 └─ README.md
