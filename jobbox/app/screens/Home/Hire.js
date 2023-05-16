@@ -6,6 +6,7 @@ import { useNavigation } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import PostJob from '../Home/PostJob';
 import { Ionicons } from '@expo/vector-icons';
+import JobDetail from './JobDetails';
 
 function HireScreen({ navigation }) {
     const [searchQuery, setSearchQuery] = useState('');
@@ -16,7 +17,6 @@ function HireScreen({ navigation }) {
         const fetchedJobs = [
             { id: '1', title: 'Software Engineer', description: 'A full-time position', datePosted: '2023-01-01', numApplications: '3'  },
             { id: '2', title: 'Data Analyst', description: 'A part-time position', datePosted: '2023-02-15', numApplications: '1' },
-            { id: '3', title: 'Gardener', description: 'Casual', datePosted: '2023-02-15', numApplications: '10' },
             // Add more jobs here...
         ];
         setJobs(fetchedJobs);
@@ -25,6 +25,9 @@ function HireScreen({ navigation }) {
     const handleSearch = () => {
         console.log(searchQuery);
     };
+    const handleJobPress = (job) => {
+        navigation.navigate('JobDetail', { job: job });
+    }
 
     const renderJob = ({ item }) => (
         <View style={styles.jobCard}>
@@ -32,6 +35,7 @@ function HireScreen({ navigation }) {
             <Text style={styles.jobDescription}>{item.description}</Text>
             <Text style={styles.jobDate}>{item.datePosted}</Text>
             <Text style={styles.jobDate}>Applications: {item.numApplications}</Text>
+            <Button onPress={() => handleJobPress(item)} title="View Applications" />
         </View>
     );
 
@@ -75,6 +79,7 @@ export default function Hire() {
         <HireStack.Navigator initialRouteName="HireScreen">
             <HireStack.Screen name="HireScreen" component={HireScreen} options={{headerShown: false}} />
             <HireStack.Screen name="PostJob" component={PostJob} options={{headerTitle: '', headerShown: true, headerBackTitle: '', headerBackTitleVisible: false}} />
+            <HireStack.Screen name="JobDetail" component={JobDetail} options={{headerTitle: '', headerShown: true, headerBackTitle: '', headerBackTitleVisible: false}} />
         </HireStack.Navigator>
     );
 }
