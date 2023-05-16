@@ -1,15 +1,15 @@
+
 ```
-JOBBOX
+JOBBOX-1
 ├─ .DS_Store
-├─ README.md
 ├─ jobbox
 │  ├─ .expo
+│  │  ├─ devices.json
 │  │  ├─ README.md
-│  │  └─ devices.json
+│  │  └─ settings.json
 │  ├─ app
 │  │  ├─ assets
 │  │  │  ├─ fonts
-│  │  │  │  └─ Raleway-Medium.ttf
 │  │  │  └─ images
 │  │  │     ├─ jobboxlogo.png
 │  │  │     ├─ jobboxlogo2.png
@@ -35,32 +35,28 @@ JOBBOX
 │  │  │  ├─ Login.js
 │  │  │  ├─ Messages.js
 │  │  │  ├─ Notifications.js
-│  │  │  ├─ Profile.js
-│  │  │  ├─ Services
-│  │  │  │  ├─ Category.js
-│  │  │  │  ├─ CategoryItem.js
-│  │  │  │  └─ Services.js
-│  │  │  └─ Signup.js
+│  │  │  ├─ Profile
+│  │  │  │  ├─ Profile.js
+│  │  │  │  └─ ProfileSection.js
+│  │  │  └─ Services
+│  │  │     ├─ Category.js
+│  │  │     ├─ CategoryItem.js
+│  │  │     └─ Services.js
 │  │  ├─ services
 │  │  │  ├─ JobService.js
 │  │  │  ├─ PaymentService.js
 │  │  │  └─ UserService.js
-│  │  ├─ state
-│  │  │  ├─ actions
-│  │  │  │  ├─ jobActions.js
-│  │  │  │  └─ userActions.js
-│  │  │  ├─ reducers
-│  │  │  │  ├─ jobReducer.js
-│  │  │  │  └─ userReducer.js
-│  │  │  └─ store.js
-│  │  └─ utilities
-│  │     └─ utilities.js
+│  │  └─ state
+│  │     ├─ actions
+│  │     │  └─ jobActions.js
+│  │     └─ store.js
 │  ├─ app.json
 │  ├─ babel.config.js
 │  ├─ package-lock.json
 │  ├─ package.json
 │  └─ react-native.config.js
 ├─ package-lock.json
-└─ package.json
+├─ package.json
+└─ README.md
 
 ```
