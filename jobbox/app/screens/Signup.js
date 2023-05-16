@@ -3,7 +3,10 @@
 import React, { useState } from 'react';
 import { StyleSheet, View, Image } from 'react-native';
 import { TextInput, Button, Text } from 'react-native-paper';
-import firebase from 'firebase';
+import * as firebase from "firebase/app";
+
+import * as firebase from "firebase/app";
+import "firebase/auth";
 
 const logo = require('../assets/images/jobboxlogo2.png');
 
@@ -14,26 +17,32 @@ export default function Signup({ navigation }) {
     const [password, setPassword] = useState('');
 
     const handleSignup = () => {
-        firebase.auth().createUserWithEmailAndPassword(email, password)
-        .then((userCredential) => {
-            // Signed in 
+        firebase
+          .auth()
+          .createUserWithEmailAndPassword(email, password)
+          .then((userCredential) => {
+            // Signed up
             var user = userCredential.user;
-            // You can also update the user's details
-            user.updateProfile({
+            // Update the user's details
+            user
+              .updateProfile({
                 displayName: firstname + ' ' + lastname,
-            }).then(() => {
+              })
+              .then(() => {
                 console.log(`User created: ${user.displayName}`);
                 navigation.navigate('MyTabs');
-            }).catch((error) => {
+              })
+              .catch((error) => {
                 console.error('Error updating user: ', error);
-            });
-        })
-        .catch((error) => {
+              });
+          })
+          .catch((error) => {
             var errorCode = error.code;
             var errorMessage = error.message;
             console.error('Error signing up: ', errorCode, errorMessage);
-        });
-    };
+          });
+      };
+      
     
 
     return (
@@ -53,7 +62,6 @@ export default function Signup({ navigation }) {
                     label="LastName"
                     value={lastname}
                     onChangeText={setLastName}
-                    secureTextEntry
                     style={styles.input2}
                 />
             </View>

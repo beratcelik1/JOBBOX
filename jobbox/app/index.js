@@ -22,12 +22,29 @@ import { useState } from 'react';
 import Login from './screens/Login';
 import Signup from './screens/Signup';
 
+
+import firebase from 'firebase/app';
+import 'firebase/auth';
+import 'firebase/database';
+
+// Replace the Firebase configuration object with your own
+const firebaseConfig = {
+  apiKey: "AIzaSyA4-qjFOwO00m1siyVnQyrU3HSdyeVDR1s",
+  authDomain: "jobbox-d937e.firebaseapp.com",
+  databaseURL: "https://jobbox-d937e.firebaseio.com",
+  projectId: "jobbox-d937e",
+  storageBucket: "jobbox-d937e.appspot.com",
+  messagingSenderId: "336768061417",
+  appId: "1:336768061417:android:475307605d96af03e64578",
+          
+};
+
+// Initialize Firebase
+firebase.initializeApp(firebaseConfig);
+
 const logo = require('./assets/images/jobboxlogo4.png');
 const logo2 = require('./assets/images/jobboxlogotek.png');
 
-const TopTab = createMaterialTopTabNavigator();
-const BottomTab = createBottomTabNavigator();
-const Stack = createStackNavigator();
 
 function HomeTopTabs() {
   return (
@@ -179,6 +196,20 @@ function MyTabs() {
 export default function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const navigationRef = React.useRef();
+  
+  useEffect(() => {
+    const unsubscribe = firebase.auth().onAuthStateChanged((user) => {
+      if (user) {
+        setIsAuthenticated(true);
+      } else {
+        setIsAuthenticated(false);
+      }
+    });
+
+    // Cleanup subscription on unmount
+    return () => unsubscribe();
+  }, []);
+  
 
   const AuthStack = () => (
     <Stack.Navigator>

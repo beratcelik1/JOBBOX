@@ -12,7 +12,8 @@
       }
     },
     "android": {
-      "package": "com.domain.jobbox"
+      "package": "com.domain.jobbox",
+      "googleServicesFile": "./google-services.json"
     },
     "web": {
       "bundler": "metro",
@@ -24,8 +25,7 @@
           "projectId": "jobbox-d937e",
           "storageBucket": "jobbox-d937e.appspot.com",
           "messagingSenderId": "336768061417",
-          "appId": "1:336768061417:android:475307605d96af03e64578",
-          "measurementId": "<your-measurement-id>" 
+          "appId": "1:336768061417:android:475307605d96af03e64578"
         }
       }
     }
