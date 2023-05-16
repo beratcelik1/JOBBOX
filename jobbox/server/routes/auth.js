@@ -1,5 +1,5 @@
 const express = require('express');
-const bcrypt = require('bcrypt');
+const bcryptjs = require('bcryptjs'); 
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 
@@ -35,7 +35,7 @@ router.post('/login', async (req, res) => {
     }
 
     // check password
-    const validPassword = await bcrypt.compare(password, user.password);
+    const validPassword = await bcryptjs.compare(password, user.password);
 
     if (!validPassword) {
         return res.status(400).send({ error: 'Invalid login credentials' });
@@ -46,5 +46,31 @@ router.post('/login', async (req, res) => {
     console.log('Response:', { token });
     res.send({ token });
 });
+
+router.get('/user/me', async (req, res) => {
+  // get token from the Authorization header
+  const token = req.header('Authorization')?.replace('Bearer ', '');
+  if (!token) {
+    return res.status(401).json({ error: 'Authorization token missing' });
+  }
+
+  try {
+    // verify the token and extract the user ID
+    const data = jwt.verify(token, process.env.JWT_SECRET);
+
+    // find the user with the extracted ID
+    const user = await User.findById(data.userId);
+    if (!user) {
+      throw new Error();
+    }
+
+    // send user data
+    res.send(user);
+  } catch {
+    res.status(401).send({ error: 'Not authorized to access this resource' });
+  }
+});
+
+
 
 module.exports = router;

@@ -60,7 +60,6 @@ export default function Signup({ navigation }) {
                     label="LastName"
                     value={lastname}
                     onChangeText={setLastName}
-                    secureTextEntry
                     style={styles.input2}
                 />
             </View>
