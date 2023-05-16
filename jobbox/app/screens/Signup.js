@@ -13,7 +13,7 @@ export default function Signup({ navigation }) {
     const [password, setPassword] = useState('');
 
     const handleSignup = () => {
-        fetch('http://localhost:5001/auth/signup', {
+        fetch('https://tranquil-ocean-74659.herokuapp.com/auth/signup', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -25,18 +25,24 @@ export default function Signup({ navigation }) {
                 password: password 
             })
         })
-        .then(response => response.json())
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+        })
         .then(data => {
             console.log(data);
             if (data.token) {
                 navigation.navigate('MyTabs');
             } else {
                 // handle error, show a message to the user
+                Alert.alert('Signup Failed', 'An error occurred during signup. Please try again.');
             }
         })
         .catch(error => console.log('Error:', error));
     };
-
+    
     return (
         <View style={styles.container}>
             <View style={styles.logoContainer}>

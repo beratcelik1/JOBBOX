@@ -20,6 +20,7 @@ router.post('/signup', async (req, res) => {
   // save user and return token
   await user.save();
   const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: '1d' });
+  console.log('Response:', { token });
   res.status(201).json({ token });
 });
 
@@ -42,7 +43,7 @@ router.post('/login', async (req, res) => {
 
     // create and return jwt
     const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: '1d' });
-
+    console.log('Response:', { token });
     res.send({ token });
 });
 

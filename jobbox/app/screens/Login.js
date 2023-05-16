@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { StyleSheet, View, Image, Switch, TouchableOpacity} from 'react-native';
 import { TextInput, Button, Text } from 'react-native-paper';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
 const logo = require('../assets/images/jobboxlogo2.png');
@@ -13,7 +14,7 @@ export default function Login({ navigation, setIsAuthenticated }) {
     const [isRemembered, setIsRemembered] = useState(false);
 
     const handleLogin = () => {
-        fetch('http://localhost:5001/auth/login', {
+        fetch('https://tranquil-ocean-74659.herokuapp.com/auth/login', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -23,17 +24,24 @@ export default function Login({ navigation, setIsAuthenticated }) {
                 password: password 
             })
         })
-        .then(response => response.json())
-        .then(data => {
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(async data => {
             console.log(data);
             if (data.token) {
+                await AsyncStorage.setItem('token', data.token);
                 setIsAuthenticated(true);
             } else {
-                // handle error, show a message to the user
+                Alert.alert('Login Failed', 'Invalid email or password');
             }
         })
         .catch(error => console.log('Error:', error));
     };
+    
     
       
     return (

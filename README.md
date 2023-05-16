@@ -64,6 +64,7 @@ JOBBOX
 │  ├─ react-native.config.js
 │  └─ server
 │     ├─ .env
+│     ├─ Procfile
 │     ├─ index.js
 │     ├─ models
 │     │  └─ User.js
@@ -73,7 +74,5 @@ JOBBOX
 │        └─ auth.js
 ├─ package-lock.json
 └─ package.json
-
-```
 
 ```
