@@ -1,7 +1,9 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, FlatList, Text, TouchableOpacity, StyleSheet, Image } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const styles = StyleSheet.create({
   container: {
@@ -68,11 +70,32 @@ const sections = [
 ];
 
 const Profile = () => {
+  const [user, setUser] = useState(null);
   const navigation = useNavigation();
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const token = await AsyncStorage.getItem('token');
+        const response = await axios.get('https://tranquil-ocean-74659.herokuapp.com/auth/user/me', {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        setUser(response.data);
+      } catch (err) {
+        console.error("Failed to fetch user data: ", err);
+      }
+    };    
+
+    fetchUserData();
+  }, []);
 
   const handleProfilePhotoPress = () => {
     console.log('Profile photo pressed.');
   };
+
+  if (!user) {
+    return null; // Or return a loading spinner
+  }
 
   return (
     <View style={styles.container}>
@@ -84,7 +107,7 @@ const Profile = () => {
           />
         </TouchableOpacity>
         <View>
-          <Text style={styles.name}>John Doe</Text>
+          <Text style={styles.name}>{user.firstname} {user.lastname}</Text>
           <View style={styles.reviews}>
             <Icon name="star" size={20} color="#f1c40f" />
             <Text>4.5</Text>
