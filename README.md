@@ -1,4 +1,3 @@
-
 ```
 JOBBOX
 ├─ .DS_Store
@@ -64,15 +63,17 @@ JOBBOX
 │  ├─ package.json
 │  ├─ react-native.config.js
 │  └─ server
+│     ├─ .env
 │     ├─ index.js
 │     ├─ models
 │     │  └─ User.js
 │     ├─ package-lock.json
 │     ├─ package.json
-│     ├─ pass.env
 │     └─ routes
 │        └─ auth.js
 ├─ package-lock.json
 └─ package.json
+
+```
 
 ```
