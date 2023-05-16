@@ -35,7 +35,7 @@ function HireScreen({ navigation }) {
             <Text style={styles.jobDescription}>{item.description}</Text>
             <Text style={styles.jobDate}>{item.datePosted}</Text>
             <Text style={styles.jobDate}>Applications: {item.numApplications}</Text>
-            <Button onPress={() => handleJobPress(item)} title="View Applications" />
+            <Button onPress={() => handleJobPress(item)} title="View Applicants" />
         </View>
     );
 
