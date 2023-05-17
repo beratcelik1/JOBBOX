@@ -1,4 +1,3 @@
-
 ```
 JOBBOX-1
 ├─ .DS_Store
@@ -15,7 +14,8 @@ JOBBOX-1
 │  │  │     ├─ jobboxlogo2.png
 │  │  │     ├─ jobboxlogo3.png
 │  │  │     ├─ jobboxlogo4.png
-│  │  │     └─ jobboxlogotek.png
+│  │  │     ├─ jobboxlogotek.png
+│  │  │     └─ ProfileImage.png
 │  │  ├─ components
 │  │  │  ├─ JobList.js
 │  │  │  ├─ JobPost.js
@@ -72,8 +72,6 @@ JOBBOX-1
 │     ├─ Procfile
 │     └─ routes
 │        └─ auth.js
-├─ package-lock.json
-├─ package.json
 └─ README.md
 
 ```
