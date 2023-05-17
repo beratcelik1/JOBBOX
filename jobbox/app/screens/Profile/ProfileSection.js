@@ -11,18 +11,19 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginBottom: 20,
   },
+  text: {
+    fontSize: 16,
+  },
   // Add more styles as needed
 });
 
 const ProfileSection = ({ route }) => {
   const { section } = route.params;
 
-  // You would typically fetch the relevant data for the section from your API here.
-  // For the sake of this example, let's just display the section title.
   return (
     <View style={styles.container}>
       <Text style={styles.title}>{section.title}</Text>
-      {/* Render the data for the section here */}
+      <Text style={styles.text}>{section.text}</Text>
     </View>
   );
 };

@@ -19,7 +19,33 @@ const UserSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  about: [{
+    title: String,
+    description: String,
+  }],
+  experience: [{
+    title: String,
+    company: String,
+    startDate: Date,
+    endDate: Date,
+    description: String,
+  }],
+  education: [{
+    institution: String,
+    degree: String,
+    fieldOfStudy: String,
+    startDate: Date,
+    endDate: Date,
+    description: String,
+  }],
+  skills: [String],
+  recommendations: [{
+    name: String,
+    relationship: String,
+    recommendation: String,
+  }]
 });
+
 
 // hash password before saving
 UserSchema.pre('save', async function(next) {
