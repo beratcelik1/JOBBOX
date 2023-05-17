@@ -1,8 +1,11 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, FlatList, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons'; // you might need to install this package
+import { createStackNavigator } from '@react-navigation/stack';
 
-export default function Work() {
+import JobDetail from './JobDetails';
+
+function Work({ navigation }) {
     const [searchQuery, setSearchQuery] = useState('');
 
     const handleSearch = () => {
@@ -12,13 +15,15 @@ export default function Work() {
 
     // Sample job data
     const jobs = [
-        {id: '1', title: 'Software Developer', company: 'Company A', location: 'City A', posted: '2 days ago'},
-        {id: '2', title: 'Product Manager', company: 'Company B', location: 'City B', posted: '3 days ago'},
+        {id: '1', title: 'Lawn mowing', company: 'Raphael Mwachiti', location: 'City A', posted: '2 days ago'},
+        {id: '2', title: 'Help with moving', company: 'Joe Harrison', location: 'City B', posted: '3 days ago'},
         // More jobs...
     ]; 
 
     const renderJob = ({item}) => (
-        <View style={styles.jobCard}>
+        <TouchableOpacity 
+            style={styles.jobCard} 
+            onPress={() => navigation.navigate('JobDetail', { job: item })}>
             <View style={styles.jobDetails}>
                 <Text style={styles.jobTitle}>{item.title}</Text>
                 <Text style={styles.jobCompany}>{item.company}</Text>
@@ -30,8 +35,9 @@ export default function Work() {
                 <Text style={styles.jobExtra}><Ionicons name="cash-outline" size={14} color="green" /> {item.pay}</Text>
                 <Text style={styles.jobExtra}><Ionicons name="star-outline" size={14} color="gold" /> {item.rating}</Text>
             </View>
-        </View>
+        </TouchableOpacity>
     );
+    
     return (
         <View style={styles.container}>
             <View style={styles.searchSection}>
@@ -74,6 +80,16 @@ export default function Work() {
             />
 
         </View>
+    );
+} 
+const WorkStack = createStackNavigator();
+
+export default function Hire() {
+    return (
+        <WorkStack.Navigator initialRouteName="Work">
+            <WorkStack.Screen name="Work" component={Work} options={{headerShown: false}} />
+            <WorkStack.Screen name="JobDetail" component={JobDetail} options={{headerTitle: '', headerShown: true, headerBackTitle: '', headerBackTitleVisible: false}} />
+        </WorkStack.Navigator>
     );
 }
 

@@ -6,7 +6,7 @@ import { useNavigation } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import PostJob from '../Home/PostJob';
 import { Ionicons } from '@expo/vector-icons';
-import JobDetail from './JobDetails';
+import HireApplications from './HireApplications';
 
 function HireScreen({ navigation }) {
     const [searchQuery, setSearchQuery] = useState('');
@@ -26,7 +26,7 @@ function HireScreen({ navigation }) {
         console.log(searchQuery);
     };
     const handleJobPress = (job) => {
-        navigation.navigate('JobDetail', { job: job });
+        navigation.navigate('HireApplications', { job: job });
     }
 
     const renderJob = ({ item }) => (
@@ -68,7 +68,7 @@ function HireScreen({ navigation }) {
                     onPress={() => navigation.navigate("PostJob")}
                     style={styles.Postbtn}
                     >
-                        <Text style={ {fontWeight: 'bold'}} > New job post</Text>
+                        <Text style={ {fontWeight: 'bold', color: '#fff' }} > New job post</Text>
                 </TouchableOpacity>
 
             </View>
@@ -84,7 +84,7 @@ export default function Hire() {
         <HireStack.Navigator initialRouteName="HireScreen">
             <HireStack.Screen name="HireScreen" component={HireScreen} options={{headerShown: false}} />
             <HireStack.Screen name="PostJob" component={PostJob} options={{headerTitle: '', headerShown: true, headerBackTitle: '', headerBackTitleVisible: false}} />
-            <HireStack.Screen name="JobDetail" component={JobDetail} options={{headerTitle: '', headerShown: true, headerBackTitle: '', headerBackTitleVisible: false}} />
+            <HireStack.Screen name="HireApplications" component={HireApplications} options={{headerTitle: '', headerShown: true, headerBackTitle: '', headerBackTitleVisible: false}} />
         </HireStack.Navigator>
     );
 }
@@ -92,23 +92,13 @@ export default function Hire() {
 
 const styles = StyleSheet.create({
     Postbtn: {
-        backgroundColor: '#fff',
-        borderRadius: 10,
+        backgroundColor: '#4683fc',
+        borderRadius: 50,
         width: 150,
         height: 40,
         justifyContent: 'center',
         alignItems: 'center',
         marginRight: 10,
-        // Android shadow properties
-        elevation: 5,
-        // iOS shadow properties
-        shadowColor: "#000",
-        shadowOffset: {
-            width: -10,
-            height: 2,
-        },
-        shadowOpacity: 0.25,
-        shadowRadius: 3.84,
     },
     container: {
         flex: 1,
