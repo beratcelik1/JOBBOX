@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, Image, FlatList, StyleSheet } from 'react-native';
+import { View, Text, Image, FlatList, StyleSheet, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
 function JobDetail({ route }) {
@@ -9,7 +9,7 @@ function JobDetail({ route }) {
     useEffect(() => {
         // Simulating a fetch call here
         const fetchedApplicants = [
-            { id: '1', name: 'John Doe', bio: 'Software engineer with 5 years of experience.', rating: 4.5, image: 'https://example.com/image1.jpg' },
+            { id: '1', name: 'John Doe', bio: 'Software engineer with 5 years of experience.', rating: 4.5, image: 'https://example.com/image2.jpg' },
             { id: '2', name: 'Jane Smith', bio: 'Data analyst specializing in healthcare.', rating: 4.7, image: 'https://example.com/image2.jpg' },
             { id: '3', name: 'Bob Johnson', bio: 'Experienced gardener with a passion for plants.', rating: 4.2, image: 'https://example.com/image3.jpg' },
             // Add more applicants here...
@@ -19,30 +19,58 @@ function JobDetail({ route }) {
 
     const renderApplicant = ({ item }) => (
         <View style={styles.applicantCard}>
-            <Image source={{ uri: item.image }} style={styles.applicantImage} />
-            <View>
-                <Text style={styles.applicantName}>{item.name}</Text>
-                <Text style={styles.applicantBio}>{item.bio}</Text>
-                <View style={styles.ratingContainer}>
-                    <Ionicons name="star" size={20} color="#ffd700" />
-                    <Text style={styles.applicantRating}>{item.rating}</Text>
+            <View style={{ flexDirection: 'row' }}>
+                <Image source={{ uri: item.image }} style={styles.applicantImage} />
+                <View style={{ flex: 1 }}>
+                    <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                            <Text style={styles.applicantName}>{item.name}</Text>
+                            <View style={styles.ratingContainer}>
+                                <Text style={styles.applicantRating}>{item.rating}</Text>
+                                <Ionicons style={styles.applicantStar} name="star" size={17} color="#f28e1b" />
+                            </View>
+                        </View>
+
+                    </View>
+                    <Text style={styles.applicantBio}>{item.bio}</Text>
+
+                    <View style={{ flexDirection: 'row', marginTop: 15, marginBottom: -5}}>
+                            <TouchableOpacity style={styles.button}>
+                                <Ionicons name="checkmark-circle" size={20} color="green" />
+                                <Text style={styles.buttonText}>Hire</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity style={styles.button}>
+                                <Ionicons name="close-circle" size={20} color="red" />
+                                <Text style={styles.buttonText}>Reject</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity style={styles.button}>
+                                <Ionicons name="eye" size={20} color="#4683fc" />
+                                <Text style={styles.buttonText}>Review</Text>
+                            </TouchableOpacity>
+                    </View>
                 </View>
             </View>
         </View>
     );
 
+
     return (
         <View style={styles.container}>
             <View style={styles.jobCard}>
-                <Text style={styles.title}>{job.title}</Text>
-                <Text style={styles.description}>{job.description}</Text>
-                <Text style={styles.date}>{job.datePosted}</Text>
-                <Text style={styles.numApplications}>Applications: {job.numApplications}</Text>
+                <Image source={{ uri: job.profilePicture }} style={styles.profileImage} />
+                <View>
+                    <Text style={styles.title}>{job.title}</Text>
+                    <Text style={styles.description}>{job.description}</Text>
+                    <Text style={styles.date}>{job.datePosted}</Text>
+                    <Text style={styles.numApplications}>Applications: {job.numApplications}</Text>
+                </View>
             </View>
+
             <FlatList
                 data={applicants}
                 renderItem={renderApplicant}
                 keyExtractor={item => item.id}
+                style={styles.applicantView}
             />
         </View>
     );
@@ -78,6 +106,8 @@ const styles = StyleSheet.create({
         color: '#fff9',
     },
     jobCard: {
+        flexDirection: 'row',
+        alignItems: 'center',
         backgroundColor: '#4683fc',
         padding: 20,
         marginBottom: 20,
@@ -85,14 +115,36 @@ const styles = StyleSheet.create({
         marginLeft: -15,
         marginRight: -15,
     },
+    applicantView: {
+        marginLeft: -15,
+        marginRight: -15,
+        marginBottom: -15,
+
+    },
     applicantCard: {
         flexDirection: 'row',
         alignItems: 'center',
         backgroundColor: '#fff',
         padding: 20,
         marginBottom: 10,
+        marginRight: 15,
+        marginLeft: 15,
         borderRadius: 10,
+        // Android shadow properties
+        elevation: 5,
+        // iOS shadow properties
+        shadowColor: "#000",
+        shadowOffset: {
+            width: -10,
+            height: 2,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 3.84,
     },
+    applicantStar: {
+        marginTop: -3,
+        marginLeft: 5,
+    }, 
     applicantImage: {
         width: 50,
         height: 50,
@@ -107,16 +159,36 @@ const styles = StyleSheet.create({
         fontSize: 14,
         color: '#666',
         marginTop: 5,
+        width: '80%',
     },
     ratingContainer: {
         flexDirection: 'row',
         alignItems: 'center',
-        marginTop: 10,
+        marginLeft: 7, 
     },
     applicantRating: {
         fontSize: 14,
         marginLeft: 5,
     },
+    profileImage: {
+        width: 50,
+        height: 50,
+        borderRadius: 25,
+        marginRight: 15,
+    },
+    button: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginHorizontal: 5,
+        backgroundColor: '#f2f3f5',
+        padding: 6, 
+        borderRadius: 10,
+    },
+    buttonText: {
+        marginLeft: 5,
+    },
+    
+    
 });
 
 export default JobDetail;
