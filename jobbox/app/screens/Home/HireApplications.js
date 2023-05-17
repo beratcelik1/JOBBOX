@@ -62,7 +62,6 @@ function JobDetail({ route }) {
                     <Text style={styles.title}>{job.title}</Text>
                     <Text style={styles.description}>{job.description}</Text>
                     <Text style={styles.date}>{job.datePosted}</Text>
-                    <Text style={styles.numApplications}>Applications: {job.numApplications}</Text>
                 </View>
             </View>
 

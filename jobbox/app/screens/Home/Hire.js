@@ -15,8 +15,8 @@ function HireScreen({ navigation }) {
     useEffect(() => {
         // Simulating a fetch call here
         const fetchedJobs = [
-            { id: '1', title: 'Lawn mowing', description: 'A full-time position', datePosted: '2023-01-01', numApplications: '3'  },
-            { id: '2', title: 'Grocery run', description: 'A part-time position', datePosted: '2023-02-15', numApplications: '1' },
+            { id: '1', title: 'Lawn mowing', description: 'One time', datePosted: '2023-01-01', numApplications: '3'  },
+            { id: '2', title: 'Grocery run', description: 'One time', datePosted: '2023-02-15', numApplications: '1' },
             // Add more jobs here...
         ];
         setJobs(fetchedJobs);
