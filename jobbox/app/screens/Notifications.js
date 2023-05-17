@@ -10,7 +10,6 @@ export default function Notifications() {
          <View>
             <Text>Notifications Screen</Text>
         </View>
-        <Button title="Go Back" onPress={() => navigation.goBack()} />
       </View>
     );
 }

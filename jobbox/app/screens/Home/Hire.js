@@ -15,8 +15,8 @@ function HireScreen({ navigation }) {
     useEffect(() => {
         // Simulating a fetch call here
         const fetchedJobs = [
-            { id: '1', title: 'Software Engineer', description: 'A full-time position', datePosted: '2023-01-01', numApplications: '3'  },
-            { id: '2', title: 'Data Analyst', description: 'A part-time position', datePosted: '2023-02-15', numApplications: '1' },
+            { id: '1', title: 'Lawn mowing', description: 'A full-time position', datePosted: '2023-01-01', numApplications: '3'  },
+            { id: '2', title: 'Grocery run', description: 'A part-time position', datePosted: '2023-02-15', numApplications: '1' },
             // Add more jobs here...
         ];
         setJobs(fetchedJobs);
@@ -63,11 +63,16 @@ function HireScreen({ navigation }) {
                 renderItem={renderJob}
                 keyExtractor={item => item.id}
             />
+            <View style={ {justifyContent: 'center', alignItems: 'center'}}>
+                <TouchableOpacity
+                    onPress={() => navigation.navigate("PostJob")}
+                    style={styles.Postbtn}
+                    >
+                        <Text style={ {fontWeight: 'bold'}} > New job post</Text>
+                </TouchableOpacity>
 
-            <Button 
-                onPress={() => navigation.navigate("PostJob")}
-                title="Post a Job"
-            />
+            </View>
+
         </View>
     );
 }
@@ -86,6 +91,25 @@ export default function Hire() {
 
 
 const styles = StyleSheet.create({
+    Postbtn: {
+        backgroundColor: '#fff',
+        borderRadius: 10,
+        width: 150,
+        height: 40,
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginRight: 10,
+        // Android shadow properties
+        elevation: 5,
+        // iOS shadow properties
+        shadowColor: "#000",
+        shadowOffset: {
+            width: -10,
+            height: 2,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 3.84,
+    },
     container: {
         flex: 1,
         padding: 10,
