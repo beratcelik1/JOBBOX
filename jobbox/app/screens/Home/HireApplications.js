@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, Image, FlatList, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, Image, FlatList, StyleSheet, TouchableOpacity, ProgressBarAndroid } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
-function JobDetail({ route }) {
+function HireApplications({ route }) {
     const { job } = route.params;
     const [applicants, setApplicants] = useState([]);
+    const [jobProgress, setJobProgress] = useState(0.33); // Add this state to represent the job progress
 
     useEffect(() => {
         // Simulating a fetch call here
@@ -16,6 +17,10 @@ function JobDetail({ route }) {
         ];
         setApplicants(fetchedApplicants);
     }, []);
+
+    const handleEditJob = () => {
+        // Handle job edit logic here...
+    };
 
     const renderApplicant = ({ item }) => (
         <View style={styles.applicantCard}>
@@ -58,10 +63,25 @@ function JobDetail({ route }) {
         <View style={styles.container}>
             <View style={styles.jobCard}>
                 <Image source={{ uri: job.profilePicture }} style={styles.profileImage} />
-                <View>
+                <View style={{ flex: 1, marginLeft: '-10%'}}>
                     <Text style={styles.title}>{job.title}</Text>
                     <Text style={styles.description}>{job.description}</Text>
                     <Text style={styles.date}>{job.datePosted}</Text>
+                </View>
+                <View style={styles.jobProgressSection}>
+                    <ProgressBarAndroid 
+                        styleAttr="Horizontal"
+                        indeterminate={false}
+                        progress={jobProgress}
+                        style={styles.progressBar}
+                    />
+                    <Text style={styles.jobStatus}>Status: {jobProgress === 1 ? 'Completed' : 'In Progress'}</Text>
+                    <TouchableOpacity 
+                        style={styles.editButton}
+                        onPress={handleEditJob}
+                    >
+                        <Text style={styles.buttonText}>Edit Job Post</Text>
+                    </TouchableOpacity>
                 </View>
             </View>
 
@@ -74,8 +94,6 @@ function JobDetail({ route }) {
         </View>
     );
 }
-
-// Add the rest of your code including styles and export statement...
 
 // Styles...
 const styles = StyleSheet.create({
@@ -106,9 +124,9 @@ const styles = StyleSheet.create({
     },
     jobCard: {
         flexDirection: 'row',
-        alignItems: 'center',
         backgroundColor: '#4683fc',
         padding: 20,
+        paddingLeft: 0,
         marginBottom: 20,
         borderRadius: 10,
         marginLeft: -15,
@@ -190,7 +208,29 @@ const styles = StyleSheet.create({
         marginLeft: 5,
     },
     
-    
+    jobProgressSection: {
+        alignItems: 'flex-end',
+    },
+    progressBar: {
+        height: 20,
+    },
+    jobStatus: {
+        fontSize: 12,
+        color: '#fff',
+        marginTop: 5,
+        fontWeight: 'bold',
+    },
+    editButton: {
+        backgroundColor: '#fff',
+        padding: 10,
+        borderRadius: 50,
+        marginTop: 10,
+    },
+    buttonText: {
+        color: '#4683fc',
+        fontSize: 12,
+        fontWeight: 'bold', 
+    },
 });
 
-export default JobDetail;
+export default HireApplications;
