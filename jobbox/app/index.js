@@ -20,7 +20,7 @@ import JobScreen from './screens/JobScreen';
 import ProfileSection from './screens/Profile/ProfileSection';
 
 import { useState } from 'react';
-import Login from './screens/Login';
+import Login from './screens/Login'; 
 import Signup from './screens/Signup';
 
 const logo = require('./assets/images/jobboxlogo4.png');

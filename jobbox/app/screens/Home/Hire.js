@@ -1,19 +1,43 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, Button, StyleSheet, TouchableOpacity } from 'react-native';
+
+
+import React, { useState, useEffect } from 'react';
+import { View, Text, TextInput, Button, StyleSheet, TouchableOpacity, FlatList } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import PostJob from '../Home/PostJob';
-import { useContext } from 'react';
-import { RootNavigationContext } from '../../navigation/RootNavigationContext';
-import { Ionicons } from '@expo/vector-icons'; // you might need to install this package
+import { Ionicons } from '@expo/vector-icons';
+import JobDetail from './JobDetails';
 
 function HireScreen({ navigation }) {
     const [searchQuery, setSearchQuery] = useState('');
+    const [jobs, setJobs] = useState([]);
+
+    useEffect(() => {
+        // Simulating a fetch call here
+        const fetchedJobs = [
+            { id: '1', title: 'Software Engineer', description: 'A full-time position', datePosted: '2023-01-01', numApplications: '3'  },
+            { id: '2', title: 'Data Analyst', description: 'A part-time position', datePosted: '2023-02-15', numApplications: '1' },
+            // Add more jobs here...
+        ];
+        setJobs(fetchedJobs);
+    }, []);
 
     const handleSearch = () => {
-        // handle search logic here
         console.log(searchQuery);
     };
+    const handleJobPress = (job) => {
+        navigation.navigate('JobDetail', { job: job });
+    }
+
+    const renderJob = ({ item }) => (
+        <View style={styles.jobCard}>
+            <Text style={styles.jobTitle}>{item.title}</Text>
+            <Text style={styles.jobDescription}>{item.description}</Text>
+            <Text style={styles.jobDate}>{item.datePosted}</Text>
+            <Text style={styles.jobDate}>Applications: {item.numApplications}</Text>
+            <Button onPress={() => handleJobPress(item)} title="View Applicants" />
+        </View>
+    );
 
     return (
         <View style={styles.container}>
@@ -34,6 +58,12 @@ function HireScreen({ navigation }) {
                 </TouchableOpacity>
             </View>
 
+            <FlatList
+                data={jobs}
+                renderItem={renderJob}
+                keyExtractor={item => item.id}
+            />
+
             <Button 
                 onPress={() => navigation.navigate("PostJob")}
                 title="Post a Job"
@@ -49,6 +79,7 @@ export default function Hire() {
         <HireStack.Navigator initialRouteName="HireScreen">
             <HireStack.Screen name="HireScreen" component={HireScreen} options={{headerShown: false}} />
             <HireStack.Screen name="PostJob" component={PostJob} options={{headerTitle: '', headerShown: true, headerBackTitle: '', headerBackTitleVisible: false}} />
+            <HireStack.Screen name="JobDetail" component={JobDetail} options={{headerTitle: '', headerShown: true, headerBackTitle: '', headerBackTitleVisible: false}} />
         </HireStack.Navigator>
     );
 }
@@ -72,6 +103,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#fff',
         borderRadius: 50,
         paddingLeft: 10,
+        marginBottom: 20,
     },
     searchIcon: {
         padding: 10,
@@ -97,5 +129,25 @@ const styles = StyleSheet.create({
     buttonText: {
         color: 'white',
         fontWeight: 'bold',
+    },
+    jobCard: {
+        backgroundColor: '#fff',
+        padding: 20,
+        marginBottom: 10,
+        borderRadius: 10,
+    },
+    jobTitle: {
+        fontSize: 18,
+        fontWeight: 'bold',
+    },
+    jobDescription: {
+        fontSize: 14,
+        color: '#666',
+        marginTop: 10,
+    },
+    jobDate: {
+        fontSize: 12,
+        color: '#999',
+        marginTop: 10,
     },
 });

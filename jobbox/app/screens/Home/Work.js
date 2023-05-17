@@ -70,6 +70,7 @@ export default function Work() {
                 data={jobs}
                 renderItem={renderJob}
                 keyExtractor={item => item.id}
+                style={styles.jobView}
             />
 
         </View>
@@ -132,6 +133,11 @@ const styles = StyleSheet.create({
         color: '#4683fc',
         fontWeight: 'bold',
         fontSize: 16,
+    },
+    jobView: {
+        width: '100%',
+        marginBottom: -15,
+
     },
     jobCard: {
         flexDirection: 'row',

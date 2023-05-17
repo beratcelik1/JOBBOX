@@ -1,11 +1,10 @@
 ```
-JOBBOX
+JOBBOX-1
 ├─ .DS_Store
-├─ README.md
 ├─ jobbox
 │  ├─ .expo
-│  │  ├─ README.md
-│  │  └─ devices.json
+│  │  ├─ devices.json
+│  │  └─ README.md
 │  ├─ app
 │  │  ├─ assets
 │  │  │  ├─ fonts
@@ -15,7 +14,8 @@ JOBBOX
 │  │  │     ├─ jobboxlogo2.png
 │  │  │     ├─ jobboxlogo3.png
 │  │  │     ├─ jobboxlogo4.png
-│  │  │     └─ jobboxlogotek.png
+│  │  │     ├─ jobboxlogotek.png
+│  │  │     └─ ProfileImage.png
 │  │  ├─ components
 │  │  │  ├─ JobList.js
 │  │  │  ├─ JobPost.js
@@ -29,6 +29,7 @@ JOBBOX
 │  │  │  ├─ Activity.js
 │  │  │  ├─ Home
 │  │  │  │  ├─ Hire.js
+│  │  │  │  ├─ JobDetails.js
 │  │  │  │  ├─ PostJob.js
 │  │  │  │  └─ Work.js
 │  │  │  ├─ JobScreen.js
@@ -63,16 +64,14 @@ JOBBOX
 │  ├─ package.json
 │  ├─ react-native.config.js
 │  └─ server
-│     ├─ .env
-│     ├─ Procfile
 │     ├─ index.js
 │     ├─ models
 │     │  └─ User.js
 │     ├─ package-lock.json
 │     ├─ package.json
+│     ├─ Procfile
 │     └─ routes
 │        └─ auth.js
-├─ package-lock.json
-└─ package.json
+└─ README.md
 
 ```

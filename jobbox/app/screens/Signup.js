@@ -1,7 +1,7 @@
 // screens/Signup.js
 
 import React, { useState } from 'react';
-import { StyleSheet, View, Image } from 'react-native';
+import { StyleSheet, View, Image, Pressable, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
 import { TextInput, Button, Text } from 'react-native-paper';
 
 const logo = require('../assets/images/jobboxlogo2.png');
@@ -44,48 +44,73 @@ export default function Signup({ navigation }) {
     };
     
     return (
-        <View style={styles.container}>
-            <View style={styles.logoContainer}>
-                <Image source={logo} style={styles.logo} />
-            </View>
-            
-            <View style={styles.firstLastNameContainer}> 
-                <TextInput
-                    label="FirstName"
-                    value={firstname}
-                    onChangeText={setFirstName}
-                    style={styles.input2}
-                />
-                <TextInput
-                    label="LastName"
-                    value={lastname}
-                    onChangeText={setLastName}
-                    style={styles.input2}
-                />
-            </View>
+        
+        <ScrollView contentContainerStyle={styles.container}>
+            <KeyboardAvoidingView 
+                behavior={Platform.OS === 'ios' ? 'padding' : null}
+                style={{ flex: 1 }}
+            >
+               <View style={styles.container}>
+                    <View style={styles.logoContainer}>
+                        <Image source={logo} style={styles.logo} />
+                    </View>
+                    
+                    <View style={styles.firstLastNameContainer}> 
+                        <TextInput
+                            label="FirstName"
+                            value={firstname}
+                            onChangeText={setFirstName}
+                            style={styles.input2}
+                        />
+                        <TextInput
+                            label="LastName"
+                            value={lastname}
+                            onChangeText={setLastName}
+                            style={styles.input2}
+                        />
+                    </View>
 
-            <TextInput
-                label="Email"
-                value={email}
-                onChangeText={setEmail}
-                style={styles.input}
-            />
-            <TextInput
-                label="Password"
-                value={password}
-                onChangeText={setPassword}
-                secureTextEntry
-                style={styles.input}
-            />
-            <Button mode="contained" onPress={handleSignup} style={styles.button}>
-                <Text style={styles.Btn}>Sign Up</Text>
-            </Button>
-            <Button onPress={() => navigation.navigate('Login')} >
-                <Text style={styles.noBtn}>Already have an account? 
-                    <Text style={styles.noBtnBold}> Login.</Text> 
-                </Text>
-            </Button>
-        </View>
+                    <TextInput
+                        label="Email"
+                        value={email}
+                        onChangeText={setEmail}
+                        style={styles.input}
+                    />
+                    <TextInput
+                        label="Password"
+                        value={password}
+                        onChangeText={setPassword}
+                        secureTextEntry
+                        style={styles.input}
+                    />
+
+                <Pressable
+                    style={({ pressed }) => [
+                        {
+                            opacity: pressed ? 0.5 : 1,
+                        },
+                        styles.pressable,
+                    ]}
+                    onPress={handleSignup}
+                >
+                    <Button mode="contained" style={styles.button}>
+                        <Text style={styles.Btn}>Sign Up</Text>
+                    </Button>
+                </Pressable>
+
+
+                    <Button onPress={() => navigation.navigate('Login')} >
+                        <Text style={styles.noBtn}>Already have an account? 
+                            <Text style={styles.noBtnBold}> Login.</Text> 
+                        </Text>
+                    </Button>
+                </View>
+            </KeyboardAvoidingView>
+        </ScrollView>
+
+
+
+       
     );
 }
 
