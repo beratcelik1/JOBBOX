@@ -41,11 +41,11 @@ function HireApplications({ route }) {
 
                     <View style={{ flexDirection: 'row', marginTop: 15, marginBottom: -5}}>
                             <TouchableOpacity style={styles.button}>
-                                <Ionicons name="checkmark-circle" size={20} color="green" />
+                                <Ionicons name="checkmark-circle" size={20} color="#4683fc" />
                                 <Text style={styles.buttonText}>Hire</Text>
                             </TouchableOpacity>
                             <TouchableOpacity style={styles.button}>
-                                <Ionicons name="close-circle" size={20} color="red" />
+                                <Ionicons name="close-circle" size={20} color="#4683fc" />
                                 <Text style={styles.buttonText}>Reject</Text>
                             </TouchableOpacity>
                             <TouchableOpacity style={styles.button}>
