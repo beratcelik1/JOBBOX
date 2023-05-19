@@ -92,7 +92,7 @@ export default function CategoryScreen({ route, navigation }) {
   }
 
   return (
-    <View>
+    <View style={{backgroundColor:'#dedcdc',}}>
       <FlatList 
         data={jobs}
         keyExtractor={item => item.id}

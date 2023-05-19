@@ -67,6 +67,7 @@ export default function PostJob({ navigation }) {
 const styles = StyleSheet.create({
     container: {
         padding: 15,
+        backgroundColor: '#dedcdc',
     },
     input: {
         marginBottom: 10,
