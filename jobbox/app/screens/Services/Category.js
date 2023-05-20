@@ -8,16 +8,21 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     backgroundColor: '#fff',
     padding: 15,
-    marginBottom: 10,
-    borderRadius: 5,
+    marginBottom: 5,
+    marginTop: 5,
+    borderRadius: 10,
+    marginLeft: 20,
+    marginRight: 20, 
+    // Android shadow properties
+    elevation: 5,
+    // iOS shadow properties
     shadowColor: "#000",
     shadowOffset: {
-      width: 0,
-      height: 2,
+        width: -10,
+        height: 2,
     },
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
-    elevation: 5,
   },
   jobDetails: {
     flex: 1,
@@ -92,7 +97,7 @@ export default function CategoryScreen({ route, navigation }) {
   }
 
   return (
-    <View>
+    <View style={{backgroundColor:'#dedcdc',}}>
       <FlatList 
         data={jobs}
         keyExtractor={item => item.id}

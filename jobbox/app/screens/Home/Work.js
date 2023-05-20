@@ -2,7 +2,10 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, FlatList, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons'; // you might need to install this package
 
-export default function Work() {
+import { createStackNavigator } from '@react-navigation/stack';
+import JobDetail from './JobDetails';
+
+function WorkScreen({ navigation }) {
     const [searchQuery, setSearchQuery] = useState('');
 
     const handleSearch = () => {
@@ -12,13 +15,15 @@ export default function Work() {
 
     // Sample job data
     const jobs = [
-        {id: '1', title: 'Software Developer', company: 'Company A', location: 'City A', posted: '2 days ago'},
-        {id: '2', title: 'Product Manager', company: 'Company B', location: 'City B', posted: '3 days ago'},
+        {id: '1', title: 'Lawn mowing', company: 'Raphael Mwachiti', location: 'City A', posted: '2 days ago'},
+        {id: '2', title: 'Help with moving', company: 'Joe Harrison', location: 'City B', posted: '3 days ago'},
         // More jobs...
     ]; 
 
     const renderJob = ({item}) => (
-        <View style={styles.jobCard}>
+        <TouchableOpacity 
+            style={styles.jobCard} 
+            onPress={() => navigation.navigate('JobDetail', { job: item })}>
             <View style={styles.jobDetails}>
                 <Text style={styles.jobTitle}>{item.title}</Text>
                 <Text style={styles.jobCompany}>{item.company}</Text>
@@ -30,8 +35,9 @@ export default function Work() {
                 <Text style={styles.jobExtra}><Ionicons name="cash-outline" size={14} color="green" /> {item.pay}</Text>
                 <Text style={styles.jobExtra}><Ionicons name="star-outline" size={14} color="gold" /> {item.rating}</Text>
             </View>
-        </View>
+        </TouchableOpacity>
     );
+    
     return (
         <View style={styles.container}>
             <View style={styles.searchSection}>
@@ -75,14 +81,41 @@ export default function Work() {
 
         </View>
     );
+} 
+
+function JobDetailScreen({ route, navigation }) {
+    //... your existing JobDetail component code
+
+    const { job } = route.params;
+
+    return (
+        <View style={styles.container2}>
+            <View style={styles.jobCard2}>
+                <Text style={styles.title2}>{job.title}</Text>
+                <Text style={styles.description2}>{job.description}</Text>
+                <Text style={styles.date2}>{job.datePosted}</Text>
+            </View>
+        </View>
+    );
 }
+  
+// Define a type for your stack
+const Stack = createStackNavigator();
+  
+export default function Work() {
+    return (
+      <Stack.Navigator initialRouteName="WorkScreen">
+        <Stack.Screen name="WorkScreen" component={WorkScreen} options={{ headerShown: false }} />
+        <Stack.Screen name="JobDetail" component={JobDetailScreen} options={{headerTitle: '', headerShown: true, headerBackTitle: '', headerBackTitleVisible: false}}/>
+      </Stack.Navigator>
+    );
+}
+
 
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        padding: 10,
-        backgroundColor: '#f5f5f5',
     },
     title: {
         fontSize: 24,
@@ -96,6 +129,9 @@ const styles = StyleSheet.create({
         backgroundColor: '#fff',
         borderRadius: 50,
         paddingLeft: 10,
+        marginLeft: 15, 
+        marginRight: 15, 
+        marginTop: 10, 
     },
     searchIcon: {
         padding: 10,
@@ -145,15 +181,19 @@ const styles = StyleSheet.create({
         backgroundColor: '#fff',
         padding: 15,
         marginBottom: 10,
-        borderRadius: 5,
+        marginLeft: 15,
+        marginRight: 15,
+        borderRadius: 10,
+        // Android shadow properties
+        elevation: 5,
+        // iOS shadow properties
         shadowColor: "#000",
         shadowOffset: {
-            width: 0,
-            height: 2,
-        },
-        shadowOpacity: 0.25,
-        shadowRadius: 3.84,
-        elevation: 5,
+        width: -10,
+        height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
     },
     jobDetails: {
         flex: 1,
@@ -184,5 +224,40 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         marginBottom: 5,
+    },
+
+    container2: {
+        flex: 1,
+        padding: 20,
+    },
+    jobCard2: {
+        backgroundColor: '#fff',
+        padding: 20,
+        marginBottom: 10,
+        borderRadius: 10,
+        // Android shadow properties
+        elevation: 5,
+        // iOS shadow properties
+        shadowColor: "#000",
+        shadowOffset: {
+            width: -10,
+            height: 2,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 3.84,
+    },
+    title2: {
+        fontSize: 18,
+        fontWeight: 'bold',
+    },
+    description2: {
+        fontSize: 14,
+        color: '#666',
+        marginTop: 10,
+    },
+    date2: {
+        fontSize: 12,
+        color: '#999',
+        marginTop: 10,
     },
 });

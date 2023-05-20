@@ -44,11 +44,9 @@ export default function Signup({ navigation }) {
     };
     
     return (
-        
-        <ScrollView contentContainerStyle={styles.container}>
             <KeyboardAvoidingView 
                 behavior={Platform.OS === 'ios' ? 'padding' : null}
-                style={{ flex: 1 }}
+                style={{ flex: 1, padding: 15, justifyContent: 'center', }}
             >
                <View style={styles.container}>
                     <View style={styles.logoContainer}>
@@ -105,12 +103,7 @@ export default function Signup({ navigation }) {
                         </Text>
                     </Button>
                 </View>
-            </KeyboardAvoidingView>
-        </ScrollView>
-
-
-
-       
+            </KeyboardAvoidingView> 
     );
 }
 

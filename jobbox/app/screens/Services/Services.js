@@ -8,17 +8,27 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    margin: 10,
+    marginTop: 10,
   },
   categoryCard: {
     flex: 1,
-    margin: 5,
+    margin: 10,
     padding: 20,
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#fff',
     borderRadius: 10,
     height: 150, // adjust the height as per your requirement
+    // Android shadow properties
+    elevation: 5,
+    // iOS shadow properties
+    shadowColor: "#000",
+    shadowOffset: {
+        width: -10,
+        height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
   },
   categoryText: {
     marginTop: 10,

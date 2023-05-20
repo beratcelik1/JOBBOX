@@ -183,7 +183,11 @@ export default function App() {
   const navigationRef = React.useRef();
 
   const AuthStack = () => (
-    <Stack.Navigator>
+    <Stack.Navigator 
+      screenOptions={{ 
+        cardStyle: { backgroundColor: '#4683FC'}
+      }}
+    >
       <Stack.Screen 
         name="Login" 
         options={{ headerShown: false }}>
@@ -200,7 +204,7 @@ export default function App() {
   );
   
   const MainStack = () => (
-    <Stack.Navigator>
+    <Stack.Navigator >
       <Stack.Screen 
         name="MyTabs" 
         component={MyTabs} 
@@ -238,7 +242,7 @@ export default function App() {
   );
 
   return (
-    <NavigationContainer ref={navigationRef} independent={true}>
+    <NavigationContainer ref={navigationRef} independent={true} >
       <RootNavigationContext.Provider value={navigationRef}>
         {isAuthenticated ? <MainStack /> : <AuthStack />}
       </RootNavigationContext.Provider>

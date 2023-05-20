@@ -6,11 +6,10 @@ export default function Notifications() {
     const navigation = useNavigation();
   
     return (
-      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center'}}>
          <View>
             <Text>Notifications Screen</Text>
         </View>
-        <Button title="Go Back" onPress={() => navigation.goBack()} />
       </View>
     );
 }

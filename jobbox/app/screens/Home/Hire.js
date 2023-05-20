@@ -6,7 +6,7 @@ import { useNavigation } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import PostJob from '../Home/PostJob';
 import { Ionicons } from '@expo/vector-icons';
-import JobDetail from './JobDetails';
+import HireApplications from './HireApplications';
 
 function HireScreen({ navigation }) {
     const [searchQuery, setSearchQuery] = useState('');
@@ -15,8 +15,8 @@ function HireScreen({ navigation }) {
     useEffect(() => {
         // Simulating a fetch call here
         const fetchedJobs = [
-            { id: '1', title: 'Software Engineer', description: 'A full-time position', datePosted: '2023-01-01', numApplications: '3'  },
-            { id: '2', title: 'Data Analyst', description: 'A part-time position', datePosted: '2023-02-15', numApplications: '1' },
+            { id: '1', title: 'Lawn mowing', description: 'One time', datePosted: '2023-01-01', numApplications: '3'  },
+            { id: '2', title: 'Grocery run', description: 'One time', datePosted: '2023-02-15', numApplications: '1' },
             // Add more jobs here...
         ];
         setJobs(fetchedJobs);
@@ -26,11 +26,11 @@ function HireScreen({ navigation }) {
         console.log(searchQuery);
     };
     const handleJobPress = (job) => {
-        navigation.navigate('JobDetail', { job: job });
+        navigation.navigate('HireApplications', { job: job });
     }
 
     const renderJob = ({ item }) => (
-        <View style={styles.jobCard}>
+        <View style={styles.jobCard} >
             <Text style={styles.jobTitle}>{item.title}</Text>
             <Text style={styles.jobDescription}>{item.description}</Text>
             <Text style={styles.jobDate}>{item.datePosted}</Text>
@@ -62,12 +62,18 @@ function HireScreen({ navigation }) {
                 data={jobs}
                 renderItem={renderJob}
                 keyExtractor={item => item.id}
+                style={styles.applicantView}
             />
+            <View style={ {justifyContent: 'center', alignItems: 'center'}}>
+                <TouchableOpacity
+                    onPress={() => navigation.navigate("PostJob")}
+                    style={styles.Postbtn}
+                    >
+                        <Text style={ {fontWeight: 'bold', color: '#fff' }} > New job post</Text>
+                </TouchableOpacity>
 
-            <Button 
-                onPress={() => navigation.navigate("PostJob")}
-                title="Post a Job"
-            />
+            </View>
+
         </View>
     );
 }
@@ -79,17 +85,30 @@ export default function Hire() {
         <HireStack.Navigator initialRouteName="HireScreen">
             <HireStack.Screen name="HireScreen" component={HireScreen} options={{headerShown: false}} />
             <HireStack.Screen name="PostJob" component={PostJob} options={{headerTitle: '', headerShown: true, headerBackTitle: '', headerBackTitleVisible: false}} />
-            <HireStack.Screen name="JobDetail" component={JobDetail} options={{headerTitle: '', headerShown: true, headerBackTitle: '', headerBackTitleVisible: false}} />
+            <HireStack.Screen name="HireApplications" component={HireApplications} options={{headerTitle: '', headerShown: true, headerBackTitle: '', headerBackTitleVisible: false}} />
         </HireStack.Navigator>
     );
 }
 
 
 const styles = StyleSheet.create({
+    applicantView: {
+        marginLeft: -20,
+        marginRight: 0,
+        marginBottom: 0,
+    },
+    Postbtn: {
+        backgroundColor: '#4683fc',
+        borderRadius: 50,
+        width: 150,
+        height: 40,
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginRight: 10,
+    },
     container: {
         flex: 1,
         padding: 10,
-        backgroundColor: '#f5f5f5',
     },
     title: {
         fontSize: 24,
@@ -135,6 +154,18 @@ const styles = StyleSheet.create({
         padding: 20,
         marginBottom: 10,
         borderRadius: 10,
+        marginLeft: 30,
+        marginRight: 10,
+        // Android shadow properties
+        elevation: 5,
+        // iOS shadow properties
+        shadowColor: "#000",
+        shadowOffset: {
+            width: -10,
+            height: 2,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 3.84,
     },
     jobTitle: {
         fontSize: 18,
