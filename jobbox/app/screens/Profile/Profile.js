@@ -5,6 +5,7 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -72,9 +73,10 @@ const Profile = () => {
         const response = await axios.get('https://tranquil-ocean-74659.herokuapp.com/auth/user/me', {
           headers: { Authorization: `Bearer ${token}` },
         });
+  
         console.log("Response data: ", response.data); // log the response data
         setUser(response.data);
-
+  
         const about = Array.isArray(response.data.about) ? response.data.about : [];
         const experience = Array.isArray(response.data.experience) ? response.data.experience : [];
         const education = Array.isArray(response.data.education) ? response.data.education : [];
@@ -86,7 +88,7 @@ const Profile = () => {
             title: 'About', 
             iconName: 'info', 
             text: about.length > 0 
-              ? about.map(a => `${a.title}: ${a.description}`).join(', ') 
+              ? about.map(a => `${a.title} ${a.description}`).join(', ') 
               : 'No information provided.' 
           },
           { 
@@ -125,9 +127,17 @@ const Profile = () => {
       } catch (err) {
         console.error("Failed to fetch user data: ", err);
       }
-    };    
+    };
+    
+    // Call fetchUserData once immediately
     fetchUserData();
-  }, []);
+  
+    // Then set it up to be called again every time the Profile screen comes into focus
+    const unsubscribe = navigation.addListener('focus', fetchUserData);
+  
+    // Clean up the listener when the component unmounts
+    return unsubscribe;
+  }, [navigation]);
   
 
   const handleProfilePhotoPress = () => {
@@ -170,7 +180,7 @@ const Profile = () => {
               <Icon name={item.iconName} size={24} color="#4683fc" style={styles.sectionIcon} />
               <Text>
                 <Text style={styles.sectionTitle}>{item.title}</Text>
-                <Text style={styles.sectionText}><Text>{item.text}</Text></Text> {/* <-- Wrapped sectionText with <Text> */}
+                <Text style={styles.sectionText}><Text></Text></Text> {/* <-- Wrapped sectionText with <Text> */}
               </Text>
             </TouchableOpacity>
           );
