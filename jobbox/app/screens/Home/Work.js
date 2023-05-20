@@ -105,7 +105,7 @@ const Stack = createStackNavigator();
 export default function Work() {
     return (
       <Stack.Navigator initialRouteName="WorkScreen">
-        <Stack.Screen name="WorkScreen" component={WorkScreen} />
+        <Stack.Screen name="WorkScreen" component={WorkScreen} options={{ headerShown: false }} />
         <Stack.Screen name="JobDetail" component={JobDetailScreen} options={{headerTitle: '', headerShown: true, headerBackTitle: '', headerBackTitleVisible: false}}/>
       </Stack.Navigator>
     );
