@@ -184,7 +184,7 @@ export default function App() {
   const AuthStack = () => (
     <Stack.Navigator 
       screenOptions={{ 
-        cardStyle: { backgroundColor: 'red'}
+        cardStyle: { backgroundColor: '#fff'}
       }}
     >
       <Stack.Screen 

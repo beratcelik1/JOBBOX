@@ -1,26 +1,26 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 
-function WorkJobDetails({ route }) {
+export default function JobDetail({ route, navigation }) {
     const { job } = route.params;
 
     return (
-        <View style={styles.container}>
-            <View style={styles.jobCard}>
-                <Text style={styles.title}>{job.title}</Text>
-                <Text style={styles.description}>{job.description}</Text>
-                <Text style={styles.date}>{job.datePosted}</Text>
+        <View style={styles.container2}>
+            <View style={styles.jobCard2}>
+                <Text style={styles.title2}>{job.title}</Text>
+                <Text style={styles.description2}>{job.description}</Text>
+                <Text style={styles.date2}>{job.datePosted}</Text>
             </View>
         </View>
     );
 }
 
 const styles = StyleSheet.create({
-    container: {
+    container2: {
         flex: 1,
         padding: 20,
     },
-    jobCard: {
+    jobCard2: {
         backgroundColor: '#fff',
         padding: 20,
         marginBottom: 10,
@@ -36,20 +36,18 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.25,
         shadowRadius: 3.84,
     },
-    title: {
+    title2: {
         fontSize: 18,
         fontWeight: 'bold',
     },
-    description: {
+    description2: {
         fontSize: 14,
         color: '#666',
         marginTop: 10,
     },
-    date: {
+    date2: {
         fontSize: 12,
         color: '#999',
         marginTop: 10,
     },
 });
-
-export default WorkJobDetails;

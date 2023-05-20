@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, FlatList, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons'; // you might need to install this package
-import { createStackNavigator } from '@react-navigation/stack';
 
+import { createStackNavigator } from '@react-navigation/stack';
 import JobDetail from './JobDetails';
 
-function Work({ navigation }) {
+function WorkScreen({ navigation }) {
     const [searchQuery, setSearchQuery] = useState('');
 
     const handleSearch = () => {
@@ -82,16 +82,35 @@ function Work({ navigation }) {
         </View>
     );
 } 
-const WorkStack = createStackNavigator();
 
-export default function Hire() {
+function JobDetailScreen({ route, navigation }) {
+    //... your existing JobDetail component code
+
+    const { job } = route.params;
+
     return (
-        <WorkStack.Navigator initialRouteName="Work">
-            <WorkStack.Screen name="Work" component={Work} options={{headerShown: false, backgroundColor: 'red'}} />
-            <WorkStack.Screen name="JobDetail" component={JobDetail} options={{headerTitle: '', headerShown: true, headerBackTitle: '', headerBackTitleVisible: false}} />
-        </WorkStack.Navigator>
+        <View style={styles.container2}>
+            <View style={styles.jobCard2}>
+                <Text style={styles.title2}>{job.title}</Text>
+                <Text style={styles.description2}>{job.description}</Text>
+                <Text style={styles.date2}>{job.datePosted}</Text>
+            </View>
+        </View>
     );
 }
+  
+// Define a type for your stack
+const Stack = createStackNavigator();
+  
+export default function Work() {
+    return (
+      <Stack.Navigator initialRouteName="WorkScreen">
+        <Stack.Screen name="WorkScreen" component={WorkScreen} />
+        <Stack.Screen name="JobDetail" component={JobDetailScreen} options={{headerTitle: '', headerShown: true, headerBackTitle: '', headerBackTitleVisible: false}}/>
+      </Stack.Navigator>
+    );
+}
+
 
 
 const styles = StyleSheet.create({
@@ -205,5 +224,40 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         marginBottom: 5,
+    },
+
+    container2: {
+        flex: 1,
+        padding: 20,
+    },
+    jobCard2: {
+        backgroundColor: '#fff',
+        padding: 20,
+        marginBottom: 10,
+        borderRadius: 10,
+        // Android shadow properties
+        elevation: 5,
+        // iOS shadow properties
+        shadowColor: "#000",
+        shadowOffset: {
+            width: -10,
+            height: 2,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 3.84,
+    },
+    title2: {
+        fontSize: 18,
+        fontWeight: 'bold',
+    },
+    description2: {
+        fontSize: 14,
+        color: '#666',
+        marginTop: 10,
+    },
+    date2: {
+        fontSize: 12,
+        color: '#999',
+        marginTop: 10,
     },
 });

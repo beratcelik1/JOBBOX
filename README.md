@@ -29,6 +29,7 @@ JOBBOX-1
 │  │  │  ├─ Activity.js
 │  │  │  ├─ Home
 │  │  │  │  ├─ Hire.js
+│  │  │  │  ├─ HireApplications.js
 │  │  │  │  ├─ JobDetails.js
 │  │  │  │  ├─ PostJob.js
 │  │  │  │  └─ Work.js
