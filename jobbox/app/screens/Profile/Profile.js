@@ -64,6 +64,7 @@ const styles = StyleSheet.create({
 const Profile = () => {
   const [user, setUser] = useState(null);
   const [sections, setSections] = useState([]);
+  const [experiences, setExperiences] = useState([]);
   const navigation = useNavigation();
 
   useEffect(() => {
@@ -83,47 +84,45 @@ const Profile = () => {
         const skills = Array.isArray(response.data.skills) ? response.data.skills : [];
         const recommendations = Array.isArray(response.data.recommendations) ? response.data.recommendations : [];
         setSections([
-          { 
-            id: '1', 
-            title: 'About', 
-            iconName: 'info', 
-            text: about.length > 0 
-              ? about.map(a => `${a.title} ${a.description}`).join(', ') 
-              : 'No information provided.' 
+          {
+            id: '1',
+            title: 'About',
+            iconName: 'info',
+            data: about,
+            text: about.length > 0 ? about.map(a => `${a.title} ${a.description}`).join(', ') : 'No information provided.'
           },
-          { 
-            id: '2', 
-            title: 'Experience', 
-            iconName: 'work', 
-            text: experience.length > 0 
-              ? experience.map(e => `${e.title} at ${e.company}`).join(', ') 
-              : 'No information provided.' 
+          {
+            id: '2',
+            title: 'Experience',
+            iconName: 'work',
+            data: experience,
+            text: experience.length > 0 ? experience.map(e => ` - ${e.position} at ${e.company}`).join('\n') : 'No information provided.'
           },
-          { 
-            id: '3', 
-            title: 'Education', 
-            iconName: 'school', 
-            text: education.length > 0 
-              ? education.map(e => `${e.degree} in ${e.fieldOfStudy} from ${e.institution}`).join(', ') 
-              : 'No information provided.' 
+          {
+            id: '3',
+            title: 'Education',
+            iconName: 'school',
+            data: education,
+            text: education.length > 0 ? education.map(e => `${e.degree} ${e.fieldOfStudy} ${e.institution}`).join(', ') : 'No information provided.'
           },
-          { 
-            id: '4', 
-            title: 'Skills', 
-            iconName: 'star', 
-            text: skills.length > 0 
-              ? skills.join(', ') 
-              : 'No information provided.' 
+          {
+            id: '4',
+            title: 'Skills',
+            iconName: 'star',
+            data: skills,
+            text: skills.length > 0 ? skills.join(', ') : 'No information provided.'
           },
-          { 
-            id: '5', 
-            title: 'Recommendations', 
-            iconName: 'thumb-up', 
-            text: recommendations.length > 0 
-              ? recommendations.map(r => `${r.name} (${r.relationship}): ${r.recommendation}`).join(', ') 
-              : 'No information provided.' 
+          {
+            id: '5',
+            title: 'Recommendations',
+            iconName: 'thumb-up',
+            data: recommendations,
+            text: recommendations.length > 0 ? recommendations.map(r => `${r.name} (${r.relationship}): ${r.recommendation}`).join(', ') : 'No information provided.'
           },
-        ]);
+        ]);        
+
+        setExperiences(experience);
+
       } catch (err) {
         console.error("Failed to fetch user data: ", err);
       }

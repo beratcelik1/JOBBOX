@@ -24,12 +24,12 @@ const UserSchema = new mongoose.Schema({
     description: String,
   }],
   experience: [{
-    title: String,
+    position: String,  // Changed from title
     company: String,
     startDate: Date,
     endDate: Date,
     description: String,
-  }],
+  }],  
   education: [{
     institution: String,
     degree: String,

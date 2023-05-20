@@ -25,27 +25,34 @@ const styles = StyleSheet.create({
   },
 });
 
-const ProfileSection = ({ route }) => {
+const ProfileSection = ({ route, navigation }) => {
   const { section } = route.params;
   const [editing, setEditing] = useState(false);
   const [text, setText] = useState('');
+  const [position, setPosition] = useState('');
+  const [company, setCompany] = useState('');
+  const [experience, setExperience] = useState([{position: '', company: ''}]); 
 
   const handleEdit = () => {
     setEditing(true);
   };
 
+  const addExperience = () => {
+    setExperience(prevExperience => [...prevExperience, {position: '', company: ''}]);
+  };
+  
+
   const handleSave = async () => {
     try {
       const token = await AsyncStorage.getItem('token');
       let updateData = {};
-
+  
       switch (section.title) {
         case 'About':
           updateData = { about: [...(section.data?.about || []), { title: '', description: text  }] };
           break;
-        case 'Experience':
-          // Update this block according to your 'Experience' section's fields and data
-          updateData = { experience: [...(section.data?.experience || []), { title: text, company: '', startDate: new Date(), endDate: new Date(), description: '' }] };
+        case 'Experience': 
+          updateData = { experience: [...(section.data?.experience || []), ...experience] };
           break;
         case 'Education':
           // Update this block according to your 'Education' section's fields and data
@@ -59,40 +66,76 @@ const ProfileSection = ({ route }) => {
           const [name, relationship, recommendation] = text.split(',');
           updateData = {
             recommendations: [...(section.data?.recommendations || []), {
-              name: name.trim(),
-              relationship: relationship.trim(),
-              recommendation: recommendation.trim()
+              name: name,
+              relationship: relationship,
+              recommendation: recommendation
             }]
           };
           break;
         default:
           break;
       }
-
+  
       const response = await axios.put('https://tranquil-ocean-74659.herokuapp.com/auth/user/me', updateData, {
         headers: { Authorization: `Bearer ${token}` },
       });
-
-      // after the section is successfully updated on the server, update the section text on the client
+  
+      // after the section is successfully updated on the server, navigate back to Profile
       if (response.status === 200) {
-        setText(text);
+        navigation.goBack();
       }
-
+  
       setEditing(false);
     } catch (err) {
       console.error("Failed to update profile section: ", err);
     }
   };
+  
 
   if (editing) {
     return (
       <View style={styles.container}>
         <Text style={styles.title}>{section.title}</Text>
-        <TextInput
-          style={styles.input}
-          value={text}
-          onChangeText={setText}
-        />
+        {
+          section.title === 'Experience'
+            ? (
+              <React.Fragment>
+                {experience.map((exp, index) => (
+                  <React.Fragment key={index}>
+                    <Text style={styles.text}>Position:</Text>
+                    <TextInput style={styles.input} 
+                     value={exp.position} 
+                     placeholder='Position' 
+                     onChangeText={(text) => { 
+                       let updatedExperience = [...experience];
+                       updatedExperience[index].position = text;
+                       setExperience(updatedExperience); 
+                     }} />
+
+                    <Text style={styles.text}>Company:</Text>
+                    <TextInput
+                      style={styles.input}
+                      value={exp.company}
+                      placeholder='Company'
+                      onChangeText={(text) => {
+                        let updatedExperience = [...experience];
+                        updatedExperience[index].company = text;
+                        setExperience(updatedExperience);
+                      }}
+                    />
+                  </React.Fragment>
+                ))}
+                <Button title="Add Experience" onPress={addExperience} />
+              </React.Fragment>
+            )
+            : (
+              <TextInput
+                style={styles.input}
+                value={text}
+                onChangeText={setText}
+              />
+            )
+        }
         <Button title="Save" onPress={handleSave} />
       </View>
     );
