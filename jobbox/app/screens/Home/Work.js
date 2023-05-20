@@ -87,7 +87,7 @@ const WorkStack = createStackNavigator();
 export default function Hire() {
     return (
         <WorkStack.Navigator initialRouteName="Work">
-            <WorkStack.Screen name="Work" component={Work} options={{headerShown: false}} />
+            <WorkStack.Screen name="Work" component={Work} options={{headerShown: false, backgroundColor: 'red'}} />
             <WorkStack.Screen name="JobDetail" component={JobDetail} options={{headerTitle: '', headerShown: true, headerBackTitle: '', headerBackTitleVisible: false}} />
         </WorkStack.Navigator>
     );
@@ -97,8 +97,6 @@ export default function Hire() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        padding: 10,
-        backgroundColor: '#dedcdc',
     },
     title: {
         fontSize: 24,
@@ -112,6 +110,9 @@ const styles = StyleSheet.create({
         backgroundColor: '#fff',
         borderRadius: 50,
         paddingLeft: 10,
+        marginLeft: 15, 
+        marginRight: 15, 
+        marginTop: 10, 
     },
     searchIcon: {
         padding: 10,
@@ -161,15 +162,19 @@ const styles = StyleSheet.create({
         backgroundColor: '#fff',
         padding: 15,
         marginBottom: 10,
-        borderRadius: 5,
+        marginLeft: 15,
+        marginRight: 15,
+        borderRadius: 10,
+        // Android shadow properties
+        elevation: 5,
+        // iOS shadow properties
         shadowColor: "#000",
         shadowOffset: {
-            width: 0,
-            height: 2,
-        },
-        shadowOpacity: 0.25,
-        shadowRadius: 3.84,
-        elevation: 5,
+        width: -10,
+        height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
     },
     jobDetails: {
         flex: 1,

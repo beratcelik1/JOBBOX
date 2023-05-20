@@ -8,7 +8,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     margin: 5,
     padding: 20,
-    backgroundColor: 'red',
     borderRadius: 10,
     height: 150, // adjust the height as per your requirement
   },

@@ -30,7 +30,7 @@ function HireScreen({ navigation }) {
     }
 
     const renderJob = ({ item }) => (
-        <View style={styles.jobCard}>
+        <View style={styles.jobCard} >
             <Text style={styles.jobTitle}>{item.title}</Text>
             <Text style={styles.jobDescription}>{item.description}</Text>
             <Text style={styles.jobDate}>{item.datePosted}</Text>
@@ -62,6 +62,7 @@ function HireScreen({ navigation }) {
                 data={jobs}
                 renderItem={renderJob}
                 keyExtractor={item => item.id}
+                style={styles.applicantView}
             />
             <View style={ {justifyContent: 'center', alignItems: 'center'}}>
                 <TouchableOpacity
@@ -91,6 +92,11 @@ export default function Hire() {
 
 
 const styles = StyleSheet.create({
+    applicantView: {
+        marginLeft: -20,
+        marginRight: 0,
+        marginBottom: 0,
+    },
     Postbtn: {
         backgroundColor: '#4683fc',
         borderRadius: 50,
@@ -103,7 +109,6 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         padding: 10,
-        backgroundColor: '#dedcdc',
     },
     title: {
         fontSize: 24,
@@ -149,6 +154,18 @@ const styles = StyleSheet.create({
         padding: 20,
         marginBottom: 10,
         borderRadius: 10,
+        marginLeft: 30,
+        marginRight: 10,
+        // Android shadow properties
+        elevation: 5,
+        // iOS shadow properties
+        shadowColor: "#000",
+        shadowOffset: {
+            width: -10,
+            height: 2,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 3.84,
     },
     jobTitle: {
         fontSize: 18,
