@@ -22,6 +22,7 @@ import ProfileSection from './screens/Profile/ProfileSection';
 import { useState } from 'react';
 import Login from './screens/Login'; 
 import Signup from './screens/Signup';
+import { Section } from 'react-native-paper';
 
 const logo = require('./assets/images/jobboxlogo4.png');
 const logo2 = require('./assets/images/jobboxlogotek.png');
@@ -231,7 +232,8 @@ export default function App() {
         component={JobScreen}
         options={{headerTitle: ' ', headerBackTitle: '', headerBackTitleVisible: false,}}  
       />
-       <Stack.Screen name="ProfileSection" component={ProfileSection} />
+       <Stack.Screen name="ProfileSection" component={ProfileSection} 
+       options={{headerTitle: 'Profile', headerBackTitle: '', headerBackTitleVisible: false }}  />
     </Stack.Navigator>
   );
 

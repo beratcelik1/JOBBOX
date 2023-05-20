@@ -5,6 +5,7 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -60,17 +61,10 @@ const styles = StyleSheet.create({
   },
 });
 
-const sections = [
-  { id: '1', title: 'About', iconName: 'info', text: 'Software developer with over 5 years of experience...' },
-  // Update the text field with relevant content for each section
-  { id: '2', title: 'Experience', iconName: 'work', text: 'Experience details...' },
-  { id: '3', title: 'Education', iconName: 'school', text: 'Education details...' },
-  { id: '4', title: 'Skills', iconName: 'star', text: 'Skills details...' },
-  { id: '5', title: 'Recommendations', iconName: 'thumb-up', text: 'Recommendations details...' },
-];
-
 const Profile = () => {
   const [user, setUser] = useState(null);
+  const [sections, setSections] = useState([]);
+  const [experiences, setExperiences] = useState([]);
   const navigation = useNavigation();
 
   useEffect(() => {
@@ -80,14 +74,70 @@ const Profile = () => {
         const response = await axios.get('https://tranquil-ocean-74659.herokuapp.com/auth/user/me', {
           headers: { Authorization: `Bearer ${token}` },
         });
+  
+        console.log("Response data: ", response.data); // log the response data
         setUser(response.data);
+  
+        const about = Array.isArray(response.data.about) ? response.data.about : [];
+        const experience = Array.isArray(response.data.experience) ? response.data.experience : [];
+        const education = Array.isArray(response.data.education) ? response.data.education : [];
+        const skills = Array.isArray(response.data.skills) ? response.data.skills : [];
+        const recommendations = Array.isArray(response.data.recommendations) ? response.data.recommendations : [];
+        setSections([
+          {
+            id: '1',
+            title: 'About',
+            iconName: 'info',
+            data: about,
+            text: about.length > 0 ? about.map(a => `${a.title} ${a.description}`).join(', ') : 'No information provided.'
+          },
+          {
+            id: '2',
+            title: 'Experience',
+            iconName: 'work',
+            data: experience,
+            text: experience.length > 0 ? experience.map(e => ` - ${e.position} at ${e.company}`).join('\n') : 'No information provided.'
+          },
+          {
+            id: '3',
+            title: 'Education',
+            iconName: 'school',
+            data: education,
+            text: education.length > 0 ? education.map(e => `${e.degree} ${e.fieldOfStudy} ${e.institution}`).join(', ') : 'No information provided.'
+          },
+          {
+            id: '4',
+            title: 'Skills',
+            iconName: 'star',
+            data: skills,
+            text: skills.length > 0 ? skills.join(', ') : 'No information provided.'
+          },
+          {
+            id: '5',
+            title: 'Recommendations',
+            iconName: 'thumb-up',
+            data: recommendations,
+            text: recommendations.length > 0 ? recommendations.map(r => `${r.name} (${r.relationship}): ${r.recommendation}`).join(', ') : 'No information provided.'
+          },
+        ]);        
+
+        setExperiences(experience);
+
       } catch (err) {
         console.error("Failed to fetch user data: ", err);
       }
-    };    
-
+    };
+    
+    // Call fetchUserData once immediately
     fetchUserData();
-  }, []);
+  
+    // Then set it up to be called again every time the Profile screen comes into focus
+    const unsubscribe = navigation.addListener('focus', fetchUserData);
+  
+    // Clean up the listener when the component unmounts
+    return unsubscribe;
+  }, [navigation]);
+  
 
   const handleProfilePhotoPress = () => {
     console.log('Profile photo pressed.');
@@ -117,27 +167,28 @@ const Profile = () => {
       </View>
 
       <FlatList 
-  data={sections}
-  keyExtractor={item => item.id}
-  contentContainerStyle={{ paddingBottom: 5 }} // adjust this value as needed
-  renderItem={({ item }) => (
-    <TouchableOpacity
-      style={styles.sectionContainer}
-      onPress={() => navigation.navigate('ProfileSection', { section: item })}
-    >
-      <Icon name={item.iconName} size={24} color="#4683fc" style={styles.sectionIcon} />
-      <View>
-        <Text style={styles.sectionTitle}>{item.title}</Text>
-        <Text style={styles.sectionText}>{item.text}</Text>
-      </View>
-    </TouchableOpacity>
-  )}
-  numColumns={1}
-/>
-
-          </View>
+        data={sections}
+        keyExtractor={item => item.id}
+        contentContainerStyle={{ paddingBottom: 5 }} // adjust this value as needed
+        renderItem={({ item }) => {
+          return (
+            <TouchableOpacity
+              style={styles.sectionContainer}
+              onPress={() => navigation.navigate('ProfileSection', { section: item })}
+            >
+              <Icon name={item.iconName} size={24} color="#4683fc" style={styles.sectionIcon} />
+              <Text>
+                <Text style={styles.sectionTitle}>{item.title}</Text>
+                <Text style={styles.sectionText}><Text></Text></Text> {/* <-- Wrapped sectionText with <Text> */}
+              </Text>
+            </TouchableOpacity>
           );
-          };
+        }}  
+        numColumns={1}
+      />
+    </View>
+  );
+};
 
 export default Profile;
 
