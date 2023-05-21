@@ -19,6 +19,10 @@ const UserSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  profilePic: {
+    type: String,
+    default: '',
+  },
   about: [{
     title: String,
     description: String,
@@ -44,6 +48,8 @@ const UserSchema = new mongoose.Schema({
     relationship: String,
     recommendation: String,
   }]
+
+
 });
 
 

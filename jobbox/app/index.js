@@ -6,6 +6,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
 import Icon from 'react-native-vector-icons/Ionicons';
 
+
 import { RootNavigationContext } from './navigation/RootNavigationContext';
 import Activity from './screens/Activity';
 import Profile from './screens/Profile/Profile';

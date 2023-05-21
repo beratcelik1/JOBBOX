@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { View, FlatList, Text, TouchableOpacity, StyleSheet, Image } from 'react-native';
+import { View, FlatList, Text, TouchableOpacity, StyleSheet, Image, ActivityIndicator } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import ImagePicker from 'react-native-image-crop-picker';
 
 
 const styles = StyleSheet.create({
@@ -73,6 +74,8 @@ const Profile = () => {
   const [sections, setSections] = useState([]);
   const [experiences, setExperiences] = useState([]);
   const navigation = useNavigation();
+  const [loading, setLoading] = useState(false);
+
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -144,41 +147,73 @@ const Profile = () => {
     // Clean up the listener when the component unmounts
     return unsubscribe;
   }, [navigation]);
-  
 
   const handleProfilePhotoPress = () => {
-    console.log('Profile photo pressed.');
+    ImagePicker.openPicker({
+      width: 300,
+      height: 300,
+      cropping: true,
+      includeBase64: true,
+    }).then(async (image) => {
+      setLoading(true);
+      const file = {
+        uri: image.path,
+        type: image.mime,
+        name: image.filename || `filename.${image.mime.split('/')[1]}`,
+      };
+      let formData = new FormData();
+      formData.append('image', file);
+      const token = await AsyncStorage.getItem('token');
+      const uploadResponse = await axios.post(
+        'https://tranquil-ocean-74659.herokuapp.com/upload',
+        formData,
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+            'Authorization': `Bearer ${token}`,
+          },
+        }
+      );
+      const updateResponse = await axios.put(
+        'https://tranquil-ocean-74659.herokuapp.com/auth/user/me/profilePic',
+        { profilePic: uploadResponse.data.path },
+        { headers: { 'Authorization': `Bearer ${token}` } }
+      );
+      setUser((prevUser) => ({
+        ...prevUser,
+        profilePic: updateResponse.data.profilePic,
+      }));
+      setLoading(false);
+      alert('Profile photo updated successfully!');
+    }).catch((error) => {
+      console.log(error);
+    });
   };
-
-  if (!user) {
-    return null; // Or return a loading spinner
-  }
-
-  return (
-    <View style={styles.container}>
-      <View style={styles.headerContainer}>
-        <TouchableOpacity onPress={handleProfilePhotoPress}>
-          <Image 
-            style={styles.profileImage}
-            // remove the source prop to display placeholder
-          />
-        </TouchableOpacity>
-        <View>
-          <Text style={styles.name}>{user.firstname} {user.lastname}</Text>
-          <View style={styles.reviews}>
-            <Icon name="star" size={20} color="#f1c40f" />
-            <Text>4.5</Text>
+  
+return (
+  <View style={styles.container}>
+    {user ? (
+      <>
+        <View style={styles.headerContainer}>
+          <TouchableOpacity onPress={handleProfilePhotoPress}>
+            <Image style={styles.profileImage} source={{uri: user.profilePic || undefined}} />
+            {loading && <ActivityIndicator size="large" color="#0000ff" />}
+          </TouchableOpacity>
+          <View>
+            <Text style={styles.name}>{user.firstname} {user.lastname}</Text>
+            <View style={styles.reviews}>
+              <Icon name="star" size={20} color="#f1c40f" />
+              <Text>4.5</Text>
+            </View>
+            <Text>San Francisco, CA</Text>
           </View>
-          <Text>San Francisco, CA</Text>
         </View>
-      </View>
 
-      <FlatList 
-        data={sections}
-        keyExtractor={item => item.id}
-        contentContainerStyle={{ paddingBottom: 5 }} // adjust this value as needed
-        renderItem={({ item }) => {
-          return (
+        <FlatList 
+          data={sections}
+          keyExtractor={item => item.id}
+          contentContainerStyle={{ paddingBottom: 5 }} // adjust this value as needed
+          renderItem={({ item }) => (
             <TouchableOpacity
               style={styles.sectionContainer}
               onPress={() => navigation.navigate('ProfileSection', { section: item })}
@@ -189,12 +224,15 @@ const Profile = () => {
                 <Text style={styles.sectionText}><Text></Text></Text> {/* <-- Wrapped sectionText with <Text> */}
               </Text>
             </TouchableOpacity>
-          );
-        }}  
-        numColumns={1}
-      />
-    </View>
-  );
+          )}  
+          numColumns={1}
+        />
+      </>
+    ) : (
+      <ActivityIndicator size="large" color="#0000ff" />
+    )}
+  </View>
+);
 };
 
 export default Profile;
