@@ -4,20 +4,22 @@ import { View, FlatList, Text, StyleSheet } from 'react-native';
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 10,
   },
   section: {
-    marginBottom: 20,
+    
   },
   sectionTitle: {
     fontSize: 18,
     fontWeight: 'bold',
     marginBottom: 10,
+    margin:15, 
   },
   card: {
     backgroundColor: '#fff',
     padding: 15,
     marginBottom: 10,
+    marginLeft: 15, 
+    marginRight: 15, 
     borderRadius: 5,
     shadowColor: "#000",
     shadowOffset: {
