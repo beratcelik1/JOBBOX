@@ -34,16 +34,20 @@ const upload = multer({
 
 app.post('/upload', upload.single('image'), (req, res, next) => {
   if (!req.file) {
-      return next(new Error('File upload failed'));
+    return next(new Error('File upload failed'));
   }
-  res.send(req.file)
-}, (error, req, res, next) => { // Error handling middleware
+  // Send the path to the image file
+  res.send({ path: '/uploads/' + req.file.filename });
+}, (error, req, res, next) => {
+  // Error handling middleware
   res.status(400).send({error: error.message});
 })
+
 
 app.use(cors());
 app.use(express.json()); // for parsing application/json
 app.use('/auth', authRoutes);
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 mongoose.connect(process.env.DB_URI, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => console.log('Connected to MongoDB'))

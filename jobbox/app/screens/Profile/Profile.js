@@ -4,7 +4,8 @@ import { useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import ImagePicker from 'react-native-image-crop-picker';
+import * as ImagePicker from 'expo-image-picker';
+import fetch from 'node-fetch';
 
 
 const styles = StyleSheet.create({
@@ -148,47 +149,66 @@ const Profile = () => {
     return unsubscribe;
   }, [navigation]);
 
-  const handleProfilePhotoPress = () => {
-    ImagePicker.openPicker({
-      width: 300,
-      height: 300,
-      cropping: true,
-      includeBase64: true,
-    }).then(async (image) => {
-      setLoading(true);
-      const file = {
-        uri: image.path,
-        type: image.mime,
-        name: image.filename || `filename.${image.mime.split('/')[1]}`,
-      };
-      let formData = new FormData();
-      formData.append('image', file);
-      const token = await AsyncStorage.getItem('token');
-      const uploadResponse = await axios.post(
-        'https://tranquil-ocean-74659.herokuapp.com/upload',
-        formData,
-        {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-            'Authorization': `Bearer ${token}`,
-          },
-        }
-      );
-      const updateResponse = await axios.put(
-        'https://tranquil-ocean-74659.herokuapp.com/auth/user/me/profilePic',
-        { profilePic: uploadResponse.data.path },
-        { headers: { 'Authorization': `Bearer ${token}` } }
-      );
-      setUser((prevUser) => ({
-        ...prevUser,
-        profilePic: updateResponse.data.profilePic,
-      }));
-      setLoading(false);
-      alert('Profile photo updated successfully!');
-    }).catch((error) => {
-      console.log(error);
+  const handleProfilePhotoPress = async () => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing: true,
+        aspect: [4, 3],
+        quality: 1,
     });
-  };
+
+    if (!result.canceled) {
+        let localUri = result.assets[0].uri;
+        let filename = localUri.split('/').pop();
+
+        // Infer the type of the image
+        let match = /\.(\w+)$/.exec(filename);
+        let type = match ? `image/${match[1]}` : `image`;
+
+        let formData = new FormData();
+        formData.append('image', { uri: localUri, name: filename, type });
+
+        const token = await AsyncStorage.getItem('token');
+
+        try {
+            let response = await axios.post(
+                'https://tranquil-ocean-74659.herokuapp.com/upload',
+                formData,
+                {
+                    headers: {
+                        'Content-Type': 'multipart/form-data',
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+            );
+
+            if (response.data && response.data.path) {
+                let imagePath = response.data.path;
+                let imageUrl = 'https://tranquil-ocean-74659.herokuapp.com' + imagePath;
+                let profilePicResponse = await axios.put(
+                    'https://tranquil-ocean-74659.herokuapp.com/api/user/me/profilePic',
+                    { profilePic: imageUrl },
+                    { headers: { Authorization: `Bearer ${token}`, }, }
+                );
+
+                if (profilePicResponse.data) {
+                    setUser((prevUser) => ({
+                        ...prevUser,
+                        profilePic: profilePicResponse.data.profilePic,
+                    }));
+
+                    alert('Profile photo updated successfully!');
+                }
+            }
+        } catch (err) {
+            console.error("Failed to upload image: ", err);
+        }
+    }
+};
+
+
+  
+  
   
 return (
   <View style={styles.container}>
@@ -196,7 +216,7 @@ return (
       <>
         <View style={styles.headerContainer}>
           <TouchableOpacity onPress={handleProfilePhotoPress}>
-            <Image style={styles.profileImage} source={{uri: user.profilePic || undefined}} />
+          <Image style={styles.profileImage} source={{uri: user.profilePic}} />
             {loading && <ActivityIndicator size="large" color="#0000ff" />}
           </TouchableOpacity>
           <View>
