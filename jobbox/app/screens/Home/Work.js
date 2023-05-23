@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, TouchableOpacity, FlatList, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons'; // you might need to install this package
 
@@ -7,18 +7,27 @@ import JobDetail from './JobDetails';
 
 function WorkScreen({ navigation }) {
     const [searchQuery, setSearchQuery] = useState('');
+    // At the top of your WorkScreen function...
+    const [jobs, setJobs] = useState([]);
+
+    useEffect(() => {
+    fetch('http://tranquil-ocean-74659.herokuapp.com/jobs')
+        .then(response => response.json())
+        .then(data => setJobs(data))
+        .catch(error => console.error('Error:', error));
+    }, []);
 
     const handleSearch = () => {
         // handle search logic here
         console.log(searchQuery);
     }; 
 
-    // Sample job data
-    const jobs = [
-        {id: '1', title: 'Lawn mowing', company: 'Raphael Mwachiti', location: 'City A', posted: '2 days ago'},
-        {id: '2', title: 'Help with moving', company: 'Joe Harrison', location: 'City B', posted: '3 days ago'},
-        // More jobs...
-    ]; 
+    // // Sample job data
+    // const jobs = [
+    //     {id: '1', title: 'Lawn mowing', company: 'Raphael Mwachiti', location: 'City A', posted: '2 days ago'},
+    //     {id: '2', title: 'Help with moving', company: 'Joe Harrison', location: 'City B', posted: '3 days ago'},
+    //     // More jobs...
+    // ]; 
 
     const renderJob = ({item}) => (
         <TouchableOpacity 
@@ -107,7 +116,7 @@ export default function Work() {
       <Stack.Navigator initialRouteName="WorkScreen">
         <Stack.Screen name="WorkScreen" component={WorkScreen} options={{ headerShown: false }} />
         <Stack.Screen name="JobDetail" component={JobDetailScreen} options={{headerTitle: '', headerShown: true, headerBackTitle: '', headerBackTitleVisible: false}}/>
-      </Stack.Navigator>
+      </Stack.Navigator>   
     );
 }
 

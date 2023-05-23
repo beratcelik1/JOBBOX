@@ -12,11 +12,29 @@ export default function PostJob({ navigation }) {
     const [pay, setPay] = useState('');
     const [estimatedTime, setEstimatedTime] = useState('');
 
-    const handlePost = () => {
-        // handle job posting logic here
-        console.log(`Job Title: ${jobTitle}, Job Description: ${jobDescription}, Skills: ${skills}, Location: ${location}, Pay: ${pay}, Estimated Time: ${estimatedTime}`);
-        navigation.goBack(); // navigate back to the previous screen
-    };
+    const handlePost = async () => {
+        // Inside your handlePost function...
+        fetch('http://tranquil-ocean-74659.herokuapp.com/jobs', {
+            method: 'POST',
+            headers: {
+            'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+            title: jobTitle,
+            description: jobDescription,
+            skills: skills,
+            location: location,
+            pay: pay,
+            estimatedTime: estimatedTime,
+            }),
+         })
+        .then(response => response.json())
+        .then(data => console.log(data))
+        .catch(error => console.error('Error:', error));
+
+        navigation.goBack(); 
+    }
+    
 
     return (
         <ScrollView style={styles.container}>

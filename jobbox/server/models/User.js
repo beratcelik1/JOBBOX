@@ -43,7 +43,11 @@ const UserSchema = new mongoose.Schema({
     name: String,
     relationship: String,
     recommendation: String,
-  }]
+  }],
+  jobPostings: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Job',
+}]
 });
 
 
