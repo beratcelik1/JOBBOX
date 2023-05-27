@@ -19,6 +19,7 @@ import PostJob from './screens/Home/PostJob';
 import Category from './screens/Services/Category';
 import JobScreen from './screens/JobScreen';
 import ProfileSection from './screens/Profile/ProfileSection';
+import Chat from './screens/Chat'; 
 
 import { useState } from 'react';
 import Login from './screens/Login'; 
@@ -237,6 +238,11 @@ export default function App() {
         component={JobScreen}
         options={{headerTitle: ' ', headerBackTitle: '', headerBackTitleVisible: false,}}  
       />
+      <Stack.Screen 
+      name="Chat" 
+      component={Chat} 
+      options={{ headerBackTitle: '', headerBackTitleVisible: false }} 
+    />
        <Stack.Screen name="ProfileSection" component={ProfileSection} 
        options={{headerTitle: 'Profile', headerBackTitle: '', headerBackTitleVisible: false }}  />
     </Stack.Navigator>
