@@ -178,6 +178,21 @@ const ProfileSection = ({ route, navigation }) => {
       <View style={styles.container}>
         <Text style={styles.title}>{section.title}</Text>
         {
+          section.title === 'About'
+            ? (
+              <React.Fragment>
+                <Text style={styles.text}>About:</Text>
+                <TextInput
+                style={styles.input}
+                value={text}
+                placeholder='About text'
+                onChangeText={setText}
+                />
+              </React.Fragment>
+            )
+            : null
+        }
+        {
           section.title === 'Experience'
             ? (
               <React.Fragment>
