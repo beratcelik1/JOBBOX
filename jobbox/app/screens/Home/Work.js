@@ -3,7 +3,6 @@ import { View, Text, TextInput, TouchableOpacity, FlatList, StyleSheet } from 'r
 import { Ionicons } from '@expo/vector-icons'; // you might need to install this package
 
 import { createStackNavigator } from '@react-navigation/stack';
-import JobDetail from './JobDetails';
 
 function WorkScreen({ navigation }) {
     const [searchQuery, setSearchQuery] = useState('');
@@ -22,12 +21,7 @@ function WorkScreen({ navigation }) {
         console.log(searchQuery);
     }; 
 
-    // // Sample job data
-    // const jobs = [
-    //     {id: '1', title: 'Lawn mowing', company: 'Raphael Mwachiti', location: 'City A', posted: '2 days ago'},
-    //     {id: '2', title: 'Help with moving', company: 'Joe Harrison', location: 'City B', posted: '3 days ago'},
-    //     // More jobs...
-    // ]; 
+
 
     const renderJob = ({item}) => (
         <TouchableOpacity 
@@ -206,6 +200,7 @@ const styles = StyleSheet.create({
     },
     jobDetails: {
         flex: 1,
+        width: '70%',
     },
     jobTitle: {
         fontSize: 18,
@@ -227,7 +222,8 @@ const styles = StyleSheet.create({
     },
     jobExtras: {
         flex: 1,
-        alignItems: 'flex-end', // This aligns the extra details to the right
+        width: 4,
+        alignItems: 'flex-start', // This aligns the extra details to the right
     },
     jobExtra: {
         flexDirection: 'row',
