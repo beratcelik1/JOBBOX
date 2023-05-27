@@ -7,19 +7,13 @@ const styles = StyleSheet.create({
         backgroundColor: '#F5F5F5',
         padding: 15,
       },
-      message: {
-        backgroundColor: '#fff',
+      messageBox: {
+        maxWidth: '75%',
+        margin: 10,
         padding: 10,
-        borderRadius: 5,
-        shadowColor: "#000",
-        shadowOffset: {
-          width: 0,
-          height: 2,
-        },
-        shadowOpacity: 0.25,
-        shadowRadius: 3.84,
-        elevation: 5,
-        marginBottom: 10,
+        borderRadius: 15,
+        borderWidth: 0.5,
+        borderColor: '#ccc',
       },
       sender: {
         fontSize: 16,
@@ -29,6 +23,7 @@ const styles = StyleSheet.create({
       content: {
         fontSize: 14,
       },
+
       time: {
         fontSize: 12,
         color: 'gray',
@@ -69,6 +64,19 @@ const ChatScreen = ({ route, navigation }) => {
     // More data...
   ];
 
+  useEffect(() => {
+    navigation.setOptions({
+      title: user.name, // Display the user's name in the header
+      headerStyle: {
+        backgroundColor: '#f8f8f8',
+      },
+      headerTintColor: '#333',
+      headerTitleStyle: {
+        fontWeight: 'bold',
+      },
+    });
+  }, []);
+
   const [newMessage, setNewMessage] = React.useState('');
 
   const handleSendMessage = () => {
@@ -81,7 +89,7 @@ const ChatScreen = ({ route, navigation }) => {
         data={conversationData}
         keyExtractor={item => item.id}
         renderItem={({ item }) => (
-            <View style={styles.message}>
+            <View style={styles.messageBox}>
             <Text style={styles.sender}>{item.sender}</Text>
             <Text style={styles.content}>{item.message}</Text>
             <Text style={styles.time}>{item.time}</Text>
