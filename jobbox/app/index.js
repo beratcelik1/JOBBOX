@@ -7,7 +7,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import Icon from 'react-native-vector-icons/Ionicons';
 
 import { RootNavigationContext } from './navigation/RootNavigationContext';
-import Activity from './screens/Activity';
+import Activity from './screens/Activity/Wallet';
 import Profile from './screens/Profile/Profile';
 import Services from './screens/Services/Services';
 import Hire from './screens/Home/Hire';
@@ -18,6 +18,9 @@ import PostJob from './screens/Home/PostJob';
 import Category from './screens/Services/Category';
 import JobScreen from './screens/JobScreen';
 import ProfileSection from './screens/Profile/ProfileSection';
+import WorkHistoryScreen from './screens/Activity/WorkHistoryScreen';
+import HireHistoryScreen from './screens/Activity/HireHistoryScreen';
+
 
 import { useState } from 'react';
 import Login from './screens/Login'; 
@@ -237,7 +240,19 @@ export default function App() {
         options={{headerTitle: ' ', headerBackTitle: '', headerBackTitleVisible: false,}}  
       />
        <Stack.Screen name="ProfileSection" component={ProfileSection} 
-       options={{headerTitle: 'Profile', headerBackTitle: '', headerBackTitleVisible: false }}  />
+       options={{headerTitle: 'Profile', headerBackTitle: '', headerBackTitleVisible: false }} 
+      />
+
+       <Stack.Screen 
+        name="WorkHistoryScreen" 
+        component={WorkHistoryScreen} 
+        options={{ headerBackTitle: '', headerBackTitleVisible: false }} 
+      />
+      <Stack.Screen 
+        name="HireHistoryScreen" 
+        component={HireHistoryScreen} 
+        options={{ headerBackTitle: '', headerBackTitleVisible: false }} 
+      />
     </Stack.Navigator>
   );
 
