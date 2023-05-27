@@ -9,7 +9,7 @@ const styles = StyleSheet.create({
       },
       messageBox: {
         maxWidth: '75%',
-        margin: 10,
+        margin: 10, 
         padding: 10,
         borderRadius: 15,
         borderWidth: 0.5,
@@ -64,7 +64,7 @@ const ChatScreen = ({ route, navigation }) => {
     // More data...
   ];
 
-  useEffect(() => {
+  /*useEffect(() => {
     navigation.setOptions({
       title: user.name, // Display the user's name in the header
       headerStyle: {
@@ -75,7 +75,7 @@ const ChatScreen = ({ route, navigation }) => {
         fontWeight: 'bold',
       },
     });
-  }, []);
+  }, []);*/
 
   const [newMessage, setNewMessage] = React.useState('');
 
