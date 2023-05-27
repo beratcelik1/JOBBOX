@@ -6,7 +6,9 @@ const mongoose = require('mongoose');
 const app = express();
 const authRoutes = require('./routes/auth');
 const multer = require('multer');
-const path = require('path');
+const path = require('path'); 
+
+const jobRoutes = require('./routes/job');
 
 // Define storage for the images
 const storage = multer.diskStorage({
@@ -56,6 +58,8 @@ app.use('/uploads', (req, res, next) => {
   next(); // This will pass the request to the next middleware
 });
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
+app.use(jobRoutes);
 
 mongoose.connect(process.env.DB_URI, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => console.log('Connected to MongoDB'))

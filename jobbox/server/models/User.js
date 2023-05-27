@@ -35,21 +35,21 @@ const UserSchema = new mongoose.Schema({
     description: String,
   }],  
   education: [{
-    institution: String,
+    date: String,
     degree: String,
-    fieldOfStudy: String,
-    startDate: Date,
-    endDate: Date,
-    description: String,
+    major: String,
+    university: String,
   }],
   skills: [String],
   recommendations: [{
     name: String,
     relationship: String,
     recommendation: String,
-  }]
-
-
+  }], 
+  jobPostings: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Job',
+  }] 
 });
 
 

@@ -115,7 +115,7 @@ const Profile = () => {
             iconName: 'school', 
             data: education, 
             text: education.length > 0 ? 
-              education.map(e => `Date: ${e.date}, Degree: ${e.degree}, Major: ${e.major}, University: ${e.university}`).join('\n') : 
+              education.map(e => ` ${e.degree || 'N/A'} ${e.major || 'N/A'} at ${e.university || 'N/A'}, ${e.date || 'N/A'}, `).join('\n') : 
               'No information provided.'
           },
           {
