@@ -17,7 +17,7 @@ function WorkScreen({ navigation }) {
         .catch(error => console.error('Error:', error));
     }, []);
 
-    const handleSearch = () => {
+    const handleSearch = ()=> {
         // handle search logic here
         console.log(searchQuery);
     }; 
