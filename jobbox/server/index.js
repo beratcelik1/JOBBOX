@@ -5,7 +5,7 @@ const mongoose = require('mongoose');
 
 const app = express();
 const authRoutes = require('./routes/auth');
-
+//job posting 
 const jobRoutes = require('./routes/job');
 
 app.use(cors());
