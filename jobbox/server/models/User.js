@@ -19,6 +19,10 @@ const UserSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  profilePic: {
+    type: String,
+    default: '',
+  },
   about: [{
     title: String,
     description: String,
@@ -31,23 +35,21 @@ const UserSchema = new mongoose.Schema({
     description: String,
   }],  
   education: [{
-    institution: String,
+    date: String,
     degree: String,
-    fieldOfStudy: String,
-    startDate: Date,
-    endDate: Date,
-    description: String,
+    major: String,
+    university: String,
   }],
   skills: [String],
   recommendations: [{
     name: String,
     relationship: String,
     recommendation: String,
-  }],
+  }], 
   jobPostings: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Job',
-}]
+  }] 
 });
 
 
