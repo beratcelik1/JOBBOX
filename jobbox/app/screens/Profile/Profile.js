@@ -171,38 +171,44 @@ const Profile = () => {
         const token = await AsyncStorage.getItem('token');
 
         try {
-            let response = await axios.post(
-                'https://tranquil-ocean-74659.herokuapp.com/upload',
-                formData,
-                {
-                    headers: {
-                        'Content-Type': 'multipart/form-data',
-                        Authorization: `Bearer ${token}`,
-                    },
-                }
-            );
-
-            if (response.data && response.data.path) {
-                let imagePath = response.data.path;
-                let imageUrl = 'https://tranquil-ocean-74659.herokuapp.com' + imagePath;
-                let profilePicResponse = await axios.put(
-                    'https://tranquil-ocean-74659.herokuapp.com/api/user/me/profilePic',
-                    { profilePic: imageUrl },
-                    { headers: { Authorization: `Bearer ${token}`, }, }
-                );
-
-                if (profilePicResponse.data) {
-                    setUser((prevUser) => ({
-                        ...prevUser,
-                        profilePic: profilePicResponse.data.profilePic,
-                    }));
-
-                    alert('Profile photo updated successfully!');
-                }
+          let response = await axios.post(
+            'https://tranquil-ocean-74659.herokuapp.com/upload',
+            formData,
+            {
+              headers: {
+                'Content-Type': 'multipart/form-data',
+                Authorization: `Bearer ${token}`,
+              },
             }
+          );
+        
+          if (response.data && response.data.path) {
+            let imagePath = response.data.path;
+            let imageUrl = 'https://tranquil-ocean-74659.herokuapp.com' + imagePath;
+        
+            try {
+              let profilePicResponse = await axios.put(
+                'https://tranquil-ocean-74659.herokuapp.com/auth/user/me/profilePic',
+                { profilePic: imageUrl },
+                { headers: { Authorization: `Bearer ${token}`, }, }
+              );
+        
+              if (profilePicResponse.data) {
+                setUser((prevUser) => ({
+                  ...prevUser,
+                  profilePic: profilePicResponse.data.profilePic,
+                }));
+        
+                alert('Profile photo updated successfully!');
+              }
+            } catch (err) {
+              console.error("Failed to update profile picture: ", err);
+            }
+          }
         } catch (err) {
-            console.error("Failed to upload image: ", err);
+          console.error("Failed to upload image: ", err);
         }
+        
     }
 };
 

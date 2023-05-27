@@ -21,32 +21,40 @@ const storage = multer.diskStorage({
 const upload = multer({
   storage: storage,
   limits: {
-    fileSize: 1000000 // 1000000 Bytes = 1 MB
+    fileSize: 100000000 // 1000000 Bytes = 1 MB
   },
   fileFilter(req, file, cb) {
-    if (!file.originalname.match(/\.(png|jpg)$/)) { 
-      // upload only png and jpg format
-      return cb(new Error('Please upload a Image'))
+    if (!file.originalname.match(/\.(png|jpg|jpeg)$/)) { 
+        // upload only png, jpg, and jpeg format
+        return cb(new Error('Please upload a Image'))
     }
     cb(undefined, true)
-  } 
+}
 })
 
 app.post('/upload', upload.single('image'), (req, res, next) => {
   if (!req.file) {
+    console.log('No file received');
     return next(new Error('File upload failed'));
   }
+  console.log('File received:', req.file);
   // Send the path to the image file
   res.send({ path: '/uploads/' + req.file.filename });
 }, (error, req, res, next) => {
   // Error handling middleware
+  console.log('Error uploading file:', error);
   res.status(400).send({error: error.message});
 })
+
 
 
 app.use(cors());
 app.use(express.json()); // for parsing application/json
 app.use('/auth', authRoutes);
+app.use('/uploads', (req, res, next) => {
+  console.log('Received request for file:', req.path);
+  next(); // This will pass the request to the next middleware
+});
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 mongoose.connect(process.env.DB_URI, { useNewUrlParser: true, useUnifiedTopology: true })
