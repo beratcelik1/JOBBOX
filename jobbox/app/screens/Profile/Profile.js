@@ -122,9 +122,9 @@ const Profile = () => {
             id: '4',
             title: 'Skills',
             iconName: 'star',
-            data: skills,
+            data: skills.map(skill => ({ title: skill })), // transform each skill to an object with 'title' property
             text: skills.length > 0 ? skills.join(', ') : 'No information provided.'
-          },
+          },          
           {
             id: '5',
             title: 'Recommendations',
