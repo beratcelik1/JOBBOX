@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, Button, StyleSheet } from 'react-native';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -28,17 +28,54 @@ const styles = StyleSheet.create({
 const ProfileSection = ({ route, navigation }) => {
   const { section } = route.params;
   const [editing, setEditing] = useState(false);
-  const [text, setText] = useState('');
-  const [position, setPosition] = useState('');
-  const [company, setCompany] = useState('');
-  const [experience, setExperience] = useState([{position: '', company: ''}]); 
-
+  const [text, setText] = useState(section.title === 'About' ? section.text : '');
+  const [experience, setExperience] = useState(
+    section.title === 'Experience' && section.data?.length > 0 
+      ? section.data 
+      : [{position: '', company: ''}]
+  );
+  const [education, setEducation] = useState(
+    section.title === 'Education' && section.data?.length > 0 
+      ? section.data 
+      : []
+  );
+  
+  
+  
+  useEffect(() => {
+    if (section.title === 'About') {
+      setText(section.text);
+    } else if (section.title === 'Experience') {
+      setExperience(section.data || [{position: '', company: ''}]);
+    } else if (section.title === 'Education') {
+      setEducation(section.data || [{date: '', degree: '', major: '', university: ''}]);
+    }
+  }, [section]);
+  
   const handleEdit = () => {
+    if (section.title === 'About') {
+      setText(section.text);
+    } else if (section.title === 'Experience') {
+      setExperience(section.data || [{position: '', company: ''}]);
+    } else if (section.title === 'Education') {
+      setEducation(section.data || [{date: '', degree: '', major: '', university: ''}]);
+    }
     setEditing(true);
   };
 
+  const handleDelete = (index) => {
+    let updatedEducation = [...education];
+    updatedEducation.splice(index, 1);
+    setEducation(updatedEducation);
+  };
+  
+  
   const addExperience = () => {
     setExperience(prevExperience => [...prevExperience, {position: '', company: ''}]);
+  };
+  
+  const addEducation = () => {
+    setEducation(prevEducation => [...prevEducation, {date: '', degree: '', major: '', university: ''}]);
   };
   
 
@@ -51,12 +88,11 @@ const ProfileSection = ({ route, navigation }) => {
         case 'About':
           updateData = { about: [...(section.data?.about || []), { title: '', description: text  }] };
           break;
-        case 'Experience': 
-          updateData = { experience: [...(section.data?.experience || []), ...experience] };
+          case 'Experience': 
+          updateData = { experience: experience };
           break;
-        case 'Education':
-          // Update this block according to your 'Education' section's fields and data
-          updateData = { education: [...(section.data?.education || []), { institution: text, degree: '', fieldOfStudy: '', startDate: new Date(), endDate: new Date(), description: '' }] };
+          case 'Education':
+          updateData = { education: education };
           break;
         case 'Skills':
           updateData = { skills: [...(section.data?.skills || []), ...text.split(',').map(skill => skill.trim())] };
@@ -103,26 +139,31 @@ const ProfileSection = ({ route, navigation }) => {
                 {experience.map((exp, index) => (
                   <React.Fragment key={index}>
                     <Text style={styles.text}>Position:</Text>
-                    <TextInput style={styles.input} 
-                     value={exp.position} 
-                     placeholder='Position' 
-                     onChangeText={(text) => { 
-                       let updatedExperience = [...experience];
-                       updatedExperience[index].position = text;
-                       setExperience(updatedExperience); 
-                     }} />
-
-                    <Text style={styles.text}>Company:</Text>
                     <TextInput
-                      style={styles.input}
-                      value={exp.company}
-                      placeholder='Company'
-                      onChangeText={(text) => {
-                        let updatedExperience = [...experience];
+                    style={styles.input}
+                    value={exp.position}
+                    placeholder='Position'
+                    onChangeText={(text) => {
+                      setExperience((prevExperience) => {
+                        const updatedExperience = [...prevExperience];
+                        updatedExperience[index].position = text;
+                        return updatedExperience;
+                      });
+                    }}
+                  />
+                  <Text style={styles.text}>Company:</Text>
+                  <TextInput
+                    style={styles.input}
+                    value={exp.company}
+                    placeholder='Company'
+                    onChangeText={(text) => {
+                      setExperience((prevExperience) => {
+                        const updatedExperience = [...prevExperience];
                         updatedExperience[index].company = text;
-                        setExperience(updatedExperience);
-                      }}
-                    />
+                        return updatedExperience;
+                      });
+                    }}
+                  />
                   </React.Fragment>
                 ))}
                 <Button title="Add Experience" onPress={addExperience} />
@@ -136,6 +177,67 @@ const ProfileSection = ({ route, navigation }) => {
               />
             )
         }
+
+{
+  section.title === 'Education'
+    ? (
+      <React.Fragment>
+        {education.map((edu, index) => (
+          <React.Fragment key={index}>
+            <Text style={styles.text}>Date:</Text>
+            <TextInput
+              style={styles.input}
+              value={edu.date}
+              placeholder='Date'
+              onChangeText={(text) => {
+                let updatedEducation = [...education];
+                updatedEducation[index].date = text;
+                setEducation(updatedEducation);
+              }}
+            />
+            <Text style={styles.text}>Degree:</Text>
+            <TextInput
+              style={styles.input}
+              value={edu.degree}
+              placeholder='Degree'
+              onChangeText={(text) => {
+                let updatedEducation = [...education];
+                updatedEducation[index].degree = text;
+                setEducation(updatedEducation);
+              }}
+            />
+            <Text style={styles.text}>Major:</Text>
+            <TextInput
+              style={styles.input}
+              value={edu.major}
+              placeholder='Major'
+              onChangeText={(text) => {
+                let updatedEducation = [...education];
+                updatedEducation[index].major = text;
+                setEducation(updatedEducation);
+              }}
+            />
+            <Text style={styles.text}>University:</Text>
+            <TextInput
+              style={styles.input}
+              value={edu.university}
+              placeholder='University'
+              onChangeText={(text) => {
+                let updatedEducation = [...education];
+                updatedEducation[index].university = text;
+                setEducation(updatedEducation);
+              }}
+            />
+            <Button title="Delete" onPress={() => handleDelete(index)} />
+          </React.Fragment>
+        ))}
+        <Button title="Add Education" onPress={addEducation} />
+      </React.Fragment>
+      
+    )
+    : null
+}
+
         <Button title="Save" onPress={handleSave} />
       </View>
     );

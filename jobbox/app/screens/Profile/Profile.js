@@ -110,11 +110,13 @@ const Profile = () => {
             text: experience.length > 0 ? experience.map(e => ` - ${e.position} at ${e.company}`).join('\n') : 'No information provided.'
           },
           {
-            id: '3',
-            title: 'Education',
-            iconName: 'school',
-            data: education,
-            text: education.length > 0 ? education.map(e => `${e.degree} ${e.fieldOfStudy} ${e.institution}`).join(', ') : 'No information provided.'
+            id: '3', 
+            title: 'Education', 
+            iconName: 'school', 
+            data: education, 
+            text: education.length > 0 ? 
+              education.map(e => `Date: ${e.date}, Degree: ${e.degree}, Major: ${e.major}, University: ${e.university}`).join('\n') : 
+              'No information provided.'
           },
           {
             id: '4',
@@ -231,7 +233,7 @@ return (
               <Icon name="star" size={20} color="#f1c40f" />
               <Text>4.5</Text>
             </View>
-            <Text>San Francisco, CA</Text>
+            <Text>Kelowna, BC</Text>
           </View>
         </View>
 
