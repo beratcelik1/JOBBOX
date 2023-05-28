@@ -1,10 +1,12 @@
 ```
-JOBBOX
+JOBBOX-1
 ├─ .DS_Store
+├─ CODEOWNERS
 ├─ jobbox
 │  ├─ .expo
 │  │  ├─ devices.json
-│  │  └─ README.md
+│  │  ├─ README.md
+│  │  └─ settings.json
 │  ├─ app
 │  │  ├─ assets
 │  │  │  ├─ fonts
@@ -66,14 +68,17 @@ JOBBOX
 │  ├─ package.json
 │  ├─ react-native.config.js
 │  └─ server
+│     ├─ .env
 │     ├─ index.js
 │     ├─ models
+│     │  ├─ Job.js
 │     │  └─ User.js
 │     ├─ package-lock.json
 │     ├─ package.json
 │     ├─ Procfile
 │     └─ routes
-│        └─ auth.js
+│        ├─ auth.js
+│        └─ job.js
 └─ README.md
 
 ```

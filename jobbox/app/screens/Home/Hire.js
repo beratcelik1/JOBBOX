@@ -1,5 +1,3 @@
-
-
 import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, Button, StyleSheet, TouchableOpacity, FlatList } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
@@ -8,19 +6,33 @@ import PostJob from '../Home/PostJob';
 import { Ionicons } from '@expo/vector-icons';
 import HireApplications from './HireApplications';
 
+import jwt_decode from "jwt-decode";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+
+
 function HireScreen({ navigation }) {
     const [searchQuery, setSearchQuery] = useState('');
     const [jobs, setJobs] = useState([]);
 
     useEffect(() => {
-        // Simulating a fetch call here
-        const fetchedJobs = [
-            { id: '1', title: 'Lawn mowing', description: 'One time', datePosted: '2023-01-01', numApplications: '3'  },
-            { id: '2', title: 'Grocery run', description: 'One time', datePosted: '2023-02-15', numApplications: '1' },
-            // Add more jobs here...
-        ];
-        setJobs(fetchedJobs);
-    }, []);
+        (async () => {
+          // Fetch the token from the async storage
+          const token = await AsyncStorage.getItem('token');
+          // Decode the token to get the user ID
+          const decodedToken = jwt_decode(token);
+          const userId = decodedToken.userId;
+      
+          // Fetch the jobs from your server
+          fetch(`http://tranquil-ocean-74659.herokuapp.com/jobs/user/${userId}`)
+            .then((response) => response.json())
+            .then((data) => {
+              // Set the jobs state
+              setJobs(data);
+            })
+            .catch((error) => console.error('Error:', error));
+        })();
+      }, []);
 
     const handleSearch = () => {
         console.log(searchQuery);
