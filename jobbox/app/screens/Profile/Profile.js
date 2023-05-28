@@ -99,8 +99,15 @@ const Profile = () => {
             id: '1',
             title: 'About',
             iconName: 'info',
+            
             data: about,
             text: about.length > 0 ? about.map(a => `${a.title} ${a.description}`).join(', ') : 'No information provided.'
+            
+            /*data:First_Name,
+            text: First_Name.length > 0 ? data.map(a => `${a.title} ${a.description}`).join(', ') : 'No information provided.'
+           // data:Last_Name,
+            //text: Last_Name.length > 0 ? data.map(a => `${a.title} ${a.description}`).join(', ') : 'No information provided.'
+            */
           },
           {
             id: '2',
@@ -220,6 +227,7 @@ const Profile = () => {
   
 return (
   <View style={styles.container}>
+
     {user ? (
       <>
         <View style={styles.headerContainer}>

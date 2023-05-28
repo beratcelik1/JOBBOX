@@ -3,27 +3,91 @@ import { View, Text, TextInput, Button, StyleSheet } from 'react-native';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const styles = StyleSheet.create({
+/*const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
+    alignItems: 'center', // Align content in the center horizontally
   },
   title: {
     fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 20,
+    // textAlign: 'center',
   },
   text: {
     fontSize: 16,
+    // textAlign: 'center'
+  },
+  label: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginBottom: 8,
+    // textAlign: 'center'
   },
   input: {
-    height: 40,
-    borderColor: 'gray',
     borderWidth: 1,
-    marginBottom: 20,
-    paddingLeft: 10,
+    borderColor: '#ccc',
+    borderRadius: 4,
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    fontSize: 16,
+    backgroundColor: '#fff',
+  },
+  button: {
+    marginTop: 10,
+    backgroundColor: '#4683FC', 
+},
+*/const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    padding: 20,
+    alignItems: 'center',
+  },
+  title: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
+  
+  text: {
+    fontSize: 14,
+    color: '#666',
+    marginTop: 10,
+  },
+  label: {
+    fontSize: 12,
+    color: '#999',
+    marginTop: 10,
+  },
+  // input: {
+  //   backgroundColor: '#fff',
+  //   padding: 20,
+  //   marginBottom: 10,
+  //   borderRadius: 10,
+  //   borderWidth: 1,
+  //   borderColor: '#ccc',
+  //   fontSize: 16,
+  inputContainer: {
+    backgroundColor: '#fff',
+    padding: 20,
+    marginBottom: 10,
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: '#ccc',
+    elevation: 2,
+  },
+  input: {
+    fontSize: 16,
+    shadowColor: '#000',
+    shadowOffset: { width: 1, height: 1 },
+    shadowOpacity: 0.5,
+    shadowRadius: 2,
   },
 });
+
+
+
 
 const ProfileSection = ({ route, navigation }) => {
   const { section } = route.params;
@@ -177,6 +241,38 @@ const ProfileSection = ({ route, navigation }) => {
     return (
       <View style={styles.container}>
         <Text style={styles.title}>{section.title}</Text>
+        {
+          section.title === 'About'
+            ? (
+              <React.Fragment>
+                <Text style={styles.label}>About:</Text>
+                <TextInput
+                style={styles.input}
+                value={text}
+                placeholder='About text'
+                onChangeText={setText}
+                />
+{/*                 
+                <Text style={styles.text}>First Name*:</Text>
+                <TextInput
+                style={styles.input}
+                value={text}
+                placeholder='First Name text'
+                onChangeText={setText}
+                /> 
+                <Text style={styles.text}>Last Name*:</Text>
+                <TextInput
+                style={styles.input}
+                value={text}
+                placeholder='Last Name text'
+                onChangeText={setText}
+              
+                />
+                */}
+              </React.Fragment>
+            )
+            : null
+        }
         {
           section.title === 'Experience'
             ? (
@@ -377,5 +473,19 @@ const ProfileSection = ({ route, navigation }) => {
     </View>
   );
 };
+
+// const styles = StyleSheet.create({
+//   container: {
+//       padding: 15,
+//   },
+//   input: {
+//       marginBottom: 10,
+//       backgroundColor: '#fff',
+//   },
+//   button: {
+//       marginTop: 10,
+//       backgroundColor: '#4683FC', 
+//   },
+// });
 
 export default ProfileSection;
