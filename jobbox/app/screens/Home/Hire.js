@@ -4,12 +4,14 @@ import { useNavigation } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import PostJob from '../Home/PostJob';
 import { Ionicons } from '@expo/vector-icons';
-import HireApplications from './HireApplications';
-import { useFocusEffect } from '@react-navigation/native';
+
+import  { HireApplicationsScreen }  from './HireApplications';
+import { useFocusEffect } from '@react-navigation/native'; 
+
+import { EditJobScreen } from './EditJobScreen';
 
 import jwt_decode from "jwt-decode";
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
 
 
 function HireScreen({ navigation }) {
@@ -50,7 +52,7 @@ function HireScreen({ navigation }) {
     };
     const handleJobPress = (job) => {
         console.log(job);
-        navigation.navigate('HireApplications', { job: job });
+        navigation.navigate('HireApplicationsScreen', { job: job });
     }
 
     const renderJob = ({ item }) => (
@@ -107,7 +109,8 @@ export default function Hire() {
         <HireStack.Navigator initialRouteName="HireScreen">
             <HireStack.Screen name="HireScreen" component={HireScreen} options={{headerShown: false}} />
             <HireStack.Screen name="PostJob" component={PostJob} options={{headerTitle: '', headerShown: true, headerBackTitle: '', headerBackTitleVisible: false}} />
-            <HireStack.Screen name="HireApplications" component={HireApplications} options={{headerTitle: '', headerShown: true, headerBackTitle: '', headerBackTitleVisible: false}} />
+            <HireStack.Screen name="HireApplicationsScreen" component={HireApplicationsScreen} options={{headerTitle: '', headerShown: true, headerBackTitle: '', headerBackTitleVisible: false}} />
+            <HireStack.Screen name="EditJob" component={EditJobScreen} options={{headerTitle: '', headerShown: true, headerBackTitle: '', headerBackTitleVisible: false}} />
         </HireStack.Navigator>
     );
 }
