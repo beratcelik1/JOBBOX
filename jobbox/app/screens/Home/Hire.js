@@ -49,6 +49,7 @@ function HireScreen({ navigation }) {
         console.log(searchQuery);
     };
     const handleJobPress = (job) => {
+        console.log(job);
         navigation.navigate('HireApplications', { job: job });
     }
 

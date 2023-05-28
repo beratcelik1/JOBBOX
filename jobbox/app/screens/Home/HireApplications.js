@@ -6,7 +6,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import { EditJobScreen } from './EditJobScreen';
 
 
-function hireApplicationsScreen({ route }) {
+function HireApplicationsScreen({ route }) {
     const { job } = route.params;
     const [applicants, setApplicants] = useState([]);
     const [jobProgress, setJobProgress] = useState(0.33); // Add this state to represent the job progress
@@ -106,7 +106,7 @@ const editJobStack = createStackNavigator();
 export default function HireApplications() {
     return (
         <editJobStack.Navigator initialRouteName="HireScreen">
-            <editJobStack.Screen name="HireApplicationsScreen" component={hireApplicationsScreen} options={{headerShown: false}} />
+            <editJobStack.Screen name="HireApplicationsScreen" component={HireApplicationsScreen} options={{headerShown: false}} />
             <editJobStack.Screen name="EditJob" component={EditJobScreen} options={{headerTitle: '', headerShown: true, headerBackTitle: '', headerBackTitleVisible: false}} />
         </editJobStack.Navigator>
     );

@@ -72,7 +72,7 @@ router.get('/', async (req, res) => {
   } catch (error) {
       res.status(500).send(error);
   }
-}); 
+});
 
 // Edit a job
 router.patch('/:jobId', async (req, res) => {
