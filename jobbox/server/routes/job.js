@@ -72,6 +72,82 @@ router.get('/', async (req, res) => {
   } catch (error) {
       res.status(500).send(error);
   }
+}); 
+
+// Edit a job
+router.patch('/:jobId', async (req, res) => {
+  const token = req.header('Authorization')?.replace('Bearer ', '');
+  if (!token) {
+    return res.status(401).json({ error: 'Authorization token missing' });
+  }
+
+  try {
+    const data = jwt.verify(token, process.env.JWT_SECRET);
+    const user = await User.findById(data.userId);
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    const job = await Job.findById(req.params.jobId);
+    if (!job) {
+      return res.status(404).json({ error: 'Job not found' });
+    }
+
+      if (job.postedBy.toString() !== user._id.toString()) {
+          return res.status(401).json({ error: 'User not authorized to edit this job' });
+      }
+
+      const { title, description, skills, location, pay, estimatedTime, estimatedTimeUnit, category } = req.body;
+
+      if (title) job.title = title;
+      if (description) job.description = description;
+      if (skills) job.skills = skills;
+      if (location) job.location = location;
+      if (pay) job.pay = pay;
+      if (estimatedTime) job.estimatedTime = estimatedTime;
+      if (estimatedTimeUnit) job.estimatedTimeUnit = estimatedTimeUnit;
+      if (category) job.category = category;
+
+      await job.save();
+
+      res.send(job);
+
+  } catch (error) {
+      res.status(400).send(error);
+  }
+}); 
+
+// Delete a job
+router.delete('/:id', async (req, res) => {
+  const token = req.header('Authorization')?.replace('Bearer ', '');
+  if (!token) {
+    return res.status(401).json({ error: 'Authorization token missing' });
+  }
+
+  try {
+    const data = jwt.verify(token, process.env.JWT_SECRET);
+    const user = await User.findById(data.userId);
+
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    const job = await Job.findById(req.params.id);
+
+    if (!job) {
+      return res.status(404).json({ error: 'Job not found' });
+    }
+
+    if (!job.postedBy.equals(user._id)) {
+      return res.status(403).json({ error: 'You are not authorized to delete this job' });
+    }
+
+    await job.remove();
+    res.json({ message: 'Job deleted' });
+
+  } catch (error) {
+    res.status(400).send(error);
+  }
 });
 
 
