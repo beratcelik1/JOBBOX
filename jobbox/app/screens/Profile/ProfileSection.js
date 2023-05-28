@@ -239,30 +239,13 @@ const ProfileSection = ({ route, navigation }) => {
           section.title === 'About'
             ? (
               <React.Fragment>
-                <Text style={styles.label}>About:</Text>
+                <Text style={styles.text}>About:</Text>
                 <TextInput
                 style={styles.input}
                 value={text}
                 placeholder='About text'
                 onChangeText={setText}
                 />
-{/*                 
-                <Text style={styles.text}>First Name*:</Text>
-                <TextInput
-                style={styles.input}
-                value={text}
-                placeholder='First Name text'
-                onChangeText={setText}
-                /> 
-                <Text style={styles.text}>Last Name*:</Text>
-                <TextInput
-                style={styles.input}
-                value={text}
-                placeholder='Last Name text'
-                onChangeText={setText}
-              
-                />
-                */}
               </React.Fragment>
             )
             : null
