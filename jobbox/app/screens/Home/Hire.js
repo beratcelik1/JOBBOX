@@ -84,10 +84,10 @@ function HireScreen({ navigation }) {
             </View>
 
             <FlatList
-                data={jobs}
-                renderItem={renderJob}
-                keyExtractor={item => item.id}
-                style={styles.applicantView}
+            data={jobs}
+            renderItem={renderJob}
+            keyExtractor={(item, index) => item._id}
+            style={styles.applicantView}
             />
             <View style={ {justifyContent: 'center', alignItems: 'center'}}>
                 <TouchableOpacity

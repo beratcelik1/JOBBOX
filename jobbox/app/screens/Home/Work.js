@@ -245,7 +245,7 @@ function WorkScreen({ navigation }) {
             <FlatList
                 data={jobs}
                 renderItem={renderJob}
-                keyExtractor={item => item.id}
+                keyExtractor={item => item._id}
                 style={styles.jobView}
                 onEndReachedThreshold={0.5}
                 refreshing={refreshing}
