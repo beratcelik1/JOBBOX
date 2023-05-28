@@ -5,6 +5,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import PostJob from '../Home/PostJob';
 import { Ionicons } from '@expo/vector-icons';
 import HireApplications from './HireApplications';
+import { useFocusEffect } from '@react-navigation/native';
 
 import jwt_decode from "jwt-decode";
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -15,24 +16,34 @@ function HireScreen({ navigation }) {
     const [searchQuery, setSearchQuery] = useState('');
     const [jobs, setJobs] = useState([]);
 
-    useEffect(() => {
-        (async () => {
-          // Fetch the token from the async storage
-          const token = await AsyncStorage.getItem('token');
-          // Decode the token to get the user ID
-          const decodedToken = jwt_decode(token);
-          const userId = decodedToken.userId;
-      
-          // Fetch the jobs from your server
-          fetch(`http://tranquil-ocean-74659.herokuapp.com/jobs/user/${userId}`)
-            .then((response) => response.json())
-            .then((data) => {
-              // Set the jobs state
-              setJobs(data);
-            })
-            .catch((error) => console.error('Error:', error));
-        })();
-      }, []);
+    useFocusEffect(
+        React.useCallback(() => {
+            const fetchJobs = async () => {
+                // Fetch the token from the async storage
+                const token = await AsyncStorage.getItem('token');
+                console.log(token);
+
+                // Decode the token to get the user ID
+                const decodedToken = jwt_decode(token);
+                const userId = decodedToken.userId;
+
+                // Fetch the jobs from your server
+                fetch(`http://tranquil-ocean-74659.herokuapp.com/jobs/user/${userId}`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                })
+                .then((response) => response.json())
+                .then((data) => {
+                    // Set the jobs state
+                    setJobs(data);
+                })
+                .catch((error) => console.error('Error:', error));
+            };
+
+            fetchJobs();
+        }, [])
+    );
 
     const handleSearch = () => {
         console.log(searchQuery);
@@ -46,7 +57,7 @@ function HireScreen({ navigation }) {
             <Text style={styles.jobTitle}>{item.title}</Text>
             <Text style={styles.jobDescription}>{item.description}</Text>
             <Text style={styles.jobDate}>{item.datePosted}</Text>
-            <Text style={styles.jobDate}>Applications: {item.numApplications}</Text>
+            <Text style={styles.jobDate}>Applications: {item.applications ? item.applications.length : 0}</Text>
             <Button onPress={() => handleJobPress(item)} title="View Applicants" />
         </View>
     );
@@ -64,8 +75,7 @@ function HireScreen({ navigation }) {
                 />
                 <TouchableOpacity
                     onPress={handleSearch}
-                    style={styles.searchButton}
-                >
+                    style={styles.searchButton}>
                     <Text style={styles.buttonText}>Search</Text>
                 </TouchableOpacity>
             </View>

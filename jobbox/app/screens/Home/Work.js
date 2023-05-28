@@ -1,17 +1,80 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { View, Text, TextInput, TouchableOpacity, FlatList, StyleSheet, ActivityIndicator } from 'react-native';
-import { Ionicons } from '@expo/vector-icons'; // you might need to install this package
+import { View, Text, TouchableOpacity, FlatList, StyleSheet, ScrollView } from 'react-native';
+import Modal from 'react-native-modal';
+import { TextInput, Button, List } from 'react-native-paper';
+import { Ionicons } from '@expo/vector-icons';
+import Collapsible from 'react-native-collapsible';
+
 
 import { createStackNavigator } from '@react-navigation/stack';
+import { DefaultTheme, Provider as PaperProvider } from 'react-native-paper';
 
 function WorkScreen({ navigation }) {
     const [searchQuery, setSearchQuery] = useState('');
     // At the top of your WorkScreen function...
     const [jobs, setJobs] = useState([]);
     const [categoryFilter, setCategoryFilter] = useState('');
+    const [skillsFilter, setSkillsFilter] = useState('');
+    const [payFilter, setPayFilter] = useState('');
+    const [locationFilter, setLocationFilter] = useState('');
+    const categories = ['Web Development', 'Graphic Design', 'Content Writing', 'Marketing', 'Mobile App Development', 'Home Cleaning', 'Gardening', 'Dog Walking', 'Grocery Delivery', 'Moving'];
+
     const [isLoading, setIsLoading] = useState(false);
     const [refreshing, setRefreshing] = useState(false);
     const [scrollPosition, setScrollPosition] = useState(0);
+
+    const [isCategoryModalVisible, setCategoryModalVisible] = useState(false);
+    const [isFilterModalVisible, setFilterModalVisible] = useState(false);
+
+    const theme = {
+        ...DefaultTheme,
+        colors: {
+          ...DefaultTheme.colors,
+          primary: '#4683FC', // change the primary color to blue
+        },
+    };
+
+    const Accordion = ({ title, data, renderContent }) => {
+        const [isCollapsed, setIsCollapsed] = useState(true);
+      
+        return (
+          <View>
+            <TouchableOpacity onPress={() => setIsCollapsed(!isCollapsed)}>
+              <Text>{title}</Text>
+            </TouchableOpacity>
+            <Collapsible collapsed={isCollapsed}>
+              {data.map((content, index) => (
+                <TouchableOpacity key={index} onPress={() => {
+                  setCategoryFilter(content);
+                  closeCategoryModal();
+                }}>
+                  <Text>{content}</Text>
+                </TouchableOpacity>
+              ))}
+            </Collapsible>
+          </View>
+        );
+      };
+      
+
+        const openFilterModal = () => {
+            setFilterModalVisible(true);
+        };
+
+        const closeFilterModal = () => {
+            setFilterModalVisible(false);
+        };
+
+
+    const openCategoryModal = () => {
+        setCategoryModalVisible(true);
+      };
+    
+      const closeCategoryModal = () => {
+        setCategoryModalVisible(false);
+      };
+      
+
 
 
     const fetchJobs = useCallback(() => {
@@ -70,21 +133,31 @@ function WorkScreen({ navigation }) {
       
       const handleFilter = () => {
         setIsLoading(true);
-        fetch(`http://tranquil-ocean-74659.herokuapp.com/jobs/category?category=${categoryFilter}`)
+        const filters = {
+          category: categoryFilter,
+          skills: skillsFilter,
+          pay: payFilter,
+          location: locationFilter,
+        };
+      
+        const query = Object.keys(filters)
+          .filter((key) => filters[key].length > 0)
+          .map((key) => `${encodeURIComponent(key)}=${encodeURIComponent(filters[key])}`)
+          .join('&');
+      
+        fetch(`http://tranquil-ocean-74659.herokuapp.com/jobs/?${query}`)
           .then(response => response.json())
           .then(data => setJobs(data))
           .catch(error => console.error('Error:', error));
       };
       
-    const renderJob = ({item}) => (
-        <TouchableOpacity 
-            style={styles.jobCard} 
-            onPress={() => navigation.navigate('JobDetail', { job: item })}>
+      const renderJob = ({ item }) => (
+        <TouchableOpacity style={styles.jobCard} onPress={() => navigation.navigate('JobDetail', { job: item })}>
             <View style={styles.jobDetails}>
                 <Text style={styles.jobTitle}>{item.title}</Text>
-                <Text style={styles.jobCompany}>{item.company}</Text>
+                <Text style={styles.jobCompany}>{item.employer}</Text>
                 <Text style={styles.jobLocation}>{item.location}</Text>
-                <Text style={styles.jobPosted}>{item.posted}</Text>
+                <Text style={styles.jobPosted}>{item.datePosted}</Text>
             </View>
             <View style={styles.jobExtras}>
                 <Text style={styles.jobExtra}><Ionicons name="time-outline" size={14} color="gray" /> {item.estimatedTime}</Text>
@@ -94,7 +167,9 @@ function WorkScreen({ navigation }) {
         </TouchableOpacity>
     );
     
+    
     return (
+        
         <View style={styles.container}>
             <View style={styles.searchSection}>
                 <Ionicons style={styles.searchIcon} name="ios-search" size={20} color="#000" />
@@ -102,7 +177,7 @@ function WorkScreen({ navigation }) {
                     style={styles.searchInput}
                     onChangeText={setSearchQuery}
                     value={searchQuery}
-                    placeholder="What Job are you looking for..."
+                    placeholder="Search"
                     placeholderTextColor="gray"
                 />
                 <TouchableOpacity
@@ -113,18 +188,60 @@ function WorkScreen({ navigation }) {
                 </TouchableOpacity>
             </View>
             <View style={styles.filterSection}>
-                <Text>Filter by:</Text>
-                <TextInput
-                    style={styles.filterInput}
-                    onChangeText={setCategoryFilter}
-                    value={categoryFilter}
-                    placeholder="Category..."
-                    placeholderTextColor="gray"
-                />
-                <TouchableOpacity onPress={handleFilter}>
-                    <Text style={styles.filterOption}>Apply Filter</Text>
+    <TouchableOpacity onPress={openFilterModal}>
+        <Text style={styles.filterOption}>Filter</Text>
+    </TouchableOpacity>
+</View>
+<Modal 
+                isVisible={isFilterModalVisible} 
+                style={styles.modal} 
+                onBackdropPress={closeFilterModal}
+            >
+<View style={styles.modalContent}>
+    <Text>Filter by:</Text>
+    <View style={styles.filterBox}>
+        <Accordion
+            title={categoryFilter || "Category..."}
+            data={categories}
+            renderContent={(content) => (
+                <TouchableOpacity onPress={() => {
+                    setCategoryFilter(content);
+                    closeCategoryModal();
+                }}>
+                    <Text>{content}</Text>
                 </TouchableOpacity>
-            </View> 
+            )}
+        />
+    </View>
+    <View style={styles.filterBox}>
+        <TextInput
+            onChangeText={setSkillsFilter}
+            value={skillsFilter}
+            placeholder="Skills..."
+            placeholderTextColor="gray"
+        />
+    </View>
+    <View style={styles.filterBox}>
+        <TextInput
+            onChangeText={setPayFilter}
+            value={payFilter}
+            placeholder="Pay..."
+            placeholderTextColor="gray"
+        />
+    </View>
+    <View style={styles.filterBox}>
+        <TextInput
+            onChangeText={setLocationFilter}
+            value={locationFilter}
+            placeholder="Location..."
+            placeholderTextColor="gray"
+        />
+    </View>
+    <TouchableOpacity onPress={() => { handleFilter(); closeFilterModal(); }}>
+        <Text style={styles.filterOption}>Apply Filter</Text>
+    </TouchableOpacity>
+</View>
+            </Modal>
             <FlatList
                 data={jobs}
                 renderItem={renderJob}
@@ -133,15 +250,13 @@ function WorkScreen({ navigation }) {
                 onEndReachedThreshold={0.5}
                 refreshing={refreshing}
                 onRefresh={onRefresh}
-                ListFooterComponent={
-                    isLoading ? <ActivityIndicator size="large" color="#0000ff" /> : null
-                }
                 onScroll={event => {
                     setScrollPosition(event.nativeEvent.contentOffset.y);
                 }}
             />
         </View>
     );
+    
 } 
 
 function JobDetailScreen({ route, navigation }) {
@@ -171,9 +286,6 @@ export default function Work() {
       </Stack.Navigator>   
     );
 }
-
-
-
 const styles = StyleSheet.create({
     container: {
         flex: 1,
@@ -188,20 +300,20 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         backgroundColor: '#fff',
-        borderRadius: 50,
+        borderRadius: 40,
         paddingLeft: 10,
         marginLeft: 15, 
         marginRight: 15, 
         marginTop: 10, 
     },
     searchIcon: {
-        padding: 10,
+        padding: 0,
     },
     searchInput: {
         flex: 1,
-        paddingTop: 10,
-        paddingRight: 10,
-        paddingBottom: 10,
+        paddingTop: 0,
+        paddingRight: 0,
+        paddingBottom: 0,
         paddingLeft: 0,
         backgroundColor: '#fff',
         color: '#424242',
@@ -209,7 +321,7 @@ const styles = StyleSheet.create({
     searchButton: {
         backgroundColor: '#4683fc',
         borderRadius: 50,
-        width: 100,
+        width: 70,
         height: 40,
         justifyContent: 'center',
         alignItems: 'center',
@@ -222,9 +334,9 @@ const styles = StyleSheet.create({
     filterSection: {
         flexDirection: 'row',
         justifyContent: 'space-around',
-        alignItems: 'center',
-        marginTop: 20,
-        marginBottom: 20,
+        alignItems: 'left',
+        marginTop: 10,
+        marginBottom: 10,
     },
     filterOption: {
         color: '#4683fc',
@@ -281,7 +393,7 @@ const styles = StyleSheet.create({
     jobExtras: {
         flex: 1,
         width: 4,
-        alignItems: 'flex-start', // This aligns the extra details to the right
+        alignItems: 'flex-start',
     },
     jobExtra: {
         flexDirection: 'row',
@@ -298,9 +410,7 @@ const styles = StyleSheet.create({
         padding: 20,
         marginBottom: 10,
         borderRadius: 10,
-        // Android shadow properties
         elevation: 5,
-        // iOS shadow properties
         shadowColor: "#000",
         shadowOffset: {
             width: -10,
@@ -323,4 +433,37 @@ const styles = StyleSheet.create({
         color: '#999',
         marginTop: 10,
     },
+    inputRow: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginBottom: 10,
+        backgroundColor: '#fff',
+    },
+    inputHalf: {
+        flex: 1,
+    },
+    modal: {
+        justifyContent: 'flex-end',
+        margin: 0, 
+    },
+    modalContent: {
+        backgroundColor: 'white',
+        padding: 22,
+        justifyContent: 'flex-start',
+        alignItems: 'flex-start', // align items to the left
+        borderRadius: 4,
+        borderColor: 'rgba(0, 0, 0, 0.1)',
+        paddingTop: 30,
+        paddingLeft: 60, // increased padding
+        paddingRight: 60, // increased padding
+      },
+    filterBox: {
+        backgroundColor: '#fff',
+        borderWidth: 1,
+        borderColor: '#ddd',
+        borderRadius: 5,
+        marginBottom: 10,
+        padding: 10,
+    },    
+
 });

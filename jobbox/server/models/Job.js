@@ -5,9 +5,11 @@ const JobSchema = new mongoose.Schema({
   description: { type: String, required: true },
   skills: { type: String, required: true },
   location: { type: String, required: true},
-  pay: { type: String, required: true },
-  estimatedTime: { type: String, required: true },
-  postedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: false},
+  pay: { type: Number, required: true },
+  estimatedTime: { type: Number, required: true },
+  estimatedTimeUnit: { type: String, required: true },
+  category: { type: String, required: true }, // New field for job category
+  postedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
 });
 
 const Job = mongoose.model('Job', JobSchema);
