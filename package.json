@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "react-native-svg": "^7.2.1",
+    "react-native-svg-charts": "^5.4.0"
+  }
+}
