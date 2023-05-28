@@ -12,18 +12,21 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 20,
+    textAlign: 'center', // Add this line to center-align the text
   },
   text: {
     fontSize: 16,
   },
   input: {
     height: 40,
-    borderColor: 'gray',
-    borderWidth: 1,
-    marginBottom: 20,
+    borderBottomColor: 'gray',
+    borderBottomWidth: 1,
     paddingLeft: 10,
+    backgroundColor: 'white', // This will make the TextInput background white
   },
+
 });
+
 
 const ProfileSection = ({ route, navigation }) => {
   const { section } = route.params;
