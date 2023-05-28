@@ -1,5 +1,9 @@
-import React from 'react';
-import { View, Text, StyleSheet, FlatList, TextInput, Button } from 'react-native';
+
+import { View, Text, StyleSheet, FlatList, TextInput, Button, TouchableOpacity } from 'react-native';
+import React, { useEffect } from 'react';
+import { useContext } from "react";
+import { ConversationContext } from '../ConversationContext';
+
 
 const styles = StyleSheet.create({
     container: {
@@ -14,6 +18,17 @@ const styles = StyleSheet.create({
         borderRadius: 15,
         borderWidth: 0.5,
         borderColor: '#ccc',
+        alignSelf: 'flex-start', // Default to left-align (the other user's messages)
+      },
+      messageBoxSelf: {
+        maxWidth: '75%',
+        margin: 10, 
+        padding: 10,
+        borderRadius: 15,
+        borderWidth: 0.5,
+        borderColor: '#ccc',
+        alignSelf: 'flex-end', // Right-align for your own messages      
+        backgroundColor: '#4683fc',
       },
       sender: {
         fontSize: 16,
@@ -22,51 +37,97 @@ const styles = StyleSheet.create({
       },
       content: {
         fontSize: 14,
+        color: 'black', // Set the text color of the sender's messages to black
+      },
+      contentSelf: {
+        fontSize: 14,
+        color: 'white', // Set the text color of your messages to white
       },
 
       time: {
         fontSize: 12,
-        color: 'gray',
+        color: 'black',
         alignSelf: 'flex-end',
         marginTop: 5,
       },
-      messageInput: {
-        height: 50,
+      typingBarContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'flex-end', // Align items to the bottom
+        padding: 10,
+        backgroundColor: '#f5f5f5',
+        borderTopColor: '#ccc',
+        borderTopWidth: 1,
+      },
+      input: {
+        flex: 1,
+        minHeight: 10, // Minimum height
+        backgroundColor: '#fff',
+        borderRadius: 20,
+        paddingHorizontal: 15,
+        paddingTop: 10,
+        paddingBottom: 10,
+        marginRight: 10,
         borderColor: '#ddd',
         borderWidth: 1,
-        backgroundColor: '#fff',
-        borderRadius: 25,
-        padding: 10,
-        marginBottom: 15,
-        fontSize: 16,
       },
       sendButton: {
-        backgroundColor: '#4B9CD3',
-        padding: 15,
-        borderRadius: 25,
-        alignItems: 'center',
+        width: 50,
+        height: 40,
         justifyContent: 'center',
+        alignItems: 'center',
+        borderRadius: 20,
+        backgroundColor: '#4683fc',
       },
       sendButtonText: {
         color: '#fff',
-        fontSize: 16,
       },
 });
 
+const TypingBar = ({ newMessage, setNewMessage, handleSendMessage }) => {
+  return (
+    <View style={styles.typingBarContainer}>
+      <TextInput
+        value={newMessage}
+        onChangeText={setNewMessage}
+        style={styles.input}
+        placeholder="Type a message..."
+        multiline={true}
+        numberOfLines={4} // Change this number to control the maximum expansion
+      />
+      <TouchableOpacity style={styles.sendButton} onPress={handleSendMessage}>
+        <Text style={styles.sendButtonText}>Send</Text>
+      </TouchableOpacity>
+    </View>
+  );
+};
+
 const ChatScreen = ({ route, navigation }) => {
-  const { sender } = route.params;
-  const user = route.params.user;
+  const currentUser = {
+    id: '456', // Some unique identifier
+    name: 'You', // Your name or identifier
+    avatar: 'https://example.com/path-to-your-avatar-image.jpg'
+  };
+  const { senderId } = route.params;
+  if (!senderId) {
+    console.error('No senderId provided');
+    return null;
+  }
+  const [conversationsData, setConversationsData] = useContext(ConversationContext);
+  
+  const conversation = conversationsData[senderId]; // if conversationsData is an object
+  if (!conversation) {
+    console.error('No conversation found for this senderId');
+    return null;
+  }
 
-  // Fetch conversation data here, possibly using `sender` to identify the conversation
-  const conversationData = [
-    { id: '1', sender: 'User1', message: 'Hello, this is User1.', time: '10:45 PM' },
-    { id: '2', sender: 'User2', message: 'Hello, this is User2. Nice to meet you!', time: '09:30 AM' },
-    // More data...
-  ];
+  const user = conversation; // Now 'user' is an object containing user data
 
-  /*useEffect(() => {
+  
+
+  useEffect(() => {
     navigation.setOptions({
-      title: user.name, // Display the user's name in the header
+      title: conversation.sender.name, // Display the user's name in the header
       headerStyle: {
         backgroundColor: '#f8f8f8',
       },
@@ -75,36 +136,60 @@ const ChatScreen = ({ route, navigation }) => {
         fontWeight: 'bold',
       },
     });
-  }, []);*/
+  }, [conversation]);
+
 
   const [newMessage, setNewMessage] = React.useState('');
+  const [messages, setMessages] = React.useState(conversation.messages); // Add this line
+
 
   const handleSendMessage = () => {
     // Handle sending the message here
+    if (!newMessage) return;
+
+  const newMessageObject = {
+    id: Math.random().toString(), // Simple id generation, you may want to use something more sophisticated
+    sender: currentUser.name,
+    message: newMessage,
+    time: new Date().toLocaleTimeString(), // Current time
   };
 
-  return (
-    <View style={styles.container}>
-      <FlatList
-        data={conversationData}
-        keyExtractor={item => item.id}
-        renderItem={({ item }) => (
-            <View style={styles.messageBox}>
-            <Text style={styles.sender}>{item.sender}</Text>
-            <Text style={styles.content}>{item.message}</Text>
-            <Text style={styles.time}>{item.time}</Text>
-          </View>
-        )}
-      />
-      <TextInput
-        value={newMessage}
-        onChangeText={setNewMessage}
-        style={styles.input}
-        placeholder="Type a message..."
-      />
-      <Button title="Send" onPress={handleSendMessage} />
+   // Adding the new message to the conversation
+   setMessages((prevMessages) => [...prevMessages, newMessageObject]);
+  
+   // Adding the new message to the overall conversation data as well
+   conversationsData[senderId].messages.push(newMessageObject);
+ 
+   setNewMessage(''); // Clear the input field
+  };
+
+  
+ 
+
+
+return (
+  <View style={styles.container}>
+    <FlatList
+  data={messages}
+  keyExtractor={item => item.id}
+  renderItem={({ item }) => (
+    <View style={item.sender === currentUser.name ? styles.messageBoxSelf : styles.messageBox}>
+      <Text style={item.sender === currentUser.name ? styles.contentSelf : styles.content}>
+        {item.message}
+      </Text>
+      <Text style={styles.time}>{item.time}</Text>
     </View>
-  );
+  )}
+/>
+    <TypingBar
+      newMessage={newMessage}
+      setNewMessage={setNewMessage}
+      handleSendMessage={handleSendMessage}
+    />
+  </View>
+);
+  
+
 };
 
 export default ChatScreen;

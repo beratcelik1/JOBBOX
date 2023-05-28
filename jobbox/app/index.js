@@ -5,6 +5,7 @@ import { createMaterialTopTabNavigator } from '@react-navigation/material-top-ta
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
 import Icon from 'react-native-vector-icons/Ionicons';
+import { ConversationProvider } from './ConversationContext';
 
 
 import { RootNavigationContext } from './navigation/RootNavigationContext';
@@ -251,7 +252,13 @@ export default function App() {
   return (
     <NavigationContainer ref={navigationRef} independent={true} >
       <RootNavigationContext.Provider value={navigationRef}>
-        {isAuthenticated ? <MainStack /> : <AuthStack />}
+        {isAuthenticated ? 
+          <ConversationProvider>
+            <MainStack /> 
+          </ConversationProvider>
+          : 
+          <AuthStack />
+        }
       </RootNavigationContext.Provider>
     </NavigationContainer>
   );

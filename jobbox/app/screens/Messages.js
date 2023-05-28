@@ -34,27 +34,49 @@ const styles = StyleSheet.create({
   },
 });
 
-const inboxData = [
-  { id: '1', sender: 'User1', latestMessage: 'Hello, this is User1.', time: '10:45 PM' },
-  { id: '2', sender: 'User2', latestMessage: 'Hello, this is User2. Nice to meet you!', time: '09:30 AM' },
-  // More data...
-];
+const conversationsData = {
+  '1': { 
+    id: '1', 
+    sender: 'John Doe', 
+    avatar: 'https://example.com/path-to-john-doe-avatar-image.jpg', 
+    messages: [
+      { id: '1', message: 'Hello, this is John Doe.', time: '10:45 PM' },
+      { id: '2', message: 'How are you?', time: '11:00 PM' },
+      // More messages...
+    ]
+  },
+  '2': { 
+    id: '2', 
+    sender: 'Jane Smith', 
+    avatar: 'https://example.com/path-to-jane-doe-avatar-image.jpg', 
+    messages: [
+      { id: '1', message: 'Hello, this is Jane Doe.', time: '09:30 AM' },
+      { id: '2', message: 'Nice to meet you!', time: '09:35 AM' },
+      // More messages...
+    ]
+  },
+  // More conversations...
+};
 
-const InboxItem = ({ item, onPress }) => (
-  <TouchableOpacity style={styles.message} onPress={onPress}>
-    <Text style={styles.sender}>{item.sender}</Text>
-    <Text style={styles.content}>{item.latestMessage}</Text>
-    <Text style={styles.time}>{item.time}</Text>
-  </TouchableOpacity>
-);
+const InboxItem = ({ conversation, onPress }) => {
+  const latestMessage = conversation.messages[conversation.messages.length - 1];
+  return (
+    <TouchableOpacity style={styles.message} onPress={onPress}>
+      <Text style={styles.sender}>{conversation.sender}</Text>
+      <Text style={styles.content}>{latestMessage.message}</Text>
+      <Text style={styles.time}>{latestMessage.time}</Text>
+    </TouchableOpacity>
+  );
+};
 
 const InboxScreen = ({ navigation }) => {
+  const conversationsArray = Object.values(conversationsData);
   return (
     <View style={styles.container}>
       <FlatList
-        data={inboxData}
+        data={conversationsArray}
         keyExtractor={item => item.id}
-        renderItem={({ item }) => <InboxItem item={item} onPress={() => navigation.navigate('Chat', { sender: item.sender })} />}
+        renderItem={({ item }) => <InboxItem conversation={item} onPress={() => navigation.navigate('Chat', { senderId: item.id })} />}
       />
     </View>
   );
@@ -63,19 +85,3 @@ const InboxScreen = ({ navigation }) => {
 export default InboxScreen;
 
 
-/*import React from 'react';
-import { View, Text, Button  } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
-
-export default function Messages() {
-    const navigation = useNavigation();
-  
-    return (
-      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-         <View>
-            <Text>Messages Screen</Text>
-        </View>
-      </View>
-    );
-}
-*/
