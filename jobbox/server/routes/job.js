@@ -108,6 +108,10 @@ router.patch('/:jobId', async (req, res) => {
       if (estimatedTimeUnit) job.estimatedTimeUnit = estimatedTimeUnit;
       if (category) job.category = category;
 
+      // apply the updates to the job
+      Object.assign(job, req.body);
+
+      // save the updated job
       await job.save();
 
       res.send(job);

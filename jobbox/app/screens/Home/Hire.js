@@ -58,7 +58,7 @@ function HireScreen({ navigation }) {
             <Text style={styles.jobDescription}>{item.description}</Text>
             <Text style={styles.jobDate}>{item.datePosted}</Text>
             <Text style={styles.jobDate}>Applications: {item.applications ? item.applications.length : 0}</Text>
-            <Button onPress={() => handleJobPress(item)} title="View Applicants" />
+            <Button onPress={() => handleJobPress(item)} title="View Job Post" />
         </View>
     );
 
@@ -93,7 +93,6 @@ function HireScreen({ navigation }) {
                     >
                         <Text style={ {fontWeight: 'bold', color: '#fff' }} > New job post</Text>
                 </TouchableOpacity>
-
             </View>
 
         </View>

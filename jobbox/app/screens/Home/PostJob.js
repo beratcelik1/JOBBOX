@@ -210,7 +210,7 @@ export default function PostJob({ navigation }) {
                 Post Job
             </Button>
             </KeyboardAwareScrollView>
-</KeyboardAvoidingView>
+        </KeyboardAvoidingView>
     );
 }
 

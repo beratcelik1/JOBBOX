@@ -1,8 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, Image, FlatList, StyleSheet, TouchableOpacity, ProgressBarAndroid } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { createStackNavigator } from '@react-navigation/stack';
 
-function HireApplications({ route }) {
+import { EditJobScreen } from './EditJobScreen';
+
+
+function hireApplicationsScreen({ route }) {
     const { job } = route.params;
     const [applicants, setApplicants] = useState([]);
     const [jobProgress, setJobProgress] = useState(0.33); // Add this state to represent the job progress
@@ -76,12 +80,14 @@ function HireApplications({ route }) {
                         style={styles.progressBar}
                     />
                     <Text style={styles.jobStatus}>Status: {jobProgress === 1 ? 'Completed' : 'In Progress'}</Text>
-                    <TouchableOpacity 
-                        style={styles.editButton}
-                        onPress={handleEditJob}
-                    >
-                        <Text style={styles.buttonText}>Edit Job Post</Text>
-                    </TouchableOpacity>
+                    <View style={ {justifyContent: 'center', alignItems: 'center'}}>
+                         <TouchableOpacity
+                            onPress={() => navigation.navigate("EditJob", { job })}
+                            style={styles.Postbtn}
+                        >
+                        <Text style={ {fontWeight: 'bold', color: '#fff' }} > Edit job</Text>
+                        </TouchableOpacity>
+                    </View>
                 </View>
             </View>
 
@@ -92,6 +98,17 @@ function HireApplications({ route }) {
                 style={styles.applicantView}
             />
         </View>
+    );
+} 
+
+const editJobStack = createStackNavigator(); 
+
+export default function HireApplications() {
+    return (
+        <editJobStack.Navigator initialRouteName="HireScreen">
+            <editJobStack.Screen name="HireApplicationsScreen" component={hireApplicationsScreen} options={{headerShown: false}} />
+            <editJobStack.Screen name="EditJob" component={EditJobScreen} options={{headerTitle: '', headerShown: true, headerBackTitle: '', headerBackTitleVisible: false}} />
+        </editJobStack.Navigator>
     );
 }
 
@@ -232,5 +249,3 @@ const styles = StyleSheet.create({
         fontWeight: 'bold', 
     },
 });
-
-export default HireApplications;
