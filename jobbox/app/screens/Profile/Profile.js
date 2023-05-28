@@ -36,25 +36,17 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   sectionContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginTop: 20,
-    padding: 15,
-    borderRadius: 15,
-    marginRight:15,
-    marginLeft:15,
-    height: 75,
-    backgroundColor: '#fff',
-    // Android shadow properties
-    elevation: 5,
-    // iOS shadow properties
-    shadowColor: "#000",
-    shadowOffset: {
-        width: -10,
-        height: 5,
+    sectionContainer: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      marginTop: 20,
+      padding: 15,
+      borderRadius: 15,
+      marginRight:15,
+      marginLeft:15,
+      height: 75,
+      backgroundColor: '#fff',
     },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
   },
   sectionIcon: {
     marginRight: 10,

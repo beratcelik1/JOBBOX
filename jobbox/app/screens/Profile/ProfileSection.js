@@ -3,42 +3,7 @@ import { View, Text, TextInput, Button, StyleSheet } from 'react-native';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-/*const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 20,
-    alignItems: 'center', // Align content in the center horizontally
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 20,
-    // textAlign: 'center',
-  },
-  text: {
-    fontSize: 16,
-    // textAlign: 'center'
-  },
-  label: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    marginBottom: 8,
-    // textAlign: 'center'
-  },
-  input: {
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 4,
-    paddingVertical: 8,
-    paddingHorizontal: 12,
-    fontSize: 16,
-    backgroundColor: '#fff',
-  },
-  button: {
-    marginTop: 10,
-    backgroundColor: '#4683FC', 
-},
-*/const styles = StyleSheet.create({
+const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
@@ -47,9 +12,45 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
   title: {
     fontSize: 18,
     fontWeight: 'bold',
-    textAlign: 'center',
   },
-  
+  text: {
+    fontSize: 14,
+    color: '#666',
+    marginTop: 10,
+    textShadowColor: '#000',
+    textShadowOffset: { width: 1, height: 1 },
+    textShadowRadius: 2,
+  },
+  label: {
+    fontSize: 12,
+    color: '#999',
+    marginTop: 10,
+  },
+  input: {
+    backgroundColor: '#fff',
+    padding: 20,
+    marginBottom: 10,
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: '#ccc',
+    fontSize: 16,
+    shadowColor: '#000',
+    shadowOffset: { width: 1, height: 1 },
+    shadowOpacity: 0.5,
+    shadowRadius: 2,
+    elevation: 2,
+  },
+});
+
+/*const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    padding: 20,
+  },
+  title: {
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
   text: {
     fontSize: 14,
     color: '#666',
@@ -60,32 +61,25 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
     color: '#999',
     marginTop: 10,
   },
-  // input: {
-  //   backgroundColor: '#fff',
-  //   padding: 20,
-  //   marginBottom: 10,
-  //   borderRadius: 10,
-  //   borderWidth: 1,
-  //   borderColor: '#ccc',
-  //   fontSize: 16,
-  inputContainer: {
+  input: {
     backgroundColor: '#fff',
     padding: 20,
     marginBottom: 10,
     borderRadius: 10,
-    borderWidth: 1,
-    borderColor: '#ccc',
-    elevation: 2,
+    // Android shadow properties
+    elevation: 5,
+    // iOS shadow properties
+    shadowColor: "#000",
+    shadowOffset: {
+        width: -10,
+        height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
   },
-  input: {
-    fontSize: 16,
-    shadowColor: '#000',
-    shadowOffset: { width: 1, height: 1 },
-    shadowOpacity: 0.5,
-    shadowRadius: 2,
-  },
+  
 });
-
+*/
 
 
 
