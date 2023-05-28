@@ -21,7 +21,7 @@ import JobScreen from './screens/JobScreen';
 import ProfileSection from './screens/Profile/ProfileSection';
 import WorkHistoryScreen from './screens/Activity/WorkHistoryScreen';
 import HireHistoryScreen from './screens/Activity/HireHistoryScreen';
-
+import EditTargetsScreen from './screens/Activity/EditTargetsScreen';
 
 import { useState } from 'react';
 import Login from './screens/Login'; 
@@ -252,6 +252,11 @@ export default function App() {
       <Stack.Screen 
         name="HireHistoryScreen" 
         component={HireHistoryScreen} 
+        options={{ headerBackTitle: '', headerBackTitleVisible: false }} 
+      />
+      <Stack.Screen 
+        name="EditTargetsScreen" 
+        component={EditTargetsScreen} 
         options={{ headerBackTitle: '', headerBackTitleVisible: false }} 
       />
     </Stack.Navigator>

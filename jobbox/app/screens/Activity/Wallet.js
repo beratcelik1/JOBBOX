@@ -1,8 +1,9 @@
-import React, { Component } from 'react';
-import { Button } from 'react-native';
+import React, { Component, useState } from 'react';
+import { Button, TextInput } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { View, FlatList, Text, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
 import PieChart from 'react-native-pie-chart'
+import axios from 'axios';
 
 const styles = StyleSheet.create({
   container: {
@@ -115,10 +116,11 @@ const hireHistory = [ /*...your hire history data...*/
  { id: '3', title: 'Hire 3', spent: '$220', date: 'May 6, 2023' },
 ];
 
-const WalletDetail = ({ label, value }) => (
+const WalletDetail = ({ label, value, onEdit }) => (
   <View style={styles.walletDetail}>
     <Text style={styles.walletDetailLabel}>{label}</Text>
     <Text style={styles.walletDetailValue}>{value}</Text>
+    {onEdit && <Button title="Edit" onPress={onEdit} />}
   </View>
 );
 
@@ -153,13 +155,18 @@ const renderHireHistoryItem = ({ item }) => (
 );
 
 const Activity = () => {
+  // These should be fetched from your '/user/me' endpoint on component mount
+  const [targetEarning, setTargetEarning] = useState(40); 
+  const [targetSpent, setTargetSpent] = useState(20); 
+  const [isEditingEarning, setIsEditingEarning] = useState(false);
+  const [isEditingSpent, setIsEditingSpent] = useState(false);
   // Implement logic to calculate these values
   const totalEarnings = 10; // Calculate total earnings from workHistory
-  const targetEarning = 40;
+  // const targetEarning = 40;
   const earnCalc = ((totalEarnings/targetEarning)*100)
   
-  const totalSpent = 5; // Calculate total spent from hireHistory
-  const targetSpent = 20; 
+  const totalSpent = 10; // Calculate total spent from hireHistory
+  // const targetSpent = 20; 
   const spentCalc = ((totalSpent/targetSpent)*100)
   const profitOrLoss = totalEarnings - totalSpent;
   
@@ -168,6 +175,26 @@ const Activity = () => {
   const seriesEarn = [earnCalc,100-earnCalc]
   const seriesSpent = [spentCalc, 100-spentCalc]
   // const sliceColor = ['#3CB043','#D0312D']
+
+  const handleEditEarning = (newEarning) => {
+    // PUT request to '/user/me' with newEarning
+    axios.put('/user/me', { targetEarning: newEarning }, { headers: { /* your auth header */ } })
+      .then((res) => {
+        setIsEditingEarning(false);
+        setTargetEarning(newEarning);
+      })
+      .catch((err) => console.error(err));
+  };
+
+  const handleEditSpent = (newSpent) => {
+    // PUT request to '/user/me' with newSpent
+    axios.put('/user/me', { targetSpent: newSpent }, { headers: { /* your auth header */ } })
+      .then((res) => {
+        setIsEditingSpent(false);
+        setTargetSpent(newSpent);
+      })
+      .catch((err) => console.error(err));
+  };
 
   return (
     <ScrollView style={styles.container}>
@@ -193,13 +220,19 @@ const Activity = () => {
             // coverFill={'#FFF'}
           />
       </View>
+
         <WalletDetail label="Total Earnings" value={`$${totalEarnings}`} />
         <WalletDetail label="Monthly Earning Target" value={`$${targetEarning}`} />
         <WalletDetail label="Total Spent" value={`$${totalSpent}`} />
         <WalletDetail label="Monthly Spending Target" value={`$${targetSpent}`} />
         <WalletDetail label="Profit/Loss" value={`$${profitOrLoss}`} />
+        
+        <View style={styles.button}>  
+          <Button title="Edit Targets"onPress={() => navigation.navigate('EditTargetsScreen')} />
+        </View>
       </View>
 
+   
       <View style={styles.section}>
         <TouchableOpacity
           style={styles.button}
