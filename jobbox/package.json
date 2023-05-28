@@ -15,16 +15,20 @@
     "expo": "^48.0.7",
     "expo-constants": "~14.2.1",
     "expo-device": "~5.2.1",
+    "expo-image-picker": "^14.1.1",
     "expo-linking": "~4.0.1",
     "expo-router": "^1.2.0",
     "expo-splash-screen": "~0.18.1",
     "expo-status-bar": "~1.4.2",
     "firebase": "^9.22.0",
+    "multer": "^1.4.5-lts.1",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-native": "0.71.8",
     "react-native-elements": "^3.4.3",
     "react-native-gesture-handler": "~2.9.0",
+    "react-native-image-crop-picker": "^0.39.0",
+    "react-native-image-picker": "^5.3.1",
     "react-native-paper": "^5.7.2",
     "react-native-pie-chart": "^3.0.1",
     "react-native-reanimated": "~2.14.4",
@@ -34,7 +38,8 @@
   },
   "devDependencies": {
     "@babel/core": "^7.19.3",
-    "@babel/plugin-proposal-export-namespace-from": "^7.18.9"
+    "@babel/plugin-proposal-export-namespace-from": "^7.18.9",
+    "@react-native-community/bob": "^0.17.1"
   },
   "resolutions": {
     "metro": "^0.73.7",
@@ -43,6 +48,14 @@
   "overrides": {
     "metro": "^0.73.7",
     "metro-resolver": "^0.73.7"
+  },
+  "bob": {
+    "source": "src",
+    "output": "lib",
+    "targets": [
+      "commonjs",
+      "typescript"
+    ]
   },
   "name": "jobbox",
   "version": "1.0.0",
