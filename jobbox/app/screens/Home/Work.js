@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, TouchableOpacity, FlatList, StyleSheet } from 'react-native';
+import React, { useState, useEffect, useCallback } from 'react';
+import { View, Text, TextInput, TouchableOpacity, FlatList, StyleSheet, ActivityIndicator } from 'react-native';
 import { Ionicons } from '@expo/vector-icons'; // you might need to install this package
 
 import { createStackNavigator } from '@react-navigation/stack';
@@ -8,21 +8,74 @@ function WorkScreen({ navigation }) {
     const [searchQuery, setSearchQuery] = useState('');
     // At the top of your WorkScreen function...
     const [jobs, setJobs] = useState([]);
+    const [categoryFilter, setCategoryFilter] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
+    const [refreshing, setRefreshing] = useState(false);
+    const [scrollPosition, setScrollPosition] = useState(0);
 
-    useEffect(() => {
-    fetch('http://tranquil-ocean-74659.herokuapp.com/jobs')
-        .then(response => response.json())
-        .then(data => setJobs(data))
-        .catch(error => console.error('Error:', error));
+
+    const fetchJobs = useCallback(() => {
+        setIsLoading(true);
+        fetch('http://tranquil-ocean-74659.herokuapp.com/jobs')
+            .then(response => response.json())
+            .then(data => {
+                // Update this line to prepend the new data
+                setJobs(data);
+                setIsLoading(false);
+                setRefreshing(false);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                setIsLoading(false);
+                setRefreshing(false);
+            });
     }, []);
 
-    const handleSearch = ()=> {
-        // handle search logic here
-        console.log(searchQuery);
-    }; 
+    const onRefresh = useCallback(() => {
+        setRefreshing(true);
+        fetchJobs();
+    }, [fetchJobs]);
+
+    useEffect(() => {
+    if (scrollPosition === 0) {
+        fetchJobs();
+    }
+  }, [scrollPosition, fetchJobs]);
 
 
+    useEffect(() => {
+        fetchJobs();
+    }, [fetchJobs]);
+    
 
+    useEffect(() => {
+        if (searchQuery.length > 0) {
+            setIsLoading(true);
+            fetch(`http://tranquil-ocean-74659.herokuapp.com/jobs/search?search=${searchQuery}`)
+                .then(response => response.json())
+                .then(data => setJobs(data))
+                .catch(error => console.error('Error:', error));
+        } else {
+            fetchJobs();
+        }
+    }, [searchQuery, fetchJobs]);
+
+    const handleSearch = () => {
+        setIsLoading(true);
+        fetch(`http://tranquil-ocean-74659.herokuapp.com/jobs/search?search=${searchQuery}`)
+          .then(response => response.json())
+          .then(data => setJobs(data))
+          .catch(error => console.error('Error:', error));
+      };
+      
+      const handleFilter = () => {
+        setIsLoading(true);
+        fetch(`http://tranquil-ocean-74659.herokuapp.com/jobs/category?category=${categoryFilter}`)
+          .then(response => response.json())
+          .then(data => setJobs(data))
+          .catch(error => console.error('Error:', error));
+      };
+      
     const renderJob = ({item}) => (
         <TouchableOpacity 
             style={styles.jobCard} 
@@ -61,27 +114,32 @@ function WorkScreen({ navigation }) {
             </View>
             <View style={styles.filterSection}>
                 <Text>Filter by:</Text>
-                <TouchableOpacity>
-                    <Text style={styles.filterOption}>Category</Text>
+                <TextInput
+                    style={styles.filterInput}
+                    onChangeText={setCategoryFilter}
+                    value={categoryFilter}
+                    placeholder="Category..."
+                    placeholderTextColor="gray"
+                />
+                <TouchableOpacity onPress={handleFilter}>
+                    <Text style={styles.filterOption}>Apply Filter</Text>
                 </TouchableOpacity>
-                <TouchableOpacity>
-                    <Text style={styles.filterOption}>Rating</Text>
-                </TouchableOpacity>
-                <TouchableOpacity>
-                    <Text style={styles.filterOption}>Time</Text>
-                </TouchableOpacity>
-                <TouchableOpacity>
-                    <Text style={styles.filterOption}>Pay</Text>
-                </TouchableOpacity>
-            </View>
-
+            </View> 
             <FlatList
                 data={jobs}
                 renderItem={renderJob}
                 keyExtractor={item => item.id}
                 style={styles.jobView}
+                onEndReachedThreshold={0.5}
+                refreshing={refreshing}
+                onRefresh={onRefresh}
+                ListFooterComponent={
+                    isLoading ? <ActivityIndicator size="large" color="#0000ff" /> : null
+                }
+                onScroll={event => {
+                    setScrollPosition(event.nativeEvent.contentOffset.y);
+                }}
             />
-
         </View>
     );
 } 

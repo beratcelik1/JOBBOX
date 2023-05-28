@@ -22,17 +22,21 @@ router.get('/', async (req, res) => {
   } catch (error) {
     res.status(500).send(error);
   }
-}); 
+});
 
-// Get jobs by user ID
-router.get('/user/:userId', async (req, res) => {
+// Get jobs by title
+router.get('/search', async (req, res) => {
+  const search = req.query.search;
   try {
-    const jobs = await Job.find({ postedBy: req.params.userId });
+    const jobs = await Job.find({ title: new RegExp(search, 'i') });
     res.send(jobs);
   } catch (error) {
     res.status(500).send(error);
   }
 });
+
+
+
 
 
 module.exports = router;
