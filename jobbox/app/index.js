@@ -6,7 +6,6 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
 import Icon from 'react-native-vector-icons/Ionicons';
 
-
 import { RootNavigationContext } from './navigation/RootNavigationContext';
 import Activity from './screens/Activity';
 import Profile from './screens/Profile/Profile';
@@ -21,9 +20,11 @@ import JobScreen from './screens/JobScreen';
 import ProfileSection from './screens/Profile/ProfileSection';
 
 import { useState } from 'react';
-import Login from './screens/Login'; 
+import Login from './screens/Login';
 import Signup from './screens/Signup';
 import { Section } from 'react-native-paper';
+
+require('./environment');
 
 const logo = require('./assets/images/jobboxlogo4.png');
 const logo2 = require('./assets/images/jobboxlogotek.png');
@@ -45,37 +46,37 @@ function MyTabs() {
   const navigation = useNavigation();
   return (
     <BottomTab.Navigator
-    initialRouteName="Home"
-    screenOptions={({ route }) => ({
-      tabBarIcon: ({ focused, color, size }) => {
-        let iconName;
-  
-        if (route.name === 'Home') {
-          iconName = focused ? 'home' : 'home-outline';
-        } else if (route.name === 'Services') {
-          iconName = focused ? 'construct' : 'construct-outline';
-        } else if (route.name === 'Activity') {
-          iconName = focused ? 'wallet' : 'wallet-outline';
-        } else if (route.name === 'Profile') {
-          iconName = focused ? 'person' : 'person-outline';
-        }
-  
-        return <Icon name={iconName} size={size} color={color} />;
-      },
-      tabBarActiveTintColor: '#4683fc',
-      tabBarInactiveTintColor: 'gray',
-      tabBarStyle: [
-        {
-          display: 'flex'
+      initialRouteName="Home"
+      screenOptions={({ route }) => ({
+        tabBarIcon: ({ focused, color, size }) => {
+          let iconName;
+
+          if (route.name === 'Home') {
+            iconName = focused ? 'home' : 'home-outline';
+          } else if (route.name === 'Services') {
+            iconName = focused ? 'construct' : 'construct-outline';
+          } else if (route.name === 'Activity') {
+            iconName = focused ? 'wallet' : 'wallet-outline';
+          } else if (route.name === 'Profile') {
+            iconName = focused ? 'person' : 'person-outline';
+          }
+
+          return <Icon name={iconName} size={size} color={color} />;
         },
-        null
-      ]
-    })}
-  >
-      <BottomTab.Screen 
-        name="Home" 
-        component={HomeTopTabs} 
-        options={{ 
+        tabBarActiveTintColor: '#4683fc',
+        tabBarInactiveTintColor: 'gray',
+        tabBarStyle: [
+          {
+            display: 'flex',
+          },
+          null,
+        ],
+      })}
+    >
+      <BottomTab.Screen
+        name="Home"
+        component={HomeTopTabs}
+        options={{
           headerTitle: () => (
             <View style={{ alignItems: 'center' }}>
               <Image source={logo} style={{ width: 170, height: 30 }} />
@@ -88,20 +89,26 @@ function MyTabs() {
           ),
           headerRight: () => (
             <View style={{ flexDirection: 'row', marginRight: 10 }}>
-              <TouchableOpacity onPress={() => navigation.navigate("Messages")}>
+              <TouchableOpacity onPress={() => navigation.navigate('Messages')}>
                 <Icon name="chatbox-outline" size={24} />
               </TouchableOpacity>
-              <TouchableOpacity onPress={() => navigation.navigate("Notifications")}>
-                <Icon name="notifications-outline" size={24} style={{ marginLeft: 10 }} />
+              <TouchableOpacity
+                onPress={() => navigation.navigate('Notifications')}
+              >
+                <Icon
+                  name="notifications-outline"
+                  size={24}
+                  style={{ marginLeft: 10 }}
+                />
               </TouchableOpacity>
             </View>
           ),
         }}
       />
-      <BottomTab.Screen 
-        name="Services" 
-        component={Services} 
-        options={{ 
+      <BottomTab.Screen
+        name="Services"
+        component={Services}
+        options={{
           headerTitle: () => (
             <View style={{ alignItems: 'center' }}>
               <Image source={logo} style={{ width: 170, height: 30 }} />
@@ -114,68 +121,86 @@ function MyTabs() {
           ),
           headerRight: () => (
             <View style={{ flexDirection: 'row', marginRight: 10 }}>
-              <TouchableOpacity onPress={() => navigation.navigate("Messages")}>
+              <TouchableOpacity onPress={() => navigation.navigate('Messages')}>
                 <Icon name="chatbox-outline" size={24} />
               </TouchableOpacity>
-              <TouchableOpacity onPress={() => navigation.navigate("Notifications")}>
-                <Icon name="notifications-outline" size={24} style={{ marginLeft: 10 }} />
+              <TouchableOpacity
+                onPress={() => navigation.navigate('Notifications')}
+              >
+                <Icon
+                  name="notifications-outline"
+                  size={24}
+                  style={{ marginLeft: 10 }}
+                />
               </TouchableOpacity>
             </View>
           ),
         }}
       />
-    <BottomTab.Screen 
-      name="Activity" 
-      component={Activity} 
-      options={{ 
-        headerTitle: () => (
-          <View style={{ alignItems: 'center' }}>
-            <Image source={logo} style={{ width: 170, height: 30 }} />
-          </View>
-        ),
-        headerLeft: () => (
-          <View style={{ marginLeft: 10 }}>
-            <Image source={logo2} style={{ width: 30, height: 30 }} />
-          </View>
-        ),
-        headerRight: () => (
-          <View style={{ flexDirection: 'row', marginRight: 10 }}>
-            <TouchableOpacity onPress={() => navigation.navigate("Messages")}>
-              <Icon name="chatbox-outline" size={24} />
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() => navigation.navigate("Notifications")}>
-              <Icon name="notifications-outline" size={24} style={{ marginLeft: 10 }} />
-            </TouchableOpacity>
-          </View>
-        ),
-      }}
-    />
-    <BottomTab.Screen 
-      name="Profile" 
-      component={Profile} 
-      options={{ 
-        headerTitle: () => (
-          <View style={{ alignItems: 'center' }}>
-            <Image source={logo} style={{ width: 170, height: 30 }} />
-          </View>
-        ),
-        headerLeft: () => (
-          <View style={{ marginLeft: 10 }}>
-            <Image source={logo2} style={{ width: 30, height: 30 }} />
-          </View>
-        ),
-        headerRight: () => (
-          <View style={{ flexDirection: 'row', marginRight: 10 }}>
-            <TouchableOpacity onPress={() => navigation.navigate("Messages")}>
-              <Icon name="chatbox-outline" size={24} />
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() => navigation.navigate("Notifications")}>
-              <Icon name="notifications-outline" size={24} style={{ marginLeft: 10 }} />
-            </TouchableOpacity>
-          </View>
-        ),
-      }}
-    />
+      <BottomTab.Screen
+        name="Activity"
+        component={Activity}
+        options={{
+          headerTitle: () => (
+            <View style={{ alignItems: 'center' }}>
+              <Image source={logo} style={{ width: 170, height: 30 }} />
+            </View>
+          ),
+          headerLeft: () => (
+            <View style={{ marginLeft: 10 }}>
+              <Image source={logo2} style={{ width: 30, height: 30 }} />
+            </View>
+          ),
+          headerRight: () => (
+            <View style={{ flexDirection: 'row', marginRight: 10 }}>
+              <TouchableOpacity onPress={() => navigation.navigate('Messages')}>
+                <Icon name="chatbox-outline" size={24} />
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => navigation.navigate('Notifications')}
+              >
+                <Icon
+                  name="notifications-outline"
+                  size={24}
+                  style={{ marginLeft: 10 }}
+                />
+              </TouchableOpacity>
+            </View>
+          ),
+        }}
+      />
+      <BottomTab.Screen
+        name="Profile"
+        component={Profile}
+        options={{
+          headerTitle: () => (
+            <View style={{ alignItems: 'center' }}>
+              <Image source={logo} style={{ width: 170, height: 30 }} />
+            </View>
+          ),
+          headerLeft: () => (
+            <View style={{ marginLeft: 10 }}>
+              <Image source={logo2} style={{ width: 30, height: 30 }} />
+            </View>
+          ),
+          headerRight: () => (
+            <View style={{ flexDirection: 'row', marginRight: 10 }}>
+              <TouchableOpacity onPress={() => navigation.navigate('Messages')}>
+                <Icon name="chatbox-outline" size={24} />
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => navigation.navigate('Notifications')}
+              >
+                <Icon
+                  name="notifications-outline"
+                  size={24}
+                  style={{ marginLeft: 10 }}
+                />
+              </TouchableOpacity>
+            </View>
+          ),
+        }}
+      />
     </BottomTab.Navigator>
   );
 }
@@ -184,70 +209,82 @@ export default function App() {
   const navigationRef = React.useRef();
 
   const AuthStack = () => (
-    <Stack.Navigator 
-      screenOptions={{ 
-        cardStyle: { backgroundColor: '#4683FC'}
+    <Stack.Navigator
+      screenOptions={{
+        cardStyle: { backgroundColor: '#4683FC' },
       }}
     >
-      <Stack.Screen 
-        name="Login" 
-        options={{ headerShown: false }}>
-        {props => <Login {...props} setIsAuthenticated={setIsAuthenticated} />}
+      <Stack.Screen name="Login" options={{ headerShown: false }}>
+        {(props) => (
+          <Login {...props} setIsAuthenticated={setIsAuthenticated} />
+        )}
       </Stack.Screen>
-      <Stack.Screen name="Signup" component={Signup} options={{ headerShown: false }} />
-      <Stack.Screen 
-        name="MyTabs" 
-        component={MyTabs} 
-        options={{ headerShown: false }} 
+      <Stack.Screen
+        name="Signup"
+        component={Signup}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="MyTabs"
+        component={MyTabs}
+        options={{ headerShown: false }}
       />
     </Stack.Navigator>
-
   );
-  
+
   const MainStack = () => (
-    <Stack.Navigator >
-      <Stack.Screen 
-        name="MyTabs" 
-        component={MyTabs} 
-        options={{ headerShown: false }} 
+    <Stack.Navigator>
+      <Stack.Screen
+        name="MyTabs"
+        component={MyTabs}
+        options={{ headerShown: false }}
       />
-      <Stack.Screen 
-        name="Messages" 
-        component={Messages} 
-        options={{ headerBackTitle: '', headerBackTitleVisible: false }} 
+      <Stack.Screen
+        name="Messages"
+        component={Messages}
+        options={{ headerBackTitle: '', headerBackTitleVisible: false }}
       />
-      <Stack.Screen 
-        name="Notifications" 
-        component={Notifications} 
-        options={{ headerBackTitle: '', headerBackTitleVisible: false }} 
+      <Stack.Screen
+        name="Notifications"
+        component={Notifications}
+        options={{ headerBackTitle: '', headerBackTitleVisible: false }}
       />
-      <Stack.Screen 
-        name="PostJob" 
-        component={PostJob} 
-        options={{headerBackTitle: '', headerBackTitleVisible: false
-        }} 
+      <Stack.Screen
+        name="PostJob"
+        component={PostJob}
+        options={{ headerBackTitle: '', headerBackTitleVisible: false }}
       />
-      <Stack.Screen 
+      <Stack.Screen
         name="Category"
-        component={Category} 
-        options={{ headerBackTitle: '', headerBackTitleVisible: false }} 
+        component={Category}
+        options={{ headerBackTitle: '', headerBackTitleVisible: false }}
       />
-      <Stack.Screen 
-        name="Job" 
+      <Stack.Screen
+        name="Job"
         component={JobScreen}
-        options={{headerTitle: ' ', headerBackTitle: '', headerBackTitleVisible: false,}}  
+        options={{
+          headerTitle: ' ',
+          headerBackTitle: '',
+          headerBackTitleVisible: false,
+        }}
       />
-       <Stack.Screen name="ProfileSection" component={ProfileSection} 
-       options={{headerTitle: 'Profile', headerBackTitle: '', headerBackTitleVisible: false }}  />
+      <Stack.Screen
+        name="ProfileSection"
+        component={ProfileSection}
+        options={{
+          headerTitle: 'Profile',
+          headerBackTitle: '',
+          headerBackTitleVisible: false,
+        }}
+      />
     </Stack.Navigator>
   );
 
   return (
-    <NavigationContainer ref={navigationRef} independent={true} >
+    <NavigationContainer ref={navigationRef} independent={true}>
       <RootNavigationContext.Provider value={navigationRef}>
         {isAuthenticated ? <MainStack /> : <AuthStack />}
       </RootNavigationContext.Provider>
     </NavigationContainer>
   );
 }
-
