@@ -7,7 +7,20 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
+    
   },
+  editButton: {
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: 5,
+    backgroundColor: 'blue',
+    fontSize: 14,
+  },
+  importantText: {
+    color: 'red',
+    fontSize: 14,
+  },
+
   title: {
     fontSize: 24,
     fontWeight: 'bold',
@@ -16,13 +29,21 @@ const styles = StyleSheet.create({
   },
   text: {
     fontSize: 16,
+    marginBottom: 10,
   },
   input: {
     height: 40,
     borderBottomColor: 'gray',
     borderBottomWidth: 1,
     paddingLeft: 10,
-    backgroundColor: 'white', // This will make the TextInput background white
+    backgroundColor: 'white',
+    marginBottom: 10, // This will make the TextInput background white
+  },
+  inputContainer: {
+    backgroundColor: 'white', // Add this line to make the container white
+    marginBottom: 10, 
+    padding: 5,
+    borderRadius: 5,
   },
 
 });
@@ -229,6 +250,7 @@ const ProfileSection = ({ route, navigation }) => {
                   />
                    <Button title="Delete" onPress={() => handleDeleteExperience(index)} />
                   </React.Fragment>
+                  
                 ))}
                 <Button title="Add Experience" onPress={addExperience} />
               </React.Fragment>
@@ -244,6 +266,7 @@ const ProfileSection = ({ route, navigation }) => {
     ? (
       <React.Fragment>
         {education.map((edu, index) => (
+          <View key={index} style={styles.inputContainer}>
           <React.Fragment key={index}>
             <Text style={styles.text}>Date:</Text>
             <TextInput
@@ -256,7 +279,7 @@ const ProfileSection = ({ route, navigation }) => {
                 setEducation(updatedEducation);
               }}
             />
-            <Text style={styles.text}>Degree:</Text>
+            <Text style={styles.text}>Degree*:</Text>
             <TextInput
               style={styles.input}
               value={edu.degree}
@@ -267,7 +290,7 @@ const ProfileSection = ({ route, navigation }) => {
                 setEducation(updatedEducation);
               }}
             />
-            <Text style={styles.text}>Major:</Text>
+            <Text style={styles.text}>Major*:</Text>
             <TextInput
               style={styles.input}
               value={edu.major}
@@ -278,7 +301,7 @@ const ProfileSection = ({ route, navigation }) => {
                 setEducation(updatedEducation);
               }}
             />
-            <Text style={styles.text}>University:</Text>
+            <Text style={styles.text}>University*:</Text>
             <TextInput
               style={styles.input}
               value={edu.university}
@@ -290,6 +313,7 @@ const ProfileSection = ({ route, navigation }) => {
               }}
             />
             <Button title="Delete" onPress={() => handleDeleteEducation(index)} />
+            
           </React.Fragment>
         ))}
         <Button title="Add Education" onPress={addEducation} />
@@ -383,6 +407,7 @@ const ProfileSection = ({ route, navigation }) => {
 
 
         <Button title="Save" onPress={handleSave} />
+        <Text style={styles.importantText}>* Fields marked with asterisk are recommended.</Text>
       </View>
     );
   }
@@ -391,7 +416,7 @@ const ProfileSection = ({ route, navigation }) => {
     <View style={styles.container}>
       <Text style={styles.title}>{section.title}</Text>
       <Text style={styles.text}>{section.text}</Text>
-      <Button title="Edit" onPress={handleEdit} />
+      <Button title="Edit" onPress={handleEdit} style={styles.editButton}/>
     </View>
   );
 };
