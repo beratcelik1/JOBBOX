@@ -1,56 +1,90 @@
-import React, { useState, useEffect } from 'react';
-import { View, TextInput, Button, Alert, StyleSheet, TouchableOpacity, KeyboardAvoidingView, Platform } from 'react-native';
-import { DefaultTheme } from 'react-native-paper';
+import React, { useState, useRef } from 'react';
+import { View, StyleSheet, TouchableOpacity, KeyboardAvoidingView, Platform, Alert } from 'react-native';
+import { TextInput, Button, List } from 'react-native-paper';
+import Modal from 'react-native-modal';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import { DefaultTheme } from 'react-native-paper';
 import { editJob, deleteJob } from '../../services/JobService';
 
-export function EditJobScreen({ route, navigation }) {
+const EditJobScreen = ({ route, navigation }) => {
   const { job } = route.params;
-  const [title, setJobTitle] = useState(job.title);
-  const [description, setDescription] = useState(job.description);
+
+  const [jobTitle, setJobTitle] = useState(job.title);
+  const [jobDescription, setJobDescription] = useState(job.description);
   const [skills, setSkills] = useState(job.skills);
   const [location, setLocation] = useState(job.location);
   const [pay, setPay] = useState(job.pay);
   const [estimatedTime, setEstimatedTime] = useState(job.estimatedTime);
-  const [estimatedTimeUnit, setEstimatedTimeUnit] = useState(job.estimatedTimeUnit);  
+  const [estimatedTimeUnit, setEstimatedTimeUnit] = useState(job.estimatedTimeUnit);
+  const [isModalVisible, setModalVisible] = useState(false);
+  const [isCategoryModalVisible, setIsCategoryModalVisible] = useState(false);
+  const [category, setCategory] = useState(job.category);
 
-  // if (title) job.title = title;
-  //     if (description) job.description = description;
-  //     if (skills) job.skills = skills;
-  //     if (location) job.location = location;
-  //     if (pay) job.pay = pay;
-  //     if (estimatedTime) job.estimatedTime = estimatedTime;
-  //     if (estimatedTimeUnit) job.estimatedTimeUnit = estimatedTimeUnit;
-  //     if (category) job.category = category;
+  const timeUnits = ['Minutes', 'Hours', 'Weeks'];
+  const categories = ['Web Development', 'Graphic Design', 'Content Writing', 'Marketing', 'Mobile App Development', 'Home Cleaning', 'Gardening', 'Dog Walking', 'Grocery Delivery', 'Moving'];
 
-  useEffect(() => {
-    navigation.setOptions({ title: 'Edit Job' });
-  }, []);
+  const theme = {
+    ...DefaultTheme,
+    colors: {
+      ...DefaultTheme.colors,
+      primary: '#4683FC', 
+    },
+  };
+
+  const toggleModal = () => {
+    setModalVisible(!isModalVisible);
+  };
+
+  const toggleCategoryModal = () => {
+    setIsCategoryModalVisible(!isCategoryModalVisible);
+  };
+
+  const handleSelectTimeUnit = (unit) => {
+    setEstimatedTimeUnit(unit);
+    toggleModal();
+  };
+
+  const handleSelectCategory = (category) => {
+    setCategory(category);
+    toggleCategoryModal();
+  };
 
   const handleSave = async () => {
     try {
-      await editJob(job.id, { description, skills, location, pay, estimatedTime, estimatedTimeUnit });
+      if (isNaN(pay)) {
+        alert('Pay must be valid numbers');
+        return;
+      }
+      if (isNaN(estimatedTime)) {
+        alert('Estimated Time must be valid numbers');
+        return;
+      }
+      
+      await editJob(job.id, {
+        title: jobTitle,
+        description: jobDescription,
+        skills: skills,
+        location: location,
+        pay: parseFloat(pay),
+        estimatedTime: parseFloat(estimatedTime),
+        estimatedTimeUnit: estimatedTimeUnit,
+        category: category,
+      });
       Alert.alert('Job updated!', '', [{ text: 'OK', onPress: () => navigation.goBack() }]);
     } catch (error) {
       Alert.alert('Error', 'There was an error updating the job.');
     }
-    navigation.goBack();
   };
 
   const handleDelete = async () => {
     try {
       const response = await deleteJob(job.id);
       if (response) {
-        Alert.alert('Job deleted!', '', [
-          { text: 'OK', onPress: () => navigation.goBack() }, // replace 'HireScreen' with the name of your Hire Screen
-        ]);
+        Alert.alert('Job deleted!', '', [{ text: 'OK', onPress: () => navigation.goBack() }]);
       }
     } catch (error) {
-      console.error(error);
       Alert.alert('Error', 'There was an error deleting the job.');
-    } 
-    navigation.goBack();
-    navigation.goBack();
+    }
   };
   
 

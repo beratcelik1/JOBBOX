@@ -1,33 +1,35 @@
-// app/services/JobService.js
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-export async function editJob(jobId, updatedJob) {
-    const response = await fetch(`http://localhost:5001/jobs/${jobId}`, {
+export async function editJob(id, data) {
+  const token = await AsyncStorage.getItem('token'); 
+  const response = await fetch(`http://tranquil-ocean-74659.herokuapp.com/jobs/${id}`, {
       method: 'PATCH',
       headers: {
-        'Content-Type': 'application/json',
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + token
       },
-      body: JSON.stringify(updatedJob),
-    });
-  
-    if (!response.ok) {
-      throw new Error('Failed to edit job');
-    }
-  
-    const data = await response.json();
-  
-    return data;
+      body: JSON.stringify(data)
+  });
+
+  if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
   }
 
- // app/services/JobService.js
+  return response.json();
+}
 
-export async function deleteJob(jobId) {
-    const response = await fetch(`http://localhost:5001/jobs/${jobId}`, {
+export async function deleteJob(id) {
+  const token = await AsyncStorage.getItem('token');
+  const response = await fetch(`http://tranquil-ocean-74659.herokuapp.com/jobs/${id}`, {
       method: 'DELETE',
-    });
-  
-    if (!response.ok) {
-      throw new Error('Failed to delete job');
-    }
+      headers: {
+          'Authorization': 'Bearer ' + token
+      }
+  });
+
+  if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
   }
-  
-  
+
+  return response.json();
+}
