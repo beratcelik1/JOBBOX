@@ -4,11 +4,13 @@ import { useNavigation } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import PostJob from '../Home/PostJob';
 import { Ionicons } from '@expo/vector-icons';
+import SearchBar from '../../components/SearchBar';
 
 import  { HireApplicationsScreen }  from './HireApplications';
 import { useFocusEffect } from '@react-navigation/native'; 
 
 import { EditJobScreen } from './EditJobScreen';
+import FindTemplateScreen from './FindTemplateScreen';
 
 import jwt_decode from "jwt-decode";
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -67,21 +69,7 @@ function HireScreen({ navigation }) {
 
     return (
         <View style={styles.container}>
-            <View style={styles.searchSection}>
-                <Ionicons style={styles.searchIcon} name="ios-search" size={20} color="#000" />
-                <TextInput
-                    style={styles.searchInput}
-                    onChangeText={setSearchQuery}
-                    value={searchQuery}
-                    placeholder="Try a job template..."
-                    placeholderTextColor="gray"
-                />
-                <TouchableOpacity
-                    onPress={handleSearch}
-                    style={styles.searchButton}>
-                    <Text style={styles.buttonText}>Search</Text>
-                </TouchableOpacity>
-            </View>
+            <SearchBar placeholder={"Find previously created jobs.."} searchQuery={searchQuery} setSearchQuery={setSearchQuery} onSearch={handleSearch} showSearchButton />
 
             <FlatList
             data={jobs}
@@ -91,10 +79,10 @@ function HireScreen({ navigation }) {
             />
             <View style={ {justifyContent: 'center', alignItems: 'center'}}>
                 <TouchableOpacity
-                    onPress={() => navigation.navigate("PostJob")}
+                    onPress={() => navigation.navigate("FindTemplateScreen")}
                     style={styles.Postbtn}
                     >
-                        <Text style={ {fontWeight: 'bold', color: '#fff' }} > New job post</Text>
+                        <Text style={ {fontWeight: 'bold', color: '#fff' }} >New job post</Text>
                 </TouchableOpacity>
             </View>
 
@@ -111,7 +99,8 @@ export default function Hire() {
             <HireStack.Screen name="PostJob" component={PostJob} options={{headerTitle: '', headerShown: true, headerBackTitle: '', headerBackTitleVisible: false}} />
             <HireStack.Screen name="HireApplicationsScreen" component={HireApplicationsScreen} options={{headerTitle: '', headerShown: true, headerBackTitle: '', headerBackTitleVisible: false}} />
             <HireStack.Screen name="EditJob" component={EditJobScreen} options={{headerTitle: '', headerShown: true, headerBackTitle: '', headerBackTitleVisible: false}} />
-        </HireStack.Navigator>
+            <HireStack.Screen name="FindTemplateScreen" component={FindTemplateScreen} options={{headerShown: false}} />
+         </HireStack.Navigator>
     );
 }
 
@@ -139,40 +128,6 @@ const styles = StyleSheet.create({
         fontSize: 24,
         fontWeight: 'bold',
         marginBottom: 20,
-    },
-    searchSection: {
-        flexDirection: 'row',
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: '#fff',
-        borderRadius: 50,
-        paddingLeft: 10,
-        marginBottom: 20,
-    },
-    searchIcon: {
-        padding: 10,
-    },
-    searchInput: {
-        flex: 1,
-        paddingTop: 10,
-        paddingRight: 10,
-        paddingBottom: 10,
-        paddingLeft: 0,
-        backgroundColor: '#fff',
-        color: '#424242',
-    },
-    searchButton: {
-        backgroundColor: '#4683fc',
-        borderRadius: 50,
-        width: 100,
-        height: 40,
-        justifyContent: 'center',
-        alignItems: 'center',
-        marginRight: 10,
-    },
-    buttonText: {
-        color: 'white',
-        fontWeight: 'bold',
     },
     jobCard: {
         backgroundColor: '#fff',
