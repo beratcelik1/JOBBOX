@@ -6,12 +6,22 @@ import { editJob, deleteJob } from '../../services/JobService';
 
 export function EditJobScreen({ route, navigation }) {
   const { job } = route.params;
-  const [jobDescription, setJobDescription] = useState(job.jobDescription);
+  const [title, setJobTitle] = useState(job.title);
+  const [description, setDescription] = useState(job.description);
   const [skills, setSkills] = useState(job.skills);
   const [location, setLocation] = useState(job.location);
   const [pay, setPay] = useState(job.pay);
   const [estimatedTime, setEstimatedTime] = useState(job.estimatedTime);
-  const [estimatedTimeUnit, setEstimatedTimeUnit] = useState(job.estimatedTimeUnit);
+  const [estimatedTimeUnit, setEstimatedTimeUnit] = useState(job.estimatedTimeUnit);  
+
+  // if (title) job.title = title;
+  //     if (description) job.description = description;
+  //     if (skills) job.skills = skills;
+  //     if (location) job.location = location;
+  //     if (pay) job.pay = pay;
+  //     if (estimatedTime) job.estimatedTime = estimatedTime;
+  //     if (estimatedTimeUnit) job.estimatedTimeUnit = estimatedTimeUnit;
+  //     if (category) job.category = category;
 
   useEffect(() => {
     navigation.setOptions({ title: 'Edit Job' });
@@ -19,7 +29,7 @@ export function EditJobScreen({ route, navigation }) {
 
   const handleSave = async () => {
     try {
-      await editJob(job.id, { jobDescription, skills, location, pay, estimatedTime, estimatedTimeUnit });
+      await editJob(job.id, { description, skills, location, pay, estimatedTime, estimatedTimeUnit });
       Alert.alert('Job updated!', '', [{ text: 'OK', onPress: () => navigation.goBack() }]);
     } catch (error) {
       Alert.alert('Error', 'There was an error updating the job.');
@@ -29,11 +39,20 @@ export function EditJobScreen({ route, navigation }) {
 
   const handleDelete = async () => {
     try {
-      await deleteJob(job.id);
+      const response = await deleteJob(job.id);
+      if (response) {
+        Alert.alert('Job deleted!', '', [
+          { text: 'OK', onPress: () => navigation.goBack() }, // replace 'HireScreen' with the name of your Hire Screen
+        ]);
+      }
     } catch (error) {
       console.error(error);
-    }
+      Alert.alert('Error', 'There was an error deleting the job.');
+    } 
+    navigation.goBack();
+    navigation.goBack();
   };
+  
 
   return (
     <KeyboardAvoidingView
@@ -42,9 +61,15 @@ export function EditJobScreen({ route, navigation }) {
     >
       <KeyboardAwareScrollView>
         <TextInput
+                label="Job Title"
+                value={title}
+                onChangeText={setJobTitle}
+                style={styles.input}
+        />
+        <TextInput
           label="Job Description"
-          value={jobDescription}
-          onChangeText={setJobDescription}
+          value={description}
+          onChangeText={setDescription}
           style={styles.input}
         />
         <TextInput
