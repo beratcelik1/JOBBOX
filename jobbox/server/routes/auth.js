@@ -60,26 +60,26 @@ router.put('/user/me', async (req, res) => {
 
     // find the user with the extracted ID
     const user = await User.findById(data.userId);
-      if (!user) {
-    return res.status(404).json({ error: 'User not found' });
-}
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
 
     // update user data
-    const allowedUpdates = ['about', 'experience', 'education', 'skills', 'recommendations'];
+    const allowedUpdates = ['about', 'experience', 'education', 'skills', 'recommendations', 'earningTarget', 'spendingTarget'];
     const updates = Object.keys(req.body);
     updates.forEach((update) => {
-    if (allowedUpdates.includes(update)) {
-     user[update] = req.body[update];
-    }
-});
-await user.save();
+      if (allowedUpdates.includes(update)) {
+        user[update] = req.body[update];
+      }
+    });    
+    await user.save();
 
 
     // send updated user data
     res.send(user);
-  } catch {
+    } catch {
     res.status(401).send({ error: 'Not authorized to access this resource' });
-  }
+    }
 });
 
 router.get('/user/me', async (req, res) => {
