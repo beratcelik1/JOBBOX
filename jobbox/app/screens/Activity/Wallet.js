@@ -1,9 +1,11 @@
-import React, { Component, useState } from 'react';
+import React, { Component, useState, useEffect } from 'react';
 import { Button, TextInput } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { View, FlatList, Text, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
 import PieChart from 'react-native-pie-chart'
 import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useFocusEffect } from '@react-navigation/native';
 
 const styles = StyleSheet.create({
   container: {
@@ -41,10 +43,8 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   button: { 
-    // alignItems: 'center',
     backgroundColor: '#fff',
     padding: 10,
-    // paddingVertical: 20, // adjust this to change the height
     marginBottom: 10,
     borderRadius: 10,
     shadowColor: "#000",
@@ -60,7 +60,6 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     paddingBottom: 8,
-    // textAlign: 'left', 
   },
   sectionTitle: {
     fontSize: 18,
@@ -73,39 +72,27 @@ const styles = StyleSheet.create({
     marginBottom: 5,
     flexDirection: 'row',
     justifyContent: 'space-between'
-    // padding: 10,
   },
   card: {
     backgroundColor: '#fff',
-    // padding: 10,
-
-    // marginBottom: 5,
-    // borderRadius: 5,
-    // shadowColor: "#000",
-    // shadowOffset: {
-    //   width: 0,
-    //   height: 2,
-    // },
-    // shadowOpacity: 0.25,
-    // shadowRadius: 3.84,
-    // elevation: 5,
   },
   cardTitle: {
     fontSize: 16,
-    // fontWeight: 'bold',
     marginBottom: 5,
-    // alignSelf: 'center',
-    // color: 'gray',
   },
   cardDetails: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    // alignItems: 'center',
   },
   cardLabel: {
     fontSize: 14,
     color: 'gray',
   },
+  lineStyle:{
+    borderWidth: 0.5,
+    borderColor:'black',
+    margin:10,
+},
 });
 
 const workHistory = [ /*...your work history data...*/ 
@@ -155,46 +142,47 @@ const renderHireHistoryItem = ({ item }) => (
 );
 
 const Activity = () => {
-  // These should be fetched from your '/user/me' endpoint on component mount
-  const [targetEarning, setTargetEarning] = useState(40); 
-  const [targetSpent, setTargetSpent] = useState(20); 
-  const [isEditingEarning, setIsEditingEarning] = useState(false);
-  const [isEditingSpent, setIsEditingSpent] = useState(false);
-  // Implement logic to calculate these values
-  const totalEarnings = 10; // Calculate total earnings from workHistory
-  // const targetEarning = 40;
-  const earnCalc = ((totalEarnings/targetEarning)*100)
+  const [earningTarget, setTargetEarning] = useState(50);
+  const [spendingTarget, setTargetSpent] = useState(50);
+
+  useFocusEffect (
+    React.useCallback(() => {
+      const fetchTargets = async () => {
+        const token = await AsyncStorage.getItem('token');
+        axios.get('https://tranquil-ocean-74659.herokuapp.com/auth/user/me', { headers: { Authorization: `Bearer ${token}` } })
+          .then((res) => {
+            console.log('Response from server: ', res.data);
+            setTargetEarning(res.data.earningTarget);
+            setTargetSpent(res.data.spendingTarget);
+          })
+          .catch((err) => console.error(err));
+      };
   
-  const totalSpent = 10; // Calculate total spent from hireHistory
-  // const targetSpent = 20; 
-  const spentCalc = ((totalSpent/targetSpent)*100)
-  const profitOrLoss = totalEarnings - totalSpent;
+      fetchTargets();
+    }, [])
+  );
+  
+  const totalEarnings = 10; 
+  const totalSpent = 20; 
+
+  let earnCalc;
+  if (earningTarget !== 0 && earningTarget != null && earningTarget != '') {
+    earnCalc = ((totalEarnings/earningTarget)*100);
+  } else {
+    earnCalc = 100;
+  }
+  
+  let spentCalc;
+  if (spendingTarget !== 0 && spendingTarget != null && spendingTarget != '') {
+    spentCalc = ((totalSpent/spendingTarget)*100);
+  } else {
+    spentCalc = 100;
+  }
   
   const navigation = useNavigation();
   const widthAndHeight = 150
-  const seriesEarn = [earnCalc,100-earnCalc]
-  const seriesSpent = [spentCalc, 100-spentCalc]
-  // const sliceColor = ['#3CB043','#D0312D']
-
-  const handleEditEarning = (newEarning) => {
-    // PUT request to '/user/me' with newEarning
-    axios.put('/user/me', { targetEarning: newEarning }, { headers: { /* your auth header */ } })
-      .then((res) => {
-        setIsEditingEarning(false);
-        setTargetEarning(newEarning);
-      })
-      .catch((err) => console.error(err));
-  };
-
-  const handleEditSpent = (newSpent) => {
-    // PUT request to '/user/me' with newSpent
-    axios.put('/user/me', { targetSpent: newSpent }, { headers: { /* your auth header */ } })
-      .then((res) => {
-        setIsEditingSpent(false);
-        setTargetSpent(newSpent);
-      })
-      .catch((err) => console.error(err));
-  };
+  const seriesEarn = [earnCalc > 0 ? earnCalc : 0.3, earnCalc > 0 ? 100-earnCalc : 100]
+  const seriesSpent = [spentCalc > 0 ? spentCalc : 0.3, spentCalc > 0 ? 100-spentCalc : 100]
 
   return (
     <ScrollView style={styles.container}>
@@ -222,39 +210,38 @@ const Activity = () => {
       </View>
 
         <WalletDetail label="Total Earnings" value={`$${totalEarnings}`} />
-        <WalletDetail label="Monthly Earning Target" value={`$${targetEarning}`} />
         <WalletDetail label="Total Spent" value={`$${totalSpent}`} />
-        <WalletDetail label="Monthly Spending Target" value={`$${targetSpent}`} />
-        <WalletDetail label="Profit/Loss" value={`$${profitOrLoss}`} />
+      
+        <View
+        style={{
+          borderBottomColor: 'black',
+          borderBottomWidth: 1.5,
+          marginBottom: 10,
+        }}/>
+        
+        <WalletDetail label="Monthly Earning Target" value={`$${earningTarget}`} />
+        <WalletDetail label="Monthly Spending Target" value={`$${spendingTarget}`} />
         
         <View style={styles.button}>  
           <Button title="Edit Targets"onPress={() => navigation.navigate('EditTargetsScreen')} />
         </View>
       </View>
-
    
       <View style={styles.section}>
         <TouchableOpacity
           style={styles.button}
           onPress={() => navigation.navigate('WorkHistoryScreen')}>
           <Text style={styles.buttonText}>Work History</Text>
-          <FlatList
-            data={workHistory}
-            keyExtractor={item => item.id}
-            renderItem={renderWorkHistoryItem}/>
+          {workHistory.map(item => <View key={item.id}>{renderWorkHistoryItem({item})}</View>)}
         </TouchableOpacity>
-
       </View>
+
       <View style={styles.section}>
         <TouchableOpacity
           style={styles.button}
           onPress={() => navigation.navigate('HireHistoryScreen')}>
           <Text style={styles.buttonText}>Hire History</Text>
-          <FlatList
-          data={hireHistory}
-          keyExtractor={item => item.id}
-          renderItem={renderHireHistoryItem}
-        />
+          {hireHistory.map(item => <View key={item.id}>{renderHireHistoryItem({item})}</View>)}
         </TouchableOpacity>
       </View>
     </ScrollView>

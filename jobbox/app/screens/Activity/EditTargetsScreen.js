@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, Button, TextInput, StyleSheet } from 'react-native';
 import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const styles = StyleSheet.create({
   container: {
@@ -20,32 +21,52 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     padding: 10,
   },
+  savedTargets: {
+    fontSize: 16,
+    marginTop: 15,
+  },
 });
 
-const EditTargetsScreen = () => {
-  const [targetEarning, setTargetEarning] = useState(null);
-  const [targetSpent, setTargetSpent] = useState(null);
+const EditTargetsScreen = ({ navigation }) => {
+  const [earningTarget, setTargetEarning] = useState('');
+  const [spendingTarget, setTargetSpent] = useState('');
 
   useEffect(() => {
-    // Fetch initial targetEarning and targetSpent values from '/user/me' when component mounts
-    axios.get('/user/me', { headers: { /* your auth header */ } })
-      .then((res) => {
-        setTargetEarning(res.data.targetEarning);
-        setTargetSpent(res.data.targetSpent);
-      })
-      .catch((err) => console.error(err));
+    const fetchTargets = async () => {
+      try {
+        const token = await AsyncStorage.getItem('token');
+        const response = await axios.get('https://tranquil-ocean-74659.herokuapp.com/auth/user/me', { headers: { Authorization: `Bearer ${token}` } });
+
+        if (response.status === 200) {
+          setTargetEarning(response.data.earningTarget?.toString());
+          setTargetSpent(response.data.spendingTarget?.toString());
+        }
+      } catch (err) {
+        console.error("Failed to fetch targets: ", err);
+      }
+    };
+
+    fetchTargets();
   }, []);
 
-  const handleEditEarning = () => {
-    // PUT request to '/user/me' with new targetEarning
-    axios.put('/user/me', { targetEarning }, { headers: { /* your auth header */ } })
-      .catch((err) => console.error(err));
-  };
+  const handleEditTargets = async () => {
+    // console.log("Update button clicked");
+    try {
+      const token = await AsyncStorage.getItem('token');
 
-  const handleEditSpent = () => {
-    // PUT request to '/user/me' with new targetSpent
-    axios.put('/user/me', { targetSpent }, { headers: { /* your auth header */ } })
-      .catch((err) => console.error(err));
+      const response = await axios.put('https://tranquil-ocean-74659.herokuapp.com/auth/user/me',
+        { earningTarget, spendingTarget },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
+      // after the targets are successfully updated on the server, navigate back
+      if (response.status === 200) {
+        navigation.goBack();
+      }
+
+    } catch (err) {
+      console.error("Failed to update targets: ", err);
+    }
   };
 
   return (
@@ -54,20 +75,19 @@ const EditTargetsScreen = () => {
         <Text style={styles.label}>Monthly Earning Target</Text>
         <TextInput
           style={styles.input}
-          defaultValue={targetEarning?.toString()}
-          onChangeText={text => setTargetEarning(Number(text))}
+          value={earningTarget}
+          onChangeText={text => setTargetEarning(text)}
         />
-        <Button title="Update Earning Target" onPress={handleEditEarning} />
       </View>
       <View style={styles.inputContainer}>
         <Text style={styles.label}>Monthly Spending Target</Text>
         <TextInput
           style={styles.input}
-          defaultValue={targetSpent?.toString()}
-          onChangeText={text => setTargetSpent(Number(text))}
+          value={spendingTarget}
+          onChangeText={text => setTargetSpent(text)}
         />
-        <Button title="Update Spending Target" onPress={handleEditSpent} />
       </View>
+      <Button title="Update Targets" onPress={handleEditTargets} />
     </View>
   );
 };
