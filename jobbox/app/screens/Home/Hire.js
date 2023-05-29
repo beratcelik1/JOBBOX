@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
+import axios from "axios";
 import { View, Text, TextInput, Button, StyleSheet, TouchableOpacity, FlatList } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
@@ -23,14 +24,13 @@ function HireScreen({ navigation }) {
       const fetchJobs = async () => {
         // Fetch the token from the async storage
         const token = await AsyncStorage.getItem("token");
-        console.log(token);
 
         // Decode the token to get the user ID
         const decodedToken = jwt_decode(token);
         const userId = decodedToken.userId;
 
         // Fetch the jobs from your server
-        fetch(`http://tranquil-ocean-74659.herokuapp.com/jobs/user/${userId}`, {
+        fetch(`${process.env.API_URL}/jobs/user/${userId}`, {
           headers: {
             Authorization: `Bearer ${token}`
           }
@@ -50,8 +50,7 @@ function HireScreen({ navigation }) {
   const handleSearch = () => {
     // search jobs from backend
     (async () => {
-      // const response = await axios.get(`${process.env.API_URL}/jobs/search`, {
-      const response = await axios.get(`http://localhost:5001/jobs/search`, {
+      const response = await axios.get(`${process.env.API_URL}/jobs/search`, {
         params: {
           search: searchQuery
         }
@@ -66,9 +65,14 @@ function HireScreen({ navigation }) {
     navigation.navigate("HireApplicationsScreen", { job: job });
   };
 
+  const handleUseTemplatePress = (job) => {
+    console.log(job);
+    navigation.navigate("PostJob", { job: job });
+  };
+
   const renderJob = ({ item }) => (
     <View style={styles.jobCard}>
-      <TouchableOpacity style={styles.editButton} onPress={() => handleCreateCustomJobPostPress(item)}>
+      <TouchableOpacity style={styles.editButton} onPress={() => handleUseTemplatePress(item)}>
         <Text style={styles.editButtonText}>Use this as a template</Text>
       </TouchableOpacity>
       <Text style={styles.jobTitle}>{item.title}</Text>
@@ -100,24 +104,12 @@ function HireScreen({ navigation }) {
       <FlatList
         data={jobs}
         renderItem={renderJob}
-        keyExtractor={(item, index) => item._id}
-        style={styles.applicantView}
-      />
-      <View style={{ justifyContent: "center", alignItems: "center" }}>
-        <TouchableOpacity onPress={() => navigation.navigate("PostJob")} style={styles.Postbtn}>
-          <Text style={{ fontWeight: "bold", color: "#fff" }}> New job post</Text>
-        </TouchableOpacity>
-      </View>
-
-      <FlatList
-        data={jobs}
-        renderItem={renderJob}
         keyExtractor={(item) => item._id}
         style={styles.applicantView}
       />
       <View style={{ justifyContent: "center", alignItems: "center" }}>
         <TouchableOpacity onPress={() => navigation.navigate("PostJob")} style={styles.Postbtn}>
-          <Text style={{ fontWeight: "bold", color: "#fff" }}> New job post</Text>
+          <Text style={{ fontWeight: "bold", color: "#fff" }}>New job post</Text>
         </TouchableOpacity>
       </View>
     </View>

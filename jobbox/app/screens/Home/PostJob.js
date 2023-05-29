@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import {
   View,
   ScrollView,
@@ -14,7 +14,8 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { DefaultTheme, Provider as PaperProvider } from "react-native-paper";
 
-export default function PostJob({ navigation }) {
+export default function PostJob({ navigation, route }) {
+  const { job } = route.params || {};
   const [jobTitle, setJobTitle] = useState("");
   const [jobDescription, setJobDescription] = useState("");
   const [skills, setSkills] = useState("");
@@ -28,13 +29,14 @@ export default function PostJob({ navigation }) {
 
   useEffect(() => {
     if (job) {
-      // setEditable(false);
       setJobTitle(job.title);
       setJobDescription(job.description);
       setSkills(job.skills);
       setLocation(job.location);
       setPay(job.pay);
       setEstimatedTime(job.estimatedTime);
+      setEstimatedTimeUnit(job.estimatedTimeUnit);
+      setCategory(job.category);
     }
   }, [job]);
 
@@ -102,7 +104,7 @@ export default function PostJob({ navigation }) {
       return;
     }
     // Inside your handlePost function...
-    fetch("http://tranquil-ocean-74659.herokuapp.com/jobs", {
+    fetch(`${process.env.API_URL}/jobs`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

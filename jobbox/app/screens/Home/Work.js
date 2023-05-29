@@ -79,7 +79,7 @@ function WorkScreen({ navigation }) {
 
     const fetchJobs = useCallback(() => {
         setIsLoading(true);
-        fetch('http://tranquil-ocean-74659.herokuapp.com/jobs')
+        fetch(`${process.env.API_URL}/jobs`)
             .then(response => response.json())
             .then(data => {
                 // Update this line to prepend the new data
@@ -114,7 +114,7 @@ function WorkScreen({ navigation }) {
     useEffect(() => {
         if (searchQuery.length > 0) {
             setIsLoading(true);
-            fetch(`http://tranquil-ocean-74659.herokuapp.com/jobs/search?search=${searchQuery}`)
+            fetch(`${process.env.API_URL}/jobs/search?search=${searchQuery}`)
                 .then(response => response.json())
                 .then(data => setJobs(data))
                 .catch(error => console.error('Error:', error));
@@ -125,7 +125,7 @@ function WorkScreen({ navigation }) {
 
     const handleSearch = () => {
         setIsLoading(true);
-        fetch(`http://tranquil-ocean-74659.herokuapp.com/jobs/search?search=${searchQuery}`)
+        fetch(`${process.env.API_URL}/jobs/search?search=${searchQuery}`)
           .then(response => response.json())
           .then(data => setJobs(data))
           .catch(error => console.error('Error:', error));
@@ -145,7 +145,7 @@ function WorkScreen({ navigation }) {
           .map((key) => `${encodeURIComponent(key)}=${encodeURIComponent(filters[key])}`)
           .join('&');
       
-        fetch(`http://tranquil-ocean-74659.herokuapp.com/jobs/?${query}`)
+        fetch(`${process.env.API_URL}/jobs/?${query}`)
           .then(response => response.json())
           .then(data => setJobs(data))
           .catch(error => console.error('Error:', error));
