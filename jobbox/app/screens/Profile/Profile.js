@@ -7,69 +7,194 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as ImagePicker from 'expo-image-picker';
 import fetch from 'node-fetch';
 
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    padding: 10,
+    
   },
   headerContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: 20,
-    paddingLeft: 20,
-    paddingRight: 20, 
-    paddingTop: 20, 
+    paddingLeft: 10,
+    paddingRight: 10, 
+    paddingTop: 10, 
+    paddingBottom: 20,
+    backgroundColor: '#4683fc',
+    borderRadius: 10,
+    
+    // Android shadow properties
+    elevation: 5,
+    // iOS shadow properties
+    shadowColor: "#000",
+    shadowOffset: {
+        width: 0,
+        height: 0,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
   },
   profileImage: {
     width: 100,
     height: 100,
     borderRadius: 50,
     marginRight: 10,
-    backgroundColor: '#d3d3d3',
+    backgroundColor: '#fff',
   },
   name: {
     fontSize: 24,
     fontWeight: 'bold',
+    color: '#fff',
+    marginBottom: 5,
   },
   reviews: {
     flexDirection: 'row',
     alignItems: 'center',
+    backgroundColor: '#4683fc',
+  
+    borderRadius: 50,
+    paddingLeft: 10,
+    marginBottom: 5,
+  },  ratingContainer: { // New style to wrap rating text and star icon
+    flexDirection: 'row',
+    alignItems: 'center',
+    color: '#fff'
+  },
+  ratingText: {
+    color: '#fff',
+    fontSize: 16,
+    marginLeft: 5,
+  },
+  locationText: {
+    color: '#fff',
+    fontSize: 16,
   },
   sectionContainer: {
     flexDirection: 'row',
-    justifyContent: 'center', // Add this line
+    justifyContent: 'center', 
     alignItems: 'center',
     marginTop: 20,
-    padding: 15,
-    borderRadius: 15,
-    marginRight:15,
-    marginLeft:15,
-    height: 75,
+    padding: 20,
+    borderRadius: 10,
     backgroundColor: '#fff',
+    marginLeft: 40,
+    marginRight: 40,
     // Android shadow properties
     elevation: 5,
     // iOS shadow properties
     shadowColor: "#000",
     shadowOffset: {
         width: -10,
-        height: 5,
+        height: 2,
     },
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
   },
   sectionIcon: {
-    marginRight: 10,
+    padding: 10,
   },
   sectionTitle: {
     fontSize: 18,
     fontWeight: 'bold',
+    color: '#424242',
   },
   sectionText: {
     flex: 1,
-    marginTop: 5,
+    paddingTop: 10,
+    paddingRight: 10,
+    paddingBottom: 10,
+    paddingLeft: 0,
     fontSize: 14,
+    color: '#fff',
+    marginTop: 10,
+  },
+  searchSection: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#d3d3d3', // Change color here
+    borderRadius: 50,
+    paddingLeft: 10,
+    marginBottom: 20,
+    height: 50, // Add height here
+  },
+  searchInput: {
+    flex: 1,
+    paddingTop: 10,
+    paddingRight: 10,
+    paddingBottom: 10,
+    paddingLeft: 0,
+    backgroundColor: '#d3d3d3', // Change color here
+    color: '#424242',
+    height: 50, 
   },
 });
+
+
+// const styles = StyleSheet.create({
+//   container: {
+//     flex: 1,
+//   },
+//   headerContainer: {
+//     flexDirection: 'row',
+//     alignItems: 'center',
+//     marginBottom: 20,
+//     paddingLeft: 20,
+//     paddingRight: 20, 
+//     paddingTop: 20, 
+//   },
+//   profileImage: {
+//     width: 100,
+//     height: 100,
+//     borderRadius: 50,
+//     marginRight: 10,
+//     backgroundColor: '#d3d3d3',
+//   },
+//   name: {
+//     fontSize: 24,
+//     fontWeight: 'bold',
+//   },
+//   reviews: {
+//     flexDirection: 'row',
+//     alignItems: 'center',
+//   },
+//   sectionContainer: {
+//     flexDirection: 'row',
+//     justifyContent: 'center', // Add this line
+//     alignItems: 'center',
+//     marginTop: 20,
+//     padding: 15,
+//     borderRadius: 15,
+//     marginRight:15,
+//     marginLeft:15,
+//     height: 75,
+//     backgroundColor: '#fff',
+//     // Android shadow properties
+//     elevation: 5,
+//     // iOS shadow properties
+//     shadowColor: "#000",
+//     shadowOffset: {
+//         width: -10,
+//         height: 5,
+//     },
+//     shadowOpacity: 0.25,
+//     shadowRadius: 3.84,
+//   },
+//   sectionIcon: {
+//     marginRight: 10,
+//   },
+//   sectionTitle: {
+//     fontSize: 18,
+//     fontWeight: 'bold',
+//   },
+//   sectionText: {
+//     flex: 1,
+//     marginTop: 5,
+//     fontSize: 14,
+//   },
+// });
+
 
 const Profile = () => {
   const [user, setUser] = useState(null);
@@ -195,7 +320,7 @@ const Profile = () => {
                 { profilePic: imageUrl },
                 { headers: { Authorization: `Bearer ${token}`, }, }
               );
-        
+                
               if (profilePicResponse.data) {
                 setUser((prevUser) => ({
                   ...prevUser,
@@ -231,10 +356,13 @@ return (
           <View>
             <Text style={styles.name}>{user.firstname} {user.lastname}</Text>
             <View style={styles.reviews}>
-              <Icon name="star" size={20} color="#f1c40f" />
-              <Text>4.5</Text>
-            </View>
-            <Text>Kelowna, BC</Text>
+  <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+  <Text style={{ color: 'white', fontWeight: 'bold' }}>4.5</Text>
+    <Icon name="star" size={20} color="#f1c40f" />
+  </View>
+</View>
+
+<Text style={{ color: 'white',fontWeight: 'bold' }}>Kelowna, BC</Text>
           </View>
         </View>
 
