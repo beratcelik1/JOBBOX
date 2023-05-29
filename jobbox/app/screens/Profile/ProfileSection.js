@@ -250,7 +250,6 @@ const ProfileSection = ({ route, navigation }) => {
                   />
                    <Button title="Delete" onPress={() => handleDeleteExperience(index)} />
                   </React.Fragment>
-                  
                 ))}
                 <Button title="Add Experience" onPress={addExperience} />
               </React.Fragment>
@@ -266,7 +265,7 @@ const ProfileSection = ({ route, navigation }) => {
     ? (
       <React.Fragment>
         {education.map((edu, index) => (
-          <View key={index} style={styles.inputContainer}>
+          
           <React.Fragment key={index}>
             <Text style={styles.text}>Date:</Text>
             <TextInput
@@ -313,7 +312,6 @@ const ProfileSection = ({ route, navigation }) => {
               }}
             />
             <Button title="Delete" onPress={() => handleDeleteEducation(index)} />
-            
           </React.Fragment>
         ))}
         <Button title="Add Education" onPress={addEducation} />
