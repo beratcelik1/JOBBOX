@@ -1,32 +1,58 @@
-
-
 import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, Button, StyleSheet, TouchableOpacity, FlatList } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import PostJob from '../Home/PostJob';
 import { Ionicons } from '@expo/vector-icons';
-import HireApplications from './HireApplications';
+
+import  { HireApplicationsScreen }  from './HireApplications';
+import { useFocusEffect } from '@react-navigation/native'; 
+
+import { EditJobScreen } from './EditJobScreen';
+
+import jwt_decode from "jwt-decode";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 
 function HireScreen({ navigation }) {
     const [searchQuery, setSearchQuery] = useState('');
     const [jobs, setJobs] = useState([]);
 
-    useEffect(() => {
-        // Simulating a fetch call here
-        const fetchedJobs = [
-            { id: '1', title: 'Lawn mowing', description: 'One time', datePosted: '2023-01-01', numApplications: '3'  },
-            { id: '2', title: 'Grocery run', description: 'One time', datePosted: '2023-02-15', numApplications: '1' },
-            // Add more jobs here...
-        ];
-        setJobs(fetchedJobs);
-    }, []);
+    useFocusEffect(
+        React.useCallback(() => {
+            const fetchJobs = async () => {
+                // Fetch the token from the async storage
+                const token = await AsyncStorage.getItem('token');
+                console.log(token);
+
+                // Decode the token to get the user ID
+                const decodedToken = jwt_decode(token);
+                const userId = decodedToken.userId;
+
+                // Fetch the jobs from your server
+                fetch(`http://tranquil-ocean-74659.herokuapp.com/jobs/user/${userId}`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                })
+                .then((response) => response.json())
+                .then((data) => {
+                    // Set the jobs state
+                    setJobs(data);
+                })
+                .catch((error) => console.error('Error:', error));
+            };
+
+            fetchJobs();
+        }, [])
+    );
 
     const handleSearch = () => {
         console.log(searchQuery);
     };
     const handleJobPress = (job) => {
-        navigation.navigate('HireApplications', { job: job });
+        console.log(job);
+        navigation.navigate('HireApplicationsScreen', { job: job });
     }
 
     const renderJob = ({ item }) => (
@@ -34,8 +60,8 @@ function HireScreen({ navigation }) {
             <Text style={styles.jobTitle}>{item.title}</Text>
             <Text style={styles.jobDescription}>{item.description}</Text>
             <Text style={styles.jobDate}>{item.datePosted}</Text>
-            <Text style={styles.jobDate}>Applications: {item.numApplications}</Text>
-            <Button onPress={() => handleJobPress(item)} title="View Applicants" />
+            <Text style={styles.jobDate}>Applications: {item.applications ? item.applications.length : 0}</Text>
+            <Button onPress={() => handleJobPress(item)} title="View Job Post" />
         </View>
     );
 
@@ -52,17 +78,16 @@ function HireScreen({ navigation }) {
                 />
                 <TouchableOpacity
                     onPress={handleSearch}
-                    style={styles.searchButton}
-                >
+                    style={styles.searchButton}>
                     <Text style={styles.buttonText}>Search</Text>
                 </TouchableOpacity>
             </View>
 
             <FlatList
-                data={jobs}
-                renderItem={renderJob}
-                keyExtractor={item => item.id}
-                style={styles.applicantView}
+            data={jobs}
+            renderItem={renderJob}
+            keyExtractor={(item, index) => item._id}
+            style={styles.applicantView}
             />
             <View style={ {justifyContent: 'center', alignItems: 'center'}}>
                 <TouchableOpacity
@@ -71,7 +96,6 @@ function HireScreen({ navigation }) {
                     >
                         <Text style={ {fontWeight: 'bold', color: '#fff' }} > New job post</Text>
                 </TouchableOpacity>
-
             </View>
 
         </View>
@@ -85,7 +109,8 @@ export default function Hire() {
         <HireStack.Navigator initialRouteName="HireScreen">
             <HireStack.Screen name="HireScreen" component={HireScreen} options={{headerShown: false}} />
             <HireStack.Screen name="PostJob" component={PostJob} options={{headerTitle: '', headerShown: true, headerBackTitle: '', headerBackTitleVisible: false}} />
-            <HireStack.Screen name="HireApplications" component={HireApplications} options={{headerTitle: '', headerShown: true, headerBackTitle: '', headerBackTitleVisible: false}} />
+            <HireStack.Screen name="HireApplicationsScreen" component={HireApplicationsScreen} options={{headerTitle: '', headerShown: true, headerBackTitle: '', headerBackTitleVisible: false}} />
+            <HireStack.Screen name="EditJob" component={EditJobScreen} options={{headerTitle: '', headerShown: true, headerBackTitle: '', headerBackTitleVisible: false}} />
         </HireStack.Navigator>
     );
 }

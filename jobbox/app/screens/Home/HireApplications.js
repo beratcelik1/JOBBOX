@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, Image, FlatList, StyleSheet, TouchableOpacity, ProgressBarAndroid } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { createStackNavigator } from '@react-navigation/stack';
 
-function HireApplications({ route }) {
-    const { job } = route.params;
+
+export function HireApplicationsScreen({ route, navigation }) {
+    const job = route.params.job;
     const [applicants, setApplicants] = useState([]);
     const [jobProgress, setJobProgress] = useState(0.33); // Add this state to represent the job progress
 
@@ -17,10 +19,6 @@ function HireApplications({ route }) {
         ];
         setApplicants(fetchedApplicants);
     }, []);
-
-    const handleEditJob = () => {
-        // Handle job edit logic here...
-    };
 
     const renderApplicant = ({ item }) => (
         <View style={styles.applicantCard}>
@@ -76,27 +74,39 @@ function HireApplications({ route }) {
                         style={styles.progressBar}
                     />
                     <Text style={styles.jobStatus}>Status: {jobProgress === 1 ? 'Completed' : 'In Progress'}</Text>
-                    <TouchableOpacity 
-                        style={styles.editButton}
-                        onPress={handleEditJob}
-                    >
-                        <Text style={styles.buttonText}>Edit Job Post</Text>
-                    </TouchableOpacity>
+                    <View style={ {justifyContent: 'center', alignItems: 'center'}}>
+                         <TouchableOpacity
+                            onPress={() => navigation.navigate("EditJob", { job })}
+                            style={styles.editBtn}
+                        >
+                        <Text style={ {fontWeight: 'bold', color: '#4683fc' }} > Edit job</Text>
+                        </TouchableOpacity>
+                    </View>
                 </View>
             </View>
 
             <FlatList
                 data={applicants}
                 renderItem={renderApplicant}
-                keyExtractor={item => item.id}
+                keyExtractor={item => item._id}
                 style={styles.applicantView}
             />
         </View>
     );
-}
+} 
 
 // Styles...
 const styles = StyleSheet.create({
+    editBtn: {
+        backgroundColor: '#fff' ,
+        borderRadius: 50,
+        width: 150,
+        height: 40,
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginRight: 10,
+        marginTop: 10,
+    },
     container: {
         flex: 1,
         padding: 20,
@@ -232,5 +242,3 @@ const styles = StyleSheet.create({
         fontWeight: 'bold', 
     },
 });
-
-export default HireApplications;

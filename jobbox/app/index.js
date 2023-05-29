@@ -9,7 +9,7 @@ import { ConversationProvider } from './ConversationContext';
 
 
 import { RootNavigationContext } from './navigation/RootNavigationContext';
-import Activity from './screens/Activity';
+import Activity from './screens/Activity/Wallet';
 import Profile from './screens/Profile/Profile';
 import Services from './screens/Services/Services';
 import Hire from './screens/Home/Hire';
@@ -20,6 +20,9 @@ import PostJob from './screens/Home/PostJob';
 import Category from './screens/Services/Category';
 import JobScreen from './screens/JobScreen';
 import ProfileSection from './screens/Profile/ProfileSection';
+import WorkHistoryScreen from './screens/Activity/WorkHistoryScreen';
+import HireHistoryScreen from './screens/Activity/HireHistoryScreen';
+import EditTargetsScreen from './screens/Activity/EditTargetsScreen';
 import Chat from './screens/Chat'; 
 
 import { useState } from 'react';
@@ -245,7 +248,24 @@ export default function App() {
       options={{ headerBackTitle: '', headerBackTitleVisible: false }} 
     />
        <Stack.Screen name="ProfileSection" component={ProfileSection} 
-       options={{headerTitle: 'Profile', headerBackTitle: '', headerBackTitleVisible: false }}  />
+       options={{headerTitle: 'Profile', headerBackTitle: '', headerBackTitleVisible: false }} 
+      />
+
+       <Stack.Screen 
+        name="WorkHistoryScreen" 
+        component={WorkHistoryScreen} 
+        options={{ headerBackTitle: '', headerBackTitleVisible: false }} 
+      />
+      <Stack.Screen 
+        name="HireHistoryScreen" 
+        component={HireHistoryScreen} 
+        options={{ headerBackTitle: '', headerBackTitleVisible: false }} 
+      />
+      <Stack.Screen 
+        name="EditTargetsScreen" 
+        component={EditTargetsScreen} 
+        options={{ headerBackTitle: '', headerBackTitleVisible: false }} 
+      />
     </Stack.Navigator>
   );
 

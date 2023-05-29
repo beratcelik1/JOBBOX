@@ -6,49 +6,55 @@ const mongoose = require('mongoose');
 const app = express();
 const authRoutes = require('./routes/auth');
 const multer = require('multer');
-const path = require('path'); 
+const path = require('path');
 
 const jobRoutes = require('./routes/job');
 
 // Define storage for the images
 const storage = multer.diskStorage({
-  // Destination to store image     
-  destination: 'uploads', 
+  // Destination to store image
+  destination: 'uploads',
   filename: (req, file, cb) => {
-    cb(null, file.fieldname + "_" + Date.now() + path.extname(file.originalname))
+    cb(
+      null,
+      file.fieldname + '_' + Date.now() + path.extname(file.originalname)
+    );
     // file.fieldname is name of the field (image), path.extname get the uploaded file extension
-  }
+  },
 });
 
 const upload = multer({
   storage: storage,
   limits: {
-    fileSize: 100000000 // 1000000 Bytes = 1 MB
+    fileSize: 100000000, // 1000000 Bytes = 1 MB
   },
   fileFilter(req, file, cb) {
-    if (!file.originalname.match(/\.(png|jpg|jpeg)$/)) { 
-        // upload only png, jpg, and jpeg format
-        return cb(new Error('Please upload a Image'))
+    if (!file.originalname.match(/\.(png|jpg|jpeg)$/)) {
+      // upload only png, jpg, and jpeg format
+      return cb(new Error('Please upload a Image'));
     }
-    cb(undefined, true)
-}
-})
+    cb(undefined, true);
+  },
+});
 
-app.post('/upload', upload.single('image'), (req, res, next) => {
-  if (!req.file) {
-    console.log('No file received');
-    return next(new Error('File upload failed'));
+app.post(
+  '/upload',
+  upload.single('image'),
+  (req, res, next) => {
+    if (!req.file) {
+      console.log('No file received');
+      return next(new Error('File upload failed'));
+    }
+    console.log('File received:', req.file);
+    // Send the path to the image file
+    res.send({ path: '/uploads/' + req.file.filename });
+  },
+  (error, req, res, next) => {
+    // Error handling middleware
+    console.log('Error uploading file:', error);
+    res.status(400).send({ error: error.message });
   }
-  console.log('File received:', req.file);
-  // Send the path to the image file
-  res.send({ path: '/uploads/' + req.file.filename });
-}, (error, req, res, next) => {
-  // Error handling middleware
-  console.log('Error uploading file:', error);
-  res.status(400).send({error: error.message});
-})
-
-
+);
 
 app.use(cors());
 app.use(express.json()); // for parsing application/json
@@ -59,11 +65,15 @@ app.use('/uploads', (req, res, next) => {
 });
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-app.use(jobRoutes);
+app.use('/jobs', jobRoutes);
 
-mongoose.connect(process.env.DB_URI, { useNewUrlParser: true, useUnifiedTopology: true })
+mongoose
+  .connect(process.env.DB_URI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
   .then(() => console.log('Connected to MongoDB'))
-  .catch(err => console.error('Could not connect to MongoDB', err));
+  .catch((err) => console.error('Could not connect to MongoDB', err));
 
 const PORT = process.env.PORT || 5001;
 
