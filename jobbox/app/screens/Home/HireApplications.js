@@ -88,7 +88,7 @@ export function HireApplicationsScreen({ route, navigation }) {
             <FlatList
                 data={applicants}
                 renderItem={renderApplicant}
-                keyExtractor={item => item._id}
+                keyExtractor={item => item.id}
                 style={styles.applicantView}
             />
         </View>

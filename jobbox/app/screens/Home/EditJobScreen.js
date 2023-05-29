@@ -6,7 +6,7 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 import { DefaultTheme } from 'react-native-paper';
 import { editJob, deleteJob } from '../../services/JobService';
 
-const EditJobScreen = ({ route, navigation }) => {
+export function EditJobScreen  ({ route, navigation }) {
   const { job } = route.params;
 
   const [jobTitle, setJobTitle] = useState(job.title);
@@ -95,52 +95,116 @@ const EditJobScreen = ({ route, navigation }) => {
     >
       <KeyboardAwareScrollView>
         <TextInput
-                label="Job Title"
-                value={title}
-                onChangeText={setJobTitle}
-                style={styles.input}
-        />
-        <TextInput
-          label="Job Description"
-          value={description}
-          onChangeText={setDescription}
+          label="Job Title"
+          value={jobTitle}
+          onChangeText={setJobTitle}
           style={styles.input}
+          theme={theme}
         />
+        <View style={styles.inputRow}>
+          <View style={styles.overlayContainer}>
+            <TextInput
+              label="Category"
+              value={category}
+              style={styles.input}
+            />
+            <TouchableOpacity style={styles.overlay} onPress={toggleCategoryModal} />
+          </View>
+        </View>
         <TextInput
           label="Skills Required"
           value={skills}
           onChangeText={setSkills}
           style={styles.input}
+          theme={theme}
         />
         <TextInput
           label="Location"
           value={location}
           onChangeText={setLocation}
           style={styles.input}
+          theme={theme}
         />
-        <TextInput
-          label="Estimated Time"
-          value={estimatedTime}
-          onChangeText={setEstimatedTime}
-          style={styles.input}
-        />
-        <TextInput
-          label="Unit"
-          value={estimatedTimeUnit}
-          onChangeText={setEstimatedTimeUnit}
-          style={styles.input}
-        />
+        <View style={styles.inputRow}>
+          <TextInput
+            label="Estimated Time"
+            value={estimatedTime.toString()}
+            onChangeText={(text) => {
+              if (!isNaN(text)) {
+                setEstimatedTime(parseFloat(text));
+              }
+            }}
+            keyboardType="numeric"
+            style={[styles.input, styles.inputHalf]}
+            theme={theme}
+          />
+          <View style={styles.overlayContainer}>
+            <TextInput
+              label="Unit"
+              value={estimatedTimeUnit}
+              style={[styles.input, styles.inputHalf]}
+              theme={theme}
+            />
+            <TouchableOpacity style={styles.overlay} onPress={toggleModal} />
+          </View>
+        </View>
         <TextInput
           label="Pay"
-          value={pay}
-          onChangeText={setPay}
+          value={pay.toString()}
+          onChangeText={(text) => {
+            if (!isNaN(text)) {
+              setPay(parseFloat(text));
+            }
+          }}
+          keyboardType="numeric"
           style={styles.input}
+          theme={theme}
         />
-        <Button title="Save Changes" onPress={handleSave} />
-        <Button title="Delete Job" color="red" onPress={handleDelete} />
+        <TextInput
+          label="Job Description"
+          value={jobDescription}
+          onChangeText={setJobDescription}
+          style={[styles.input, styles.descriptionInput]}
+          theme={theme}
+        />
+        <Modal
+          isVisible={isModalVisible}
+          style={styles.modal}
+          onBackdropPress={toggleModal}
+        >
+          <View style={styles.modalContent}>
+            {timeUnits.map((unit, index) => (
+              <List.Item
+                key={index}
+                title={unit}
+                onPress={() => handleSelectTimeUnit(unit)}
+              />
+            ))}
+            <Button onPress={toggleModal}>Close</Button>
+          </View>
+        </Modal>
+        <Modal
+          isVisible={isCategoryModalVisible}
+          style={styles.modal}
+          onBackdropPress={toggleCategoryModal}
+        >
+          <View style={styles.modalContent}>
+            {categories.map((category, index) => (
+              <List.Item
+                key={index}
+                title={category}
+                onPress={() => handleSelectCategory(category)}
+              />
+            ))}
+            <Button onPress={toggleCategoryModal}>Close</Button>
+          </View>
+        </Modal>
+        <Button onPress={handleSave} style={styles.button}>Save Changes</Button>
+        <Button onPress={handleDelete} style={styles.button} color="red">Delete Job</Button>
       </KeyboardAwareScrollView>
     </KeyboardAvoidingView>
   );
+
 }
 
 const styles = StyleSheet.create({
