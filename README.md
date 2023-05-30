@@ -29,6 +29,7 @@ JOBBOX-1
 │  │  ├─ screens
 │  │  │  ├─ Activity.js
 │  │  │  ├─ Home
+│  │  │  │  ├─ EditJobScreen.js
 │  │  │  │  ├─ Hire.js
 │  │  │  │  ├─ HireApplications.js
 │  │  │  │  ├─ JobDetails.js
@@ -67,21 +68,18 @@ JOBBOX-1
 │  ├─ package.json
 │  ├─ react-native.config.js
 │  └─ server
-│     ├─ .env
+│     ├─ .prettierrc
 │     ├─ index.js
-│     ├─ jobbox
-│     │  └─ .expo
-│     │     ├─ devices.json
-│     │     └─ README.md
 │     ├─ models
 │     │  ├─ Job.js
 │     │  └─ User.js
 │     ├─ package-lock.json
 │     ├─ package.json
 │     ├─ Procfile
-│     └─ routes
-│        ├─ auth.js
-│        └─ job.js
+│     ├─ routes
+│     │  ├─ auth.js
+│     │  └─ job.js
+│     └─ uploads
 └─ README.md
 
 ```
