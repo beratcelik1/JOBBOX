@@ -14,9 +14,10 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { DefaultTheme, Provider as PaperProvider } from 'react-native-paper';
 import { TIME_UNITS, CATEGORIES } from './constants';
+import { showMessage } from 'react-native-flash-message';
 
 export default function PostJob({ navigation, route }) {
-  const { template } = route.params || {};
+  const { template, editing } = route.params || {};
 
   const [jobTitle, setJobTitle] = useState('');
   const [jobDescription, setJobDescription] = useState('');
@@ -60,7 +61,8 @@ export default function PostJob({ navigation, route }) {
       skills !== '' &&
       location !== '' &&
       pay !== '' &&
-      estimatedTime !== ''
+      estimatedTime !== '' &&
+      !!estimatedTimeUnit
     );
   };
 
@@ -79,6 +81,46 @@ export default function PostJob({ navigation, route }) {
   const handleSelectCategory = (category) => {
     setCategory(category);
     toggleCategoryModal();
+  };
+
+  const handleEdit = async () => {
+    const token = await AsyncStorage.getItem('token');
+    if (isNaN(pay)) {
+      alert('Pay must be valid numbers');
+      return;
+    }
+    if (isNaN(estimatedTime)) {
+      alert('Estimated Time must be valid numbers');
+      return;
+    }
+
+    fetch(`http://tranquil-ocean-74659.herokuapp.com/jobs/${template._id}`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`, // Add this line
+      },
+      body: JSON.stringify({
+        description: jobDescription,
+        skills: skills,
+        location: location,
+        pay: parseFloat(pay), // ensure pay is a number
+        estimatedTime: parseFloat(estimatedTime),
+        estimatedTimeUnit: estimatedTimeUnit,
+      }),
+    })
+      .then((response) => response.json())
+      .then((data) => console.log(data))
+      .catch((error) => console.error('Error:', error));
+
+    showMessage({
+      message: 'Your job is updated!',
+      type: 'info',
+      floating: true,
+      icon: 'success',
+      duration: 3000,
+    });
+    navigation.navigate('HireScreen');
   };
 
   const handlePost = async () => {
@@ -113,7 +155,19 @@ export default function PostJob({ navigation, route }) {
       .then((data) => console.log(data))
       .catch((error) => console.error('Error:', error));
 
-    navigation.goBack();
+    showMessage({
+      message: !template
+        ? 'Your request has been sent!'
+        : 'Your job is posted!',
+      description:
+        !template &&
+        'you will get a notification when your job post is approved.',
+      type: 'info',
+      floating: true,
+      icon: 'success',
+      duration: 3000,
+    });
+    navigation.navigate('HireScreen');
   };
 
   return (
@@ -132,14 +186,22 @@ export default function PostJob({ navigation, route }) {
           onChangeText={setJobTitle}
           style={styles.input}
           theme={theme}
+          editable={!template}
         />
         <View style={styles.inputRow}>
           <View style={styles.overlayContainer}>
-            <TextInput label="Category" value={category} style={styles.input} />
-            <TouchableOpacity
-              style={styles.overlay}
-              onPress={toggleCategoryModal}
+            <TextInput
+              label="Category"
+              value={category}
+              style={styles.input}
+              editable={!template}
             />
+            {!template && (
+              <TouchableOpacity
+                style={styles.overlay}
+                onPress={toggleCategoryModal}
+              />
+            )}
           </View>
         </View>
         <TextInput
@@ -148,6 +210,7 @@ export default function PostJob({ navigation, route }) {
           onChangeText={setSkills}
           style={styles.input}
           theme={theme}
+          editable={!template}
         />
         <TextInput
           label="Location"
@@ -167,7 +230,7 @@ export default function PostJob({ navigation, route }) {
           <View style={styles.overlayContainer}>
             <TextInput
               label="Unit"
-              value={estimatedTimeUnit}
+              value={estimatedTimeUnit || 'Select'}
               style={[styles.input, styles.inputHalf]}
               theme={theme}
             />
@@ -225,11 +288,11 @@ export default function PostJob({ navigation, route }) {
 
         <Button
           mode="contained"
-          onPress={handlePost}
+          onPress={editing ? handleEdit : handlePost}
           style={styles.button}
           disabled={!isFormValid()}
         >
-          Post Job
+          {editing ? 'Save Edit' : 'Post Job'}
         </Button>
       </KeyboardAwareScrollView>
     </KeyboardAvoidingView>

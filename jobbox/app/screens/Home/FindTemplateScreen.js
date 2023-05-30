@@ -12,18 +12,21 @@ const FindTemplateScreen = ({ navigation }) => {
       title: 'Cook food',
       description: 'Cook food for 2 people',
       category: CATEGORIES[0],
+      skills: 'Cooking',
     },
     {
       id: '2',
       title: 'Help move',
       description: 'Help move furniture',
       category: CATEGORIES[1],
+      skills: 'Lifting heavy objects',
     },
     {
       id: '3',
       title: 'Cleaning',
       description: 'Clean the house',
       category: CATEGORIES[2],
+      skills: 'Cleaning',
     },
     // add as many templates as you want
   ]);
@@ -68,14 +71,26 @@ const FindTemplateScreen = ({ navigation }) => {
           </View>
         )}
       />
+
+      <View style={styles.customJobContainer}>
+        <Text style={styles.customJobText}>
+          Can't find what you're looking for?{' '}
+          <Text
+            style={styles.customJobButton}
+            onPress={() => navigation.navigate('PostJob')}
+          >
+            Create a custom job
+          </Text>
+        </Text>
+      </View>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-      flex: 1,
-      padding: 10,
+    flex: 1,
+    padding: 10,
   },
   searchBar: {
     height: 40,
@@ -123,6 +138,18 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: '#999',
     marginTop: 10,
+  },
+  customJobContainer: {
+    paddingHorizontal: 50,
+  },
+  customJobText: {
+    textAlign: 'center',
+    paddingTop: 8,
+    fontSize: 16,
+    color: '#666',
+  },
+  customJobButton: {
+    color: '#4683fc',
   },
 });
 
