@@ -40,7 +40,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginTop: 20,
     padding: 15,
-    borderRadius: 15,
+    borderRadius: 10,
     marginRight:15,
     marginLeft:15,
     height: 75,
@@ -50,11 +50,12 @@ const styles = StyleSheet.create({
     // iOS shadow properties
     shadowColor: "#000",
     shadowOffset: {
-        width: -10,
+        width: 0,
         height: 5,
     },
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
+    elevation: 5,
   },
   sectionIcon: {
     marginRight: 10,
@@ -249,7 +250,6 @@ return (
               <Icon name={item.iconName} size={24} color="#4683fc" style={styles.sectionIcon} />
               <Text>
                 <Text style={styles.sectionTitle}>{item.title}</Text>
-                <Text style={styles.sectionText}><Text></Text></Text> {/* <-- Wrapped sectionText with <Text> */}
               </Text>
             </TouchableOpacity>
           )}  

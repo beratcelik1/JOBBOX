@@ -61,7 +61,9 @@ function HireScreen({ navigation }) {
             <Text style={styles.jobDescription}>{item.description}</Text>
             <Text style={styles.jobDate}>{item.datePosted}</Text>
             <Text style={styles.jobDate}>Applications: {item.applications ? item.applications.length : 0}</Text>
-            <Button onPress={() => handleJobPress(item)} title="View Job Post" />
+            <View style={styles.button}>  
+                <Button onPress={() => handleJobPress(item)} title="View Job Status" color="#fff" fontWeight='600'/>
+            </View>
         </View>
     );
 
@@ -186,11 +188,29 @@ const styles = StyleSheet.create({
         // iOS shadow properties
         shadowColor: "#000",
         shadowOffset: {
-            width: -10,
+            width: 0,
             height: 2,
         },
         shadowOpacity: 0.25,
         shadowRadius: 3.84,
+        elevation: 5, 
+    },
+    button: { 
+        backgroundColor: '#fff',
+        padding: 5,
+        marginBottom: 0,
+        marginTop: 15,
+        borderRadius: 10,
+        shadowColor: "#4683fc",
+        shadowOffset: {
+          width: 0,
+          height: 2,
+        },
+        shadowOpacity: 1,
+        shadowRadius: 3.84,
+        elevation: 5,
+        backgroundColor: '#4683fc',
+        color: '#fff'
     },
     jobTitle: {
         fontSize: 18,

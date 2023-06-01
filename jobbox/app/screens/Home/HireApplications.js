@@ -212,7 +212,15 @@ const styles = StyleSheet.create({
         paddingBottom: 6, 
         paddingLeft: 7, 
         paddingRight: 9, 
-        borderRadius: 50,
+        borderRadius: 10,
+        shadowColor: "#000",
+        shadowOffset: {
+            width: 0,
+            height: 2,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 3.84,
+        elevation: 5,
     },
     buttonText: {
         marginLeft: 5,

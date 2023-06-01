@@ -17,7 +17,7 @@ const styles = StyleSheet.create({
   },
   wallet: {
     padding: 20,
-    marginBottom: 15,
+    marginBottom: 40,
     borderRadius: 10,
     backgroundColor: '#f8f9fa',
     shadowColor: "#000",
