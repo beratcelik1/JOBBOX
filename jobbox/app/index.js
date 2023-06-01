@@ -27,6 +27,7 @@ import { useState } from 'react';
 import Login from './screens/Login'; 
 import Signup from './screens/Signup';
 import { Section } from 'react-native-paper';
+import FlashMessage from 'react-native-flash-message';
 
 const logo = require('./assets/images/jobboxlogo4.png');
 const logo2 = require('./assets/images/jobboxlogotek.png');
@@ -267,6 +268,7 @@ export default function App() {
       <RootNavigationContext.Provider value={navigationRef}>
         {isAuthenticated ? <MainStack /> : <AuthStack />}
       </RootNavigationContext.Provider>
+      <FlashMessage position="top" />
     </NavigationContainer>
   );
 }
