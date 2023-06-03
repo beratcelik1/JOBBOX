@@ -7,6 +7,7 @@ import {
   StyleSheet,
   TouchableOpacity,
   FlatList,
+  Alert,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
@@ -29,32 +30,33 @@ function HireScreen({ navigation }) {
   const [searchQuery, setSearchQuery] = useState('');
   const [jobs, setJobs] = useState([]);
 
+
+  const fetchJobs = async () => {
+    // Fetch the token from the async storage
+    const token = await AsyncStorage.getItem('token');
+    console.log(token);
+
+    // Decode the token to get the user ID
+    const decodedToken = jwt_decode(token);
+    const userId = decodedToken.userId;
+
+    // Fetch the jobs from your server
+    fetch(`http://tranquil-ocean-74659.herokuapp.com/jobs/user/${userId}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        // Set the jobs state
+        setJobs(data);
+      })
+      .catch((error) => console.error('Error:', error));
+  };
+
   useFocusEffect(
     React.useCallback(() => {
       setLoaded(false);
-      const fetchJobs = async () => {
-        // Fetch the token from the async storage
-        const token = await AsyncStorage.getItem('token');
-        console.log(token);
-
-        // Decode the token to get the user ID
-        const decodedToken = jwt_decode(token);
-        const userId = decodedToken.userId;
-
-        // Fetch the jobs from your server
-        fetch(`http://tranquil-ocean-74659.herokuapp.com/jobs/user/${userId}`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        })
-          .then((response) => response.json())
-          .then((data) => {
-            // Set the jobs state
-            setJobs(data);
-          })
-          .catch((error) => console.error('Error:', error));
-      };
-
       fetchJobs();
       setLoaded(true);
     }, [])
@@ -77,7 +79,44 @@ function HireScreen({ navigation }) {
   const handleJobPress = (job) => {
     console.log(job);
     navigation.navigate('HireApplicationsScreen', { job: job });
+  }; 
+
+  const handleDeleteJob = async (jobId) => {
+    // Confirm the delete action
+    Alert.alert(
+      "Delete Job",
+      "Are you sure you want to delete this job?",
+      [
+        {
+          text: "Cancel",
+          style: "cancel"
+        },
+        { text: "OK", onPress: async () => {
+          // Fetch the token from the async storage
+          const token = await AsyncStorage.getItem('token');
+          console.log(token);
+
+          // Make the DELETE request
+          fetch(`http://tranquil-ocean-74659.herokuapp.com/jobs/${jobId}`, {
+            method: 'DELETE',
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          })
+            .then((response) => response.json())
+            .then((data) => {
+              // Refresh the job list after deleting
+              // You may wish to handle potential errors here too
+              fetchJobs();
+            })
+            .catch((error) => console.error('Error:', error));
+        }}
+      ],
+      { cancelable: false }
+    );
   };
+  
+
 
   const renderJob = ({ item }) => (
     <View style={styles.jobCard}>
@@ -91,7 +130,15 @@ function HireScreen({ navigation }) {
         >
           <Ionicons name="create-outline" size={24} color="#4683fc" />
           <Text style={styles.buttonText2}>Edit post</Text>
-        </TouchableOpacity>
+        </TouchableOpacity> 
+
+        <TouchableOpacity
+      onPress={() => handleDeleteJob(item._id)}
+      style={styles.button2}
+    >
+      <Text style={styles.buttonText2}>Delete Job</Text>
+    </TouchableOpacity>
+
       </View>
       <Text style={styles.jobDescription}>{item.description}</Text>
       <Text style={styles.jobDate}>{item.datePosted}</Text> 
@@ -106,7 +153,9 @@ function HireScreen({ navigation }) {
                 <Text style={styles.buttonText}> View Possible Hires</Text>
             </TouchableOpacity>
     </View>
-  ); 
+  );  
+
+  
 
   return (
     <View style={styles.container}>

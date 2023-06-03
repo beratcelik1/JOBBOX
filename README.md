@@ -21,15 +21,21 @@ JOBBOX-1
 │  │  │  ├─ JobList.js
 │  │  │  ├─ JobPost.js
 │  │  │  ├─ PaymentHistory.js
+│  │  │  ├─ SearchBar.js
 │  │  │  └─ Settings.js
 │  │  ├─ index.js
 │  │  ├─ navigation
 │  │  │  ├─ AppNavigator.js
 │  │  │  └─ RootNavigationContext.js
 │  │  ├─ screens
-│  │  │  ├─ Activity.js
+│  │  │  ├─ Activity
+│  │  │  │  ├─ EditTargetsScreen.js
+│  │  │  │  ├─ HireHistoryScreen.js
+│  │  │  │  ├─ Wallet.js
+│  │  │  │  └─ WorkHistoryScreen.js
 │  │  │  ├─ Home
-│  │  │  │  ├─ EditJobScreen.js
+│  │  │  │  ├─ constants.js
+│  │  │  │  ├─ FindTemplateScreen.js
 │  │  │  │  ├─ Hire.js
 │  │  │  │  ├─ HireApplications.js
 │  │  │  │  ├─ JobDetails.js
@@ -68,18 +74,24 @@ JOBBOX-1
 │  ├─ package.json
 │  ├─ react-native.config.js
 │  └─ server
+│     ├─ .env
 │     ├─ .prettierrc
 │     ├─ index.js
+│     ├─ jobbox
+│     │  └─ .expo
+│     │     ├─ devices.json
+│     │     └─ README.md
 │     ├─ models
+│     │  ├─ Conversation.js
 │     │  ├─ Job.js
+│     │  ├─ Message.js
 │     │  └─ User.js
 │     ├─ package-lock.json
 │     ├─ package.json
 │     ├─ Procfile
-│     ├─ routes
-│     │  ├─ auth.js
-│     │  └─ job.js
-│     └─ uploads
+│     └─ routes
+│        ├─ auth.js
+│        └─ job.js
 └─ README.md
 
 ```

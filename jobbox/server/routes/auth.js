@@ -3,6 +3,9 @@ const bcryptjs = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 
+const Message = require('../models/Message');
+const Conversation = require('../models/Conversation');
+
 const router = express.Router();
 
 router.post('/signup', async (req, res) => {
@@ -135,5 +138,50 @@ router.put('/user/me/profilePic', async (req, res) => {
   }
 });
 //...
+
+// For Messages ---------------
+router.post('/message', async (req, res) => {
+  const { senderId, receiverId, content } = req.body;
+
+  // create new message
+  const message = new Message({ senderId, receiverId, content });
+
+  // save message and return
+  await message.save();
+  res.status(201).json(message);
+});
+
+// Get all conversations for a specific user
+router.get('/conversations/:userId', async (req, res) => {
+  const userId = req.params.userId;
+  const conversations = await Conversation.find({ members: userId }).populate('members');
+  res.send(conversations);
+});
+
+// Get all messages in a specific conversation
+router.get('/messages/:conversationId', async (req, res) => {
+  const conversationId = req.params.conversationId;
+  const messages = await Message.find({ conversation: conversationId }).sort('timestamp');
+  res.send(messages);
+});
+
+// Post a new message to a conversation
+router.post('/messages/:conversationId', async (req, res) => {
+  const conversationId = req.params.conversationId;
+  const { senderId, content } = req.body;
+
+  const message = new Message({ senderId, content, conversation: conversationId });
+
+  await message.save();
+  res.send(message);
+});
+
+// get all usernames
+router.get('/users', async (req, res) => {
+  const users = await User.find({});
+  res.send(users);
+});
+
+// End of Messages ---------------
 
 module.exports = router;
