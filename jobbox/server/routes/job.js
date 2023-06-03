@@ -109,7 +109,8 @@ router.get('/', async (req, res) => {
           query.pay = { $gte: pay }; // returns jobs with pay greater than or equal to the pay query
       }
 
-      const jobs = await Job.find(query);
+      
+      const jobs = await Job.find(query).populate('postedBy', 'firstname lastname');
       res.send(jobs);
   } catch (error) {
       res.status(500).send(error);
@@ -203,50 +204,10 @@ router.get('/user/:userId', async (req, res) => {
     if (!user) {
       return res.status(404).json({ error: 'User not found' });
     }
-    const jobs = await Job.find({ postedBy: user._id });
+    const jobs = await Job.find({ postedBy: user._id }).populate('postedBy', 'firstname lastname');
     res.send(jobs);
   } catch (error) {
     res.status(500).send(error);
-  }
-}); 
-
-// Delete a job
-router.delete('/:id', async (req, res) => {
-  const token = req.header('Authorization')?.replace('Bearer ', '');
-  if (!token) {
-    return res.status(401).json({ error: 'Authorization token missing' });
-  }
-
-  try {
-    // verify the token and extract the user ID
-    const data = jwt.verify(token, process.env.JWT_SECRET);
-
-    // find the user with the extracted ID
-    const user = await User.findById(data.userId);
-    if (!user) {
-      return res.status(404).json({ error: 'User not found' });
-    }
-
-    const job = await Job.findById(req.params.id);
-    if (!job) {
-      return res.status(404).json({ error: 'Job not found' });
-    }
-
-    // Check if the job was posted by the logged in user
-    if (job.postedBy.toString() !== user._id.toString()) {
-      return res.status(403).json({ error: 'You can only delete your own jobs' });
-    }
-
-    // delete job
-    await job.remove();
-
-    // Remove job id from user's job postings
-    user.jobPostings = user.jobPostings.filter((jobId) => jobId.toString() !== job._id.toString());
-    await user.save();
-
-    res.status(200).send({ message: 'Job deleted successfully' });
-  } catch (error) {
-    res.status(400).send(error);
   }
 });
 
