@@ -8,6 +8,9 @@ const authRoutes = require('./routes/auth');
 const multer = require('multer');
 const path = require('path');
 
+const conversationRoute = require('./routes/conversations');
+const messageRoute = require('./routes/messages');
+
 const jobRoutes = require('./routes/job');
 
 // Define storage for the images
@@ -66,6 +69,9 @@ app.use('/uploads', (req, res, next) => {
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 app.use('/jobs', jobRoutes);
+
+app.use("/conversations", conversationRoute);
+app.use("/messages", messageRoute);
 
 mongoose
   .connect(process.env.DB_URI, {

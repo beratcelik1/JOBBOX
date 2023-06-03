@@ -10,6 +10,7 @@ const JobSchema = new mongoose.Schema({
   estimatedTimeUnit: { type: String, required: true },
   category: { type: String, required: true }, // New field for job category
   postedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+  applicants: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User'}],
 });
 
 const Job = mongoose.model('Job', JobSchema);
