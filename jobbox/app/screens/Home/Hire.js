@@ -124,7 +124,7 @@ function HireScreen({ navigation }) {
             data={jobs}
             renderItem={renderJob}
             keyExtractor={(item, index) => item._id}
-            style={styles.applicantView}
+            style={styles.applicantView} 
           />
           <View style={{ justifyContent: 'center', alignItems: 'center' }}>
             <TouchableOpacity
