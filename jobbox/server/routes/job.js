@@ -47,6 +47,48 @@ router.get('/search', async (req, res) => {
   }
 });
 
+// Handle delete job
+router.delete('/:id', async (req, res) => {
+  const token = req.header('Authorization')?.replace('Bearer ', '');
+  if (!token) {
+    return res.status(401).json({ error: 'Authorization token missing' });
+  }
+
+  try {
+    // verify the token and extract the user ID
+  const token = req.headers.authorization.split(' ')[1]; // Bearer <token>
+
+  if (!token) {
+    return res.status(401).json({ error: 'No token provided' });
+  }
+
+  let data;
+  try {
+    data = jwt.verify(token, process.env.JWT_SECRET);
+  } catch (error) {
+    return res.status(401).json({ error: 'Invalid token' });
+  }
+  
+  // find the job with the extracted ID
+  const job = await Job.findById(req.params.id);
+  if (!job) {
+    return res.status(404).json({ error: 'Job not found' });
+  }
+
+  if (job.postedBy.toString() !== data.userId) {
+    return res.status(401).json({ error: 'Not authorized to delete this job' });
+  }
+
+  console.log('Deleting job:', job);
+
+  await Job.deleteOne({ _id: job._id });
+  res.send(job);
+  } catch (error) {
+    console.log(error);
+    res.status(500).send(error);
+  }
+});
+
 // Get all jobs
 router.get('/', async (req, res) => {
   try {
@@ -166,7 +208,48 @@ router.get('/user/:userId', async (req, res) => {
   } catch (error) {
     res.status(500).send(error);
   }
+}); 
+
+// Delete a job
+router.delete('/:id', async (req, res) => {
+  const token = req.header('Authorization')?.replace('Bearer ', '');
+  if (!token) {
+    return res.status(401).json({ error: 'Authorization token missing' });
+  }
+
+  try {
+    // verify the token and extract the user ID
+    const data = jwt.verify(token, process.env.JWT_SECRET);
+
+    // find the user with the extracted ID
+    const user = await User.findById(data.userId);
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    const job = await Job.findById(req.params.id);
+    if (!job) {
+      return res.status(404).json({ error: 'Job not found' });
+    }
+
+    // Check if the job was posted by the logged in user
+    if (job.postedBy.toString() !== user._id.toString()) {
+      return res.status(403).json({ error: 'You can only delete your own jobs' });
+    }
+
+    // delete job
+    await job.remove();
+
+    // Remove job id from user's job postings
+    user.jobPostings = user.jobPostings.filter((jobId) => jobId.toString() !== job._id.toString());
+    await user.save();
+
+    res.status(200).send({ message: 'Job deleted successfully' });
+  } catch (error) {
+    res.status(400).send(error);
+  }
 });
+
 
 
 module.exports = router;
