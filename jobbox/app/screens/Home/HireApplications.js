@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, Image, FlatList, StyleSheet, TouchableOpacity, Alert} from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { createStackNavigator } from '@react-navigation/stack'; 
+import { createStackNavigator } from '@react-navigation/stack';
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import axios from 'axios';
 
 
 export function HireApplicationsScreen({ route, navigation }) {
@@ -11,24 +12,26 @@ export function HireApplicationsScreen({ route, navigation }) {
     const [applicants, setApplicants] = useState([]);
 
     useEffect(() => {
-        // Simulating a fetch call here
-        const fetchedApplicants = [
-            { id: '1', name: 'John Doe', bio: 'Software engineer with 5 years of experience.', rating: 4.5, image: 'https://example.com/image2.jpg' },
-            { id: '2', name: 'Jane Smith', bio: 'Data analyst specializing in healthcare.', rating: 4.7, image: 'https://example.com/image2.jpg' },
-            { id: '3', name: 'Bob Johnson', bio: 'Experienced gardener with a passion for plants.', rating: 4.2, image: 'https://example.com/image3.jpg' },
-            // Add more applicants here...
-        ];
-        setApplicants(fetchedApplicants);
+        (async () => {
+            try {
+                const response = await axios.get(`http://tranquil-ocean-74659.herokuapp.com/jobs/applicants/${job._id}`);
+                console.log(response.data);
+                setApplicants(response.data);
+            }
+            catch (error) {
+                console.log(error);
+            }
+        })();
     }, []);
 
     const renderApplicant = ({ item }) => (
         <View style={styles.applicantCard}>
             <View style={{ flexDirection: 'row' }}>
-                <Image source={{ uri: item.image }} style={styles.applicantImage} />
+                <Image source={{ uri: item.profilePic }} style={styles.applicantImage} />
                 <View style={{ flex: 1 }}>
                     <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
                         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                            <Text style={styles.applicantName}>{item.name}</Text>
+                            <Text style={styles.applicantName}>{`${item.firstname} ${item.lastname}`}</Text>
                             <View style={styles.ratingContainer}>
                                 <Text style={styles.applicantRating}>{item.rating}</Text>
                                 <Ionicons style={styles.applicantStar} name="star" size={17} color="#f28e1b" />
@@ -103,15 +106,28 @@ export function HireApplicationsScreen({ route, navigation }) {
                         <Text style={styles.buttonTextDel}>Delete Job</Text>
                     </TouchableOpacity>
                     
+                    <Text style={styles.jobStatus}>Status: {jobProgress === 1 ? 'Completed' : 'In Progress'}</Text>
+                    <View style={ {justifyContent: 'center', alignItems: 'center'}}>
+                         <TouchableOpacity
+                            onPress={() => navigation.navigate("EditJob", { job })}
+                            style={styles.editBtn}
+                        >
+                        <Text style={ {fontWeight: 'bold', color: '#4683fc' }} > Edit job</Text>
+                        </TouchableOpacity>
+                    </View>
                 </View>
             </View>
 
-            <FlatList
+            {applicants.length < 1 ? 
+                <View style={{ flex: 1, marginTop: 40, justifyContent: 'top', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 18, color: '#000' }}>No applicants yet</Text>
+                </View>
+            : <FlatList
                 data={applicants}
                 renderItem={renderApplicant}
                 keyExtractor={item => item._id}
                 style={styles.applicantView}
-            />
+            />}
         </View>
     );
 } 
