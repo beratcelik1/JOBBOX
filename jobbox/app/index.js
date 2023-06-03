@@ -5,7 +5,6 @@ import { createMaterialTopTabNavigator } from '@react-navigation/material-top-ta
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
 import Icon from 'react-native-vector-icons/Ionicons';
-import { ConversationProvider } from './ConversationContext';
 
 
 import { RootNavigationContext } from './navigation/RootNavigationContext';
@@ -14,7 +13,7 @@ import Profile from './screens/Profile/Profile';
 import Services from './screens/Services/Services';
 import Hire from './screens/Home/Hire';
 import Work from './screens/Home/Work';
-import Messages from './screens/Messages';
+import Messages from './screens/Messages/Messages';
 import Notifications from './screens/Notifications';
 import PostJob from './screens/Home/PostJob';
 import Category from './screens/Services/Category';
@@ -23,7 +22,6 @@ import ProfileSection from './screens/Profile/ProfileSection';
 import WorkHistoryScreen from './screens/Activity/WorkHistoryScreen';
 import HireHistoryScreen from './screens/Activity/HireHistoryScreen';
 import EditTargetsScreen from './screens/Activity/EditTargetsScreen';
-import Chat from './screens/Chat'; 
 
 import { useState } from 'react';
 import Login from './screens/Login'; 
@@ -243,11 +241,6 @@ export default function App() {
         component={JobScreen}
         options={{headerTitle: ' ', headerBackTitle: '', headerBackTitleVisible: false,}}  
       />
-      <Stack.Screen 
-      name="Chat" 
-      component={Chat} 
-      options={{ headerBackTitle: '', headerBackTitleVisible: false }} 
-    />
        <Stack.Screen name="ProfileSection" component={ProfileSection} 
        options={{headerTitle: 'Profile', headerBackTitle: '', headerBackTitleVisible: false }} 
       />
@@ -273,16 +266,9 @@ export default function App() {
   return (
     <NavigationContainer ref={navigationRef} independent={true} >
       <RootNavigationContext.Provider value={navigationRef}>
-        {isAuthenticated ? 
-          <ConversationProvider>
-            <MainStack /> 
-          </ConversationProvider>
-          : 
-          <AuthStack />
-        }
+        {isAuthenticated ? <MainStack /> : <AuthStack />}
       </RootNavigationContext.Provider>
       <FlashMessage position="top" />
     </NavigationContainer>
   );
 }
-
