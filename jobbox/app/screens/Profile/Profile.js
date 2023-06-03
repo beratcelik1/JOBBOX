@@ -11,14 +11,26 @@ import fetch from 'node-fetch';
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    marginTop: 5,
   },
   headerContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 20,
-    paddingLeft: 20,
-    paddingRight: 20, 
-    paddingTop: 20, 
+    marginLeft: 5,
+    marginRight: 5, 
+    margingTop: 10, 
+    padding: 20,
+    marginBottom: 7,
+    borderRadius: 10,
+    backgroundColor: '#f8f9fa',
+    shadowColor: "#000",
+    shadowOffset: {
+        width: 0,
+        height: 7,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
   },
   profileImage: {
     width: 100,
@@ -51,14 +63,15 @@ const styles = StyleSheet.create({
     shadowColor: "#000",
     shadowOffset: {
         width: 0,
-        height: 5,
+        height: 3,
     },
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
-    elevation: 5,
+    elevation: 5, 
   },
   sectionIcon: {
     marginRight: 10,
+    marginLeft: '10%',
   },
   sectionTitle: {
     fontSize: 18,

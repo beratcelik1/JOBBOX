@@ -17,7 +17,6 @@ import SearchBar from '../../components/SearchBar';
 import { HireApplicationsScreen } from './HireApplications';
 import { useFocusEffect } from '@react-navigation/native';
 
-import { EditJobScreen } from './EditJobScreen';
 import FindTemplateScreen from './FindTemplateScreen';
 
 import jwt_decode from 'jwt-decode';
@@ -87,21 +86,27 @@ function HireScreen({ navigation }) {
         <TouchableOpacity
           onPress={() =>
             navigation.navigate('PostJob', { template: item, editing: true })
-          }
+          } 
+          style = {styles.button2}
         >
-          <Ionicons name="create-outline" size={24} color="#666" />
+          <Ionicons name="create-outline" size={24} color="#4683fc" />
+          <Text style={styles.buttonText2}>Edit post</Text>
         </TouchableOpacity>
       </View>
       <Text style={styles.jobDescription}>{item.description}</Text>
-      <Text style={styles.jobDate}>{item.datePosted}</Text>
-      <Text style={styles.jobDate}>
+      <Text style={styles.jobDate}>{item.datePosted}</Text> 
+      <Text style={styles.jobDate}> 
         Applications: {item.applications ? item.applications.length : 0}
-      </Text>
-            <View style={styles.button}>  
-          <Button onPress={() => handleJobPress(item)} title="View Job Status" color="#fff" fontWeight='600'/>
-            </View>
+      </Text>  
+
+            <TouchableOpacity 
+              style={styles.button}
+              onPress={() => handleJobPress(item)}  
+            > 
+                <Text style={styles.buttonText}> View Possible Hires</Text>
+            </TouchableOpacity>
     </View>
-  );
+  ); 
 
   return (
     <View style={styles.container}>
@@ -174,16 +179,6 @@ export default function Hire() {
         }}
       />
       <HireStack.Screen
-        name="EditJob"
-        component={EditJobScreen}
-        options={{
-          headerTitle: '',
-          headerShown: true,
-          headerBackTitle: '',
-          headerBackTitleVisible: false,
-        }}
-      />
-      <HireStack.Screen
         name="FindTemplateScreen"
         component={FindTemplateScreen}
         options={{
@@ -198,18 +193,18 @@ export default function Hire() {
 }
 
 const styles = StyleSheet.create({
-  applicantView: {
-    marginLeft: -20,
-    marginRight: 0,
-    marginBottom: 0,
+  applicantView: { 
+    marginLeft: -20, 
+    marginRight: 0, 
+    marginBottom: 0, 
   },
-  Postbtn: {
-    backgroundColor: '#4683fc',
-    borderRadius: 50,
-    width: 150,
-    height: 40,
-    justifyContent: 'center',
-    alignItems: 'center',
+  Postbtn: { 
+    backgroundColor: '#4683fc', 
+    borderRadius: 50, 
+    width: 150, 
+    height: 40, 
+    justifyContent: 'center', 
+    alignItems: 'center', 
     marginRight: 10,
   },
   container: {
@@ -233,14 +228,57 @@ const styles = StyleSheet.create({
     // iOS shadow properties
     shadowColor: '#000',
     shadowOffset: {
-      width: -10,
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+  }, 
+  button: { 
+    backgroundColor: '#4683fc',
+    padding: 15,
+    marginTop: 10,
+    borderRadius: 10,
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
       height: 2,
     },
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
+    elevation: 5, 
+    alignItems: 'center', 
   },
-  jobHeader: {
+  buttonText: {
+    fontSize: 16,
+    color: '#fff',
+    
+  }, 
+  button2: {
     flexDirection: 'row',
+    alignItems: 'center',
+    marginHorizontal: 5,
+    backgroundColor: '#f2f3f5',
+    paddingTop: 6, 
+    paddingBottom: 6, 
+    paddingLeft: 15, 
+    paddingRight: 15, 
+    borderRadius: 10,
+    shadowColor: "#000",
+    shadowOffset: {
+        width: 0,
+        height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5, 
+},
+buttonText2: {
+    marginLeft: 5,
+    color: '#4683fc', 
+},
+  jobHeader: {
+    flexDirection: 'row', 
     justifyContent: 'space-between',
     alignItems: 'center',
   },
