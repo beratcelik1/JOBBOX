@@ -84,13 +84,6 @@ function HireScreen({ navigation }) {
     <View style={styles.jobCard}>
       <View style={styles.jobHeader}>
         <Text style={styles.jobTitle}>{item.title}</Text>
-        <TouchableOpacity
-          onPress={() =>
-            navigation.navigate('PostJob', { template: item, editing: true })
-          }
-        >
-          <Ionicons name="create-outline" size={24} color="#666" />
-        </TouchableOpacity>
       </View>
       <Text style={styles.jobDescription}>{item.description}</Text>
       <Text style={styles.jobDate}>{item.datePosted}</Text>
