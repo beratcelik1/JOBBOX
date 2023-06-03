@@ -258,24 +258,25 @@ function WorkScreen({ navigation }) {
     return (
         
         <View style={styles.container}>
-        <View style={styles.searchSection}>
-          <Ionicons style={styles.searchIcon} name="ios-search" size={20} color="#000" />
-          <TextInput
-            style={styles.searchInput}
-            onChangeText={setSearchQuery}
-            value={searchQuery}
-            placeholder="Search"
-            placeholderTextColor="gray"
-          />
-          <TouchableOpacity onPress={handleSearch} style={styles.searchButton}>
-            <Text style={styles.buttonText}>Search</Text>
-          </TouchableOpacity>
-    
-          <TouchableOpacity style={styles.filterButton} onPress={openFilterModal}>
-            
-            <Ionicons name="filter" size={24} color="white" />
-          </TouchableOpacity>
-        </View>
+            <View style={styles.searchSection}>
+            <Ionicons style={styles.searchIcon} name="ios-search" size={20} color="#000" />
+            <TextInput 
+                style={styles.searchInput}
+                onChangeText={setSearchQuery}
+                value={searchQuery}
+                placeholder="Search"
+                placeholderTextColor="gray"
+            />
+            {searchQuery.length > 0 &&
+                <TouchableOpacity onPress={() => setSearchQuery('')}>
+                <Ionicons name="ios-close" size={20} color="#000" />
+                </TouchableOpacity>
+            }
+            <TouchableOpacity style={styles.filterButton} onPress={openFilterModal}>
+                <Ionicons name="filter" size={24} color="white" />
+            </TouchableOpacity>
+            </View>
+
 <Modal 
     isVisible={isFilterModalVisible} 
     style={styles.modal} 
@@ -436,8 +437,8 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         backgroundColor: '#fff',
         borderColor: 'white',
-        borderWidth: 1,
-        borderRadius: 8,
+        borderWidth: 0.5,
+        borderRadius: 50,
         paddingLeft: 10,
         margin: 10,
       },
