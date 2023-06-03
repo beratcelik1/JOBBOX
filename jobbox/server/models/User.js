@@ -28,12 +28,12 @@ const UserSchema = new mongoose.Schema({
     description: String,
   }],
   experience: [{
-    position: String,  // Changed from title
+    position: String,
     company: String,
     startDate: Date,
     endDate: Date,
     description: String,
-  }],  
+  }],
   education: [{
     date: String,
     degree: String,
@@ -45,7 +45,7 @@ const UserSchema = new mongoose.Schema({
     name: String,
     relationship: String,
     recommendation: String,
-  }], 
+  }],
   jobPostings: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Job',
@@ -57,21 +57,12 @@ const UserSchema = new mongoose.Schema({
   spendingTarget: {
     type: Number,
     default: 0,
- ,
-  earningTarget: {
-    type: Number,
-    default: 0,
-  },
-  spendingTarget: {
-    type: Number,
-    default: 0,
   },
   conversations: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Conversation',
-  },}],
+  }],
 });
-
 
 // hash password before saving
 UserSchema.pre('save', async function(next) {
