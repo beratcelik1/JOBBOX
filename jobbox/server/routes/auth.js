@@ -183,16 +183,6 @@ router.get('/users', async (req, res) => {
   res.send(users);
 });
 
-// End of Messages --------------- 
-
-router.get('/jobs', async (req, res) => {
-  try {
-    const Job = require('../models/Job');
-    const jobs = await Job.find({}).populate('postedBy', 'firstname lastname');
-    res.json(jobs);
-  } catch (err) {
-    res.status(500).send({ error: err.message });
-  }
-});
+// End of Messages ---------------
 
 module.exports = router;

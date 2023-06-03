@@ -92,45 +92,29 @@ router.delete('/:id', async (req, res) => {
 // Get all jobs
 router.get('/', async (req, res) => {
   try {
-    const { category, skills, location, pay } = req.query;
+      const { category, skills, location, pay } = req.query;
 
-    let query = {};
+      let query = {};
 
-    if(category) {
-        query.category = category;
-    }
-    if(skills) {
-        query.skills = new RegExp(skills, 'i'); 
-    }
-    if(location) {
-        query.location = new RegExp(location, 'i'); 
-    }
-    if(pay) {
-        query.pay = { $gte: pay }; // returns jobs with pay greater than or equal to the pay query
-    }
+      if(category) {
+          query.category = category;
+      }
+      if(skills) {
+          query.skills = new RegExp(skills, 'i'); 
+      }
+      if(location) {
+          query.location = new RegExp(location, 'i'); 
+      }
+      if(pay) {
+          query.pay = { $gte: pay }; // returns jobs with pay greater than or equal to the pay query
+      }
 
-    const jobs = await Job.find(query).populate('postedBy', 'firstname lastname');
-    res.send(jobs);
+      const jobs = await Job.find(query);
+      res.send(jobs);
   } catch (error) {
-    res.status(500).send(error);
+      res.status(500).send(error);
   }
 });
-
-// Get a user's jobs
-router.get('/user/:userId', async (req, res) => {
-  try {
-    const user = await User.findById(req.params.userId);
-    if (!user) {
-      return res.status(404).json({ error: 'User not found' });
-    }
-    const jobs = await Job.find({ postedBy: user._id }).populate('postedBy', 'firstname lastname');
-    res.send(jobs);
-  } catch (error) {
-    res.status(500).send(error);
-  }
-});
-
-
 
 // Edit a job
 router.patch('/:jobId', async (req, res) => {
@@ -267,45 +251,5 @@ router.delete('/:id', async (req, res) => {
 });
 
 
-// handle apply job
-router.post('/apply', async (req, res) => {
-  const { jobId, userId } = req.body;
-
-  try {
-    const job = await Job.findByIdAndUpdate(
-      jobId,
-      { $addToSet: { applicants: userId } },
-      { new: true }  // Returns the updated document
-    );
-
-    console.log(job);
-
-    if (!job) {
-      return res.status(404).send({ message: "Job not found" });
-    }
-
-    res.send(job);
-  } catch (err) {
-    console.error(err);
-    res.status(500).send({ message: "Server error" });
-  }
-});
-
-// handle get applicants
-router.get('/applicants/:jobId', async (req, res) => {
-  const { jobId } = req.params;
-
-  try {
-    const job = await Job.findById(jobId).populate('applicants');
-    if (!job) {
-      return res.status(404).send({ message: "Job not found" });
-    }
-
-    res.send(job.applicants);
-  } catch (err) {
-    console.error(err);
-    res.status(500).send({ message: "Server error" });
-  }
-});
 
 module.exports = router;
