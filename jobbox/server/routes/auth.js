@@ -140,11 +140,23 @@ router.put('/user/me/profilePic', async (req, res) => {
 //...
 
 // For Messages ---------------
+// Post a new message and start a new conversation if necessary
 router.post('/message', async (req, res) => {
   const { senderId, receiverId, content } = req.body;
 
+  // Find existing conversation
+  let conversation = await Conversation.findOne({
+    members: { $all: [senderId, receiverId] },
+  });
+
+  // If it doesn't exist, create a new one
+  if (!conversation) {
+    conversation = new Conversation({ members: [senderId, receiverId] });
+    await conversation.save();
+  }
+
   // create new message
-  const message = new Message({ senderId, receiverId, content });
+  const message = new Message({ senderId, receiverId, content, conversation: conversation._id });
 
   // save message and return
   await message.save();
@@ -165,23 +177,22 @@ router.get('/messages/:conversationId', async (req, res) => {
   res.send(messages);
 });
 
-// Post a new message to a conversation
-router.post('/messages/:conversationId', async (req, res) => {
-  const conversationId = req.params.conversationId;
-  const { senderId, content } = req.body;
-
-  const message = new Message({ senderId, content, conversation: conversationId });
-
-  await message.save();
-  res.send(message);
-});
-
 // get all usernames
 router.get('/users', async (req, res) => {
   const users = await User.find({});
   res.send(users);
 });
 
-// End of Messages ---------------
+// End of Messages --------------- 
+
+router.get('/jobs', async (req, res) => {
+  try {
+    const Job = require('../models/Job');
+    const jobs = await Job.find({}).populate('postedBy', 'firstname lastname');
+    res.json(jobs);
+  } catch (err) {
+    res.status(500).send({ error: err.message });
+  }
+});
 
 module.exports = router;

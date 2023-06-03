@@ -5,12 +5,13 @@ import { TextInput, Button, List } from 'react-native-paper';
 import { Ionicons } from '@expo/vector-icons';
 import Collapsible from 'react-native-collapsible';
 
-
+import axios from 'axios';
 import { createStackNavigator } from '@react-navigation/stack';
 import { DefaultTheme, Provider as PaperProvider } from 'react-native-paper';
 
 function WorkScreen({ navigation }) {
-    const [searchQuery, setSearchQuery] = useState('');
+    const [searchQuery, setSearchQuery] = useState(''); 
+
     // At the top of your WorkScreen function...
     const [jobs, setJobs] = useState([]);
     const [categoryFilter, setCategoryFilter] = useState('');
@@ -24,7 +25,18 @@ function WorkScreen({ navigation }) {
     const [scrollPosition, setScrollPosition] = useState(0);
 
     const [isCategoryModalVisible, setCategoryModalVisible] = useState(false);
-    const [isFilterModalVisible, setFilterModalVisible] = useState(false);
+    const [isFilterModalVisible, setFilterModalVisible] = useState(false); 
+
+    useEffect(() => {
+        // Fetch jobs from API when component mounts
+        axios.get('/jobs')
+          .then(response => {
+            setJobs(response.data);
+          })
+          .catch(error => {
+            console.error('There was an error fetching jobs', error);
+          });
+      }, []);
 
     const theme = {
         ...DefaultTheme,
@@ -70,13 +82,13 @@ function WorkScreen({ navigation }) {
         setCategoryModalVisible(true);
       };
     
-      const closeCategoryModal = () => {
+    const closeCategoryModal = () => {
         setCategoryModalVisible(false);
       };
       
 
 
-
+      
     const fetchJobs = useCallback(() => {
         setIsLoading(true);
         fetch('http://tranquil-ocean-74659.herokuapp.com/jobs')
@@ -121,7 +133,8 @@ function WorkScreen({ navigation }) {
         } else {
             fetchJobs();
         }
-    }, [searchQuery, fetchJobs]);
+    }, [searchQuery, fetchJobs]);  
+
 
     const handleSearch = () => {
         setIsLoading(true);
@@ -153,8 +166,8 @@ function WorkScreen({ navigation }) {
       
       const renderJob = ({ item }) => ( 
         <View style={styles.jobCard}>
-            <View style={styles.jobHeader}>
-                <Text style={styles.jobTitle}> Raphael 4/5 -  </Text>
+            <View style={styles.jobHeader}>  
+                <Text style={styles.jobTitle}>{item.postedBy?.firstname} {item.postedBy?.lastname}</Text>
                 <Text style={styles.jobTitle}>{item.title}</Text>
             </View>   
             <View

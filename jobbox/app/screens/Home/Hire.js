@@ -92,7 +92,15 @@ function HireScreen({ navigation }) {
           borderBottomColor: '#4683fc',
           borderBottomWidth: 1.5,
           marginBottom: 10,
-        }}/>
+        }}/> 
+
+      {/* <View style = {{ 
+        flexDirection: 'row',
+        justifyContent: 'space-between',}}>  
+
+        
+        
+      </View> */}
 
       <View style={styles.jobDetails}>
         <Text style={styles.detailLabel}>Description:</Text>

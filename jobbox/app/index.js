@@ -51,7 +51,8 @@ function HomeTopTabs() {
 
 
 function MyTabs() {
-  const navigation = useNavigation();
+  const navigation = useNavigation(); 
+
   return (
     <BottomTab.Navigator
     initialRouteName="Home"

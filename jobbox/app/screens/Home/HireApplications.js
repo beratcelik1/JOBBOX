@@ -98,9 +98,9 @@ export function HireApplicationsScreen({ route, navigation }) {
                         <Ionicons name="create-outline" size={24} color="#4683fc" />
                         <Text style={styles.buttonText2}>Edit post</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity onPress={handleDeleteJob} style={styles.button2}>
-                        <Ionicons name="trash-outline" size={24} color="#4683fc" />
-                        <Text style={styles.buttonText2}>Delete Job</Text>
+                    <TouchableOpacity onPress={handleDeleteJob} style={styles.buttonDel}>
+                        <Ionicons name="trash-outline" size={24} color="#fff" />
+                        <Text style={styles.buttonTextDel}>Delete Job</Text>
                     </TouchableOpacity>
                     
                 </View>
@@ -141,15 +141,28 @@ const styles = StyleSheet.create({
         marginLeft: 5,
         color: '#4683fc', 
     },
-    editBtn: {
-        backgroundColor: '#fff' ,
-        borderRadius: 50,
-        width: 150,
-        height: 40,
-        justifyContent: 'center',
+    buttonDel: {
+        flexDirection: 'row',
         alignItems: 'center',
-        marginRight: 10,
-        marginTop: 10,
+        backgroundColor: '#eb5c52',
+        paddingTop: 6, 
+        paddingBottom: 6, 
+        paddingLeft: 15, 
+        paddingRight: 15, 
+        borderRadius: 10,
+        shadowColor: "#000",
+        shadowOffset: {
+            width: 0,
+            height: 2,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 6.84,
+        elevation: 5, 
+        marginBottom: 10,
+    },
+    buttonTextDel: {
+        marginLeft: 5,
+        color: '#fff', 
     },
     container: {
         flex: 1,
