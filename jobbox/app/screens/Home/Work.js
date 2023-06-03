@@ -151,20 +151,53 @@ function WorkScreen({ navigation }) {
           .catch(error => console.error('Error:', error));
       };
       
-      const renderJob = ({ item }) => (
-        <TouchableOpacity style={styles.jobCard} onPress={() => navigation.navigate('JobDetail', { job: item })}>
-            <View style={styles.jobDetails}>
+      const renderJob = ({ item }) => ( 
+        <View style={styles.jobCard}>
+            <View style={styles.jobHeader}>
+                <Text style={styles.jobTitle}> Raphael 4/5 -  </Text>
                 <Text style={styles.jobTitle}>{item.title}</Text>
-                <Text style={styles.jobCompany}>{item.employer}</Text>
-                <Text style={styles.jobLocation}>{item.location}</Text>
-                <Text style={styles.jobPosted}>{item.datePosted}</Text>
+            </View>   
+            <View
+                style={{
+                borderBottomColor: '#4683fc',
+                borderBottomWidth: 1.5,
+                marginBottom: 10,
+                }}/>
+
+            <View style={styles.jobDetails}>
+                <Text style={styles.detailLabel}>Description:</Text>
+                <Text style={styles.jobDescription}>{item.description}</Text>
             </View>
-            <View style={styles.jobExtras}>
-                <Text style={styles.jobExtra}><Ionicons name="time-outline" size={14} color="gray" /> {item.estimatedTime}</Text>
-                <Text style={styles.jobExtra}><Ionicons name="cash-outline" size={14} color="green" /> {item.pay}</Text>
-                <Text style={styles.jobExtra}><Ionicons name="star-outline" size={14} color="gold" /> {item.rating}</Text>
+            <View style={styles.jobDetails}>
+                <Text style={styles.detailLabel}>Skills:</Text>
+                <Text style={styles.jobDescription}>{item.skills}</Text>
             </View>
-        </TouchableOpacity>
+
+            <View style={styles.jobDetails}>
+                <Text style={styles.detailLabel}>Location:</Text>
+                <Text style={styles.jobDescription}>{item.location}</Text>
+            </View>
+            <View style={styles.jobDetails}>
+                <Text style={styles.detailLabel}>Pay:</Text>
+                <Text style={styles.jobDescription}>{item.pay}</Text>
+            </View>
+            <View style={styles.jobDetails}>
+                <Text style={styles.detailLabel}>Time:</Text>
+                <Text style={styles.jobDescription}>{item.estimatedTime}</Text>
+                <Text style={styles.detailLabel}>Units:</Text>
+                <Text style={styles.jobDescription}>{item.estimatedTimeUnit}</Text>
+            </View> 
+            <View style={styles.jobDetails}>
+                <Text style={styles.detailLabel}>Category:</Text>
+                <Text style={styles.jobDescription}>{item.category}</Text>
+            </View>
+            <TouchableOpacity 
+                style={styles.button}
+                onPress={() => navigation.navigate('JobDetail', { job: item })} 
+            > 
+                <Text style={styles.buttonText}> View Job Post</Text>
+            </TouchableOpacity>
+        </View>
     );
     
     
@@ -240,7 +273,7 @@ function WorkScreen({ navigation }) {
     <TouchableOpacity onPress={() => { handleFilter(); closeFilterModal(); }}>
         <Text style={styles.filterOption}>Apply Filter</Text>
     </TouchableOpacity>
-</View>
+    </View>
             </Modal>
             <FlatList
                 data={jobs}
@@ -254,16 +287,14 @@ function WorkScreen({ navigation }) {
                     setScrollPosition(event.nativeEvent.contentOffset.y);
                 }}
             />
-        </View>
+    </View>
     );
     
 } 
 
 function JobDetailScreen({ route, navigation }) {
     //... your existing JobDetail component code
-
     const { job } = route.params;
-
     return (
         <View style={styles.container2}>
             <View style={styles.jobCard2}>
@@ -286,7 +317,53 @@ export default function Work() {
       </Stack.Navigator>   
     );
 }
-const styles = StyleSheet.create({
+const styles = StyleSheet.create({ 
+    jobHeader: {
+        flexDirection: 'row', 
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        marginBottom: 10, 
+    },
+    jobTitle: {
+        fontSize: 18,
+        fontWeight: 'bold',
+    },
+    jobDescription: {
+        fontSize: 14,
+        color: '#000',
+    },
+    jobDetails: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        marginBottom: 5,
+    },
+    detailLabel: {
+        fontSize: 14,
+        color: '#4683fc',
+        fontWeight: '600'
+    }, 
+    button: { 
+        backgroundColor: '#4683fc',
+        padding: 15,
+        marginTop: 10,
+        borderRadius: 10,
+        shadowColor: "#000",
+        shadowOffset: {
+          width: 0,
+          height: 2,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 3.84,
+        elevation: 5, 
+        alignItems: 'center', 
+      },
+      buttonText: {
+        fontSize: 16,
+        color: '#fff',
+        
+      }, 
+
+
     container: {
         flex: 1,
     },
@@ -351,29 +428,23 @@ const styles = StyleSheet.create({
 
     },
     jobCard: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
         backgroundColor: '#fff',
-        padding: 15,
+        padding: 20,
         marginBottom: 10,
+        borderRadius: 10,
         marginLeft: 15,
         marginRight: 15,
-        borderRadius: 10,
         // Android shadow properties
         elevation: 5,
         // iOS shadow properties
-        shadowColor: "#000",
+        shadowColor: '#000',
         shadowOffset: {
-            width: 0,
-            height: 2,
+          width: 0,
+          height: 4,
         },
         shadowOpacity: 0.25,
-        shadowRadius: 6.84,
-    },
-    jobDetails: {
-        flex: 1,
-        width: '70%',
-    },
+        shadowRadius: 3.84,
+      },
     jobTitle: {
         fontSize: 18,
         fontWeight: 'bold',

@@ -86,19 +86,47 @@ function HireScreen({ navigation }) {
     <View style={styles.jobCard}>
       <View style={styles.jobHeader}>
         <Text style={styles.jobTitle}>{item.title}</Text>
-      </View>
-      <Text style={styles.jobDescription}>{item.description}</Text>
-      <Text style={styles.jobDate}>{item.datePosted}</Text> 
-      <Text style={styles.jobDate}> 
-        Applications: {item.applications ? item.applications.length : 0}
-      </Text>  
+      </View>   
+      <View
+        style={{
+          borderBottomColor: '#4683fc',
+          borderBottomWidth: 1.5,
+          marginBottom: 10,
+        }}/>
 
-            <TouchableOpacity 
-              style={styles.button}
-              onPress={() => handleJobPress(item)}  
-            > 
-                <Text style={styles.buttonText}> View Possible Hires</Text>
-            </TouchableOpacity>
+      <View style={styles.jobDetails}>
+        <Text style={styles.detailLabel}>Description:</Text>
+        <Text style={styles.jobDescription}>{item.description}</Text>
+      </View>
+      <View style={styles.jobDetails}>
+        <Text style={styles.detailLabel}>Skills:</Text>
+        <Text style={styles.jobDescription}>{item.skills}</Text>
+      </View>
+
+      <View style={styles.jobDetails}>
+        <Text style={styles.detailLabel}>Location:</Text>
+        <Text style={styles.jobDescription}>{item.location}</Text>
+      </View>
+      <View style={styles.jobDetails}>
+        <Text style={styles.detailLabel}>Pay:</Text>
+        <Text style={styles.jobDescription}>{item.pay}</Text>
+      </View>
+      <View style={styles.jobDetails}>
+        <Text style={styles.detailLabel}>Time:</Text>
+        <Text style={styles.jobDescription}>{item.estimatedTime}</Text>
+        <Text style={styles.detailLabel}>Units:</Text>
+        <Text style={styles.jobDescription}>{item.estimatedTimeUnit}</Text>
+      </View> 
+      <View style={styles.jobDetails}>
+        <Text style={styles.detailLabel}>Category:</Text>
+        <Text style={styles.jobDescription}>{item.category}</Text>
+      </View>
+      <TouchableOpacity 
+        style={styles.button}
+        onPress={() => handleJobPress(item)}  
+      > 
+        <Text style={styles.buttonText}> View Possible Hires ({item.applications ? item.applications.length : 3})</Text>
+      </TouchableOpacity>
     </View>
   );  
 
@@ -186,7 +214,17 @@ export default function Hire() {
   );
 }
 
-const styles = StyleSheet.create({
+const styles = StyleSheet.create({ 
+  jobDetails: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 5,
+  },
+  detailLabel: {
+    fontSize: 14,
+    color: '#4683fc',
+    fontWeight: '600'
+  },
   applicantView: { 
     marginLeft: -20, 
     marginRight: 0, 
@@ -229,7 +267,7 @@ const styles = StyleSheet.create({
     shadowRadius: 3.84,
   }, 
   button: { 
-    backgroundColor: '#4683fc',
+    backgroundColor: '#f2f3f5',
     padding: 15,
     marginTop: 10,
     borderRadius: 10,
@@ -245,36 +283,15 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     fontSize: 16,
-    color: '#fff',
+    color: '#4683fc', 
+    fontWeight: '600',
     
   }, 
-  button2: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginHorizontal: 5,
-    backgroundColor: '#f2f3f5',
-    paddingTop: 6, 
-    paddingBottom: 6, 
-    paddingLeft: 15, 
-    paddingRight: 15, 
-    borderRadius: 10,
-    shadowColor: "#000",
-    shadowOffset: {
-        width: 0,
-        height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5, 
-  },
-  buttonText2: {
-      marginLeft: 5,
-      color: '#4683fc', 
-  },
   jobHeader: {
     flexDirection: 'row', 
     justifyContent: 'space-between',
     alignItems: 'center',
+    marginBottom: 10, 
   },
   jobTitle: {
     fontSize: 18,
@@ -282,8 +299,7 @@ const styles = StyleSheet.create({
   },
   jobDescription: {
     fontSize: 14,
-    color: '#666',
-    marginTop: 10,
+    color: '#000',
   },
   jobDate: {
     fontSize: 12,
