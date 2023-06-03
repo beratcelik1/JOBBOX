@@ -29,6 +29,7 @@ function HireScreen({ navigation }) {
   const [loaded, setLoaded] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [jobs, setJobs] = useState([]);
+  const [allJobs, setAllJobs] = useState([]);
 
   useFocusEffect(
     React.useCallback(() => {
@@ -51,6 +52,7 @@ function HireScreen({ navigation }) {
           .then((response) => response.json())
           .then((data) => {
             // Set the jobs state
+            setAllJobs(data);
             setJobs(data);
           })
           .catch((error) => console.error('Error:', error));
@@ -61,19 +63,21 @@ function HireScreen({ navigation }) {
     }, [])
   );
 
-  const handleSearch = () => {
-    console.log(searchQuery);
+  useEffect(() => {
+    handleSearch();
+  }, [searchQuery]);
 
-    // for testing showMessage
-    showMessage({
-      message: true ? 'Your request has been sent!' : 'Your job is posted!',
-      description:
-        true && 'you will get a notification when your job post is approved.',
-      type: 'info',
-      floating: true,
-      icon: 'success',
-      duration: 3000,
-    });
+  const handleSearch = () => {
+    if (!searchQuery) {
+      // if searchQuery is empty, show all jobs
+      setJobs(allJobs);
+    } else {
+      const filteredJobs = allJobs.filter(job => 
+        job.title.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+  
+      setJobs(filteredJobs);
+    }
   };
   const handleJobPress = (job) => {
     console.log(job);
@@ -109,8 +113,6 @@ function HireScreen({ navigation }) {
             placeholder={'Find previously created jobs..'}
             searchQuery={searchQuery}
             setSearchQuery={setSearchQuery}
-            onSearch={handleSearch}
-            showSearchButton
           />
 
           <FlatList

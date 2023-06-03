@@ -4,6 +4,7 @@ import Modal from 'react-native-modal';
 import { TextInput, Button, List } from 'react-native-paper';
 import { Ionicons } from '@expo/vector-icons';
 import Collapsible from 'react-native-collapsible';
+import { Picker } from '@react-native-picker/picker';
 
 
 import { createStackNavigator } from '@react-navigation/stack';
@@ -18,7 +19,47 @@ function WorkScreen({ navigation }) {
     const [payFilter, setPayFilter] = useState('');
     const [locationFilter, setLocationFilter] = useState('');
     const categories = ['Web Development', 'Graphic Design', 'Content Writing', 'Marketing', 'Mobile App Development', 'Home Cleaning', 'Gardening', 'Dog Walking', 'Grocery Delivery', 'Moving'];
-
+    const FilterModal = ({visible, setVisible, filterData, setFilterData, categories}) => {
+        const [categoryFilter, setCategoryFilter] = useState('');
+        const handleApplyFilters = () => {
+            // apply filters
+            // ...
+        }
+        return (
+            <Modal 
+                isVisible={visible}
+                onBackdropPress={() => setVisible(false)}
+                animationIn='slideInUp'
+                animationOut='slideOutDown'
+                style={styles.modal}
+            >
+                <View style={styles.container}>
+                    <Text style={styles.headerText}>Filter by</Text>
+                    
+                    <View style={styles.filterBox}>
+                        <Text style={styles.filterText}>Category</Text>
+                        <Picker
+                            selectedValue={categoryFilter}
+                            onValueChange={(itemValue) => setCategoryFilter(itemValue)}
+                            style={styles.picker}
+                            dropdownIconColor="#4683FC"
+                        >
+                            <Picker.Item label="Category..." value="" />
+                            {categories.map((category) => (
+                                <Picker.Item key={category} label={category} value={category} />
+                            ))}
+                        </Picker>
+                    </View>
+    
+                    <TouchableOpacity style={styles.applyButton} onPress={handleApplyFilters}>
+                        <Text style={styles.applyButtonText}>Apply Filters</Text>
+                    </TouchableOpacity>
+                </View>
+            </Modal>
+        );
+    };
+    
+    
     const [isLoading, setIsLoading] = useState(false);
     const [refreshing, setRefreshing] = useState(false);
     const [scrollPosition, setScrollPosition] = useState(0);
@@ -172,76 +213,78 @@ function WorkScreen({ navigation }) {
         
         <View style={styles.container}>
             <View style={styles.searchSection}>
-                <Ionicons style={styles.searchIcon} name="ios-search" size={20} color="#000" />
-                <TextInput
-                    style={styles.searchInput}
-                    onChangeText={setSearchQuery}
-                    value={searchQuery}
-                    placeholder="Search"
-                    placeholderTextColor="gray"
-                />
-                <TouchableOpacity
-                    onPress={handleSearch}
-                    style={styles.searchButton}
-                >
-                    <Text style={styles.buttonText}>Search</Text>
+            <Ionicons style={styles.searchIcon} name="ios-search" size={20} color="#000" />
+            <TextInput 
+                style={styles.searchInput}
+                onChangeText={setSearchQuery}
+                value={searchQuery}
+                placeholder="Search"
+                placeholderTextColor="gray"
+            />
+            {searchQuery.length > 0 &&
+                <TouchableOpacity onPress={() => setSearchQuery('')}>
+                <Ionicons name="ios-close" size={20} color="#000" />
                 </TouchableOpacity>
+            }
+            <TouchableOpacity style={styles.filterButton} onPress={openFilterModal}>
+                <Ionicons name="filter" size={24} color="white" />
+            </TouchableOpacity>
             </View>
-            <View style={styles.filterSection}>
-    <TouchableOpacity onPress={openFilterModal}>
-        <Text style={styles.filterOption}>Filter</Text>
-    </TouchableOpacity>
-</View>
+
 <Modal 
-                isVisible={isFilterModalVisible} 
-                style={styles.modal} 
-                onBackdropPress={closeFilterModal}
+    isVisible={isFilterModalVisible} 
+    style={styles.modal} 
+    onBackdropPress={closeFilterModal}
+>
+    <View style={styles.modalContent}>
+        <Text style={styles.modalTitle}>Filter by:</Text>
+        <View style={styles.filterBox}>
+            <Picker
+                selectedValue={categoryFilter}
+                onValueChange={(itemValue) => setCategoryFilter(itemValue)}
+                style={styles.picker}
+                dropdownIconColor="#4683FC"
             >
-<View style={styles.modalContent}>
-    <Text>Filter by:</Text>
-    <View style={styles.filterBox}>
-        <Accordion
-            title={categoryFilter || "Category..."}
-            data={categories}
-            renderContent={(content) => (
-                <TouchableOpacity onPress={() => {
-                    setCategoryFilter(content);
-                    closeCategoryModal();
-                }}>
-                    <Text>{content}</Text>
-                </TouchableOpacity>
-            )}
-        />
+                <Picker.Item label="Category..." value="" />
+                {categories.map((category) => (
+                    <Picker.Item key={category} label={category} value={category} />
+                ))}
+            </Picker>
+        </View>
+        <View style={styles.filterBox}>
+            <TextInput
+                style={styles.modalInput}
+                onChangeText={setSkillsFilter}
+                value={skillsFilter}
+                placeholder="Skills..."
+                placeholderTextColor="#aaa"
+            />
+        </View>
+        <View style={styles.filterBox}>
+            <TextInput
+                style={styles.modalInput}
+                onChangeText={setPayFilter}
+                value={payFilter}
+                placeholder="Pay..."
+                placeholderTextColor="#aaa"
+            />
+        </View>
+        <View style={styles.filterBox}>
+            <TextInput
+                style={styles.modalInput}
+                onChangeText={setLocationFilter}
+                value={locationFilter}
+                placeholder="Location..."
+                placeholderTextColor="#aaa"
+            />
+        </View>
+        <TouchableOpacity onPress={() => { handleFilter(); closeFilterModal(); }} style={styles.applyFilterButton}>
+            <Text style={styles.filterOption}>Apply Filter</Text>
+        </TouchableOpacity>
     </View>
-    <View style={styles.filterBox}>
-        <TextInput
-            onChangeText={setSkillsFilter}
-            value={skillsFilter}
-            placeholder="Skills..."
-            placeholderTextColor="gray"
-        />
-    </View>
-    <View style={styles.filterBox}>
-        <TextInput
-            onChangeText={setPayFilter}
-            value={payFilter}
-            placeholder="Pay..."
-            placeholderTextColor="gray"
-        />
-    </View>
-    <View style={styles.filterBox}>
-        <TextInput
-            onChangeText={setLocationFilter}
-            value={locationFilter}
-            placeholder="Location..."
-            placeholderTextColor="gray"
-        />
-    </View>
-    <TouchableOpacity onPress={() => { handleFilter(); closeFilterModal(); }}>
-        <Text style={styles.filterOption}>Apply Filter</Text>
-    </TouchableOpacity>
-</View>
-            </Modal>
+</Modal>
+
+
             <FlatList
                 data={jobs}
                 renderItem={renderJob}
@@ -258,6 +301,7 @@ function WorkScreen({ navigation }) {
     );
     
 } 
+
 
 function JobDetailScreen({ route, navigation }) {
     //... your existing JobDetail component code
@@ -295,18 +339,20 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         marginBottom: 20,
     },
+    searchSection: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', backgroundColor: '#fff', borderRadius: 50, paddingLeft: 10, marginLeft: 15, marginRight: 15, marginTop: 10, height: 40, }, 
+
     searchSection: {
         flexDirection: 'row',
-        justifyContent: 'center',
+        justifyContent: 'space-between',
         alignItems: 'center',
         backgroundColor: '#fff',
+        borderColor: 'white',
+        borderWidth: 0.5,
         borderRadius: 50,
         paddingLeft: 10,
-        marginLeft: 15, 
-        marginRight: 15, 
-        marginTop: 10, 
-        height: 40,
-    },
+        margin: 10,
+      },
+          
     searchIcon: {
         padding: 0,
     },
@@ -340,11 +386,39 @@ const styles = StyleSheet.create({
         marginTop: 10,
         marginBottom: 10,
     },
+
+    filterButton: {
+        width: 40, // specify the width
+        height: 40, // specify the height
+        backgroundColor: '#4683fc',
+        justifyContent: 'center', // center the icon vertically
+        alignItems: 'center', // center the icon horizontally
+        borderRadius: 10, // this will make the corners rounded
+        elevation: 5,
+        shadowOffset: { width: 1, height: 1 },
+        shadowColor: '#333',
+        shadowOpacity: 0.3,
+        shadowRadius: 2,
+        marginHorizontal: 10,
+    },
+    
+    
+      
+    
     filterOption: {
-        color: '#4683fc',
+        color: 'white',
         fontWeight: 'bold',
         fontSize: 16,
+        padding: 10,
     },
+      filterIcon: {
+        padding: 10,
+        backgroundColor: '#4683fc',
+        borderRadius: 8, // Change this to control the corner roundness
+        color: 'white',
+    },
+    
+  
     jobView: {
         width: '100%',
         marginBottom: -15,
@@ -449,23 +523,51 @@ const styles = StyleSheet.create({
         margin: 0, 
     },
     modalContent: {
-        backgroundColor: 'white',
-        padding: 22,
-        justifyContent: 'flex-start',
-        alignItems: 'flex-start', // align items to the left
-        borderRadius: 4,
+        backgroundColor: '#f6f6f6',  // Light grey background for contrast
+        padding: 25,
+        justifyContent: 'center',
+        alignItems: 'center', // center align items
+        borderTopRightRadius: 20, // Rounded edges for a softer look
+        borderTopLeftRadius: 20,
         borderColor: 'rgba(0, 0, 0, 0.1)',
-        paddingTop: 30,
-        paddingLeft: 60, // increased padding
-        paddingRight: 60, // increased padding
-      },
+    },
+    modalTitle: {
+        fontSize: 24,
+        fontWeight: 'bold',
+        marginBottom: 20,
+        color: '#4683FC',
+    },
     filterBox: {
         backgroundColor: '#fff',
         borderWidth: 1,
         borderColor: '#ddd',
-        borderRadius: 5,
-        marginBottom: 10,
-        padding: 10,
-    },    
+        borderRadius: 15,  // More rounded edges
+        marginBottom: 20,  // Increase space between inputs
+        width: '100%',  // Take full width of the modal
+        paddingHorizontal: 15,  // More padding for text input
+    },
+    modalInput: {
+        backgroundColor: 'white',
+        fontSize: 16,
+        color: '#333',
+    },
+    accordionText: {
+        fontSize: 16,
+        color: '#333',
+    },
+    applyFilterButton: {
+        backgroundColor: '#4683FC',
+        borderRadius: 50,
+        width: '100%',
+        height: 50,
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginTop: 20,
+    },
+    picker: {
+        height: 220,
+        width: '100%',
+    },
+    
 
 });
