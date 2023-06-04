@@ -133,18 +133,13 @@ const ChatRoom = ({ route, navigation }) => {
           marginHorizontal: 10,  // Increase width
           backgroundColor: 'white',
         }}
+        textInputStyle={{
+          paddingTop: 10, 
+          paddingBottom: 10,
+          paddingLeft: 8,
+        }}
       />
     );
-    // return (
-    //   <View style={{ flexDirection: 'row', alignItems: 'center', backgroundColor: '#F5F5F5' }}>
-    //     {/* <TextInput
-    //       placeholder="Type a message..."
-    //       multiline
-    //       style={{ flex: 1, marginLeft: 10, marginRight: 10, paddingTop: 8, paddingBottom: 8 }}
-    //       {...props}
-    //     /> */}
-    //   </View>
-    // );
   };
 
   return (
