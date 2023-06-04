@@ -338,7 +338,7 @@ export default function PostJob({ navigation, route }) {
           style={styles.modal}
           onBackdropPress={() => setIsLocationModalVisible(false)}
         >
-          <View style={styles.modalContent}>
+          <View style={styles.modalView}>
             {LOCATIONS.map((location, index) => (
               <List.Item
                 key={index}

@@ -8,112 +8,35 @@ import { TextInput, Button, List } from 'react-native-paper';
 import { Ionicons } from '@expo/vector-icons';
 import Collapsible from 'react-native-collapsible';
 import { Picker } from '@react-native-picker/picker';
-
 import { createStackNavigator } from '@react-navigation/stack';
 import { DefaultTheme, Provider as PaperProvider } from 'react-native-paper';
 import { showMessage } from 'react-native-flash-message';
 import LoadingScreen from '../../components/LoadingScreen';
+import {CATEGORIES} from '../constants';
+import DropDownPicker from 'react-native-dropdown-picker';
 
 function WorkScreen({ navigation }) {
     const [searchQuery, setSearchQuery] = useState(''); 
-
-    // At the top of your WorkScreen function...
     const [jobs, setJobs] = useState([]);
     const [categoryFilter, setCategoryFilter] = useState('');
-    const [skillsFilter, setSkillsFilter] = useState('');
+    const [skillsFilter, setSkillsFilter] = useState([]);
     const [payFilter, setPayFilter] = useState('');
     const [locationFilter, setLocationFilter] = useState('');
-    const categories = ['Web Development', 'Graphic Design', 'Content Writing', 'Marketing', 'Mobile App Development', 'Home Cleaning', 'Gardening', 'Dog Walking', 'Grocery Delivery', 'Moving'];
-    const FilterModal = ({visible, setVisible, filterData, setFilterData, categories}) => {
-        const [categoryFilter, setCategoryFilter] = useState('');
-        const handleApplyFilters = () => {
-            // apply filters
-            // ...
-        }
-        return (
-            <Modal 
-                isVisible={visible}
-                onBackdropPress={() => setVisible(false)}
-                animationIn='slideInUp'
-                animationOut='slideOutDown'
-                style={styles.modal}
-            >
-                <View style={styles.container}>
-                    <Text style={styles.headerText}>Filter by</Text>
-                    
-                    <View style={styles.filterBox}>
-                        <Text style={styles.filterText}>Category</Text>
-                        <Picker
-                            selectedValue={categoryFilter}
-                            onValueChange={(itemValue) => setCategoryFilter(itemValue)}
-                            style={styles.picker}
-                            dropdownIconColor="#4683FC"
-                        >
-                            <Picker.Item label="Category..." value="" />
-                            {categories.map((category) => (
-                                <Picker.Item key={category} label={category} value={category} />
-                            ))}
-                        </Picker>
-                    </View>
-    
-                    <TouchableOpacity style={styles.applyButton} onPress={handleApplyFilters}>
-                        <Text style={styles.applyButtonText}>Apply Filters</Text>
-                    </TouchableOpacity>
-                </View>
-            </Modal>
-        );
-    };
-    
-    
     const [isLoading, setIsLoading] = useState(false);
     const [refreshing, setRefreshing] = useState(false);
     const [scrollPosition, setScrollPosition] = useState(0);
-
     const [isCategoryModalVisible, setCategoryModalVisible] = useState(false);
     const [isFilterModalVisible, setFilterModalVisible] = useState(false); 
+    const theme = {...DefaultTheme,colors: {...DefaultTheme.colors,primary: '#4683FC', },};
 
     useEffect(() => {
-        // Fetch jobs from API when component mounts
         axios.get('/jobs')
-          .then(response => {
-            setJobs(response.data);
-          })
+          .then(response => {setJobs(response.data);})
           .catch(error => {
             console.error('There was an error fetching jobs', error);
           });
       }, []);
-
-    const theme = {
-        ...DefaultTheme,
-        colors: {
-          ...DefaultTheme.colors,
-          primary: '#4683FC', // change the primary color to blue
-        },
-    };
-
-    const Accordion = ({ title, data, renderContent }) => {
-        const [isCollapsed, setIsCollapsed] = useState(true);
       
-        return (
-          <View>
-            <TouchableOpacity onPress={() => setIsCollapsed(!isCollapsed)}>
-              <Text>{title}</Text>
-            </TouchableOpacity>
-            <Collapsible collapsed={isCollapsed}>
-              {data.map((content, index) => (
-                <TouchableOpacity key={index} onPress={() => {
-                  setCategoryFilter(content);
-                  closeCategoryModal();
-                }}>
-                  <Text>{content}</Text>
-                </TouchableOpacity>
-              ))}
-            </Collapsible>
-          </View>
-        );
-      };
-      
-
         const openFilterModal = () => {
             setFilterModalVisible(true);
         };
@@ -121,18 +44,6 @@ function WorkScreen({ navigation }) {
         const closeFilterModal = () => {
             setFilterModalVisible(false);
         };
-
-
-    const openCategoryModal = () => {
-        setCategoryModalVisible(true);
-      };
-    
-    const closeCategoryModal = () => {
-        setCategoryModalVisible(false);
-      };
-      
-
-
       
     const fetchJobs = useCallback(() => {
         setIsLoading(true);
@@ -162,12 +73,6 @@ function WorkScreen({ navigation }) {
     }
   }, [scrollPosition, fetchJobs]);
 
-
-    useEffect(() => {
-        fetchJobs();
-    }, [fetchJobs]);
-    
-
     useEffect(() => {
         if (searchQuery.length > 0) {
             setIsLoading(true);
@@ -179,15 +84,6 @@ function WorkScreen({ navigation }) {
             fetchJobs();
         }
     }, [searchQuery, fetchJobs]);  
-
-
-    const handleSearch = () => {
-        setIsLoading(true);
-        fetch(`http://tranquil-ocean-74659.herokuapp.com/jobs/search?search=${searchQuery}`)
-          .then(response => response.json())
-          .then(data => setJobs(data))
-          .catch(error => console.error('Error:', error));
-      };
       
       const handleFilter = () => {
         setIsLoading(true);
@@ -197,17 +93,29 @@ function WorkScreen({ navigation }) {
           pay: payFilter,
           location: locationFilter,
         };
-      
         const query = Object.keys(filters)
           .filter((key) => filters[key].length > 0)
           .map((key) => `${encodeURIComponent(key)}=${encodeURIComponent(filters[key])}`)
           .join('&');
-      
-        fetch(`http://tranquil-ocean-74659.herokuapp.com/jobs/?${query}`)
+           fetch(`http://tranquil-ocean-74659.herokuapp.com/jobs/?${query}`)
           .then(response => response.json())
           .then(data => setJobs(data))
           .catch(error => console.error('Error:', error));
       };
+
+      const handleCategoryChange = (category) => {
+        setCategoryFilter(category);
+      
+        // Clear skills filter when changing category
+        setSkillsFilter([]);
+      }
+      
+      const handleSkillsChange = (itemValue) => {
+        setSkillsFilter(itemValue);
+      }
+
+      const categories = CATEGORIES.map(category => category.title);
+
       
       const renderJob = ({ item }) => ( 
         <TouchableOpacity 
@@ -254,10 +162,8 @@ function WorkScreen({ navigation }) {
             </View>
         </TouchableOpacity>
     );
-    
-    
+
     return (
-        
         <View style={styles.container}>
             <View style={styles.searchSection}>
             <Ionicons style={styles.searchIcon} name="ios-search" size={20} color="#000" />
@@ -286,17 +192,17 @@ function WorkScreen({ navigation }) {
     <View style={styles.modalContent}>
         <Text style={styles.modalTitle}>Filter by:</Text>
         <View style={styles.filterBox}>
-            <Picker
-                selectedValue={categoryFilter}
-                onValueChange={(itemValue) => setCategoryFilter(itemValue)}
-                style={styles.picker}
-                dropdownIconColor="#4683FC"
+        <Picker
+            selectedValue={categoryFilter}
+            onValueChange={handleCategoryChange}
+            style={styles.picker}
+            dropdownIconColor="#4683FC"
             >
-                <Picker.Item label="Category..." value="" />
-                {categories.map((category) => (
-                    <Picker.Item key={category} label={category} value={category} />
-                ))}
-            </Picker>
+            <Picker.Item label="Category..." value="" />
+            {CATEGORIES.map((category, index) => (
+                <Picker.Item key={index} label={category.title} value={category.title} />
+            ))}
+        </Picker>
         </View>
         <View style={styles.filterBox}>
             <TextInput
@@ -330,8 +236,6 @@ function WorkScreen({ navigation }) {
         </TouchableOpacity>
     </View>
 </Modal>
-
-
             <FlatList
                 data={jobs}
                 renderItem={renderJob}
@@ -342,28 +246,17 @@ function WorkScreen({ navigation }) {
                 onRefresh={onRefresh}
                 onScroll={event => {
                     setScrollPosition(event.nativeEvent.contentOffset.y);
-                }}
-            />
-    </View>
-    );
-    
-} 
+                }}/></View>);} 
+
 function JobDetailScreen({ route, navigation }) {
-    //... your existing JobDetail component code
     const { job } = route.params;
 
     const handleApplyPress = () => {
-        // fetch user data with axios
         (async () => {
-            // Fetch the token from the async storage
             const token = await AsyncStorage.getItem('token');
             console.log(token);
-
-            // Decode the token to get the user ID
             const decodedToken = jwt_decode(token);
             const userId = decodedToken.userId;
-
-            // send post apply request to server
             fetch(`http://tranquil-ocean-74659.herokuapp.com/jobs/apply`, {
                 method: 'POST',
                 headers: {
@@ -371,14 +264,10 @@ function JobDetailScreen({ route, navigation }) {
                 },
                 body: JSON.stringify({
                     jobId: job._id,
-                    userId: userId,
-                }),
-            })
+                    userId: userId,}),})
             .then(response => response.json())
             .then(data => console.log(data))
             .catch(error => console.error('Error:', error));
-
-            // set flashMessage if successful
             showMessage({
                 message: "You have successfully applied for this job!",
                 type: "success",
@@ -386,10 +275,7 @@ function JobDetailScreen({ route, navigation }) {
                 duration: 3000,
                 hideOnPress: true,
                 floating: true,
-            });
-            })();
-    };
-
+            });})(); };
     return (
         <View style={styles.container2}>
             <View style={styles.jobCard2}>
@@ -400,13 +286,9 @@ function JobDetailScreen({ route, navigation }) {
                     <Text style={styles.buttonText2}>Apply</Text>
                 </TouchableOpacity>
             </View>
-        </View>
-    );
-}
-  
-// Define a type for your stack
-const Stack = createStackNavigator();
-  
+        </View>);}
+
+const Stack = createStackNavigator();  
 export default function Work() {
     return (
       <Stack.Navigator initialRouteName="WorkScreen">
@@ -415,6 +297,7 @@ export default function Work() {
       </Stack.Navigator>   
     );
 }
+
 const styles = StyleSheet.create({ 
     jobHeader: {
         flexDirection: 'row', 

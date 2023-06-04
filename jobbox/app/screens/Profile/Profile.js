@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { View, FlatList, Text, TouchableOpacity, StyleSheet, Image, ActivityIndicator, RefreshControl, Modal,List, Button, Pressable} from 'react-native';
+import { View, FlatList, Text, TouchableOpacity, StyleSheet, Image, ActivityIndicator, RefreshControl, Modal, Pressable} from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import { TextInput, Button, List } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -8,6 +9,7 @@ import * as ImagePicker from 'expo-image-picker';
 import fetch from 'node-fetch';
 import LoadingScreen from '../../components/LoadingScreen';
 import { LOCATIONS } from '../constants';
+import { Colors } from 'react-native/Libraries/NewAppScreen';
 
 const styles = StyleSheet.create({
   container: {
@@ -92,12 +94,16 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 20,
     padding: 35,
     alignItems: 'center',
+    fontSize: 20,
   },
   button: {
     borderRadius: 20,
     padding: 10,
     elevation: 2,
     marginTop: 15,
+  },
+  locationButton: {
+    padding: 5
   },
 });
 
@@ -300,7 +306,9 @@ return (
             <View style={{ flexDirection: 'row', alignItems: 'center' }}>
             <Text>{selectedLocation}</Text>
             <TouchableOpacity onPress={() => setIsLocationModalVisible(true)}>
-            <Text>Edit</Text>
+            <View style={styles.locationButton}>
+            <Text><Icon name="edit" size={20} color="#000" /></Text>
+            </View>
             </TouchableOpacity>
             </View>
             <Modal
@@ -311,15 +319,13 @@ return (
           presentationStyle='overFullScreen'
         >
           <View style={styles.modalView}>
-            <FlatList
-              data={LOCATIONS}
-              keyExtractor={(item, index) => index.toString()}
-              renderItem={({ item }) => (
-                <TouchableOpacity onPress={() => handleLocationSelect(item)}>
-                  <Text>{item}</Text>
-                </TouchableOpacity>
-              )}
-            />
+            {LOCATIONS.map((location, index) => (
+              <List.Item
+                key={index}
+                title={location}
+                onPress={() => handleLocationSelect(location)}
+              />
+            ))}
             <Pressable style={styles.button} onPress={() => setIsLocationModalVisible(false)}>
               <Text>Close</Text>
             </Pressable>
