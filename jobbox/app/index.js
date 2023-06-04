@@ -62,8 +62,8 @@ function MyTabs() {
   
         if (route.name === 'Home') {
           iconName = focused ? 'home' : 'home-outline';
-        } else if (route.name === 'Services') {
-          iconName = focused ? 'construct' : 'construct-outline';
+        } else if (route.name === 'Categories') {
+          iconName = focused ? 'md-grid' : 'md-grid-outline';
         } else if (route.name === 'Activity') {
           iconName = focused ? 'wallet' : 'wallet-outline';
         } else if (route.name === 'Profile') {
@@ -109,7 +109,7 @@ function MyTabs() {
         }}
       />
       <BottomTab.Screen 
-        name="Services" 
+        name="Categories" 
         component={Services} 
         options={{ 
           headerTitle: () => (

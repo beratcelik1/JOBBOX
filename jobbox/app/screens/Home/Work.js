@@ -229,12 +229,12 @@ function WorkScreen({ navigation }) {
                 </View> 
 
                 <View style = {{ width: '40%'}}> 
-                    <View style={styles.jobDetails}> 
+                    <View style={{flexDirection: 'row', justifyContent: 'flex-start', marginBottom: 5}}> 
                         <Ionicons name="md-cash" size={20} color="#4683fc" /> 
-                        <Text style={styles.jobDescription}>{item.pay} CAD</Text>
+                        <Text style={styles.jobDescription}>  {item.pay} $ </Text>
                     </View> 
 
-                    <View style={styles.jobDetails}>
+                    <View style={{flexDirection: 'row', justifyContent: 'flex-start'}}>
                         <Ionicons name="md-time" size={20} color="#4683fc" />
                         <Text style={styles.jobDescription}>  {item.estimatedTime}</Text>
                         <Text style={styles.jobDescription}>  {item.estimatedTimeUnit}</Text>
@@ -339,7 +339,6 @@ function WorkScreen({ navigation }) {
     
 } 
 
-
 function JobDetailScreen({ route, navigation }) {
     //... your existing JobDetail component code
     const { job } = route.params;
@@ -379,6 +378,7 @@ function JobDetailScreen({ route, navigation }) {
                 hideOnPress: true,
                 floating: true,
             });
+            
             })();
     };
 

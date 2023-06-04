@@ -169,6 +169,46 @@ router.get('/user/:userId', async (req, res) => {
   } catch (error) {
     res.status(500).send(error);
   }
+}); 
+
+// Apply to a job
+router.post('/apply/:jobId', async (req, res) => {
+  const token = req.header('Authorization')?.replace('Bearer ', '');
+  if (!token) {
+      return res.status(401).json({ error: 'Authorization token missing' });
+  }
+
+  try {
+      // verify the token and extract the user ID
+      const data = jwt.verify(token, process.env.JWT_SECRET);
+
+      // find the user with the extracted ID
+      const user = await User.findById(data.userId);
+      if (!user) {
+          return res.status(404).json({ error: 'User not found' });
+      }
+
+      // find the job
+      const job = await Job.findById(req.params.jobId);
+      if (!job) {
+          return res.status(404).json({ error: 'Job not found' });
+      }
+
+      // check if user has already applied
+      if (job.applicants.includes(user._id)) {
+          return res.status(400).json({ error: 'User has already applied for this job' });
+      }
+
+      // add user to the list of applicants
+      job.applicants.push(user._id);
+
+      // save the job
+      await job.save();
+
+      res.status(200).send(job);
+  } catch (error) {
+      res.status(400).send(error);
+  }
 });
 
 
