@@ -6,11 +6,8 @@ import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as ImagePicker from 'expo-image-picker';
 import fetch from 'node-fetch';
-import LoadingScreen from '../../components/LoadingScreen';import { LOCATIONS } from '../constants';
-
-
-
 import LoadingScreen from '../../components/LoadingScreen';
+import { LOCATIONS } from '../constants';
 
 const styles = StyleSheet.create({
   container: {
