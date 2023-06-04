@@ -243,7 +243,18 @@ router.get('/applicants/:jobId', authenticate, async (req, res) => {
   }
 });
 
-
+// Get a specific job by id
+router.get('/:jobId', async (req, res) => {
+  try {
+      const job = await Job.findById(req.params.jobId).populate('postedBy', 'firstname lastname');
+      if (!job) {
+          return res.status(404).json({ error: 'Job not found' });
+      }
+      res.send(job);
+  } catch (error) {
+      res.status(500).send(error);
+  }
+});
 
 // handle apply job
 router.post('/apply', async (req, res) => {
@@ -302,8 +313,12 @@ router.post('/reject/:jobId/:userId', async (req, res) => {
     job.rejectedApplicants.push(userId);
     job.applicants = job.applicants.filter(id => id.toString() !== userId);
 
-    await job.save();
+    const applicant = await User.findById(userId);
+    const application = applicant.jobApplications.find(app => app.job.equals(jobId));
+    application.status = 'rejected';
+    await applicant.save();
 
+    await job.save();
     res.send(job);
   } catch (err) {
     console.error(err);
@@ -337,7 +352,13 @@ router.post('/hire/:jobId/:userId', async (req, res) => {
       if (!job.applicants.includes(userId)) {
           return res.status(400).send({ error: 'User has not applied for this job' });
       }
-      job.hiredApplicant = userId;
+      job.hiredApplicant = userId; 
+
+      const applicant = await User.findById(userId);
+      const application = applicant.jobApplications.find(app => app.job.equals(jobId));
+      application.status = 'hired';
+      await applicant.save();
+
       job.applicants = [];
       await job.save();
       res.send(job);

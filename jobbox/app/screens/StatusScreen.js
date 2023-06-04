@@ -56,8 +56,9 @@ function StatusScreen() {
                 headers: {Authorization: `Bearer ${token}`,},
             }).then((response) => response.json())
             .then((data) => {
-                setJobs(data);
-                setLoaded(true);
+              const filteredJobs = data.filter(job => job.status !== 'rejected');
+              setJobs(filteredJobs);
+              setLoaded(true);
             }).catch((error) => {
                 console.error('Error:', error);
                 setError('Failed to load jobs. Please try again later.');
