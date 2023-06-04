@@ -2,7 +2,8 @@ const express = require('express');
 const Job = require('../models/Job');
 const User = require('../models/User');
 const router = express.Router();
-const jwt = require('jsonwebtoken');
+const jwt = require('jsonwebtoken'); 
+
 // Post a job
 router.post('/', async (req, res) => {
   const token = req.header('Authorization')?.replace('Bearer ', '');
@@ -47,47 +48,6 @@ router.get('/search', async (req, res) => {
   }
 });
 
-// Handle delete job
-router.delete('/:id', async (req, res) => {
-  const token = req.header('Authorization')?.replace('Bearer ', '');
-  if (!token) {
-    return res.status(401).json({ error: 'Authorization token missing' });
-  }
-
-  try {
-    // verify the token and extract the user ID
-  const token = req.headers.authorization.split(' ')[1]; // Bearer <token>
-
-  if (!token) {
-    return res.status(401).json({ error: 'No token provided' });
-  }
-
-  let data;
-  try {
-    data = jwt.verify(token, process.env.JWT_SECRET);
-  } catch (error) {
-    return res.status(401).json({ error: 'Invalid token' });
-  }
-  
-  // find the job with the extracted ID
-  const job = await Job.findById(req.params.id);
-  if (!job) {
-    return res.status(404).json({ error: 'Job not found' });
-  }
-
-  if (job.postedBy.toString() !== data.userId) {
-    return res.status(401).json({ error: 'Not authorized to delete this job' });
-  }
-
-  console.log('Deleting job:', job);
-
-  await Job.deleteOne({ _id: job._id });
-  res.send(job);
-  } catch (error) {
-    console.log(error);
-    res.status(500).send(error);
-  }
-});
 
 // Get all jobs
 router.get('/', async (req, res) => {
@@ -165,7 +125,7 @@ router.patch('/:jobId', async (req, res) => {
 }); 
 
 // Delete a job
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', async (req, res) => { 
   const token = req.header('Authorization')?.replace('Bearer ', '');
   if (!token) {
     return res.status(401).json({ error: 'Authorization token missing' });
@@ -197,7 +157,7 @@ router.delete('/:id', async (req, res) => {
   }
 });
 
-
+// user data 
 router.get('/user/:userId', async (req, res) => {
   try {
     const user = await User.findById(req.params.userId);

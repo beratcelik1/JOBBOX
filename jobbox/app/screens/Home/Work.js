@@ -68,17 +68,7 @@ function WorkScreen({ navigation }) {
     const [isCategoryModalVisible, setCategoryModalVisible] = useState(false);
     const [isFilterModalVisible, setFilterModalVisible] = useState(false); 
 
-    useEffect(() => {
-        // Fetch jobs from API when component mounts
-        axios.get('/jobs')
-          .then(response => {
-            setJobs(response.data);
-          })
-          .catch(error => {
-            console.error('There was an error fetching jobs', error);
-          });
-      }, []);
-
+    
     const theme = {
         ...DefaultTheme,
         colors: {
@@ -156,7 +146,7 @@ function WorkScreen({ navigation }) {
     if (scrollPosition === 0) {
         fetchJobs();
     }
-  }, [scrollPosition, fetchJobs]);
+    }, [scrollPosition, fetchJobs]);
 
 
     useEffect(() => {
@@ -226,25 +216,25 @@ function WorkScreen({ navigation }) {
                 justifyContent: 'flex-start',}}> 
 
                 <View style = {{ width: '60%'}} > 
-                <View style={styles.jobDetails}>
-                    <Text style={styles.jobDescription}>{item.category}</Text>
-                </View>
-                <View style={styles.jobDetails}>
-                    <Text style={styles.jobDescription}>{item.location}</Text>
-                </View>
+                    <View style={styles.jobDetails}>
+                        <Text style={styles.jobDescription}>{item.category}</Text>
+                    </View>
+                    <View style={styles.jobDetails}>
+                        <Text style={styles.jobDescription}>{item.location}</Text>
+                    </View>
                 </View> 
 
-                <View> 
-                <View style={styles.jobDetails}> 
-                    <Ionicons name="md-cash" size={20} color="#4683fc" /> 
-                    <Text style={styles.jobDescription}>{item.pay} CAD</Text>
-                </View> 
+                <View style = {{ width: '40%'}}> 
+                    <View style={styles.jobDetails}> 
+                        <Ionicons name="md-cash" size={20} color="#4683fc" /> 
+                        <Text style={styles.jobDescription}>{item.pay} CAD</Text>
+                    </View> 
 
-                <View style={styles.jobDetails}>
-                    <Ionicons name="md-time" size={20} color="#4683fc" />
-                    <Text style={styles.jobDescription}>  {item.estimatedTime}</Text>
-                    <Text style={styles.jobDescription}>  {item.estimatedTimeUnit}</Text>
-                </View> 
+                    <View style={styles.jobDetails}>
+                        <Ionicons name="md-time" size={20} color="#4683fc" />
+                        <Text style={styles.jobDescription}>  {item.estimatedTime}</Text>
+                        <Text style={styles.jobDescription}>  {item.estimatedTimeUnit}</Text>
+                    </View> 
                 
                 </View>
             </View>

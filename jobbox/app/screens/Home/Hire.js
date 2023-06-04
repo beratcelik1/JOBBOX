@@ -93,7 +93,7 @@ function HireScreen({ navigation }) {
       </View>   
       <View
         style={{
-          borderBottomColor: '#4683fc',
+          borderBottomColor: '#fff',
           borderBottomWidth: 1.5,
           marginBottom: 10,
         }}/> 
@@ -111,14 +111,14 @@ function HireScreen({ navigation }) {
           </View>
         </View> 
 
-        <View> 
+        <View style = {{ width: '40%'}}> 
           <View style={styles.jobDetails}> 
-            <Ionicons name="md-cash" size={20} color="#4683fc" /> 
+            <Ionicons name="md-cash" size={20} color="#fff" /> 
             <Text style={styles.jobDescription}>{item.pay} CAD</Text>
           </View> 
 
           <View style={styles.jobDetails}>
-            <Ionicons name="md-time" size={20} color="#4683fc" />
+            <Ionicons name="md-time" size={20} color="#fff" />
             <Text style={styles.jobDescription}>  {item.estimatedTime}</Text>
             <Text style={styles.jobDescription}>  {item.estimatedTimeUnit}</Text>
           </View> 
@@ -252,7 +252,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   jobCard: {
-    backgroundColor: '#fff',
+    backgroundColor: '#4683fc',
     padding: 20,
     marginBottom: 10,
     borderRadius: 10,
@@ -299,10 +299,11 @@ const styles = StyleSheet.create({
   jobTitle: {
     fontSize: 18,
     fontWeight: 'bold',
+    color: '#fff',
   },
   jobDescription: {
     fontSize: 14,
-    color: '#000',
+    color: '#fff',
     marginTop: 4,
   },
   jobDate: {
