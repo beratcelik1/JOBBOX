@@ -157,16 +157,17 @@ router.delete('/:id', async (req, res) => {
 // user data 
 router.get('/user/:userId', async (req, res) => {
   try {
-    const user = await User.findById(req.params.userId);
-    if (!user) {
-      return res.status(404).json({ error: 'User not found' });
-    }
-    const jobs = await Job.find({ postedBy: user._id }).populate('postedBy', 'firstname lastname');
-    res.send(jobs);
+      const user = await User.findById(req.params.userId);
+      if (!user) {
+          return res.status(404).json({ error: 'User not found' });
+      }
+      const jobs = await Job.find({ postedBy: user._id, rejectedApplicants: { $ne: user._id }}).populate('postedBy', 'firstname lastname');
+      res.send(jobs);
   } catch (error) {
-    res.status(500).send(error);
+      res.status(500).send(error);
   }
-}); 
+});
+
 
 // Apply to a job
 router.post('/apply/:jobId', async (req, res) => {
@@ -268,55 +269,77 @@ router.post('/apply', async (req, res) => {
 router.post('/reject/:jobId/:userId', async (req, res) => {
   const { jobId, userId } = req.params;
 
+  const token = req.header('Authorization')?.replace('Bearer ', '');
+  if (!token) {
+    return res.status(401).send({ error: 'Authorization token missing' });
+  }
+
   try {
+    const data = jwt.verify(token, process.env.JWT_SECRET);
+    const currentUser = await User.findById(data.userId);
+
+    if (!currentUser) {
+      return res.status(404).send({ error: 'User not found' });
+    }
+
     const job = await Job.findById(jobId);
     if (!job) {
-      return res.status(404).send({ message: "Job not found" });
+      return res.status(404).send({ error: 'Job not found' });
     }
-    
-    // Check if the user is an applicant
+
+    if (!job.postedBy.equals(currentUser._id)) {
+      return res.status(403).send({ error: 'You are not authorized to reject applicants for this job' });
+    }
+
     if (!job.applicants.includes(userId)) {
-      return res.status(400).send({ message: "User has not applied for this job" });
+      return res.status(400).send({ error: 'User has not applied for this job' });
     }
-    
-    // Add to rejectedApplicants and remove from applicants
+
     job.rejectedApplicants.push(userId);
     job.applicants = job.applicants.filter(id => id.toString() !== userId);
-    
+
     await job.save();
 
     res.send(job);
   } catch (err) {
     console.error(err);
-    res.status(500).send({ message: "Server error" });
+    res.status(500).send({ error: "Server error" });
   }
-}); 
+});
 
 // Hire an applicant
 router.post('/hire/:jobId/:userId', async (req, res) => {
   const { jobId, userId } = req.params;
-
+  const token = req.header('Authorization')?.replace('Bearer ', '');
+  if (!token) {
+      return res.status(401).send({ error: 'Authorization token missing' });
+  }
   try {
-    const job = await Job.findById(jobId);
-    if (!job) {
-      return res.status(404).send({ message: "Job not found" });
-    }
-
-    // Check if the user is an applicant
-    if (!job.applicants.includes(userId)) {
-      return res.status(400).send({ message: "User has not applied for this job" });
-    }
-
-    // Set hiredApplicant and remove all from applicants
-    job.hiredApplicant = userId;
-    job.applicants = [];
-
-    await job.save();
-
-    res.send(job);
+      const data = jwt.verify(token, process.env.JWT_SECRET);
+      const currentUser = await User.findById(data.userId);
+      if (!currentUser) {
+          return res.status(404).send({ error: 'User not found' });
+      }
+      const job = await Job.findById(jobId);
+      if (!job) {
+          return res.status(404).send({ error: 'Job not found' });
+      }
+      if (!job.postedBy.equals(currentUser._id)) {
+          return res.status(403).send({ error: 'You are not authorized to hire applicants for this job' });
+      }
+      if (job.hiredApplicant) {
+          return res.status(400).send({ error: 'An applicant has already been hired for this job' });
+      }
+      if (!job.applicants.includes(userId)) {
+          return res.status(400).send({ error: 'User has not applied for this job' });
+      }
+      job.hiredApplicant = userId;
+      job.applicants = [];
+      await job.save();
+      res.send(job);
   } catch (err) {
-    console.error(err);
-    res.status(500).send({ message: "Server error" });
+      console.error(err);
+      res.status(500).send({ error: "Server error" });
   }
 });
 

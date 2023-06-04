@@ -2,7 +2,38 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, FlatList, ActivityIndicator, TouchableOpacity } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import jwt_decode from 'jwt-decode';
-import { Ionicons } from '@expo/vector-icons';
+import { Ionicons } from '@expo/vector-icons'; 
+
+
+function StatusBadge({ status }) {
+  let text = '';
+  let color = '';
+
+  switch (status) {
+    case 'open':
+      text = 'Open';
+      color = 'green';
+      break;
+    case 'hired':
+      text = 'Hired';
+      color = 'blue';
+      break;
+    case 'closed':
+      text = 'Closed';
+      color = 'red';
+      break;
+    case 'rejected':
+      text = 'Rejected';
+      color = 'grey';
+      break;
+  }
+
+  return (
+    <View style={{ backgroundColor: color, borderRadius: 5, padding: 5, alignSelf: 'flex-start' }}>
+      <Text style={{ color: 'red' }}>{text} this</Text>
+    </View>
+  );
+}
 
 function StatusScreen() {
     const [loaded, setLoaded] = useState(false);
@@ -36,39 +67,12 @@ function StatusScreen() {
         fetchJobs();
     }, []); 
 
-    function StatusBadge({ status }) {
-        let text = '';
-        let color = '';
-      
-        switch (status) {
-          case 'open':
-            text = 'Open';
-            color = 'green';
-            break;
-          case 'hired':
-            text = 'Hired';
-            color = 'blue';
-            break;
-          case 'closed':
-            text = 'Closed';
-            color = 'red';
-            break;
-        }
-      
-        return (
-          <View style={{ backgroundColor: color, borderRadius: 5, padding: 5, alignSelf: 'flex-start' }}>
-            <Text style={{ color: 'white' }}>{text}</Text>
-          </View>
-        );
-      }
-    
-
     const renderJob = ({ item }) => {
         // Provide JSX to render each job in the list
         return (
         <TouchableOpacity 
             style={styles.jobCard}
-            onPress={() => navigation.navigate('JobDetail', { job: item })} 
+            // onPress={() => navigation.navigate('JobDetail', { job: item })} 
         > 
             <View style={styles.jobHeader}>  
                 <Text style={styles.jobTitle}>{item.title}</Text>
@@ -98,7 +102,7 @@ function StatusScreen() {
                     </View> 
                 </View> 
 
-                <View style = {{ width: '40%'}}> 
+                <View style = {{ width: '40%',}}> 
                     <StatusBadge status={item.status} />
                 </View>
             </View>
