@@ -243,22 +243,6 @@ router.get('/applicants/:jobId', authenticate, async (req, res) => {
   }
 });
 
-// handle get applicants
-// router.get('/applicants/:jobId', async (req, res) => {
-//   const { jobId } = req.params;
-
-//   try {
-//     const job = await Job.findById(jobId).populate('applicants');
-//     if (!job) {
-//       return res.status(404).send({ message: "Job not found" });
-//     }
-
-//     res.send(job.applicants);
-//   } catch (err) {
-//     console.error(err);
-//     res.status(500).send({ message: "Server error" });
-//   }
-// });
 
 // handle apply job
 router.post('/apply', async (req, res) => {
