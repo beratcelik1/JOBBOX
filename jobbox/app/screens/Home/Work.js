@@ -9,7 +9,6 @@ import { Ionicons } from '@expo/vector-icons';
 import Collapsible from 'react-native-collapsible';
 import { Picker } from '@react-native-picker/picker';
 
-import axios from 'axios';
 import { createStackNavigator } from '@react-navigation/stack';
 import { DefaultTheme, Provider as PaperProvider } from 'react-native-paper';
 import { showMessage } from 'react-native-flash-message';
