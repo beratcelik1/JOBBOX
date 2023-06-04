@@ -58,8 +58,9 @@ export function HireApplicationsScreen({ route, navigation }) {
             Alert.alert('Success', 'User has been hired successfully!');
         }
     }).catch((error) => {
-        // handle error
-        Alert.alert('Error', 'Something went wrong while hiring the user');
+      // handle error
+      console.error(error.response.data); // This will log the actual error message from the server
+      Alert.alert('Error', 'Something went wrong while hiring the user');
     });
 };
 
@@ -76,8 +77,9 @@ const handleReject = async (applicantId) => {
             Alert.alert('Success', 'User has been rejected successfully!');
         }
     }).catch((error) => {
-        // handle error
-        Alert.alert('Error', 'Something went wrong while rejecting the user');
+      // handle error
+      console.error(error.response.data); // This will log the actual error message from the server
+      Alert.alert('Error', 'Something went wrong while rejecting the user');
     });
 };
 
