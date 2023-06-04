@@ -39,30 +39,28 @@ function HireScreen({ navigation }) {
         const token = await AsyncStorage.getItem('token');
         console.log(token);
 
-    // Decode the token to get the user ID
-    const decodedToken = jwt_decode(token);
-    const userId = decodedToken.userId;
+        // Decode the token to get the user ID
+        const decodedToken = jwt_decode(token);
+        const userId = decodedToken.userId;
 
-    // Fetch the jobs from your server
-    fetch(`http://tranquil-ocean-74659.herokuapp.com/jobs/user/${userId}`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        // Set the jobs state
-            setAllJobs(data);
-        setJobs(data);
-      })
-      .catch((error) => console.error('Error:', error));
-  };
+        // Fetch the jobs from your server
+        fetch(`http://tranquil-ocean-74659.herokuapp.com/jobs/user/${userId}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        })
+        .then((response) => response.json())
+        .then((data) => {
+          // Set the jobs state
+          setAllJobs(data);
+          setJobs(data);
+        })
+        .catch((error) => console.error('Error:', error));
 
-  useFocusEffect(
-    React.useCallback(() => {
-      setLoaded(false);
+        setLoaded(true);
+      };
+
       fetchJobs();
-      setLoaded(true);
     }, [])
   );
 
@@ -81,7 +79,7 @@ function HireScreen({ navigation }) {
   
       setJobs(filteredJobs);
     }
-  };  
+  }; 
 
   const handleJobPress = (job) => {
     console.log(job);
@@ -100,41 +98,34 @@ function HireScreen({ navigation }) {
           marginBottom: 10,
         }}/> 
 
-      {/* <View style = {{ 
+      <View style = {{ 
         flexDirection: 'row',
-        justifyContent: 'space-between',}}>  
+        justifyContent: 'flex-start',}}> 
 
-        
-        
-      </View> */}
+        <View style = {{ width: '60%'}} > 
+          <View style={styles.jobDetails}>
+            <Text style={styles.jobDescription}>{item.category}</Text>
+          </View>
+          <View style={styles.jobDetails}>
+            <Text style={styles.jobDescription}>{item.location}</Text>
+          </View>
+        </View> 
 
-      <View style={styles.jobDetails}>
-        <Text style={styles.detailLabel}>Description:</Text>
-        <Text style={styles.jobDescription}>{item.description}</Text>
-      </View>
-      <View style={styles.jobDetails}>
-        <Text style={styles.detailLabel}>Skills:</Text>
-        <Text style={styles.jobDescription}>{item.skills}</Text>
+        <View> 
+          <View style={styles.jobDetails}> 
+            <Ionicons name="md-cash" size={20} color="#4683fc" /> 
+            <Text style={styles.jobDescription}>{item.pay} CAD</Text>
+          </View> 
+
+          <View style={styles.jobDetails}>
+            <Ionicons name="md-time" size={20} color="#4683fc" />
+            <Text style={styles.jobDescription}>  {item.estimatedTime}</Text>
+            <Text style={styles.jobDescription}>  {item.estimatedTimeUnit}</Text>
+          </View> 
+          
+        </View>
       </View>
 
-      <View style={styles.jobDetails}>
-        <Text style={styles.detailLabel}>Location:</Text>
-        <Text style={styles.jobDescription}>{item.location}</Text>
-      </View>
-      <View style={styles.jobDetails}>
-        <Text style={styles.detailLabel}>Pay:</Text>
-        <Text style={styles.jobDescription}>{item.pay}</Text>
-      </View>
-      <View style={styles.jobDetails}>
-        <Text style={styles.detailLabel}>Time:</Text>
-        <Text style={styles.jobDescription}>{item.estimatedTime}</Text>
-        <Text style={styles.detailLabel}>Units:</Text>
-        <Text style={styles.jobDescription}>{item.estimatedTimeUnit}</Text>
-      </View> 
-      <View style={styles.jobDetails}>
-        <Text style={styles.detailLabel}>Category:</Text>
-        <Text style={styles.jobDescription}>{item.category}</Text>
-      </View>
       <TouchableOpacity 
         style={styles.button}
         onPress={() => handleJobPress(item)}  
@@ -312,6 +303,7 @@ const styles = StyleSheet.create({
   jobDescription: {
     fontSize: 14,
     color: '#000',
+    marginTop: 4,
   },
   jobDate: {
     fontSize: 12,

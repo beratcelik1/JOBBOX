@@ -206,7 +206,10 @@ function WorkScreen({ navigation }) {
       };
       
       const renderJob = ({ item }) => ( 
-        <View style={styles.jobCard}>
+        <TouchableOpacity 
+                style={styles.jobCard}
+                onPress={() => navigation.navigate('JobDetail', { job: item })} 
+            > 
             <View style={styles.jobHeader}>  
                 <Text style={styles.jobTitle}>{item.postedBy?.firstname} {item.postedBy?.lastname}</Text>
                 <Text style={styles.jobTitle}>{item.title}</Text>
@@ -218,40 +221,34 @@ function WorkScreen({ navigation }) {
                 marginBottom: 10,
                 }}/>
 
-            <View style={styles.jobDetails}>
-                <Text style={styles.detailLabel}>Description:</Text>
-                <Text style={styles.jobDescription}>{item.description}</Text>
-            </View>
-            <View style={styles.jobDetails}>
-                <Text style={styles.detailLabel}>Skills:</Text>
-                <Text style={styles.jobDescription}>{item.skills}</Text>
-            </View>
+            <View style = {{ 
+                flexDirection: 'row',
+                justifyContent: 'flex-start',}}> 
 
-            <View style={styles.jobDetails}>
-                <Text style={styles.detailLabel}>Location:</Text>
-                <Text style={styles.jobDescription}>{item.location}</Text>
+                <View style = {{ width: '60%'}} > 
+                <View style={styles.jobDetails}>
+                    <Text style={styles.jobDescription}>{item.category}</Text>
+                </View>
+                <View style={styles.jobDetails}>
+                    <Text style={styles.jobDescription}>{item.location}</Text>
+                </View>
+                </View> 
+
+                <View> 
+                <View style={styles.jobDetails}> 
+                    <Ionicons name="md-cash" size={20} color="#4683fc" /> 
+                    <Text style={styles.jobDescription}>{item.pay} CAD</Text>
+                </View> 
+
+                <View style={styles.jobDetails}>
+                    <Ionicons name="md-time" size={20} color="#4683fc" />
+                    <Text style={styles.jobDescription}>  {item.estimatedTime}</Text>
+                    <Text style={styles.jobDescription}>  {item.estimatedTimeUnit}</Text>
+                </View> 
+                
+                </View>
             </View>
-            <View style={styles.jobDetails}>
-                <Text style={styles.detailLabel}>Pay:</Text>
-                <Text style={styles.jobDescription}>{item.pay}</Text>
-            </View>
-            <View style={styles.jobDetails}>
-                <Text style={styles.detailLabel}>Time:</Text>
-                <Text style={styles.jobDescription}>{item.estimatedTime}</Text>
-                <Text style={styles.detailLabel}>Units:</Text>
-                <Text style={styles.jobDescription}>{item.estimatedTimeUnit}</Text>
-            </View> 
-            <View style={styles.jobDetails}>
-                <Text style={styles.detailLabel}>Category:</Text>
-                <Text style={styles.jobDescription}>{item.category}</Text>
-            </View>
-            <TouchableOpacity 
-                style={styles.button}
-                onPress={() => navigation.navigate('JobDetail', { job: item })} 
-            > 
-                <Text style={styles.buttonText}> View Job Post</Text>
-            </TouchableOpacity>
-        </View>
+        </TouchableOpacity>
     );
     
     
