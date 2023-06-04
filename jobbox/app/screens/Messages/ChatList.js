@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, FlatList, Text, TouchableOpacity, View } from 'react-native';
+import { StyleSheet, FlatList, Text, TouchableOpacity, View, Image } from 'react-native';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { SearchBar } from 'react-native-elements';
+// import { SearchBar } from 'react-native-elements';
+import SearchBar from '../../components/SearchBar';
 
 const styles = StyleSheet.create({
   container: {
@@ -26,7 +27,18 @@ const styles = StyleSheet.create({
   },
   label: {
     fontSize: 18,
-    fontWeight: 'bold',
+    // fontWeight: 'bold',
+  },
+  chatListItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  profileImage: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    marginRight: 10,
+    backgroundColor: '#d3d3d3',
   },
 });
 
@@ -129,20 +141,23 @@ function ChatList({ navigateToChat }) {
   return (
     <View style={styles.container}>
       <SearchBar
-        round
-        searchIcon={{ size: 24 }}
-        onChangeText={(text) => searchFilterFunction(text)}
-        onClear={(text) => searchFilterFunction('')}
-        placeholder="Search..."
-        value={search}
-      />
+  placeholder={'Search users...'}
+  searchQuery={search}
+  setSearchQuery={searchFilterFunction}
+/>
       {search.length > 0 ?
         <FlatList
           data={searchResults}
           keyExtractor={(item, index) => item._id.toString()}
           renderItem={({ item }) => (
             <TouchableOpacity style={styles.card} onPress={() => handleChatNavigation(item._id)}>
-              <Text style={styles.label}>{item.firstname}</Text>
+              <View style={styles.chatListItem}>
+                <Image 
+                  source={{uri: item.profilePic ? item.profilePic : 'https://cdn-icons-png.flaticon.com/512/847/847969.png?w=826&t=st=1685898712~exp=1685899312~hmac=650bef1520ec4ea89beec54315f42f553b7a246868819cb05c873088997dc5e0'}} 
+                  style={styles.profileImage} 
+                />
+                <Text style={styles.label}>{item.firstname}</Text>
+              </View>
             </TouchableOpacity>
           )}
         />
@@ -152,7 +167,14 @@ function ChatList({ navigateToChat }) {
           keyExtractor={(item, index) => item._id.toString()}
           renderItem={({ item }) => (
             <TouchableOpacity style={styles.card} onPress={() => handleChatNavigation(item._id)}>
-              <Text style={styles.label}>{item.firstname}</Text>
+              <View style={styles.chatListItem}>
+                {/* <Image source={{uri: item.profilePic}} style={styles.profileImage} /> */}
+                <Image 
+                  source={{uri: item.profilePic ? item.profilePic : 'https://cdn-icons-png.flaticon.com/512/847/847969.png?w=826&t=st=1685898712~exp=1685899312~hmac=650bef1520ec4ea89beec54315f42f553b7a246868819cb05c873088997dc5e0'}} 
+                  style={styles.profileImage} 
+                />
+                <Text style={styles.label}>{item.firstname}</Text>
+              </View>
             </TouchableOpacity>
           )}
         />

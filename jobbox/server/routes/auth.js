@@ -138,63 +138,6 @@ router.put('/user/me/profilePic', async (req, res) => {
 });
 //...
 
-// // For Messages ---------------
-// // Post a new message and start a new conversation if necessary
-// router.post('/message', async (req, res) => {
-//   const { senderId, receiverId, content } = req.body;
-
-//   // Find existing conversation
-//   let conversation = await Conversation.findOne({
-//     members: { $all: [senderId, receiverId] },
-//   });
-
-//   // If it doesn't exist, create a new one
-//   if (!conversation) {
-//     conversation = new Conversation({ members: [senderId, receiverId] });
-//     await conversation.save();
-//   }
-
-//   // create new message
-//   const message = new Message({ senderId, receiverId, content, conversation: conversation._id });
-
-//   // save message and return
-//   await message.save();
-//   res.status(201).json(message);
-// });
-
-// // Get all conversations for a specific user
-// router.get('/conversations/:userId', async (req, res) => {
-//   const userId = req.params.userId;
-//   const conversations = await Conversation.find({ members: userId }).populate('members');
-//   res.send(conversations);
-// });
-
-// // Get all messages in a specific conversation
-// router.get('/messages/:conversationId', async (req, res) => {
-//   const conversationId = req.params.conversationId;
-//   const messages = await Message.find({ conversation: conversationId }).sort('timestamp');
-//   res.send(messages);
-// });
-
-// router.get('/messages/:user1Id/:user2Id', async (req, res) => {
-//   try {
-//     const { user1Id, user2Id } = req.params;
-//     const conversation = await Conversation.findOne({
-//       members: { $all: [user1Id, user2Id] },
-//     });
-//     if (!conversation) {
-//       return res.json([]); // No conversation exists between these two users, so return an empty array
-//     }
-//     const messages = await Message.find({ conversation: conversation._id }).sort('timestamp');
-//     return res.json(messages);
-//   } catch (err) {
-//     return res.status(500).json({ error: 'Server error' });
-//   }
-// });
-
-// // End of Messages ---------------
-
-
 // get all usernames
 router.get('/users', async (req, res) => {
   const users = await User.find({});
