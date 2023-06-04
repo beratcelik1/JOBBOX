@@ -43,7 +43,7 @@ export default function CategoryScreen({ route, navigation }) {
   }
 
   return (
-    <View style={{backgroundColor:'#fff', flex: 1}}>
+    <View style={{ flex: 1}}>
       {loading ? (
         <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
           <Text>Loading...</Text>
@@ -95,7 +95,7 @@ const styles = StyleSheet.create({
     // iOS shadow properties
     shadowColor: "#000",
     shadowOffset: {
-        width: -10,
+        width: 0,
         height: 2,
     },
     shadowOpacity: 0.25,

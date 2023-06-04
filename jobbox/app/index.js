@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { Image, Text, View, TouchableOpacity } from 'react-native';
 import { NavigationContainer, useNavigation } from '@react-navigation/native';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
@@ -6,6 +6,8 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
 import Icon from 'react-native-vector-icons/Ionicons';
 
+import { Modalize } from 'react-native-modalize';
+import { Dimensions } from 'react-native';
 
 import { RootNavigationContext } from './navigation/RootNavigationContext';
 import Activity from './screens/Activity/Wallet';
@@ -21,7 +23,9 @@ import JobScreen from './screens/JobScreen';
 import ProfileSection from './screens/Profile/ProfileSection';
 import WorkHistoryScreen from './screens/Activity/WorkHistoryScreen';
 import HireHistoryScreen from './screens/Activity/HireHistoryScreen';
-import EditTargetsScreen from './screens/Activity/EditTargetsScreen';
+import EditTargetsScreen from './screens/Activity/EditTargetsScreen'; 
+import StatusScreen from './screens/StatusScreen';  
+
 
 import { useState } from 'react';
 import Login from './screens/Login'; 
@@ -45,8 +49,10 @@ function HomeTopTabs() {
   );
 }
 
+
 function MyTabs() {
-  const navigation = useNavigation();
+  const navigation = useNavigation(); 
+
   return (
     <BottomTab.Navigator
     initialRouteName="Home"
@@ -127,7 +133,55 @@ function MyTabs() {
             </View>
           ),
         }}
-      />
+      /> 
+    <BottomTab.Screen 
+        name=" " 
+        component={StatusScreen} 
+        options={{  
+          tabBarIcon: ({ focused, color, size }) => (
+            <View style={{
+              width: 70, 
+              height: 50, 
+              borderRadius: 30, 
+              marginBottom: -20, 
+              backgroundColor: focused ? '#4683FC' : '#D3D3D3',
+              justifyContent: 'center', 
+              alignItems: 'center'
+            }}>
+              <Icon 
+                name={focused ? 'cube' : 'cube-outline'} 
+                size={size} 
+                color={focused ? 'white' : 'gray'} 
+              />
+            </View>
+          ),
+          tabBarButton: (props) => (
+            <TouchableOpacity {...props} />
+          ),
+          headerTitle: () => (
+            <View style={{ alignItems: 'center' }}>
+              <Image source={logo} style={{ width: 170, height: 30 }} />
+            </View>
+          ),
+          headerLeft: () => (
+            <View style={{ marginLeft: 10 }}>
+              <Image source={logo2} style={{ width: 30, height: 30 }} />
+            </View>
+          ),
+          headerRight: () => (
+            <View style={{ flexDirection: 'row', marginRight: 10 }}>
+              <TouchableOpacity onPress={() => navigation.navigate("Messages")}>
+                <Icon name="chatbox-outline" size={24} />
+              </TouchableOpacity>
+              <TouchableOpacity onPress={() => navigation.navigate("Notifications")}>
+                <Icon name="notifications-outline" size={24} style={{ marginLeft: 10 }} />
+              </TouchableOpacity>
+            </View>
+          ),
+        }}
+      /> 
+
+
     <BottomTab.Screen 
       name="Activity" 
       component={Activity} 
@@ -264,12 +318,15 @@ export default function App() {
   );
 
   return (
-    <NavigationContainer ref={navigationRef} independent={true} >
-      <RootNavigationContext.Provider value={navigationRef}>
-        {isAuthenticated ? <MainStack /> : <AuthStack />}
-      </RootNavigationContext.Provider>
-      <FlashMessage position="top" />
-    </NavigationContainer>
+  
+      <NavigationContainer ref={navigationRef} independent={true} >
+        <RootNavigationContext.Provider value={navigationRef}>
+          {isAuthenticated ? <MainStack /> : <AuthStack />}
+        </RootNavigationContext.Provider>
+        <FlashMessage position="top" />
+      </NavigationContainer>
+    
+    
   );
 }
 

@@ -109,7 +109,8 @@ router.get('/', async (req, res) => {
           query.pay = { $gte: pay }; // returns jobs with pay greater than or equal to the pay query
       }
 
-      const jobs = await Job.find(query);
+      
+      const jobs = await Job.find(query).populate('postedBy', 'firstname lastname');
       res.send(jobs);
   } catch (error) {
       res.status(500).send(error);
@@ -203,7 +204,7 @@ router.get('/user/:userId', async (req, res) => {
     if (!user) {
       return res.status(404).json({ error: 'User not found' });
     }
-    const jobs = await Job.find({ postedBy: user._id });
+    const jobs = await Job.find({ postedBy: user._id }).populate('postedBy', 'firstname lastname');
     res.send(jobs);
   } catch (error) {
     res.status(500).send(error);

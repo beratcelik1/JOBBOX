@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, Image, FlatList, StyleSheet, TouchableOpacity, ProgressBarAndroid } from 'react-native';
+import { View, Text, Image, FlatList, StyleSheet, TouchableOpacity, Alert} from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { createStackNavigator } from '@react-navigation/stack';
+import { createStackNavigator } from '@react-navigation/stack'; 
+
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
 export function HireApplicationsScreen({ route, navigation }) {
-    const job = route.params.job;
+    const  job  = route.params.job;
     const [applicants, setApplicants] = useState([]);
-    const [jobProgress, setJobProgress] = useState(0.33); // Add this state to represent the job progress
 
     useEffect(() => {
         // Simulating a fetch call here
@@ -54,7 +55,33 @@ export function HireApplicationsScreen({ route, navigation }) {
                 </View>
             </View>
         </View>
-    );
+    ); 
+
+    const handleDeleteJob = async () => {
+        // Confirm the delete action
+        Alert.alert("Delete Job","Are you sure you want to delete this job?",[
+          {text: "Cancel",style: "cancel"},
+          { text: "OK", onPress: async () => {
+            // Fetch the token from the async storage
+            const token = await AsyncStorage.getItem('token');
+            console.log(token);
+    
+            // Make the DELETE request
+            fetch(`http://tranquil-ocean-74659.herokuapp.com/jobs/${job._id}`, {
+              method: 'DELETE',
+              headers: {Authorization: `Bearer ${token}`},
+            })
+            .then((response) => response.json())
+            .then((data) => {
+              // Show alert message
+              Alert.alert('Job Deleted', 'This job has been successfully deleted.', [
+                {text: 'OK', onPress: () => navigation.navigate('HireScreen')}
+              ]);
+            })
+            .catch((error) => console.error('Error:', error));
+          }}
+        ],{ cancelable: false });
+      };
 
 
     return (
@@ -67,21 +94,15 @@ export function HireApplicationsScreen({ route, navigation }) {
                     <Text style={styles.date}>{job.datePosted}</Text>
                 </View>
                 <View style={styles.jobProgressSection}>
-                    <ProgressBarAndroid 
-                        styleAttr="Horizontal"
-                        indeterminate={false}
-                        progress={jobProgress}
-                        style={styles.progressBar}
-                    />
-                    <Text style={styles.jobStatus}>Status: {jobProgress === 1 ? 'Completed' : 'In Progress'}</Text>
-                    <View style={ {justifyContent: 'center', alignItems: 'center'}}>
-                         <TouchableOpacity
-                            onPress={() => navigation.navigate("EditJob", { job })}
-                            style={styles.editBtn}
-                        >
-                        <Text style={ {fontWeight: 'bold', color: '#4683fc' }} > Edit job</Text>
-                        </TouchableOpacity>
-                    </View>
+                    <TouchableOpacity onPress={() => navigation.navigate('PostJob', { template: job, editing: true })} style={styles.button2}>
+                        <Ionicons name="create-outline" size={24} color="#4683fc" />
+                        <Text style={styles.buttonText2}>Edit post</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={handleDeleteJob} style={styles.buttonDel}>
+                        <Ionicons name="trash-outline" size={24} color="#fff" />
+                        <Text style={styles.buttonTextDel}>Delete Job</Text>
+                    </TouchableOpacity>
+                    
                 </View>
             </View>
 
@@ -96,16 +117,52 @@ export function HireApplicationsScreen({ route, navigation }) {
 } 
 
 // Styles...
-const styles = StyleSheet.create({
-    editBtn: {
-        backgroundColor: '#fff' ,
-        borderRadius: 50,
-        width: 150,
-        height: 40,
-        justifyContent: 'center',
+const styles = StyleSheet.create({ 
+    button2: {
+        flexDirection: 'row',
         alignItems: 'center',
-        marginRight: 10,
-        marginTop: 10,
+        backgroundColor: '#f2f3f5',
+        paddingTop: 6, 
+        paddingBottom: 6, 
+        paddingLeft: 15, 
+        paddingRight: 15, 
+        borderRadius: 10,
+        shadowColor: "#000",
+        shadowOffset: {
+            width: 0,
+            height: 2,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 3.84,
+        elevation: 5, 
+        marginBottom: 10,
+    },
+    buttonText2: {
+        marginLeft: 5,
+        color: '#4683fc', 
+    },
+    buttonDel: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        backgroundColor: '#eb5c52',
+        paddingTop: 6, 
+        paddingBottom: 6, 
+        paddingLeft: 15, 
+        paddingRight: 15, 
+        borderRadius: 10,
+        shadowColor: "#000",
+        shadowOffset: {
+            width: 0,
+            height: 2,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 6.84,
+        elevation: 5, 
+        marginBottom: 10,
+    },
+    buttonTextDel: {
+        marginLeft: 5,
+        color: '#fff', 
     },
     container: {
         flex: 1,
@@ -134,7 +191,9 @@ const styles = StyleSheet.create({
     jobCard: {
         flexDirection: 'row',
         backgroundColor: '#4683fc',
-        padding: 20,
+        
+        paddingRight: 20, 
+        paddingTop: 20,
         paddingLeft: 0,
         marginBottom: 10,
         marginTop: '-5%',
@@ -212,7 +271,15 @@ const styles = StyleSheet.create({
         paddingBottom: 6, 
         paddingLeft: 7, 
         paddingRight: 9, 
-        borderRadius: 50,
+        borderRadius: 10,
+        shadowColor: "#000",
+        shadowOffset: {
+            width: 0,
+            height: 2,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 3.84,
+        elevation: 5, 
     },
     buttonText: {
         marginLeft: 5,
