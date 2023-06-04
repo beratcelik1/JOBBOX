@@ -219,7 +219,7 @@ router.get('/user/:userId', async (req, res) => {
     if (!user) {
       return res.status(404).json({ error: 'User not found' });
     }
-    const jobs = await Job.find({ postedBy: user._id });
+    const jobs = await Job.find({ postedBy: user._id }).populate('postedBy', 'firstname lastname');
     res.send(jobs);
   } catch (error) {
     res.status(500).send(error);

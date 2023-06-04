@@ -7,6 +7,7 @@ import {
   StyleSheet,
   TouchableOpacity,
   FlatList,
+  Alert,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
@@ -17,7 +18,6 @@ import SearchBar from '../../components/SearchBar';
 import { HireApplicationsScreen } from './HireApplications';
 import { useFocusEffect } from '@react-navigation/native';
 
-import { EditJobScreen } from './EditJobScreen';
 import FindTemplateScreen from './FindTemplateScreen';
 
 import jwt_decode from 'jwt-decode';
@@ -49,17 +49,18 @@ function HireScreen({ navigation }) {
             Authorization: `Bearer ${token}`,
           },
         })
-          .then((response) => response.json())
-          .then((data) => {
-            // Set the jobs state
-            setAllJobs(data);
-            setJobs(data);
-          })
-          .catch((error) => console.error('Error:', error));
+        .then((response) => response.json())
+        .then((data) => {
+          // Set the jobs state
+          setAllJobs(data);
+          setJobs(data);
+        })
+        .catch((error) => console.error('Error:', error));
+
+        setLoaded(true);
       };
 
       fetchJobs();
-      setLoaded(true);
     }, [])
   );
 
@@ -78,7 +79,8 @@ function HireScreen({ navigation }) {
   
       setJobs(filteredJobs);
     }
-  };
+  }; 
+
   const handleJobPress = (job) => {
     console.log(job);
     navigation.navigate('HireApplicationsScreen', { job: job });
@@ -88,22 +90,50 @@ function HireScreen({ navigation }) {
     <View style={styles.jobCard}>
       <View style={styles.jobHeader}>
         <Text style={styles.jobTitle}>{item.title}</Text>
-        <TouchableOpacity
-          onPress={() =>
-            navigation.navigate('PostJob', { template: item, editing: true })
-          }
-        >
-          <Ionicons name="create-outline" size={24} color="#666" />
-        </TouchableOpacity>
+      </View>   
+      <View
+        style={{
+          borderBottomColor: '#4683fc',
+          borderBottomWidth: 1.5,
+          marginBottom: 10,
+        }}/> 
+
+      <View style = {{ 
+        flexDirection: 'row',
+        justifyContent: 'flex-start',}}> 
+
+        <View style = {{ width: '60%'}} > 
+          <View style={styles.jobDetails}>
+            <Text style={styles.jobDescription}>{item.category}</Text>
+          </View>
+          <View style={styles.jobDetails}>
+            <Text style={styles.jobDescription}>{item.location}</Text>
+          </View>
+        </View> 
+
+        <View> 
+          <View style={styles.jobDetails}> 
+            <Ionicons name="md-cash" size={20} color="#4683fc" /> 
+            <Text style={styles.jobDescription}>{item.pay} CAD</Text>
+          </View> 
+
+          <View style={styles.jobDetails}>
+            <Ionicons name="md-time" size={20} color="#4683fc" />
+            <Text style={styles.jobDescription}>  {item.estimatedTime}</Text>
+            <Text style={styles.jobDescription}>  {item.estimatedTimeUnit}</Text>
+          </View> 
+          
+        </View>
       </View>
-      <Text style={styles.jobDescription}>{item.description}</Text>
-      <Text style={styles.jobDate}>{item.datePosted}</Text>
-      <Text style={styles.jobDate}>
-        Applications: {item.applications ? item.applications.length : 0}
-      </Text>
-      <Button onPress={() => handleJobPress(item)} title="View Job Post" />
+
+      <TouchableOpacity 
+        style={styles.button}
+        onPress={() => handleJobPress(item)}  
+      > 
+        <Text style={styles.buttonText}> View Possible Hires ({item.applications ? item.applications.length : 3})</Text>
+      </TouchableOpacity>
     </View>
-  );
+  );  
 
   return (
     <View style={styles.container}>
@@ -119,7 +149,7 @@ function HireScreen({ navigation }) {
             data={jobs}
             renderItem={renderJob}
             keyExtractor={(item, index) => item._id}
-            style={styles.applicantView}
+            style={styles.applicantView} 
           />
           <View style={{ justifyContent: 'center', alignItems: 'center' }}>
             <TouchableOpacity
@@ -174,16 +204,6 @@ export default function Hire() {
         }}
       />
       <HireStack.Screen
-        name="EditJob"
-        component={EditJobScreen}
-        options={{
-          headerTitle: '',
-          headerShown: true,
-          headerBackTitle: '',
-          headerBackTitleVisible: false,
-        }}
-      />
-      <HireStack.Screen
         name="FindTemplateScreen"
         component={FindTemplateScreen}
         options={{
@@ -197,19 +217,29 @@ export default function Hire() {
   );
 }
 
-const styles = StyleSheet.create({
-  applicantView: {
-    marginLeft: -20,
-    marginRight: 0,
-    marginBottom: 0,
+const styles = StyleSheet.create({ 
+  jobDetails: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 5,
   },
-  Postbtn: {
-    backgroundColor: '#4683fc',
-    borderRadius: 50,
-    width: 150,
-    height: 40,
-    justifyContent: 'center',
-    alignItems: 'center',
+  detailLabel: {
+    fontSize: 14,
+    color: '#4683fc',
+    fontWeight: '600'
+  },
+  applicantView: { 
+    marginLeft: -20, 
+    marginRight: 0, 
+    marginBottom: 0, 
+  },
+  Postbtn: { 
+    backgroundColor: '#4683fc', 
+    borderRadius: 50, 
+    width: 150, 
+    height: 40, 
+    justifyContent: 'center', 
+    alignItems: 'center', 
     marginRight: 10,
   },
   container: {
@@ -233,16 +263,38 @@ const styles = StyleSheet.create({
     // iOS shadow properties
     shadowColor: '#000',
     shadowOffset: {
-      width: -10,
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+  }, 
+  button: { 
+    backgroundColor: '#f2f3f5',
+    padding: 15,
+    marginTop: 10,
+    borderRadius: 10,
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
       height: 2,
     },
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
+    elevation: 5, 
+    alignItems: 'center', 
   },
+  buttonText: {
+    fontSize: 16,
+    color: '#4683fc', 
+    fontWeight: '600',
+    
+  }, 
   jobHeader: {
-    flexDirection: 'row',
+    flexDirection: 'row', 
     justifyContent: 'space-between',
     alignItems: 'center',
+    marginBottom: 10, 
   },
   jobTitle: {
     fontSize: 18,
@@ -250,8 +302,8 @@ const styles = StyleSheet.create({
   },
   jobDescription: {
     fontSize: 14,
-    color: '#666',
-    marginTop: 10,
+    color: '#000',
+    marginTop: 4,
   },
   jobDate: {
     fontSize: 12,

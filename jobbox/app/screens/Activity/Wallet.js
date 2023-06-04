@@ -17,7 +17,7 @@ const styles = StyleSheet.create({
   },
   wallet: {
     padding: 20,
-    marginBottom: 15,
+    marginBottom: 20,
     borderRadius: 10,
     backgroundColor: '#f8f9fa',
     shadowColor: "#000",
@@ -45,7 +45,7 @@ const styles = StyleSheet.create({
   button: { 
     backgroundColor: '#fff',
     padding: 10,
-    marginBottom: 10,
+    marginBottom: 0,
     borderRadius: 10,
     shadowColor: "#000",
     shadowOffset: {
@@ -189,25 +189,25 @@ const Activity = () => {
       <Text style={styles.sectionTitle}>Wallet</Text>
       <View style={styles.wallet}>
         <View style={{flexDirection: 'row', justifyContent:'space-around'}}> 
-        <Text style={styles.sectionTitle}>Earning</Text>
-        <Text style={styles.sectionTitle}>Spending</Text>
+          <Text style={styles.sectionTitle}>Earning</Text>
+          <Text style={styles.sectionTitle}>Spending</Text>
         </View>
-      <View style={styles.piContainer}>
-          <PieChart
-            widthAndHeight={widthAndHeight}
-            series={seriesEarn}
-            sliceColor={['#4683fc','#fff']}
-            // coverRadius={0.7}
-            // coverFill={'#FFF'}
-          />
-          <PieChart
-            widthAndHeight={widthAndHeight}
-            series={seriesSpent}
-            sliceColor={['#c0c2c7','#fff']}
-            // coverRadius={0.7}
-            // coverFill={'#FFF'}
-          />
-      </View>
+        <View style={styles.piContainer}>
+            <PieChart
+              widthAndHeight={widthAndHeight}
+              series={seriesEarn}
+              sliceColor={['#4683fc','#fff']}
+              // coverRadius={0.7}
+              // coverFill={'#FFF'}
+            />
+            <PieChart
+              widthAndHeight={widthAndHeight}
+              series={seriesSpent}
+              sliceColor={['#c0c2c7','#fff']}
+              // coverRadius={0.7}
+              // coverFill={'#FFF'}
+            />
+        </View>
 
         <WalletDetail label="Total Earnings" value={`$${totalEarnings}`} />
         <WalletDetail label="Total Spent" value={`$${totalSpent}`} />

@@ -6,12 +6,13 @@ import { Ionicons } from '@expo/vector-icons';
 import Collapsible from 'react-native-collapsible';
 import { Picker } from '@react-native-picker/picker';
 
-
+import axios from 'axios';
 import { createStackNavigator } from '@react-navigation/stack';
 import { DefaultTheme, Provider as PaperProvider } from 'react-native-paper';
 
 function WorkScreen({ navigation }) {
-    const [searchQuery, setSearchQuery] = useState('');
+    const [searchQuery, setSearchQuery] = useState(''); 
+
     // At the top of your WorkScreen function...
     const [jobs, setJobs] = useState([]);
     const [categoryFilter, setCategoryFilter] = useState('');
@@ -65,7 +66,18 @@ function WorkScreen({ navigation }) {
     const [scrollPosition, setScrollPosition] = useState(0);
 
     const [isCategoryModalVisible, setCategoryModalVisible] = useState(false);
-    const [isFilterModalVisible, setFilterModalVisible] = useState(false);
+    const [isFilterModalVisible, setFilterModalVisible] = useState(false); 
+
+    useEffect(() => {
+        // Fetch jobs from API when component mounts
+        axios.get('/jobs')
+          .then(response => {
+            setJobs(response.data);
+          })
+          .catch(error => {
+            console.error('There was an error fetching jobs', error);
+          });
+      }, []);
 
     const theme = {
         ...DefaultTheme,
@@ -111,13 +123,13 @@ function WorkScreen({ navigation }) {
         setCategoryModalVisible(true);
       };
     
-      const closeCategoryModal = () => {
+    const closeCategoryModal = () => {
         setCategoryModalVisible(false);
       };
       
 
 
-
+      
     const fetchJobs = useCallback(() => {
         setIsLoading(true);
         fetch('http://tranquil-ocean-74659.herokuapp.com/jobs')
@@ -162,7 +174,8 @@ function WorkScreen({ navigation }) {
         } else {
             fetchJobs();
         }
-    }, [searchQuery, fetchJobs]);
+    }, [searchQuery, fetchJobs]);  
+
 
     const handleSearch = () => {
         setIsLoading(true);
@@ -192,18 +205,48 @@ function WorkScreen({ navigation }) {
           .catch(error => console.error('Error:', error));
       };
       
-      const renderJob = ({ item }) => (
-        <TouchableOpacity style={styles.jobCard} onPress={() => navigation.navigate('JobDetail', { job: item })}>
-            <View style={styles.jobDetails}>
+      const renderJob = ({ item }) => ( 
+        <TouchableOpacity 
+                style={styles.jobCard}
+                onPress={() => navigation.navigate('JobDetail', { job: item })} 
+            > 
+            <View style={styles.jobHeader}>  
+                <Text style={styles.jobTitle}>{item.postedBy?.firstname} {item.postedBy?.lastname}</Text>
                 <Text style={styles.jobTitle}>{item.title}</Text>
-                <Text style={styles.jobCompany}>{item.employer}</Text>
-                <Text style={styles.jobLocation}>{item.location}</Text>
-                <Text style={styles.jobPosted}>{item.datePosted}</Text>
-            </View>
-            <View style={styles.jobExtras}>
-                <Text style={styles.jobExtra}><Ionicons name="time-outline" size={14} color="gray" /> {item.estimatedTime}</Text>
-                <Text style={styles.jobExtra}><Ionicons name="cash-outline" size={14} color="green" /> {item.pay}</Text>
-                <Text style={styles.jobExtra}><Ionicons name="star-outline" size={14} color="gold" /> {item.rating}</Text>
+            </View>   
+            <View
+                style={{
+                borderBottomColor: '#4683fc',
+                borderBottomWidth: 1.5,
+                marginBottom: 10,
+                }}/>
+
+            <View style = {{ 
+                flexDirection: 'row',
+                justifyContent: 'flex-start',}}> 
+
+                <View style = {{ width: '60%'}} > 
+                <View style={styles.jobDetails}>
+                    <Text style={styles.jobDescription}>{item.category}</Text>
+                </View>
+                <View style={styles.jobDetails}>
+                    <Text style={styles.jobDescription}>{item.location}</Text>
+                </View>
+                </View> 
+
+                <View> 
+                <View style={styles.jobDetails}> 
+                    <Ionicons name="md-cash" size={20} color="#4683fc" /> 
+                    <Text style={styles.jobDescription}>{item.pay} CAD</Text>
+                </View> 
+
+                <View style={styles.jobDetails}>
+                    <Ionicons name="md-time" size={20} color="#4683fc" />
+                    <Text style={styles.jobDescription}>  {item.estimatedTime}</Text>
+                    <Text style={styles.jobDescription}>  {item.estimatedTimeUnit}</Text>
+                </View> 
+                
+                </View>
             </View>
         </TouchableOpacity>
     );
@@ -297,7 +340,7 @@ function WorkScreen({ navigation }) {
                     setScrollPosition(event.nativeEvent.contentOffset.y);
                 }}
             />
-        </View>
+    </View>
     );
     
 } 
@@ -305,9 +348,7 @@ function WorkScreen({ navigation }) {
 
 function JobDetailScreen({ route, navigation }) {
     //... your existing JobDetail component code
-
     const { job } = route.params;
-
     return (
         <View style={styles.container2}>
             <View style={styles.jobCard2}>
@@ -330,7 +371,53 @@ export default function Work() {
       </Stack.Navigator>   
     );
 }
-const styles = StyleSheet.create({
+const styles = StyleSheet.create({ 
+    jobHeader: {
+        flexDirection: 'row', 
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        marginBottom: 10, 
+    },
+    jobTitle: {
+        fontSize: 18,
+        fontWeight: 'bold',
+    },
+    jobDescription: {
+        fontSize: 14,
+        color: '#000',
+    },
+    jobDetails: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        marginBottom: 5,
+    },
+    detailLabel: {
+        fontSize: 14,
+        color: '#4683fc',
+        fontWeight: '600'
+    }, 
+    button: { 
+        backgroundColor: '#4683fc',
+        padding: 15,
+        marginTop: 10,
+        borderRadius: 10,
+        shadowColor: "#000",
+        shadowOffset: {
+          width: 0,
+          height: 2,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 3.84,
+        elevation: 5, 
+        alignItems: 'center', 
+      },
+      buttonText: {
+        fontSize: 16,
+        color: '#fff',
+        
+      }, 
+
+
     container: {
         flex: 1,
     },
@@ -425,29 +512,23 @@ const styles = StyleSheet.create({
 
     },
     jobCard: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
         backgroundColor: '#fff',
-        padding: 15,
+        padding: 20,
         marginBottom: 10,
+        borderRadius: 10,
         marginLeft: 15,
         marginRight: 15,
-        borderRadius: 10,
         // Android shadow properties
         elevation: 5,
         // iOS shadow properties
-        shadowColor: "#000",
+        shadowColor: '#000',
         shadowOffset: {
-        width: -10,
-        height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    },
-    jobDetails: {
-        flex: 1,
-        width: '70%',
-    },
+          width: 0,
+          height: 4,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 3.84,
+      },
     jobTitle: {
         fontSize: 18,
         fontWeight: 'bold',
