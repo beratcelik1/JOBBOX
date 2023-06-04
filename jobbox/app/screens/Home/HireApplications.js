@@ -42,8 +42,46 @@ export function HireApplicationsScreen({ route, navigation }) {
     setRefreshing(true);
     await fetchApplicants();
     setRefreshing(false);
-  }, []);
+  }, []); 
 
+  const handleHire = async (applicantId) => {
+    const token = await AsyncStorage.getItem('token');
+
+    axios.put(`http://tranquil-ocean-74659.herokuapp.com/jobs/${job._id}`, {
+        status: 'hired',
+        hired: applicantId
+    }, {
+        headers: { Authorization: `Bearer ${token}` }
+    }).then((response) => {
+        // handle successful response
+        if(response.status === 200){
+            Alert.alert('Success', 'User has been hired successfully!');
+        }
+    }).catch((error) => {
+        // handle error
+        Alert.alert('Error', 'Something went wrong while hiring the user');
+    });
+};
+
+const handleReject = async (applicantId) => {
+    const token = await AsyncStorage.getItem('token');
+
+    axios.put(`http://tranquil-ocean-74659.herokuapp.com/users/${applicantId}/reject`, {
+        jobId: job._id
+    }, {
+        headers: { Authorization: `Bearer ${token}` }
+    }).then((response) => {
+        // handle successful response
+        if(response.status === 200){
+            Alert.alert('Success', 'User has been rejected successfully!');
+        }
+    }).catch((error) => {
+        // handle error
+        Alert.alert('Error', 'Something went wrong while rejecting the user');
+    });
+};
+
+  
   const renderApplicant = ({ item }) => (
     <View style={styles.applicantCard}>
       <View style={{ flexDirection: 'row' }}>
@@ -79,11 +117,11 @@ export function HireApplicationsScreen({ route, navigation }) {
           <View
             style={{ flexDirection: 'row', marginTop: 15, marginBottom: -5 }}
           >
-            <TouchableOpacity style={styles.button}>
+            <TouchableOpacity style={styles.button} onPress={() => handleHire(item._id)}>
               <Ionicons name="checkmark-circle" size={20} color="#4683fc" />
               <Text style={styles.buttonText}>Hire</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.button}>
+            <TouchableOpacity style={styles.button} onPress={() => handleReject(item._id)}>
               <Ionicons name="close-circle" size={20} color="#4683fc" />
               <Text style={styles.buttonText}>Reject</Text>
             </TouchableOpacity>

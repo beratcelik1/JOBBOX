@@ -343,33 +343,63 @@ function JobDetailScreen({ route, navigation }) {
     //... your existing JobDetail component code
     const { job } = route.params;
 
+    // const handleApplyPress = () => {
+    //     // fetch user data with axios
+    //     (async () => {
+    //         // Fetch the token from the async storage
+    //         const token = await AsyncStorage.getItem('token');
+    //         console.log(token);
+
+    //         // Decode the token to get the user ID
+    //         const decodedToken = jwt_decode(token);
+    //         const userId = decodedToken.userId;
+
+    //         // send post apply request to server
+    //         fetch(`http://tranquil-ocean-74659.herokuapp.com/jobs/apply`, {
+    //             method: 'POST',
+    //             headers: {
+    //                 'Content-Type': 'application/json',
+    //             },
+    //             body: JSON.stringify({
+    //                 jobId: job._id,
+    //                 userId: userId,
+    //             }),
+    //         })
+    //         .then(response => response.json())
+    //         .then(data => console.log(data))
+    //         .catch(error => console.error('Error:', error));
+
+    //         // set flashMessage if successful
+    //         showMessage({
+    //             message: "You have successfully applied for this job!",
+    //             type: "success",
+    //             icon: "success",
+    //             duration: 3000,
+    //             hideOnPress: true,
+    //             floating: true,
+    //         });
+            
+    //         })();
+    // };
+
     const handleApplyPress = () => {
-        // fetch user data with axios
         (async () => {
             // Fetch the token from the async storage
             const token = await AsyncStorage.getItem('token');
             console.log(token);
-
-            // Decode the token to get the user ID
-            const decodedToken = jwt_decode(token);
-            const userId = decodedToken.userId;
-
-            // send post apply request to server
-            fetch(`http://tranquil-ocean-74659.herokuapp.com/jobs/apply`, {
+    
+            // Send the POST request to apply for the job
+            fetch(`http://tranquil-ocean-74659.herokuapp.com/jobs/apply/${job._id}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`,
                 },
-                body: JSON.stringify({
-                    jobId: job._id,
-                    userId: userId,
-                }),
-            })
-            .then(response => response.json())
+            }).then(response => response.json())
             .then(data => console.log(data))
             .catch(error => console.error('Error:', error));
-
-            // set flashMessage if successful
+    
+            // Set flashMessage if successful
             showMessage({
                 message: "You have successfully applied for this job!",
                 type: "success",
@@ -378,10 +408,9 @@ function JobDetailScreen({ route, navigation }) {
                 hideOnPress: true,
                 floating: true,
             });
-            
-            })();
+        })();
     };
-
+    
     return (
         <View style={styles.container2}> 
             <View style={styles.jobCard2}> 

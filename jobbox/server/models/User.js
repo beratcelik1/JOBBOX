@@ -62,6 +62,10 @@ const UserSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Conversation',
   }],
+  location: {
+    type: String,
+    default: '',
+  },
 });
 
 // hash password before saving

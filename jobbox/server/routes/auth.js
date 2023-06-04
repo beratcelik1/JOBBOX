@@ -137,7 +137,46 @@ router.put('/user/me/profilePic', async (req, res) => {
     res.status(401).send({ error: 'Not authorized to access this resource' });
   }
 });
-//...
+
+// update user location
+router.put('/user/me/location', async (req, res) => {
+  const token = req.header('Authorization')?.replace('Bearer ', '');
+  if (!token) {
+    return res.status(401).json({ error: 'Authorization token missing' });
+  }
+
+  try {
+    const data = jwt.verify(token, process.env.JWT_SECRET);
+    const user = await User.findById(data.userId);
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+    user.location = req.body.location;
+    await user.save();
+    res.send(user);
+  } catch {
+    res.status(401).send({ error: 'Not authorized to access this resource' });
+  }
+});
+
+// get user location
+router.get('/user/me/location', async (req, res) => {
+  const token = req.header('Authorization')?.replace('Bearer ', '');
+  if (!token) {
+    return res.status(401).json({ error: 'Authorization token missing' });
+  }
+
+  try {
+    const data = jwt.verify(token, process.env.JWT_SECRET);
+    const user = await User.findById(data.userId);
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+    res.send({ location: user.location });
+  } catch {
+    res.status(401).send({ error: 'Not authorized to access this resource' });
+  }
+});
 
 // For Messages ---------------
 // Post a new message and start a new conversation if necessary

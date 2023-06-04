@@ -110,10 +110,7 @@ router.patch('/:jobId', async (req, res) => {
       if (estimatedTime) job.estimatedTime = estimatedTime;
       if (estimatedTimeUnit) job.estimatedTimeUnit = estimatedTimeUnit;
       if (category) job.category = category;
-
-      // apply the updates to the job
-      Object.assign(job, req.body);
-
+      
       // save the updated job
       await job.save();
 
@@ -209,7 +206,121 @@ router.post('/apply/:jobId', async (req, res) => {
   } catch (error) {
       res.status(400).send(error);
   }
+}); 
+
+// Get all applicants for a job
+router.get('/applicants/:jobId', async (req, res) => {
+  try {
+    const job = await Job.findById(req.params.jobId).populate('applicants', 'firstname lastname profilePic bio rating');
+
+    if (!job) {
+      return res.status(404).json({ error: 'Job not found' });
+    }
+
+    res.send(job.applicants);
+  } catch (error) {
+    res.status(500).send(error);
+  }
 });
+
+// handle get applicants
+router.get('/applicants/:jobId', async (req, res) => {
+  const { jobId } = req.params;
+
+  try {
+    const job = await Job.findById(jobId).populate('applicants');
+    if (!job) {
+      return res.status(404).send({ message: "Job not found" });
+    }
+
+    res.send(job.applicants);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send({ message: "Server error" });
+  }
+});
+
+// handle apply job
+router.post('/apply', async (req, res) => {
+  const { jobId, userId } = req.body;
+
+  try {
+    const job = await Job.findByIdAndUpdate(
+      jobId,
+      { $addToSet: { applicants: userId } },
+      { new: true }  // Returns the updated document
+    );
+
+    console.log(job);
+
+    if (!job) {
+      return res.status(404).send({ message: "Job not found" });
+    }
+
+    res.send(job);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send({ message: "Server error" });
+  }
+}); 
+
+// Reject an applicant
+router.post('/reject/:jobId/:userId', async (req, res) => {
+  const { jobId, userId } = req.params;
+
+  try {
+    const job = await Job.findById(jobId);
+    if (!job) {
+      return res.status(404).send({ message: "Job not found" });
+    }
+    
+    // Check if the user is an applicant
+    if (!job.applicants.includes(userId)) {
+      return res.status(400).send({ message: "User has not applied for this job" });
+    }
+    
+    // Add to rejectedApplicants and remove from applicants
+    job.rejectedApplicants.push(userId);
+    job.applicants = job.applicants.filter(id => id.toString() !== userId);
+    
+    await job.save();
+
+    res.send(job);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send({ message: "Server error" });
+  }
+}); 
+
+// Hire an applicant
+router.post('/hire/:jobId/:userId', async (req, res) => {
+  const { jobId, userId } = req.params;
+
+  try {
+    const job = await Job.findById(jobId);
+    if (!job) {
+      return res.status(404).send({ message: "Job not found" });
+    }
+
+    // Check if the user is an applicant
+    if (!job.applicants.includes(userId)) {
+      return res.status(400).send({ message: "User has not applied for this job" });
+    }
+
+    // Set hiredApplicant and remove all from applicants
+    job.hiredApplicant = userId;
+    job.applicants = [];
+
+    await job.save();
+
+    res.send(job);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send({ message: "Server error" });
+  }
+});
+
+
 
 
 module.exports = router;
