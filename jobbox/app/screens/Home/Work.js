@@ -1,4 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import axios from 'axios';
+import jwt_decode from 'jwt-decode';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { View, Text, TouchableOpacity, FlatList, StyleSheet, ScrollView } from 'react-native';
 import Modal from 'react-native-modal';
 import { TextInput, Button, List } from 'react-native-paper';
@@ -6,9 +9,10 @@ import { Ionicons } from '@expo/vector-icons';
 import Collapsible from 'react-native-collapsible';
 import { Picker } from '@react-native-picker/picker';
 
-import axios from 'axios';
 import { createStackNavigator } from '@react-navigation/stack';
 import { DefaultTheme, Provider as PaperProvider } from 'react-native-paper';
+import { showMessage } from 'react-native-flash-message';
+import LoadingScreen from '../../components/LoadingScreen';
 
 function WorkScreen({ navigation }) {
     const [searchQuery, setSearchQuery] = useState(''); 
@@ -349,12 +353,54 @@ function WorkScreen({ navigation }) {
 function JobDetailScreen({ route, navigation }) {
     //... your existing JobDetail component code
     const { job } = route.params;
+
+    const handleApplyPress = () => {
+        // fetch user data with axios
+        (async () => {
+            // Fetch the token from the async storage
+            const token = await AsyncStorage.getItem('token');
+            console.log(token);
+
+            // Decode the token to get the user ID
+            const decodedToken = jwt_decode(token);
+            const userId = decodedToken.userId;
+
+            // send post apply request to server
+            fetch(`http://tranquil-ocean-74659.herokuapp.com/jobs/apply`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    jobId: job._id,
+                    userId: userId,
+                }),
+            })
+            .then(response => response.json())
+            .then(data => console.log(data))
+            .catch(error => console.error('Error:', error));
+
+            // set flashMessage if successful
+            showMessage({
+                message: "You have successfully applied for this job!",
+                type: "success",
+                icon: "success",
+                duration: 3000,
+                hideOnPress: true,
+                floating: true,
+            });
+            })();
+    };
+
     return (
         <View style={styles.container2}>
             <View style={styles.jobCard2}>
                 <Text style={styles.title2}>{job.title}</Text>
                 <Text style={styles.description2}>{job.description}</Text>
                 <Text style={styles.date2}>{job.datePosted}</Text>
+                <TouchableOpacity style={styles.applyButton} onPress={handleApplyPress}>
+                    <Text style={styles.buttonText2}>Apply</Text>
+                </TouchableOpacity>
             </View>
         </View>
     );
@@ -589,6 +635,18 @@ const styles = StyleSheet.create({
         fontSize: 12,
         color: '#999',
         marginTop: 10,
+    },
+    applyButton: {
+        backgroundColor: '#3498db',
+        paddingVertical: 15,
+        borderRadius: 4,
+        alignItems: 'center',
+        marginTop: 10,
+    },
+    buttonText2: {
+        color: '#fff',
+        textAlign: 'center',
+        fontWeight: '700',
     },
     inputRow: {
         flexDirection: 'row',
