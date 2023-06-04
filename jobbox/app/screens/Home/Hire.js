@@ -15,16 +15,16 @@ import jwt_decode from 'jwt-decode';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { showMessage } from 'react-native-flash-message';
 import { ActivityIndicator } from 'react-native-paper';
+import LoadingScreen from '../../components/LoadingScreen';
 
 function HireScreen({ navigation }) {
-  const [loaded, setLoaded] = useState(false);
+  const [loading, setloading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [jobs, setJobs] = useState([]);
   const [allJobs, setAllJobs] = useState([]);
 
   useFocusEffect(
     React.useCallback(() => {
-      setLoaded(false);
       const fetchJobs = async () => {
         // Fetch the token from the async storage
         const token = await AsyncStorage.getItem('token');
@@ -48,7 +48,7 @@ function HireScreen({ navigation }) {
         })
         .catch((error) => console.error('Error:', error));
 
-        setLoaded(true);
+        setloading(false);
       };
 
       fetchJobs();
@@ -121,45 +121,38 @@ function HireScreen({ navigation }) {
         style={styles.button}
         onPress={() => handleJobPress(item)}  
       > 
-        <Text style={styles.buttonText}> View Possible Hires ({item.applications ? item.applications.length : 3})</Text>
+        <Text style={styles.buttonText}> View Possible Hires ({item.applicants ? item.applicants.length : 0})</Text>
       </TouchableOpacity>
     </View>
   );  
 
   return (
     <View style={styles.container}>
-      {loaded ? (
-        <React.Fragment>
-          <SearchBar
-            placeholder={'Find previously created jobs..'}
-            searchQuery={searchQuery}
-            setSearchQuery={setSearchQuery}
-          />
-
-          <FlatList
-            data={jobs}
-            renderItem={renderJob}
-            keyExtractor={(item, index) => item._id}
-            style={styles.applicantView} 
-          />
-          <View style={{ justifyContent: 'center', alignItems: 'center' }}>
-            <TouchableOpacity
-              onPress={() => navigation.navigate('FindTemplateScreen')}
-              style={styles.Postbtn}
-            >
-              <Text style={{ fontWeight: 'bold', color: '#fff' }}>
-                New job post
-              </Text>
-            </TouchableOpacity>
-          </View>
-        </React.Fragment>
-      ) : (
-        <ActivityIndicator
-          style={{ marginTop: 30 }}
-          size="large"
-          color="#0000ff"
+      <React.Fragment>
+        <SearchBar
+          placeholder={'Find previously created jobs..'}
+          searchQuery={searchQuery}
+          setSearchQuery={setSearchQuery}
         />
-      )}
+
+        <FlatList
+          data={jobs}
+          renderItem={renderJob}
+          keyExtractor={(item, index) => item._id}
+          style={styles.applicantView} 
+        />
+        <View style={{ justifyContent: 'center', alignItems: 'center' }}>
+          <TouchableOpacity
+            onPress={() => navigation.navigate('FindTemplateScreen')}
+            style={styles.Postbtn}
+          >
+            <Text style={{ fontWeight: 'bold', color: '#fff' }}>
+              New job post
+            </Text>
+          </TouchableOpacity>
+        </View>
+      </React.Fragment>
+      {loading && <LoadingScreen />}
     </View>
   );
 }
