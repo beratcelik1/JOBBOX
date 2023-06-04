@@ -59,7 +59,7 @@ export default function JobScreen({ route }) {
             <Ionicons name="star" size={24} color={job.rating >= 5 ? 'gold' : 'gray'} />
           </View>
         </View>
-        <Text style={styles.label}>Description:</Text>
+        <Text style={styles.label}>Descriptionnnn:</Text>
         <Text style={styles.value}>{job.description}</Text>
         <View style={styles.row}>
           <Text style={styles.label}>Location:</Text>

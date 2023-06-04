@@ -1,19 +1,12 @@
 import React, { useState, useRef, useEffect } from 'react';
-import {
-  View,
-  ScrollView,
-  StyleSheet,
-  TouchableOpacity,
-  KeyboardAvoidingView,
-  Platform,
-} from 'react-native';
+import {View,ScrollView,StyleSheet,TouchableOpacity,KeyboardAvoidingView,Platform} from 'react-native';
 import { TextInput, Button, List } from 'react-native-paper';
 import Modal from 'react-native-modal';
 import jwt_decode from 'jwt-decode';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { DefaultTheme, Provider as PaperProvider } from 'react-native-paper';
-import { TIME_UNITS, CATEGORIES } from './constants';
+import { TIME_UNITS, CATEGORIES, SKILLS_BY_CATEGORY, LOCATIONS } from '../constants';
 import { showMessage } from 'react-native-flash-message';
 
 export default function PostJob({ navigation, route }) {
@@ -21,14 +14,19 @@ export default function PostJob({ navigation, route }) {
 
   const [jobTitle, setJobTitle] = useState('');
   const [jobDescription, setJobDescription] = useState('');
-  const [skills, setSkills] = useState('');
+  const [skills, setSkills] = useState([]);
   const [location, setLocation] = useState('');
   const [pay, setPay] = useState('');
   const [estimatedTime, setEstimatedTime] = useState('');
   const [estimatedTimeUnit, setEstimatedTimeUnit] = useState('minutes');
   const [isModalVisible, setModalVisible] = useState(false);
   const [isCategoryModalVisible, setIsCategoryModalVisible] = useState(false);
-  const [category, setCategory] = useState('Web Development'); // Default category
+  const [category, setCategory] = useState('');
+  const selectedCategory = CATEGORIES.find(c => c.id === category);
+  const [isSkillsModalVisible, setIsSkillsModalVisible] = useState(false);
+  const [selectedSkills, setSelectedSkills] = useState(new Set());
+  const [selectedLocation, setSelectedLocation] = useState('');
+  const [isLocationModalVisible, setIsLocationModalVisible] = useState(false);
 
   const scrollViewRef = useRef();
   const jobDescriptionRef = useRef();
@@ -79,9 +77,32 @@ export default function PostJob({ navigation, route }) {
     toggleModal();
   };
   const handleSelectCategory = (category) => {
-    setCategory(category);
+    setCategory(category.id);
+    console.log("Selected Category: ", category);
+    const categoryId = Number(category.id); // Convert to number
+   console.log("Skills for selected category: ", SKILLS_BY_CATEGORY.get(categoryId));
+    setSkills(SKILLS_BY_CATEGORY.get(categoryId) || []); // set skills for selected category
+    setSelectedSkills(new Set()); // reset selected skills when category changes
     toggleCategoryModal();
+};
+  const handleSelectSkill = (skill) => {
+    setSelectedSkills((prevSkills) => {
+      const newSkills = new Set(prevSkills);
+      if (newSkills.has(skill)) {
+        newSkills.delete(skill);
+      } else {
+        newSkills.add(skill);
+      }
+      return newSkills;
+    });
+    setIsSkillsModalVisible(false);
   };
+
+  const handleSelectLocation = (location) => {
+    setSelectedLocation(location);
+    setIsLocationModalVisible(false);
+  };
+  
 
   const handleEdit = async () => {
     const token = await AsyncStorage.getItem('token');
@@ -102,7 +123,7 @@ export default function PostJob({ navigation, route }) {
       },
       body: JSON.stringify({
         description: jobDescription,
-        skills: skills,
+        skills: Array.from(selectedSkills),
         location: location,
         pay: parseFloat(pay), // ensure pay is a number
         estimatedTime: parseFloat(estimatedTime),
@@ -143,7 +164,7 @@ export default function PostJob({ navigation, route }) {
       body: JSON.stringify({
         title: jobTitle,
         description: jobDescription,
-        skills: skills,
+        skills: Array.from(selectedSkills),
         location: location,
         pay: parseFloat(pay), // ensure pay is a number
         estimatedTime: parseFloat(estimatedTime),
@@ -191,11 +212,11 @@ export default function PostJob({ navigation, route }) {
         <View style={styles.inputRow}>
           <View style={styles.overlayContainer}>
             <TextInput
-              label="Category"
-              value={category}
-              style={styles.input}
-              editable={!template}
-            />
+            label="Category"
+            value={selectedCategory ? selectedCategory.title : ''}
+            style={styles.input}
+            editable={!template}
+          />
             {!template && (
               <TouchableOpacity
                 style={styles.overlay}
@@ -204,21 +225,31 @@ export default function PostJob({ navigation, route }) {
             )}
           </View>
         </View>
+        <View style={styles.overlayContainer}>
         <TextInput
           label="Skills Required"
-          value={skills}
-          onChangeText={setSkills}
+          value={Array.from(selectedSkills).join(', ')}
           style={styles.input}
+          editable={false}
           theme={theme}
-          editable={!template}
         />
+        <TouchableOpacity
+          style={styles.overlay}
+          onPress={() => setIsSkillsModalVisible(true)}
+        />
+      </View>
+      <View style={styles.overlayContainer}>
         <TextInput
           label="Location"
-          value={location}
-          onChangeText={setLocation}
+          value={selectedLocation}
           style={styles.input}
           theme={theme}
         />
+        <TouchableOpacity
+          style={styles.overlay}
+          onPress={() => setIsLocationModalVisible(true)}
+        />
+      </View>
         <View style={styles.inputRow}>
           <TextInput
             label="Estimated Time"
@@ -252,40 +283,72 @@ export default function PostJob({ navigation, route }) {
           style={[styles.input, styles.descriptionInput]}
           theme={theme}
         />
+            <Modal
+              isVisible={isModalVisible}
+              style={styles.modal}
+              onBackdropPress={toggleModal}
+            >
+              <View style={styles.modalContent}>
+                  {TIME_UNITS.map((unit, index) => (
+                    <List.Item
+                      key={index}
+                      title={unit}
+                      onPress={() => handleSelectTimeUnit(unit)}
+                    />
+                  ))}
+                <Button onPress={toggleModal}>Close</Button>
+              </View>
+            </Modal>
 
-        <Modal
-          isVisible={isModalVisible}
-          style={styles.modal}
-          onBackdropPress={toggleModal}
-        >
-          <View style={styles.modalContent}>
-            {TIME_UNITS.map((unit, index) => (
+            <Modal
+              isVisible={isCategoryModalVisible}
+              style={styles.modal}
+              onBackdropPress={toggleCategoryModal}
+            >
+              <View style={styles.modalContent}>
+                  {CATEGORIES.map((category, index) => (
+                    <List.Item
+                      key={index}
+                      title={category.title}
+                      onPress={() => handleSelectCategory(category)}
+                    />
+                  ))}
+                <Button onPress={toggleCategoryModal}>Close</Button>
+              </View>
+            </Modal>
+                      <Modal
+            isVisible={isSkillsModalVisible}
+            style={styles.modal}
+            onBackdropPress={() => setIsSkillsModalVisible(false)}
+          >
+            <View style={styles.modalContent}>
+            {skills.map((skill, index) => (
               <List.Item
                 key={index}
-                title={unit}
-                onPress={() => handleSelectTimeUnit(unit)}
+                title={skill}
+                titleStyle={selectedSkills.has(skill) ? styles.selectedSkill : {}}
+                onPress={() => handleSelectSkill(skill)}
               />
             ))}
-            <Button onPress={toggleModal}>Close</Button>
-          </View>
-        </Modal>
-        <Modal
-          isVisible={isCategoryModalVisible}
+              <Button onPress={() => setIsSkillsModalVisible(false)}>Close</Button>
+            </View>
+          </Modal>
+          <Modal
+          isVisible={isLocationModalVisible}
           style={styles.modal}
-          onBackdropPress={toggleCategoryModal}
+          onBackdropPress={() => setIsLocationModalVisible(false)}
         >
           <View style={styles.modalContent}>
-            {CATEGORIES.map((category, index) => (
+            {LOCATIONS.map((location, index) => (
               <List.Item
                 key={index}
-                title={category}
-                onPress={() => handleSelectCategory(category)}
+                title={location}
+                onPress={() => handleSelectLocation(location)}
               />
             ))}
-            <Button onPress={toggleCategoryModal}>Close</Button>
+            <Button onPress={() => setIsLocationModalVisible(false)}>Close</Button>
           </View>
         </Modal>
-
         <Button
           mode="contained"
           onPress={editing ? handleEdit : handlePost}
@@ -348,4 +411,8 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
   },
+    // Inside your styles definition
+    selectedSkill: {
+      color: '#4683fc',
+    },  
 });

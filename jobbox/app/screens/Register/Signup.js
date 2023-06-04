@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { StyleSheet, View, Image, Pressable, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
 import { TextInput, Button, Text } from 'react-native-paper';
 
-const logo = require('../assets/images/jobboxlogo2.png');
+const logo = require('../../assets/images/jobboxlogo2.png');
 
 export default function Signup({ navigation }) {
     const [firstname, setFirstName] = useState('');

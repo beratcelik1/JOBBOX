@@ -1,7 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { View, FlatList, Text, StyleSheet, Button } from 'react-native';
 import SearchBar from '../../components/SearchBar';
-import { CATEGORIES } from './constants';
+import { CATEGORIES } from '../constants';
+import { LOCATIONS } from '../constants';
+import { SKILLS_BY_CATEGORY } from '../constants';
+
+
 
 const FindTemplateScreen = ({ navigation }) => {
   const [search, setSearch] = useState('');
@@ -9,26 +13,28 @@ const FindTemplateScreen = ({ navigation }) => {
   const [templates, setTemplates] = useState([
     {
       id: '1',
-      title: 'Cook food',
-      description: 'Cook food for 2 people',
-      category: CATEGORIES[0],
-      skills: 'Cooking',
+      title: 'Cooking Food',
+      description: '',
+      category: CATEGORIES[9].id,
+      skills: SKILLS_BY_CATEGORY.get(10),
+      location: LOCATIONS[0],
     },
     {
       id: '2',
-      title: 'Help move',
-      description: 'Help move furniture',
-      category: CATEGORIES[1],
-      skills: 'Lifting heavy objects',
+      title: 'Moving Assistance',
+      description: '',
+      category: CATEGORIES[8].id,
+      skills: SKILLS_BY_CATEGORY.get(9),
+      location: LOCATIONS[0],
     },
     {
       id: '3',
-      title: 'Cleaning',
-      description: 'Clean the house',
-      category: CATEGORIES[2],
-      skills: 'Cleaning',
+      title: 'House Cleaning',
+      description: '',
+      category: CATEGORIES[4].id,
+      skills: SKILLS_BY_CATEGORY.get(5),
+      location: LOCATIONS[0],
     },
-    // add as many templates as you want
   ]);
 
   useEffect(() => {
@@ -44,9 +50,22 @@ const FindTemplateScreen = ({ navigation }) => {
     );
   }, [search]);
 
+  useEffect(() => {
+    // add skills to each template according to their category
+    const templatesWithSkills = templates.map(template => {
+        const categorySkills = SKILLS_BY_CATEGORY.get(Number(template.category));
+        if (categorySkills) {
+            return { ...template, skills: categorySkills };
+        }
+        return template;
+    });
+    setTemplates(templatesWithSkills);
+}, []);
+
   const handleUseTemplatePress = (template) => {
     navigation.navigate('PostJob', { template: template });
   };
+
 
   return (
     <View style={styles.container}>
@@ -62,7 +81,6 @@ const FindTemplateScreen = ({ navigation }) => {
           <View style={styles.jobCard}>
             <Text style={styles.jobTitle}>{item.title}</Text>
             <Text style={styles.jobDescription}>{item.description}</Text>
-            <Text style={styles.jobDate}>{item.datePosted}</Text>
             <Button
               style={styles.button}
               onPress={() => handleUseTemplatePress(item)}
