@@ -3,6 +3,7 @@ import { GiftedChat } from 'react-native-gifted-chat';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import { Text } from 'react-native';
+import { useFocusEffect } from '@react-navigation/native';
 
 const ChatRoom = ({ route, navigation }) => {
   const [conversations, setConversations] = useState([]);
@@ -52,29 +53,55 @@ const ChatRoom = ({ route, navigation }) => {
     }
   }, [user._id]);
 
-  useEffect(() => {
-    const getMessages = async () => {
-      if (currentChat) {
-        try {
-          const res = await axios.get("https://tranquil-ocean-74659.herokuapp.com/messages/" + currentChat._id);
-          const formattedMessages = res.data.map((message) => ({
-            _id: message._id,
-            text: message.text,
-            createdAt: new Date(message.createdAt),
-            user: {
-              _id: message.sender,
-            },
-          })).reverse();
-          setMessages(formattedMessages);
-        } catch (err) {
-          console.log(err);
+  // useEffect(() => {
+  //   const getMessages = async () => {
+  //     if (currentChat) {
+  //       try {
+  //         const res = await axios.get("https://tranquil-ocean-74659.herokuapp.com/messages/" + currentChat._id);
+  //         const formattedMessages = res.data.map((message) => ({
+  //           _id: message._id,
+  //           text: message.text,
+  //           createdAt: new Date(message.createdAt),
+  //           user: {
+  //             _id: message.sender,
+  //           },
+  //         })).reverse();
+  //         setMessages(formattedMessages);
+  //       } catch (err) {
+  //         console.log(err);
+  //       }
+  //     } else {
+  //       console.log('no chat info')
+  //     }
+  //   };
+  //   getMessages();
+  // }, [currentChat]);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      const getMessages = async () => {
+        if (currentChat) {
+          try {
+            const res = await axios.get("https://tranquil-ocean-74659.herokuapp.com/messages/" + currentChat._id);
+            const formattedMessages = res.data.map((message) => ({
+              _id: message._id,
+              text: message.text,
+              createdAt: new Date(message.createdAt),
+              user: {
+                _id: message.sender,
+              },
+            })).reverse();
+            setMessages(formattedMessages);
+          } catch (err) {
+            console.log(err);
+          }
+        } else {
+          console.log('no chat info')
         }
-      } else {
-        console.log('no chat info')
-      }
-    };
-    getMessages();
-  }, [currentChat]);
+      };
+      getMessages();
+    }, [currentChat])
+  );
 
   const handleSend = async (messagesArray) => {
     // Extract text from the first message in the array
