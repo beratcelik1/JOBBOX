@@ -2,83 +2,103 @@ const express = require('express');
 const Job = require('../models/Job');
 const User = require('../models/User');
 const router = express.Router();
-const jwt = require('jsonwebtoken'); 
+const jwt = require('jsonwebtoken');
 
-// Post a job
-router.post('/', async (req, res) => {
-  const token = req.header('Authorization')?.replace('Bearer ', '');
-  if (!token) {
-    return res.status(401).json({ error: 'Authorization token missing' });
-  }
-
-  try {
-    // verify the token and extract the user ID
-    const data = jwt.verify(token, process.env.JWT_SECRET);
-
-    // find the user with the extracted ID
-    const user = await User.findById(data.userId);
-    if (!user) {
-      return res.status(404).json({ error: 'User not found' });
+// Middleware for token verification and user fetching
+const authenticate = async (req, res, next) => {
+    const token = req.header('Authorization')?.replace('Bearer ', '');
+    if (!token) {
+        return res.status(401).json({ error: 'Authorization token missing' });
     }
 
-    const { title, description, skills, location, pay, estimatedTime, estimatedTimeUnit, category } = req.body;
-    const job = new Job({ title, description, skills, location, pay, estimatedTime, estimatedTimeUnit, category, postedBy: user._id });
-    
-    // save job
-    await job.save();
+    try {
+        const data = jwt.verify(token, process.env.JWT_SECRET);
+        const user = await User.findById(data.userId);
+        if (!user) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+        req.user = user;
+        next();
+    } catch (error) {
+        res.status(401).send({ error: 'Not authorized to access this resource' });
+    }
+};
 
-    // add job id to user's job postings
-    user.jobPostings.push(job._id);
-    await user.save();
+// Post a job
+router.post('/', authenticate, async (req, res) => {
+    try {
+        const { title, description, skills, location, pay, estimatedTime, estimatedTimeUnit, category } = req.body;
 
-    res.status(201).send(job);
-  } catch (error) {
-    res.status(400).send(error);
-  }
+        // TODO: Add input validation based on your requirements
+        if (!title || !description) {
+            return res.status(400).json({ error: 'Missing necessary fields' });
+        }
+
+        const job = new Job({
+            title,
+            description,
+            skills,
+            location,
+            pay,
+            estimatedTime,
+            estimatedTimeUnit,
+            category,
+            postedBy: req.user._id,
+        });
+
+        await job.save();
+        req.user.jobPostings.push(job._id);
+        await req.user.save();
+
+        res.status(201).send(job);
+    } catch (error) {
+        res.status(400).send(error);
+    }
 });
 
 // Get jobs by title
 router.get('/search', async (req, res) => {
-  const search = req.query.search;
-  try {
-    const jobs = await Job.find({ title: new RegExp(search, 'i') });
-    res.send(jobs);
-  } catch (error) {
-    res.status(500).send(error);
-  }
-});
+    const search = req.query.search;
 
+    try {
+        const jobs = await Job.find({ title: new RegExp(search, 'i') });
+        res.send(jobs);
+    } catch (error) {
+        res.status(500).send(error);
+    }
+});
 
 // Get all jobs
 router.get('/', async (req, res) => {
-  try {
-      const { category, skills, location, pay } = req.query;
+    try {
+        const { category, skills, location, pay } = req.query;
+        let query = {};
 
-      let query = {};
+        if (category) {
+            query.category = category;
+        }
 
-      if(category) {
-          query.category = category;
-      }
-      if(skills) {
-          query.skills = new RegExp(skills, 'i'); 
-      }
-      if(location) {
-          query.location = new RegExp(location, 'i'); 
-      }
-      if(pay) {
-          query.pay = { $gte: pay }; // returns jobs with pay greater than or equal to the pay query
-      }
+        if (skills) {
+            query.skills = new RegExp(skills, 'i');
+        }
 
-      
-      const jobs = await Job.find(query).populate('postedBy', 'firstname lastname');
-      res.send(jobs);
-  } catch (error) {
-      res.status(500).send(error);
-  }
+        if (location) {
+            query.location = new RegExp(location, 'i');
+        }
+
+        if (pay) {
+            query.pay = { $gte: pay };
+        }
+
+        const jobs = await Job.find(query).populate('postedBy', 'firstname lastname');
+        res.send(jobs);
+    } catch (error) {
+        res.status(500).send(error);
+    }
 });
 
 // Edit a job
-router.patch('/:jobId', async (req, res) => {
+router.patch('/:jobId', authenticate, async (req, res) => {
   const token = req.header('Authorization')?.replace('Bearer ', '');
   if (!token) {
     return res.status(401).json({ error: 'Authorization token missing' });
@@ -122,7 +142,7 @@ router.patch('/:jobId', async (req, res) => {
 }); 
 
 // Delete a job
-router.delete('/:id', async (req, res) => { 
+router.delete('/:id', authenticate, async (req, res) => { 
   const token = req.header('Authorization')?.replace('Bearer ', '');
   if (!token) {
     return res.status(401).json({ error: 'Authorization token missing' });
@@ -168,7 +188,6 @@ router.get('/user/:userId', async (req, res) => {
   }
 });
 
-
 // Apply to a job
 router.post('/apply/:jobId', async (req, res) => {
   const token = req.header('Authorization')?.replace('Bearer ', '');
@@ -210,7 +229,7 @@ router.post('/apply/:jobId', async (req, res) => {
 }); 
 
 // Get all applicants for a job
-router.get('/applicants/:jobId', async (req, res) => {
+router.get('/applicants/:jobId', authenticate, async (req, res) => {
   try {
     const job = await Job.findById(req.params.jobId).populate('applicants', 'firstname lastname profilePic bio rating');
 
@@ -225,21 +244,21 @@ router.get('/applicants/:jobId', async (req, res) => {
 });
 
 // handle get applicants
-router.get('/applicants/:jobId', async (req, res) => {
-  const { jobId } = req.params;
+// router.get('/applicants/:jobId', async (req, res) => {
+//   const { jobId } = req.params;
 
-  try {
-    const job = await Job.findById(jobId).populate('applicants');
-    if (!job) {
-      return res.status(404).send({ message: "Job not found" });
-    }
+//   try {
+//     const job = await Job.findById(jobId).populate('applicants');
+//     if (!job) {
+//       return res.status(404).send({ message: "Job not found" });
+//     }
 
-    res.send(job.applicants);
-  } catch (err) {
-    console.error(err);
-    res.status(500).send({ message: "Server error" });
-  }
-});
+//     res.send(job.applicants);
+//   } catch (err) {
+//     console.error(err);
+//     res.status(500).send({ message: "Server error" });
+//   }
+// });
 
 // handle apply job
 router.post('/apply', async (req, res) => {
