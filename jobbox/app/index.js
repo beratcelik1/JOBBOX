@@ -13,7 +13,7 @@ import Profile from './screens/Profile/Profile';
 import Services from './screens/Services/Services';
 import Hire from './screens/Home/Hire';
 import Work from './screens/Home/Work';
-import Messages from './screens/Messages/Messages';
+import ChatHandler from './screens/Messages/ChatHandler';
 import Notifications from './screens/Notifications';
 import PostJob from './screens/Home/PostJob';
 import Category from './screens/Services/Category';
@@ -92,7 +92,7 @@ function MyTabs() {
           ),
           headerRight: () => (
             <View style={{ flexDirection: 'row', marginRight: 10 }}>
-              <TouchableOpacity onPress={() => navigation.navigate("Messages")}>
+              <TouchableOpacity onPress={() => navigation.navigate("ChatHandler")}>
                 <Icon name="chatbox-outline" size={24} />
               </TouchableOpacity>
               <TouchableOpacity onPress={() => navigation.navigate("Notifications")}>
@@ -118,7 +118,7 @@ function MyTabs() {
           ),
           headerRight: () => (
             <View style={{ flexDirection: 'row', marginRight: 10 }}>
-              <TouchableOpacity onPress={() => navigation.navigate("Messages")}>
+              <TouchableOpacity onPress={() => navigation.navigate("ChatHandler")}>
                 <Icon name="chatbox-outline" size={24} />
               </TouchableOpacity>
               <TouchableOpacity onPress={() => navigation.navigate("Notifications")}>
@@ -144,7 +144,7 @@ function MyTabs() {
         ),
         headerRight: () => (
           <View style={{ flexDirection: 'row', marginRight: 10 }}>
-            <TouchableOpacity onPress={() => navigation.navigate("Messages")}>
+            <TouchableOpacity onPress={() => navigation.navigate("ChatHandler")}>
               <Icon name="chatbox-outline" size={24} />
             </TouchableOpacity>
             <TouchableOpacity onPress={() => navigation.navigate("Notifications")}>
@@ -170,7 +170,7 @@ function MyTabs() {
         ),
         headerRight: () => (
           <View style={{ flexDirection: 'row', marginRight: 10 }}>
-            <TouchableOpacity onPress={() => navigation.navigate("Messages")}>
+            <TouchableOpacity onPress={() => navigation.navigate("ChatHandler")}>
               <Icon name="chatbox-outline" size={24} />
             </TouchableOpacity>
             <TouchableOpacity onPress={() => navigation.navigate("Notifications")}>
@@ -216,8 +216,8 @@ export default function App() {
         options={{ headerShown: false }} 
       />
       <Stack.Screen 
-        name="Messages" 
-        component={Messages} 
+        name="ChatHandler" 
+        component={ChatHandler} 
         options={{ headerBackTitle: '', headerBackTitleVisible: false }} 
       />
       <Stack.Screen 

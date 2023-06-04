@@ -1,4 +1,4 @@
-// App.js
+// ChatHandler.js
 import React from 'react';
 import { View, Button } from 'react-native';
 import ChatRoom from './ChatRoom';
