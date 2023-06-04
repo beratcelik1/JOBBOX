@@ -344,8 +344,6 @@ function WorkScreen({ navigation }) {
     );
     
 } 
-
-
 function JobDetailScreen({ route, navigation }) {
     //... your existing JobDetail component code
     const { job } = route.params;
@@ -486,11 +484,9 @@ const styles = StyleSheet.create({
         shadowColor: '#333',
         shadowOpacity: 0.3,
         shadowRadius: 2,
-        marginHorizontal: 10,
+        borderRadius: 50,
+        marginHorizontal: 5,
     },
-    
-    
-      
     
     filterOption: {
         color: 'white',
