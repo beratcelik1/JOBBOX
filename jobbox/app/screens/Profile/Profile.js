@@ -6,7 +6,7 @@ import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as ImagePicker from 'expo-image-picker';
 import fetch from 'node-fetch';
-
+import LoadingScreen from '../../components/LoadingScreen';
 
 const styles = StyleSheet.create({
   container: {
@@ -249,7 +249,7 @@ return (
         <View style={styles.headerContainer}>
           <TouchableOpacity onPress={handleProfilePhotoPress}>
           <Image style={styles.profileImage} source={{uri: user.profilePic}} />
-            {loading && <ActivityIndicator size="large" color="#0000ff" />}
+            {loading && <LoadingScreen />}
           </TouchableOpacity>
           <View>
             <Text style={styles.name}>{user.firstname} {user.lastname}</Text>
