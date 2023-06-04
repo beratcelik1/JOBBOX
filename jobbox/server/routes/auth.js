@@ -3,9 +3,8 @@ const bcryptjs = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 
-const Message = require('../models/Message');
-const Conversation = require('../models/Conversation');
-
+// const Message = require('../models/Message');
+// const Conversation = require('../models/Conversation');
 const router = express.Router();
 
 router.post('/signup', async (req, res) => {
@@ -139,50 +138,20 @@ router.put('/user/me/profilePic', async (req, res) => {
 });
 //...
 
-// For Messages ---------------
-// Post a new message and start a new conversation if necessary
-router.post('/message', async (req, res) => {
-  const { senderId, receiverId, content } = req.body;
-
-  // Find existing conversation
-  let conversation = await Conversation.findOne({
-    members: { $all: [senderId, receiverId] },
-  });
-
-  // If it doesn't exist, create a new one
-  if (!conversation) {
-    conversation = new Conversation({ members: [senderId, receiverId] });
-    await conversation.save();
-  }
-
-  // create new message
-  const message = new Message({ senderId, receiverId, content, conversation: conversation._id });
-
-  // save message and return
-  await message.save();
-  res.status(201).json(message);
-});
-
-// Get all conversations for a specific user
-router.get('/conversations/:userId', async (req, res) => {
-  const userId = req.params.userId;
-  const conversations = await Conversation.find({ members: userId }).populate('members');
-  res.send(conversations);
-});
-
-// Get all messages in a specific conversation
-router.get('/messages/:conversationId', async (req, res) => {
-  const conversationId = req.params.conversationId;
-  const messages = await Message.find({ conversation: conversationId }).sort('timestamp');
-  res.send(messages);
-});
-
 // get all usernames
 router.get('/users', async (req, res) => {
   const users = await User.find({});
   res.send(users);
 });
 
-// End of Messages ---------------
+router.get('/jobs', async (req, res) => {
+  try {
+    const Job = require('../models/Job');
+    const jobs = await Job.find({}).populate('postedBy', 'firstname lastname');
+    res.json(jobs);
+  } catch (err) {
+    res.status(500).send({ error: err.message });
+  }
+});
 
 module.exports = router;
