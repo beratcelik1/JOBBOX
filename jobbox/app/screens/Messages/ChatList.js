@@ -42,7 +42,7 @@ const styles = StyleSheet.create({
   },
 });
 
-function ChatList({ navigateToChat }) {
+function ChatList({ navigateToChat, navigation }) {
   const [users, setUsers] = useState([]);
   const [search, setSearch] = useState('');
   const [filteredDataSource, setFilteredDataSource] = useState([]);
@@ -125,7 +125,7 @@ function ChatList({ navigateToChat }) {
     }
   };
 
-  const handleChatNavigation = async (receiverId) => {
+  const handleChatNavigation = async (receiverId, receiverName) => {
     let conversation = await axios.get(`http://tranquil-ocean-74659.herokuapp.com/conversations/find/${user._id}/${receiverId}`);
 
     if (!conversation.data) {
@@ -135,8 +135,11 @@ function ChatList({ navigateToChat }) {
       });
     }
 
-    navigateToChat(conversation.data);
+    navigation.navigate('ChatRoom', {currentChatId: conversation.data, receiverName: receiverName});
   };
+
+  //   navigation.navigate('ChatRoom', { currentChatId: conversation.data });
+  // };
 
   return (
     <View style={styles.container}>
@@ -166,11 +169,10 @@ function ChatList({ navigateToChat }) {
           data={filteredDataSource.filter(user => conversationPartnerIds.includes(user._id))}
           keyExtractor={(item, index) => item._id.toString()}
           renderItem={({ item }) => (
-            <TouchableOpacity style={styles.card} onPress={() => handleChatNavigation(item._id)}>
+            <TouchableOpacity style={styles.card} onPress={() => handleChatNavigation(item._id, item.firstname)}>
               <View style={styles.chatListItem}>
-                {/* <Image source={{uri: item.profilePic}} style={styles.profileImage} /> */}
                 <Image 
-                  source={{uri: item.profilePic ? item.profilePic : 'https://cdn-icons-png.flaticon.com/512/847/847969.png?w=826&t=st=1685898712~exp=1685899312~hmac=650bef1520ec4ea89beec54315f42f553b7a246868819cb05c873088997dc5e0'}} 
+                  source={{uri: item.profilePic ? item.profilePic : 'https://cdn-icons-png.flaticon.com/512/847/847969.png'}} 
                   style={styles.profileImage} 
                 />
                 <Text style={styles.label}>{item.firstname}</Text>
