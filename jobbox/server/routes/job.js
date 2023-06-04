@@ -139,7 +139,48 @@ router.patch('/:jobId', authenticate, async (req, res) => {
   } catch (error) {
       res.status(400).send(error);
   }
-}); 
+});  
+
+router.put('/:jobId', authenticate, async (req, res) => {
+  const token = req.header('Authorization')?.replace('Bearer ', '');
+  if (!token) {
+    return res.status(401).json({ error: 'Authorization token missing' });
+  }
+
+  try {
+    const data = jwt.verify(token, process.env.JWT_SECRET);
+    const user = await User.findById(data.userId);
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    const job = await Job.findById(req.params.jobId);
+    if (!job) {
+      return res.status(404).json({ error: 'Job not found' });
+    }
+
+    if (job.postedBy.toString() !== user._id.toString()) {
+      return res.status(401).json({ error: 'User not authorized to edit this job' });
+    }
+
+    const { title, description, skills, location, pay, estimatedTime, estimatedTimeUnit, category } = req.body;
+    
+    job.title = title;
+    job.description = description;
+    job.skills = skills;
+    job.location = location;
+    job.pay = pay;
+    job.estimatedTime = estimatedTime;
+    job.estimatedTimeUnit = estimatedTimeUnit;
+    job.category = category;
+    
+    await job.save();
+
+    res.send(job);
+  } catch (error) {
+    res.status(400).send(error);
+  }
+});
 
 // Delete a job
 router.delete('/:id', authenticate, async (req, res) => { 
@@ -366,6 +407,18 @@ router.post('/hire/:jobId/:userId', async (req, res) => {
       console.error(err);
       res.status(500).send({ error: "Server error" });
   }
+}); 
+
+router.get('/user/jobs', authenticate, async (req, res) => {
+  try {
+    const jobs = await Job.find({ 
+      _id: { $in: req.user.jobApplications.filter(app => app.status !== 'rejected').map(app => app.job) }
+    }).populate('postedBy', 'firstname lastname');
+    res.send(jobs);
+  } catch (error) {
+    res.status(500).send(error);
+  }
 });
+
 
 module.exports = router;

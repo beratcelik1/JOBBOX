@@ -41,29 +41,24 @@ function StatusScreen() {
     const [error, setError] = useState(null);
 
     useEffect(() => {
-        const fetchJobs = async () => {
-            setLoaded(false);
-
-            // Fetch the token from the async storage
-            const token = await AsyncStorage.getItem('token');
-
-            // Decode the token to get the user ID
-            const decodedToken = jwt_decode(token);
-            const userId = decodedToken.userId;
-
-            // Fetch the jobs from your server
-            fetch(`http://tranquil-ocean-74659.herokuapp.com/jobs/user/${userId}`, {
-                headers: {Authorization: `Bearer ${token}`,},
-            }).then((response) => response.json())
-            .then((data) => {
-              const filteredJobs = data.filter(job => job.status !== 'rejected');
-              setJobs(filteredJobs);
-              setLoaded(true);
-            }).catch((error) => {
-                console.error('Error:', error);
-                setError('Failed to load jobs. Please try again later.');
-            });
-        };
+      const fetchJobs = async () => {
+        setLoaded(false);
+      
+        // Fetch the token from the async storage
+        const token = await AsyncStorage.getItem('token');
+      
+        // Fetch the jobs from your server
+        fetch(`http://tranquil-ocean-74659.herokuapp.com/jobs/user/jobs`, {
+            headers: {Authorization: `Bearer ${token}`,},
+        }).then((response) => response.json())
+        .then((data) => {
+          setJobs(data);
+          setLoaded(true);
+        }).catch((error) => {
+            console.error('Error:', error);
+            setError('Failed to load jobs. Please try again later.');
+        });
+      };      
 
         fetchJobs();
     }, []); 
