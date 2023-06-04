@@ -227,11 +227,11 @@ router.post('/apply/:jobId', async (req, res) => {
       res.status(400).send(error);
   }
 }); 
-
 // Get all applicants for a job
 router.get('/applicants/:jobId', authenticate, async (req, res) => {
   try {
     const job = await Job.findById(req.params.jobId).populate('applicants', 'firstname lastname profilePic bio rating');
+    console.log(job);
 
     if (!job) {
       return res.status(404).json({ error: 'Job not found' });
@@ -242,6 +242,7 @@ router.get('/applicants/:jobId', authenticate, async (req, res) => {
     res.status(500).send(error);
   }
 });
+
 
 
 // handle apply job

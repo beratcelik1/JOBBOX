@@ -31,8 +31,11 @@ export function HireApplicationsScreen({ route, navigation }) {
       setApplicants(response.data);
     } catch (error) {
       console.log(error);
+    } finally {
+      setLoading(false); // This will run whether the try block exits normally or with an error
     }
   };
+
   useEffect(() => {
     fetchApplicants();
     setLoading(false);
