@@ -201,9 +201,12 @@ function WorkScreen({ navigation }) {
                 onPress={() => navigation.navigate('JobDetail', { job: item })} 
             > 
             <View style={styles.jobHeader}>  
-                <Text style={styles.jobTitle}>{item.postedBy?.firstname} {item.postedBy?.lastname}</Text>
                 <Text style={styles.jobTitle}>{item.title}</Text>
-            </View>   
+                <View style = {{ flexDirection: 'row',justifyContent: 'space-between'}}>
+                    <Text style={styles.jobTitle2}>{item.postedBy?.firstname} {item.postedBy?.lastname} - 4.3 </Text>
+                    <Ionicons name="star" size={13} color="#4683fc" /> 
+                </View>
+            </View>     
             <View
                 style={{
                 borderBottomColor: '#4683fc',
@@ -211,10 +214,7 @@ function WorkScreen({ navigation }) {
                 marginBottom: 10,
                 }}/>
 
-            <View style = {{ 
-                flexDirection: 'row',
-                justifyContent: 'flex-start',}}> 
-
+            <View style = {{ flexDirection: 'row', justifyContent: 'flex-start',}}> 
                 <View style = {{ width: '60%'}} > 
                     <View style={styles.jobDetails}>
                         <Text style={styles.jobDescription}>{item.category}</Text>
@@ -340,11 +340,78 @@ function JobDetailScreen({ route, navigation }) {
     //... your existing JobDetail component code
     const { job } = route.params;
     return (
-        <View style={styles.container2}>
-            <View style={styles.jobCard2}>
-                <Text style={styles.title2}>{job.title}</Text>
-                <Text style={styles.description2}>{job.description}</Text>
-                <Text style={styles.date2}>{job.datePosted}</Text>
+        <View style={styles.container2}> 
+            <View style={styles.jobCard2}> 
+                <View style={styles.jobHeader}>  
+                    <Text style={styles.jobTitle}>{job.title}</Text>
+                    <View style = {{ flexDirection: 'row',justifyContent: 'space-between'}}>
+                        <Text style={styles.jobTitle2}>{job.postedBy?.firstname} {job.postedBy?.lastname} - 4.3 </Text>
+                        <Ionicons name="star" size={13} color="#4683fc" /> 
+                    </View>
+                </View>     
+                <View
+                    style={{
+                    borderBottomColor: '#4683fc',
+                    borderBottomWidth: 1.5,
+                    marginBottom: 10,
+                    }}/> 
+                
+                    
+                <View style={styles.jobDetails}> 
+                    <View style={styles.jobDetails}>
+                        <Ionicons name="md-grid" size={20} color="#4683fc" /> 
+                        <Text style={{color: '#4683fc', fontWeight: '700'}}>  Category: </Text> 
+                    </View>
+                    <Text style={styles.jobDescription}>{job.category}</Text>
+                </View>
+
+                <View style={styles.jobDetails}> 
+                    <View style={styles.jobDetails}>
+                        <Ionicons name="ios-location-sharp" size={20} color="#4683fc" /> 
+                        <Text style={{color: '#4683fc', fontWeight: '700'}}>  Location: </Text>
+                    </View>
+                    <Text style={styles.jobDescription}>{job.location}</Text>
+                </View>
+
+                <View style={styles.jobDetails}>  
+                    <View style={styles.jobDetails}>
+                        <Ionicons name="md-cash" size={20} color="#4683fc" /> 
+                        <Text style={{color: '#4683fc', fontWeight: '700'}}>  Pay: </Text>
+                    </View>
+                    <Text style={styles.jobDescription}>{job.pay} CAD</Text>
+                </View> 
+
+                <View style={styles.jobDetails}> 
+                    <View style={styles.jobDetails}>
+                        <Ionicons name="md-time" size={20} color="#4683fc" /> 
+                        <Text style={{color: '#4683fc', fontWeight: '700'}}>  Time: </Text>
+                    </View>
+                    <Text style={styles.jobDescription}>{job.estimatedTime}  {job.estimatedTimeUnit}</Text>
+                </View> 
+                <View
+                    style={{
+                    borderBottomColor: '#4683fc',
+                    borderBottomWidth: 1.5,
+                    marginBottom: 7,
+                    }}/>
+                    
+                <View style = {{alignItems: 'center'}}> 
+                    <Text style={{color: '#4683fc', fontWeight: '700', marginBottom: 5}}>Skills </Text>
+                    <Text style={styles.jobDescription}>{job.skills}</Text>
+
+                    <Text style={{color: '#4683fc', fontWeight: '700', marginBottom: 5, marginTop: 15}}>Description</Text>
+                    <Text style={styles.jobDescription}>{job.description}</Text>
+                </View> 
+
+                <TouchableOpacity 
+                    style={styles.button2}
+                    // onPress={() => handleJobPress(job)}  
+                > 
+                    <Text style={styles.buttonText2}> Apply For Job </Text>
+                </TouchableOpacity>
+
+
+
             </View>
         </View>
     );
@@ -372,6 +439,9 @@ const styles = StyleSheet.create({
         fontSize: 18,
         fontWeight: 'bold',
     },
+    jobTitle2: {
+        fontSize: 13,
+    },
     jobDescription: {
         fontSize: 14,
         color: '#000',
@@ -381,11 +451,7 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         marginBottom: 5,
     },
-    detailLabel: {
-        fontSize: 14,
-        color: '#4683fc',
-        fontWeight: '600'
-    }, 
+
     button: { 
         backgroundColor: '#4683fc',
         padding: 15,
@@ -400,14 +466,12 @@ const styles = StyleSheet.create({
         shadowRadius: 3.84,
         elevation: 5, 
         alignItems: 'center', 
-      },
-      buttonText: {
+    },
+    buttonText: {
         fontSize: 16,
         color: '#fff',
         
-      }, 
-
-
+    }, 
     container: {
         flex: 1,
     },
@@ -416,8 +480,7 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         marginBottom: 20,
     },
-    searchSection: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', backgroundColor: '#fff', borderRadius: 50, paddingLeft: 10, marginLeft: 15, marginRight: 15, marginTop: 10, height: 40, }, 
-
+    
     searchSection: {
         flexDirection: 'row',
         justifyContent: 'space-between',
@@ -428,7 +491,7 @@ const styles = StyleSheet.create({
         borderRadius: 50,
         paddingLeft: 10,
         margin: 10,
-      },
+    },
           
     searchIcon: {
         padding: 0,
@@ -462,7 +525,28 @@ const styles = StyleSheet.create({
         alignItems: 'left',
         marginTop: 10,
         marginBottom: 10,
-    },
+    }, 
+    button2: { 
+        backgroundColor: '#4683fc',
+        padding: 15,
+        marginTop: 10,
+        borderRadius: 10,
+        shadowColor: "#000",
+        shadowOffset: {
+          width: 0,
+          height: 2,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 3.84,
+        elevation: 5, 
+        alignItems: 'center', 
+      },
+      buttonText2: {
+        fontSize: 16,
+        color: '#fff', 
+        fontWeight: '600',
+        
+      },
 
     filterButton: {
         width: 40, // specify the width
@@ -479,9 +563,6 @@ const styles = StyleSheet.create({
         marginHorizontal: 10,
     },
     
-    
-      
-    
     filterOption: {
         color: 'white',
         fontWeight: 'bold',
@@ -494,8 +575,6 @@ const styles = StyleSheet.create({
         borderRadius: 8, // Change this to control the corner roundness
         color: 'white',
     },
-    
-  
     jobView: {
         width: '100%',
         marginBottom: -15,
@@ -523,30 +602,7 @@ const styles = StyleSheet.create({
         fontSize: 18,
         fontWeight: 'bold',
         marginBottom: 5,
-    },
-    jobCompany: {
-        color: 'gray',
-        fontSize: 14,
-    },
-    jobLocation: {
-        color: 'gray',
-        fontSize: 14,
-    },
-    jobPosted: {
-        color: 'gray',
-        fontSize: 14,
-        marginTop: 5,
-    },
-    jobExtras: {
-        flex: 1,
-        width: 4,
-        alignItems: 'flex-start',
-    },
-    jobExtra: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        marginBottom: 5,
-    },
+    }, 
 
     container2: {
         flex: 1,

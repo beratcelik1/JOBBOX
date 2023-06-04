@@ -43,7 +43,7 @@ export default function CategoryScreen({ route, navigation }) {
   }
 
   return (
-    <View style={{ flex: 1}}>
+    <View style={{ flex: 1, marginTop: 10}}>
       {loading ? (
         <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
           <Text>Loading...</Text>
@@ -52,20 +52,55 @@ export default function CategoryScreen({ route, navigation }) {
         <FlatList 
           data={jobs}
           keyExtractor={item => item._id}
-          renderItem={({ item }) => (
-            <TouchableOpacity onPress={() => handleJobPress(item)}>
-              <View style={styles.jobCard}>
-                <Text style={styles.jobTitle}>{item.title}</Text>
-                <Text style={styles.jobCreator}>Creator: {item.jobCreator}</Text>
-                <Text style={styles.jobDescription}>Description: {item.description}</Text>
-                <Text style={styles.jobLocation}>Location: {item.location}</Text>
-                <Text style={styles.jobPay}>Pay: {item.pay}</Text>
-                <View style={{ flexDirection: 'row', marginTop: 10 }}>
-                  <Ionicons name="star" size={14} color="gold" />
-                  <Text style={styles.jobCreator}> {item.rating} / 5</Text>
-                </View>
+          renderItem={({ item }) => ( 
+
+          <TouchableOpacity 
+          style={styles.jobCard}
+          onPress={() => handleJobPress(item)}
+          > 
+            <View style={styles.jobHeader}>  
+              <Text style={styles.jobTitle}>{item.title}</Text>
+              <View style = {{ flexDirection: 'row',justifyContent: 'space-between'}}>
+                  <Text style={styles.jobTitle2}>{item.postedBy?.firstname} {item.postedBy?.lastname} - 4.3 </Text>
+                  <Ionicons name="star" size={13} color="#4683fc" /> 
               </View>
-            </TouchableOpacity>
+            </View> 
+
+            <View
+              style={{
+              borderBottomColor: '#4683fc',
+              borderBottomWidth: 1.5,
+              marginBottom: 10,
+            }}/>
+
+            <View style = {{ flexDirection: 'row', justifyContent: 'flex-start',}}> 
+              <View style = {{ width: '60%'}} > 
+                  <View style={styles.jobDetails}>
+                      <Text style={styles.jobDescription}>{item.category}</Text>
+                  </View>
+                  <View style={styles.jobDetails}>
+                      <Text style={styles.jobDescription}>{item.location}</Text>
+                  </View>
+              </View> 
+
+              <View style = {{ width: '40%'}}> 
+                  <View style={styles.jobDetails}> 
+                      <Ionicons name="md-cash" size={20} color="#4683fc" /> 
+                      <Text style={styles.jobDescription}>{item.pay} CAD</Text>
+                  </View> 
+
+                  <View style={styles.jobDetails}>
+                      <Ionicons name="md-time" size={20} color="#4683fc" />
+                      <Text style={styles.jobDescription}>  {item.estimatedTime}</Text>
+                      <Text style={styles.jobDescription}>  {item.estimatedTimeUnit}</Text>
+                  </View> 
+
+              </View>
+            </View>
+          </TouchableOpacity>
+
+
+
           )}
         />
       ) : (
@@ -81,48 +116,44 @@ export default function CategoryScreen({ route, navigation }) {
 
 const styles = StyleSheet.create({
   jobCard: {
-    flexDirection: 'column',
-    justifyContent: 'space-between',
     backgroundColor: '#fff',
-    padding: 15,
-    marginBottom: 5,
-    marginTop: 5,
+    padding: 20,
+    marginBottom: 10,
     borderRadius: 10,
-    marginLeft: 20,
-    marginRight: 20, 
+    marginLeft: 15,
+    marginRight: 15,
     // Android shadow properties
     elevation: 5,
     // iOS shadow properties
-    shadowColor: "#000",
+    shadowColor: '#000',
     shadowOffset: {
-        width: 0,
-        height: 2,
+      width: 0,
+      height: 4,
     },
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
-  },
-  jobDetails: {
-    flex: 1,
+  }, 
+  jobHeader: {
+    flexDirection: 'row', 
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 10, 
   },
   jobTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    marginBottom: 5,
   },
-  jobCreator: {
-    color: 'gray',
-    fontSize: 14,
+  jobTitle2: {
+    fontSize: 13,
   },
   jobDescription: {
-    color: 'gray',
     fontSize: 14,
+    color: '#000',
   },
-  jobLocation: {
-    color: 'gray',
-    fontSize: 14,
+  jobDetails: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      marginBottom: 5,
   },
-  jobPay: {
-    color: 'gray',
-    fontSize: 14,
-  },
+
 });
