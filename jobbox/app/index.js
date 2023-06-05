@@ -15,21 +15,21 @@ import Profile from './screens/Profile/Profile';
 import Services from './screens/Services/Services';
 import Hire from './screens/Home/Hire';
 import Work from './screens/Home/Work';
-import Messages from './screens/Messages';
-import Notifications from './screens/Notifications';
+import ChatHandler from './screens/Messages/ChatHandler';
+import ChatRoom from './screens/Messages/ChatRoom';
+import Notifications from './screens/Notifications/Notifications';
 import PostJob from './screens/Home/PostJob';
 import Category from './screens/Services/Category';
-import JobScreen from './screens/JobScreen';
+import JobScreen from './screens/Services/JobScreen';
 import ProfileSection from './screens/Profile/ProfileSection';
 import WorkHistoryScreen from './screens/Activity/WorkHistoryScreen';
 import HireHistoryScreen from './screens/Activity/HireHistoryScreen';
 import EditTargetsScreen from './screens/Activity/EditTargetsScreen'; 
-import StatusScreen from './screens/StatusScreen';  
-
+import StatusScreen from './screens/Box/Box';  
 
 import { useState } from 'react';
-import Login from './screens/Login'; 
-import Signup from './screens/Signup';
+import Login from './screens/Register/Login'; 
+import Signup from './screens/Register/Signup';
 import { Section } from 'react-native-paper';
 import FlashMessage from 'react-native-flash-message';
 
@@ -271,8 +271,13 @@ export default function App() {
       />
       <Stack.Screen 
         name="Messages" 
-        component={Messages} 
-        options={{ headerBackTitle: '', headerBackTitleVisible: false }} 
+        component={ChatHandler} 
+        options={{ headerBackTitle: 'Back', headerBackTitleVisible: false }} 
+      />
+      <Stack.Screen 
+        name="ChatRoom" 
+        component={ChatRoom} 
+        options={{ headerBackTitle: 'Back', headerBackTitleVisible: false }} 
       />
       <Stack.Screen 
         name="Notifications" 
@@ -329,4 +334,3 @@ export default function App() {
     
   );
 }
-
