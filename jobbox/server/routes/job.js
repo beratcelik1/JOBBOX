@@ -232,7 +232,6 @@ res.json({ message: 'Job deleted' });
   }
 });
 
-
 // user data 
 router.get('/user/:userId', async (req, res) => {
   try {
@@ -295,13 +294,8 @@ router.get('/applicants/:jobId', authenticate, async (req, res) => {
     if (!job) {
       return res.status(404).json({ error: 'Job not found' });
     }
-<<<<<<< HEAD
 
     res.send(job.applicants);
-=======
-    const jobs = await Job.find({ postedBy: user._id }).populate('postedBy', 'firstname lastname');
-    res.send(jobs);
->>>>>>> 0158e5e (notifications server-side updates)
   } catch (error) {
     res.status(500).send(error);
   }
@@ -439,22 +433,28 @@ router.post('/hire/:jobId/:userId', async (req, res) => {
       res.status(500).send({ error: "Server error" });
   }
 });
- 
+
+//filtering jobs to display 
 router.get('/user/:userId/jobs', authenticate, async (req, res) => {
   try {
     const user = await User.findById(req.params.userId);
     if (!user) {
       return res.status(404).json({ error: 'User not found' });
     }
-    const jobs = await Job.find({ 
-      _id: { $in: user.jobApplications.filter(app => app.status !== 'rejected').map(app => app.job) }
+    // Get list of job ids for which the application status is not 'rejected'
+    const jobIds = user.jobApplications.map(app => {
+      if (app.status !== 'rejected') {
+        return app.job;
+      }
+    });
+    // Use $in operator to match jobs with these ids
+    const jobs = await Job.find({
+      _id: { $in: jobIds }
     }).populate('postedBy', 'firstname lastname');
     res.send(jobs);
   } catch (error) {
-    res.status(500).send(error);
+    res.status(500).json({ error: 'Internal server error' });
   }
 });
-
-
 
 module.exports = router;

@@ -13,7 +13,6 @@ const UserSchema = new mongoose.Schema({
     skills: [String],
     recommendations: [{ name: String, relationship: String, recommendation: String, }],
     jobPostings: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Job', }],
-    jobsApplied: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Job', }],
     earningTarget: { type: Number, default: 0, },
     spendingTarget: { type: Number, default: 0, },
     conversations: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Conversation', }],
