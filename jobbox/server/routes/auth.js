@@ -183,4 +183,52 @@ router.get('/users', async (req, res) => {
   res.send(users);
 });
 
+// notifications
+router.post('/notifications', async (req, res) => {
+  const { to, from, action, conversationId, jobId } = req.body;
+
+  // Create new notification
+  const notification = new Notification({ to, from, action, conversationId, jobId });
+
+  // Save notification and return it
+  await notification.save();
+  res.status(201).json(notification);
+});
+
+// Fetch all notifications for a specific user
+router.get('/notifications/:userId', async (req, res) => {
+  try {
+    const notifications = await Notification.find({ to: req.params.userId }).sort({ createdAt: -1 });
+    res.json(notifications);
+  } catch (err) {
+    res.status(500).send({ error: err.message });
+  }
+});
+
+// Mark a specific notification as read
+router.put('/notifications/:notificationId', async (req, res) => {
+  try {
+    const notification = await Notification.findByIdAndUpdate(req.params.notificationId, { read: true }, { new: true });
+    if (!notification) {
+      return res.status(404).json({ error: 'Notification not found' });
+    }
+    res.json(notification);
+  } catch (err) {
+    res.status(500).send({ error: err.message });
+  }
+});
+
+// Delete a specific notification
+router.delete('/notifications/:notificationId', async (req, res) => {
+  try {
+    const notification = await Notification.findByIdAndDelete(req.params.notificationId);
+    if (!notification) {
+      return res.status(404).json({ error: 'Notification not found' });
+    }
+    res.json({ message: 'Notification deleted successfully' });
+  } catch (err) {
+    res.status(500).send({ error: err.message });
+  }
+});
+
 module.exports = router;
