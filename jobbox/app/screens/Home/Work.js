@@ -343,74 +343,52 @@ function JobDetailScreen({ route, navigation }) {
     //... your existing JobDetail component code
     const { job } = route.params;
 
-    // const handleApplyPress = () => {
-    //     // fetch user data with axios
-    //     (async () => {
-    //         // Fetch the token from the async storage
-    //         const token = await AsyncStorage.getItem('token');
-    //         console.log(token);
-
-    //         // Decode the token to get the user ID
-    //         const decodedToken = jwt_decode(token);
-    //         const userId = decodedToken.userId;
-
-    //         // send post apply request to server
-    //         fetch(`http://tranquil-ocean-74659.herokuapp.com/jobs/apply`, {
-    //             method: 'POST',
-    //             headers: {
-    //                 'Content-Type': 'application/json',
-    //             },
-    //             body: JSON.stringify({
-    //                 jobId: job._id,
-    //                 userId: userId,
-    //             }),
-    //         })
-    //         .then(response => response.json())
-    //         .then(data => console.log(data))
-    //         .catch(error => console.error('Error:', error));
-
-    //         // set flashMessage if successful
-    //         showMessage({
-    //             message: "You have successfully applied for this job!",
-    //             type: "success",
-    //             icon: "success",
-    //             duration: 3000,
-    //             hideOnPress: true,
-    //             floating: true,
-    //         });
+    const handleApplyPress = async () => {
+        try {
+          // Fetch the token from the async storage
+          const token = await AsyncStorage.getItem('token');
+      
+          // Send the POST request to apply for the job
+          const response = await fetch(`http://tranquil-ocean-74659.herokuapp.com/jobs/apply/${job._id}`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${token}`,
+            },
+          });
+      
+          if (!response.ok) {
+            // If server response is not ok, throw an error
+            throw new Error(`HTTP error! status: ${response.status}`);
+          } else {
+            const data = await response.json();
+            console.log(data);
             
-    //         })();
-    // };
-
-    const handleApplyPress = () => {
-        (async () => {
-            // Fetch the token from the async storage
-            const token = await AsyncStorage.getItem('token');
-            console.log(token);
-    
-            // Send the POST request to apply for the job
-            fetch(`http://tranquil-ocean-74659.herokuapp.com/jobs/apply/${job._id}`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`,
-                },
-            }).then(response => response.json())
-            .then(data => console.log(data))
-            .catch(error => console.error('Error:', error));
-    
-            // Set flashMessage if successful
+            // Show a success message if application is successful
             showMessage({
-                message: "You have successfully applied for this job!",
-                type: "success",
-                icon: "success",
-                duration: 3000,
-                hideOnPress: true,
-                floating: true,
+              message: "You have successfully applied for this job!",
+              type: "success",
+              icon: "success",
+              duration: 3000,
+              hideOnPress: true,
+              floating: true,
             });
-        })();
+          }
+        } catch (error) {
+          // Display error message and log the error for debugging
+          console.error('Error:', error);
+      
+          showMessage({
+            message: "An error occurred while applying for the job. Please try again later.",
+            type: "danger",
+            icon: "danger",
+            duration: 3000,
+            hideOnPress: true,
+            floating: true,
+          });
+        }
     };
-    
+      
     return (
         <View style={styles.container2}> 
             <View style={styles.jobCard2}> 

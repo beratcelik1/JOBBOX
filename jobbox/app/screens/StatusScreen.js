@@ -1,14 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, FlatList, ActivityIndicator, TouchableOpacity } from 'react-native';
+import { View, Text, FlatList, ActivityIndicator, TouchableOpacity, Alert } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import jwt_decode from 'jwt-decode';
-import { Ionicons } from '@expo/vector-icons'; 
-
+import { Ionicons } from '@expo/vector-icons';
 
 function StatusBadge({ status }) {
   let text = '';
   let color = '';
-
   switch (status) {
     case 'open':
       text = 'Open';
@@ -30,38 +28,49 @@ function StatusBadge({ status }) {
 
   return (
     <View style={{ backgroundColor: color, borderRadius: 5, padding: 5, alignSelf: 'flex-start' }}>
-      <Text style={{ color: 'red' }}>{text} this</Text>
+      <Text style={{ color: 'white' }}>{text}</Text>
     </View>
   );
 }
 
 function StatusScreen() {
-    const [loaded, setLoaded] = useState(false);
-    const [jobs, setJobs] = useState([]);
-    const [error, setError] = useState(null);
+  const [loaded, setLoaded] = useState(false);
+  const [jobs, setJobs] = useState([]);
+  const [error, setError] = useState(null);
 
-    useEffect(() => {
-      const fetchJobs = async () => {
-        setLoaded(false);
-      
+  useEffect(() => {
+    const fetchJobs = async () => {
+      setLoaded(false);
+      let token;
+      try {
         // Fetch the token from the async storage
-        const token = await AsyncStorage.getItem('token');
-      
-        // Fetch the jobs from your server
-        fetch(`http://tranquil-ocean-74659.herokuapp.com/jobs/user/jobs`, {
-            headers: {Authorization: `Bearer ${token}`,},
-        }).then((response) => response.json())
-        .then((data) => {
-          setJobs(data);
-          setLoaded(true);
-        }).catch((error) => {
-            console.error('Error:', error);
-            setError('Failed to load jobs. Please try again later.');
-        });
-      };      
+        token = await AsyncStorage.getItem('token');
+      } catch(e) {
+        Alert.alert('Error', 'Could not retrieve user information. Please try again later.');
+        return;
+      }
 
-        fetchJobs();
-    }, []); 
+      // Fetch the jobs from your server
+      try {
+        const response = await fetch('http://tranquil-ocean-74659.herokuapp.com/jobs/user/jobs', {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        setJobs(data);
+        setLoaded(true);
+      } catch (error) {
+        console.error('Error:', error);
+        setError('Failed to load jobs. Please try again later.');
+      }
+    };
+
+    fetchJobs();
+  }, []);
 
     const renderJob = ({ item }) => {
         // Provide JSX to render each job in the list

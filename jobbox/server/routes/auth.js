@@ -3,8 +3,7 @@ const bcryptjs = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 
-const Message = require('../models/Message');
-const Conversation = require('../models/Conversation');
+const Notification = require('../models/Notification');
 
 const router = express.Router();
 
@@ -178,50 +177,58 @@ router.get('/user/me/location', async (req, res) => {
   }
 });
 
-// For Messages ---------------
-// Post a new message and start a new conversation if necessary
-router.post('/message', async (req, res) => {
-  const { senderId, receiverId, content } = req.body;
-
-  // Find existing conversation
-  let conversation = await Conversation.findOne({
-    members: { $all: [senderId, receiverId] },
-  });
-
-  // If it doesn't exist, create a new one
-  if (!conversation) {
-    conversation = new Conversation({ members: [senderId, receiverId] });
-    await conversation.save();
-  }
-
-  // create new message
-  const message = new Message({ senderId, receiverId, content, conversation: conversation._id });
-
-  // save message and return
-  await message.save();
-  res.status(201).json(message);
-});
-
-// Get all conversations for a specific user
-router.get('/conversations/:userId', async (req, res) => {
-  const userId = req.params.userId;
-  const conversations = await Conversation.find({ members: userId }).populate('members');
-  res.send(conversations);
-});
-
-// Get all messages in a specific conversation
-router.get('/messages/:conversationId', async (req, res) => {
-  const conversationId = req.params.conversationId;
-  const messages = await Message.find({ conversation: conversationId }).sort('timestamp');
-  res.send(messages);
-});
-
 // get all usernames
 router.get('/users', async (req, res) => {
   const users = await User.find({});
   res.send(users);
 });
 
-// End of Messages ---------------
+// notifications
+router.post('/notifications', async (req, res) => {
+  const { to, from, action, conversationId, jobId } = req.body;
+
+  // Create new notification
+  const notification = new Notification({ to, from, action, conversationId, jobId });
+
+  // Save notification and return it
+  await notification.save();
+  res.status(201).json(notification);
+});
+
+// Fetch all notifications for a specific user
+router.get('/notifications/:userId', async (req, res) => {
+  try {
+    const notifications = await Notification.find({ to: req.params.userId }).sort({ createdAt: -1 });
+    res.json(notifications);
+  } catch (err) {
+    res.status(500).send({ error: err.message });
+  }
+});
+
+// Mark a specific notification as read
+router.put('/notifications/:notificationId', async (req, res) => {
+  try {
+    const notification = await Notification.findByIdAndUpdate(req.params.notificationId, { read: true }, { new: true });
+    if (!notification) {
+      return res.status(404).json({ error: 'Notification not found' });
+    }
+    res.json(notification);
+  } catch (err) {
+    res.status(500).send({ error: err.message });
+  }
+});
+
+// Delete a specific notification
+router.delete('/notifications/:notificationId', async (req, res) => {
+  try {
+    const notification = await Notification.findByIdAndDelete(req.params.notificationId);
+    if (!notification) {
+      return res.status(404).json({ error: 'Notification not found' });
+    }
+    res.json({ message: 'Notification deleted successfully' });
+  } catch (err) {
+    res.status(500).send({ error: err.message });
+  }
+});
 
 module.exports = router;

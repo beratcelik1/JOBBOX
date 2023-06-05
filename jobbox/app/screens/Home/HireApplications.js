@@ -51,24 +51,39 @@ export function HireApplicationsScreen({ route, navigation }) {
 
   const handleHire = async (applicantId) => {
     const token = await AsyncStorage.getItem('token');
-
-    axios.post(`http://tranquil-ocean-74659.herokuapp.com/jobs/hire/${job._id}/${applicantId}`, {}, {
-        headers: { Authorization: `Bearer ${token}` }
-    })
-    .then((response) => {
-      // handle successful response
-      if(response.status === 200){
+    try {
+      const response = await axios.post(
+        `http://tranquil-ocean-74659.herokuapp.com/jobs/hire/${job._id}/${applicantId}`, 
+        {}, 
+        { headers: { Authorization: `Bearer ${token}` }}
+      );
+  
+      if (response.status === 200){
         Alert.alert('Success', 'User has been hired successfully!');
-        fetchJobs();
+  
+        // update local state here with new data
+        // for example:
+        setJobs(prevJobs => {
+          return prevJobs.map(j => {
+            if (j._id === job._id) {
+              // This assumes the job object has an applicants array
+              return {
+                ...j, 
+                applicants: j.applicants.filter(app => app._id !== applicantId),
+                hired: [...j.hired, applicantId]
+              };
+            } else {
+              return j;
+            }
+          });
+        });
       }
-    })
-    .catch((error) => {
-      // handle error
+    } catch (error) {
       console.error(error.response.data);
       Alert.alert('Error', 'Something went wrong while hiring the user');
-    });
-};
-
+    }
+  };
+  
   
   const handleReject = async (applicantId) => {
     const token = await AsyncStorage.getItem('token');
