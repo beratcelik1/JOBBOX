@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import jwt_decode from 'jwt-decode';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { View, Text, TouchableOpacity, FlatList, StyleSheet, ScrollView } from 'react-native';
+import { View, Text, TouchableOpacity, FlatList, StyleSheet, ScrollView, KeyboardAvoidingView } from 'react-native';
 import Modal from 'react-native-modal';
 import { TextInput, Button, List } from 'react-native-paper';
 import { Ionicons } from '@expo/vector-icons';
@@ -12,15 +12,18 @@ import { createStackNavigator } from '@react-navigation/stack';
 import { DefaultTheme, Provider as PaperProvider } from 'react-native-paper';
 import { showMessage } from 'react-native-flash-message';
 import LoadingScreen from '../../components/LoadingScreen';
-import {CATEGORIES} from '../constants';
+import {CATEGORIES, SKILLS_BY_CATEGORY, LOCATIONS} from '../constants';
 import DropDownPicker from 'react-native-dropdown-picker';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import { Keyboard } from 'react-native';
+
 
 function WorkScreen({ navigation }) {
     const [searchQuery, setSearchQuery] = useState(''); 
     const [jobs, setJobs] = useState([]);
     const [categoryFilter, setCategoryFilter] = useState('');
     const [skillsFilter, setSkillsFilter] = useState([]);
-    const [payFilter, setPayFilter] = useState('');
+    const [payFilter, setPayFilter] = useState({ min: '', max: '' });
     const [locationFilter, setLocationFilter] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const [refreshing, setRefreshing] = useState(false);
@@ -28,6 +31,7 @@ function WorkScreen({ navigation }) {
     const [isCategoryModalVisible, setCategoryModalVisible] = useState(false);
     const [isFilterModalVisible, setFilterModalVisible] = useState(false); 
     const theme = {...DefaultTheme,colors: {...DefaultTheme.colors,primary: '#4683FC', },};
+    const [isKeyboardVisible, setKeyboardVisible] = useState(false);
 
     useEffect(() => {
         axios.get('/jobs')
@@ -73,6 +77,26 @@ function WorkScreen({ navigation }) {
     }
   }, [scrollPosition, fetchJobs]);
 
+  useEffect(() => {
+    const keyboardDidShowListener = Keyboard.addListener(
+      'keyboardDidShow',
+      () => {
+        setKeyboardVisible(true); // or some other action
+      }
+    );
+    const keyboardDidHideListener = Keyboard.addListener(
+      'keyboardDidHide',
+      () => {
+        setKeyboardVisible(false); // or some other action
+      }
+    );
+
+    return () => {
+      keyboardDidHideListener.remove();
+      keyboardDidShowListener.remove();
+    };
+  }, []);
+
     useEffect(() => {
         if (searchQuery.length > 0) {
             setIsLoading(true);
@@ -85,34 +109,35 @@ function WorkScreen({ navigation }) {
         }
     }, [searchQuery, fetchJobs]);  
       
-      const handleFilter = () => {
+    const handleFilter = () => {
         setIsLoading(true);
         const filters = {
-          category: categoryFilter,
-          skills: skillsFilter,
-          pay: payFilter,
-          location: locationFilter,
+            category: categoryFilter,
+            skills: skillsFilter,
+            pay: payFilter.min || null,
+            location: locationFilter,
         };
+      
         const query = Object.keys(filters)
-          .filter((key) => filters[key].length > 0)
+          .filter((key) => filters[key])
           .map((key) => `${encodeURIComponent(key)}=${encodeURIComponent(filters[key])}`)
           .join('&');
-           fetch(`http://tranquil-ocean-74659.herokuapp.com/jobs/?${query}`)
+      
+          fetch(`http://tranquil-ocean-74659.herokuapp.com/jobs/?${query}`)
           .then(response => response.json())
           .then(data => setJobs(data))
           .catch(error => console.error('Error:', error));
-      };
+      };      
 
       const handleCategoryChange = (category) => {
         setCategoryFilter(category);
-      
         // Clear skills filter when changing category
         setSkillsFilter([]);
-      }
       
-      const handleSkillsChange = (itemValue) => {
-        setSkillsFilter(itemValue);
-      }
+        // Fetch skills for selected category
+        let skillsForCategory = SKILLS_BY_CATEGORY.get(category) || [];
+        setSkillsForCategory(skillsForCategory);
+      };
 
       const categories = CATEGORIES.map(category => category.title);
 
@@ -184,43 +209,34 @@ function WorkScreen({ navigation }) {
             </TouchableOpacity>
             </View>
 
-<Modal 
+    <Modal 
     isVisible={isFilterModalVisible} 
-    style={styles.modal} 
-    onBackdropPress={closeFilterModal}
->
+    style={[styles.modal, isKeyboardVisible ? {paddingBottom: 280} : {}]} 
+    onBackdropPress={closeFilterModal}>
     <View style={styles.modalContent}>
         <Text style={styles.modalTitle}>Filter by:</Text>
         <View style={styles.filterBox}>
         <Picker
             selectedValue={categoryFilter}
-            onValueChange={handleCategoryChange}
+            onValueChange={(itemValue) => setCategoryFilter(itemValue)}
             style={styles.picker}
             dropdownIconColor="#4683FC"
             >
             <Picker.Item label="Category..." value="" />
-            {CATEGORIES.map((category, index) => (
-                <Picker.Item key={index} label={category.title} value={category.title} />
+            {categories.map((category, index) => (
+                <Picker.Item key={index} label={category} value={category} />
             ))}
-        </Picker>
+            </Picker>
         </View>
         <View style={styles.filterBox}>
-            <TextInput
-                style={styles.modalInput}
-                onChangeText={setSkillsFilter}
-                value={skillsFilter}
-                placeholder="Skills..."
-                placeholderTextColor="#aaa"
-            />
-        </View>
-        <View style={styles.filterBox}>
-            <TextInput
-                style={styles.modalInput}
-                onChangeText={setPayFilter}
-                value={payFilter}
-                placeholder="Pay..."
-                placeholderTextColor="#aaa"
-            />
+                    <TextInput
+                        style={styles.modalInput}
+                        onChangeText={(value) => setPayFilter({...payFilter, min: value})}
+                        value={payFilter.min}
+                        placeholder="Min Pay..."
+                        placeholderTextColor="#aaa"
+                        keyboardType="numeric"
+                    />
         </View>
         <View style={styles.filterBox}>
             <TextInput

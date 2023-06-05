@@ -11,6 +11,8 @@ const JobSchema = new mongoose.Schema({
   category: { type: String, required: true }, // New field for job category
   postedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
   applicants: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User'}],
+  hiredApplicant: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }, // New field for hired applicant
+  rejectedApplicants: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }], // New field for rejected applicants
 });
 
 const Job = mongoose.model('Job', JobSchema);
