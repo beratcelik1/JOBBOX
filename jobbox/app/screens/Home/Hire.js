@@ -84,7 +84,7 @@ function HireScreen({ navigation }) {
       </View>   
       <View
         style={{
-          borderBottomColor: '#4683fc',
+          borderBottomColor: '#fff',
           borderBottomWidth: 1.5,
           marginBottom: 10,
         }}/> 
@@ -102,14 +102,14 @@ function HireScreen({ navigation }) {
           </View>
         </View> 
 
-        <View> 
-          <View style={styles.jobDetails}> 
-            <Ionicons name="md-cash" size={20} color="#4683fc" /> 
-            <Text style={styles.jobDescription}>{item.pay} CAD</Text>
+        <View style = {{ width: '40%'}}> 
+          <View style={{flexDirection: 'row', justifyContent: 'flex-start', marginBottom: 5}}> 
+            <Ionicons name="md-cash" size={20} color="#fff" /> 
+            <Text style={styles.jobDescription}>  {item.pay} $</Text>
           </View> 
 
-          <View style={styles.jobDetails}>
-            <Ionicons name="md-time" size={20} color="#4683fc" />
+          <View style={{flexDirection: 'row', justifyContent: 'flex-start'}}>
+            <Ionicons name="md-time" size={20} color="#fff" />
             <Text style={styles.jobDescription}>  {item.estimatedTime}</Text>
             <Text style={styles.jobDescription}>  {item.estimatedTimeUnit}</Text>
           </View> 
@@ -225,6 +225,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center', 
     alignItems: 'center', 
     marginRight: 10,
+    marginTop:5,
   },
   container: {
     flex: 1,
@@ -236,7 +237,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   jobCard: {
-    backgroundColor: '#fff',
+    backgroundColor: '#4683fc',
     padding: 20,
     marginBottom: 10,
     borderRadius: 10,
@@ -283,10 +284,11 @@ const styles = StyleSheet.create({
   jobTitle: {
     fontSize: 18,
     fontWeight: 'bold',
+    color: '#fff',
   },
   jobDescription: {
     fontSize: 14,
-    color: '#000',
+    color: '#fff',
     marginTop: 4,
   },
   jobDate: {
