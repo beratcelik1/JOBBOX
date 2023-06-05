@@ -98,6 +98,22 @@ router.get('/', async (req, res) => {
   }
 });
 
+// Get a user's jobs
+router.get('/user/:userId', async (req, res) => {
+  try {
+    const user = await User.findById(req.params.userId);
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+    const jobs = await Job.find({ postedBy: user._id }).populate('postedBy', 'firstname lastname');
+    res.send(jobs);
+  } catch (error) {
+    res.status(500).send(error);
+  }
+});
+
+
+
 // Edit a job
 router.patch('/:jobId', authenticate, async (req, res) => {
   const token = req.header('Authorization')?.replace('Bearer ', '');
@@ -464,8 +480,88 @@ router.get('/user/:userId/jobs', authenticate, async (req, res) => {
   } catch (error) {
     res.status(500).send(error);
   }
+}); 
+
+// Delete a job
+router.delete('/:id', async (req, res) => {
+  const token = req.header('Authorization')?.replace('Bearer ', '');
+  if (!token) {
+    return res.status(401).json({ error: 'Authorization token missing' });
+  }
+
+  try {
+    // verify the token and extract the user ID
+    const data = jwt.verify(token, process.env.JWT_SECRET);
+
+    // find the user with the extracted ID
+    const user = await User.findById(data.userId);
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    const job = await Job.findById(req.params.id);
+    if (!job) {
+      return res.status(404).json({ error: 'Job not found' });
+    }
+
+    // Check if the job was posted by the logged in user
+    if (job.postedBy.toString() !== user._id.toString()) {
+      return res.status(403).json({ error: 'You can only delete your own jobs' });
+    }
+
+    // delete job
+    await job.remove();
+
+    // Remove job id from user's job postings
+    user.jobPostings = user.jobPostings.filter((jobId) => jobId.toString() !== job._id.toString());
+    await user.save();
+
+    res.status(200).send({ message: 'Job deleted successfully' });
+  } catch (error) {
+    res.status(400).send(error);
+  }
 });
 
 
+// handle apply job
+router.post('/apply', async (req, res) => {
+  const { jobId, userId } = req.body;
+
+  try {
+    const job = await Job.findByIdAndUpdate(
+      jobId,
+      { $addToSet: { applicants: userId } },
+      { new: true }  // Returns the updated document
+    );
+
+    console.log(job);
+
+    if (!job) {
+      return res.status(404).send({ message: "Job not found" });
+    }
+
+    res.send(job);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send({ message: "Server error" });
+  }
+});
+
+// handle get applicants
+router.get('/applicants/:jobId', async (req, res) => {
+  const { jobId } = req.params;
+
+  try {
+    const job = await Job.findById(jobId).populate('applicants');
+    if (!job) {
+      return res.status(404).send({ message: "Job not found" });
+    }
+
+    res.send(job.applicants);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send({ message: "Server error" });
+  }
+});
 
 module.exports = router;
