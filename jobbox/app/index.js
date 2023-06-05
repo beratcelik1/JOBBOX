@@ -16,7 +16,7 @@ import Services from './screens/Services/Services';
 import Hire from './screens/Home/Hire';
 import Work from './screens/Home/Work';
 import ChatHandler from './screens/Messages/ChatHandler';
-import ChatRoom from './screens/Chat/Messages/ChatRoom';
+import ChatRoom from './screens/Messages/ChatRoom';
 import Notifications from './screens/Notifications/Notifications';
 import PostJob from './screens/Home/PostJob';
 import Category from './screens/Services/Category';
@@ -26,7 +26,6 @@ import WorkHistoryScreen from './screens/Activity/WorkHistoryScreen';
 import HireHistoryScreen from './screens/Activity/HireHistoryScreen';
 import EditTargetsScreen from './screens/Activity/EditTargetsScreen'; 
 import StatusScreen from './screens/Box/Box';  
-
 
 import { useState } from 'react';
 import Login from './screens/Register/Login'; 
