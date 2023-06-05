@@ -29,12 +29,9 @@ import HireHistoryScreen from './screens/Activity/HireHistoryScreen';
 import EditTargetsScreen from './screens/Activity/EditTargetsScreen'; 
 import StatusScreen from './screens/Box/Box';  
 
-import { useState } from 'react';
 import Login from './screens/Register/Login'; 
 import Signup from './screens/Register/Signup';
 
-import Login from './screens/Login'; 
-import Signup from './screens/Signup';
 import { Section } from 'react-native-paper';
 import FlashMessage from 'react-native-flash-message';
 
