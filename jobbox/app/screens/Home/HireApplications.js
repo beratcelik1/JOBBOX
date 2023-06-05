@@ -51,24 +51,24 @@ export function HireApplicationsScreen({ route, navigation }) {
 
   const handleHire = async (applicantId) => {
     const token = await AsyncStorage.getItem('token');
-  
-    // Clone the job object and update status and hired fields
-    const updatedJob = { ...job, status: 'hired', hired: applicantId };
-  
-    axios.put(`http://tranquil-ocean-74659.herokuapp.com/jobs/${job._id}`, updatedJob, {
-      headers: { Authorization: `Bearer ${token}` }
-    }).then((response) => {
+
+    axios.post(`http://tranquil-ocean-74659.herokuapp.com/jobs/hire/${job._id}/${applicantId}`, {}, {
+        headers: { Authorization: `Bearer ${token}` }
+    })
+    .then((response) => {
       // handle successful response
       if(response.status === 200){
         Alert.alert('Success', 'User has been hired successfully!');
-        setApplicants(applicants.filter(applicant => applicant._id !== applicantId));
+        fetchJobs();
       }
-    }).catch((error) => {
+    })
+    .catch((error) => {
       // handle error
       console.error(error.response.data);
       Alert.alert('Error', 'Something went wrong while hiring the user');
     });
-  };
+};
+
   
   const handleReject = async (applicantId) => {
     const token = await AsyncStorage.getItem('token');
@@ -152,36 +152,41 @@ export function HireApplicationsScreen({ route, navigation }) {
         {
           text: 'OK',
           onPress: async () => {
-            // Fetch the token from the async storage
-            const token = await AsyncStorage.getItem('token');
-            console.log(token);
-
-            // Make the DELETE request
-            fetch(`http://tranquil-ocean-74659.herokuapp.com/jobs/${job._id}`, {
-              method: 'DELETE',
-              headers: { Authorization: `Bearer ${token}` },
-            })
-              .then((response) => response.json())
-              .then((data) => {
-                // Show alert message
-                Alert.alert(
-                  'Job Deleted',
-                  'This job has been successfully deleted.',
-                  [
-                    {
-                      text: 'OK',
-                      onPress: () => navigation.navigate('HireScreen'),
-                    },
-                  ]
-                );
-              })
-              .catch((error) => console.error('Error:', error));
+            try {
+              // Fetch the token from the async storage
+              const token = await AsyncStorage.getItem('token');
+  
+              if (!token) {
+                console.log('Token is not stored in AsyncStorage');
+                Alert.alert('Error', 'Authentication token is missing.');
+                return;
+              }
+  
+              console.log('Token:', token);
+  
+              // Make the DELETE request
+              await axios.delete(`http://tranquil-ocean-74659.herokuapp.com/jobs/${job._id}`, {
+                headers: { Authorization: `Bearer ${token}` },
+              });
+  
+              // Show alert message
+              Alert.alert('Job Deleted', 'This job has been successfully deleted.', [
+                {
+                  text: 'OK',
+                  onPress: () => navigation.navigate('HireScreen'),
+                },
+              ]);
+            } catch (error) {
+              console.error('Error:', error.response);
+              Alert.alert('Error', 'Something went wrong while deleting the job');
+            }
           },
         },
       ],
       { cancelable: false }
     );
   };
+  
 
   return (
     <View style={styles.container}>
