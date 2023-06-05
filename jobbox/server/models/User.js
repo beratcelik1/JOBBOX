@@ -13,14 +13,13 @@ const UserSchema = new mongoose.Schema({
     skills: [String],
     recommendations: [{ name: String, relationship: String, recommendation: String, }],
     jobPostings: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Job', }],
-    jobsApplied: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Job', }],
     earningTarget: { type: Number, default: 0, },
     spendingTarget: { type: Number, default: 0, },
     conversations: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Conversation', }],
     location: { type: String, default: '', },
     jobApplications: [{
         job: { type: mongoose.Schema.Types.ObjectId, ref: 'Job' },
-        status: { type: String, default: 'applied' } // can be 'applied', 'hired', 'rejected'
+        status: { type: String, default: 'applied', enum: ['applied', 'hired', 'rejected'] } 
     }]
     
 });

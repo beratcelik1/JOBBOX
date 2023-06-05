@@ -4,7 +4,7 @@ import jwt_decode from 'jwt-decode';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { View, Text, TouchableOpacity, FlatList, StyleSheet, ScrollView, KeyboardAvoidingView } from 'react-native';
 import Modal from 'react-native-modal';
-import { TextInput, Button, List } from 'react-native-paper';
+import { TextInput, List, Menu, Button } from 'react-native-paper';
 import { Ionicons } from '@expo/vector-icons';
 import Collapsible from 'react-native-collapsible';
 import { Picker } from '@react-native-picker/picker';
@@ -16,6 +16,14 @@ import {CATEGORIES, SKILLS_BY_CATEGORY, LOCATIONS} from '../constants';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { Keyboard } from 'react-native';
+
+const theme = {
+    ...DefaultTheme,
+    colors: {
+      ...DefaultTheme.colors,
+      primary: '#4683FC',
+    },
+  };
 
 
 function WorkScreen({ navigation }) {
@@ -30,8 +38,8 @@ function WorkScreen({ navigation }) {
     const [scrollPosition, setScrollPosition] = useState(0);
     const [isCategoryModalVisible, setCategoryModalVisible] = useState(false);
     const [isFilterModalVisible, setFilterModalVisible] = useState(false); 
-    const theme = {...DefaultTheme,colors: {...DefaultTheme.colors,primary: '#4683FC', },};
     const [isKeyboardVisible, setKeyboardVisible] = useState(false);
+    const [visible, setVisible] = useState(false);
 
     useEffect(() => {
         axios.get('/jobs')
@@ -70,6 +78,14 @@ function WorkScreen({ navigation }) {
         setRefreshing(true);
         fetchJobs();
     }, [fetchJobs]);
+
+    const openMenu = () => {
+        setVisible(true);
+      };
+      
+      const closeMenu = () => {
+        setVisible(false);
+      };      
 
     useEffect(() => {
     if (scrollPosition === 0) {
@@ -115,7 +131,7 @@ function WorkScreen({ navigation }) {
             category: categoryFilter,
             skills: skillsFilter,
             pay: payFilter.min || null,
-            location: locationFilter,
+            location: locationFilter, 
         };
       
         const query = Object.keys(filters)
@@ -238,20 +254,11 @@ function WorkScreen({ navigation }) {
                         keyboardType="numeric"
                     />
         </View>
-        <View style={styles.filterBox}>
-            <TextInput
-                style={styles.modalInput}
-                onChangeText={setLocationFilter}
-                value={locationFilter}
-                placeholder="Location..."
-                placeholderTextColor="#aaa"
-            />
-        </View>
         <TouchableOpacity onPress={() => { handleFilter(); closeFilterModal(); }} style={styles.applyFilterButton}>
             <Text style={styles.filterOption}>Apply Filter</Text>
         </TouchableOpacity>
     </View>
-</Modal>
+        </Modal>
             <FlatList
                 data={jobs}
                 renderItem={renderJob}
@@ -307,12 +314,14 @@ function JobDetailScreen({ route, navigation }) {
 const Stack = createStackNavigator();  
 export default function Work() {
     return (
-      <Stack.Navigator initialRouteName="WorkScreen">
-        <Stack.Screen name="WorkScreen" component={WorkScreen} options={{ headerShown: false }} />
-        <Stack.Screen name="JobDetail" component={JobDetailScreen} options={{headerTitle: '', headerShown: true, headerBackTitle: '', headerBackTitleVisible: false}}/>
-      </Stack.Navigator>   
+      <PaperProvider theme={theme}>
+        <Stack.Navigator initialRouteName="WorkScreen">
+          <Stack.Screen name="WorkScreen" component={WorkScreen} options={{ headerShown: false }} />
+          <Stack.Screen name="JobDetail" component={JobDetailScreen} options={{headerTitle: '', headerShown: true, headerBackTitle: '', headerBackTitleVisible: false}}/>
+        </Stack.Navigator>
+      </PaperProvider>
     );
-}
+  }
 
 const styles = StyleSheet.create({ 
     jobHeader: {

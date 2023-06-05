@@ -5,8 +5,6 @@ import { CATEGORIES } from '../constants';
 import { LOCATIONS } from '../constants';
 import { SKILLS_BY_CATEGORY } from '../constants';
 
-
-
 const FindTemplateScreen = ({ navigation }) => {
   const [search, setSearch] = useState('');
   const [flatListData, setFlatListData] = useState([]);
@@ -95,8 +93,7 @@ const FindTemplateScreen = ({ navigation }) => {
           Can't find what you're looking for?{' '}
           <Text
             style={styles.customJobButton}
-            onPress={() => navigation.navigate('PostJob')}
-          >
+            onPress={() => navigation.navigate('PostJob')}>
             Create a custom job
           </Text>
         </Text>

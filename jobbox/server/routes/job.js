@@ -84,7 +84,7 @@ router.get('/', async (req, res) => {
     }
 
     if(location) {
-      query.location = new RegExp(location, 'i');
+      query.location = new RegExp(req.user.location, 'i');
     }
 
     if(pay) {
@@ -200,19 +200,31 @@ router.delete('/:id', authenticate, async (req, res) => {
     }
 
     const job = await Job.findById(req.params.id);
+console.log("Job found:", job);
 
-    if (!job) {
-      console.log('Job not found');
-      return res.status(404).json({ error: 'Job not found' });
-    }
+if (!job) {
+  console.log('Job not found');
+  return res.status(404).json({ error: 'Job not found' });
+}
 
-    if (!job.postedBy.equals(user._id)) {
-      console.log('User is not authorized to delete this job');
-      return res.status(403).json({ error: 'You are not authorized to delete this job' });
-    }
+console.log(job instanceof Job); // Ensure that job is an instance of your Job model
 
-    await job.remove();
-    res.json({ message: 'Job deleted' });
+if (!job.postedBy.equals(user._id)) {
+  console.log('User is not authorized to delete this job');
+  return res.status(403).json({ error: 'You are not authorized to delete this job' });
+}
+
+// If the job is an instance of the Job model, then it should have the .remove method
+// If it doesn't, you could try deleting by id directly on the model
+try {
+  await Job.findByIdAndRemove(job._id);
+} catch (error) {
+  console.error("Error while removing job:", error);
+  return res.status(500).send("Error while removing job.");
+}
+
+res.json({ message: 'Job deleted' });
+
 
   } catch (error) {
     console.error(error);
@@ -399,32 +411,45 @@ router.post('/hire/:jobId/:userId', async (req, res) => {
       if (!job.applicants.includes(userId)) {
           return res.status(400).send({ error: 'User has not applied for this job' });
       }
+
+      // Set the hired user for this job
       job.hiredApplicant = userId; 
+
+      // Set the status of the job to 'hired'
+      job.status = 'hired';
 
       const applicant = await User.findById(userId);
       const application = applicant.jobApplications.find(app => app.job.equals(jobId));
       application.status = 'hired';
       await applicant.save();
 
+      // Clear the applicants list for this job since a user has been hired
       job.applicants = [];
+
+      // Save the job with the updated status and hired applicant
       await job.save();
       res.send(job);
   } catch (err) {
-      console.error(err);
+      console.error('Error:', err, 'Stack:', err.stack);
       res.status(500).send({ error: "Server error" });
   }
-}); 
-
-router.get('/user/jobs', authenticate, async (req, res) => {
+});
+ 
+router.get('/user/:userId/jobs', authenticate, async (req, res) => {
   try {
+    const user = await User.findById(req.params.userId);
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
     const jobs = await Job.find({ 
-      _id: { $in: req.user.jobApplications.filter(app => app.status !== 'rejected').map(app => app.job) }
+      _id: { $in: user.jobApplications.filter(app => app.status !== 'rejected').map(app => app.job) }
     }).populate('postedBy', 'firstname lastname');
     res.send(jobs);
   } catch (error) {
     res.status(500).send(error);
   }
 });
+
 
 
 module.exports = router;

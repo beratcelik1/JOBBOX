@@ -55,12 +55,13 @@ export default function PostJob({ navigation, route }) {
   const isFormValid = () => {
     return (
       jobTitle !== '' &&
-      jobDescription !== '' &&
-      skills !== '' &&
-      location !== '' &&
-      pay !== '' &&
+      !!selectedCategory  &&
+      !!selectedSkills  &&
+      !!selectedLocation &&
       estimatedTime !== '' &&
-      !!estimatedTimeUnit
+      !!estimatedTimeUnit &&
+      pay !== ''  &&
+      jobDescription !== ''
     );
   };
 
@@ -338,7 +339,7 @@ export default function PostJob({ navigation, route }) {
           style={styles.modal}
           onBackdropPress={() => setIsLocationModalVisible(false)}
         >
-          <View style={styles.modalView}>
+          <View style={styles.modalContent}>
             {LOCATIONS.map((location, index) => (
               <List.Item
                 key={index}
