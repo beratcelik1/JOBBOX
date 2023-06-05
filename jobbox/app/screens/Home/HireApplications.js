@@ -24,15 +24,20 @@ export function HireApplicationsScreen({ route, navigation }) {
 
   const fetchApplicants = async () => {
     try {
+      const token = await AsyncStorage.getItem('token'); // Fetch the token from async storage
       const response = await axios.get(
-        `http://tranquil-ocean-74659.herokuapp.com/jobs/applicants/${job._id}`
+        `http://tranquil-ocean-74659.herokuapp.com/jobs/applicants/${job._id}`,
+        { headers: { Authorization: `Bearer ${token}` } } // Include the token in your request
       );
       console.log(response.data);
       setApplicants(response.data);
     } catch (error) {
       console.log(error);
+    } finally {
+      setLoading(false);
     }
   };
+  
   useEffect(() => {
     fetchApplicants();
     setLoading(false);
@@ -42,8 +47,58 @@ export function HireApplicationsScreen({ route, navigation }) {
     setRefreshing(true);
     await fetchApplicants();
     setRefreshing(false);
-  }, []);
+  }, []); 
 
+  const handleHire = async (applicantId) => {
+    const token = await AsyncStorage.getItem('token');
+    try {
+      const response = await axios.post(
+        `http://tranquil-ocean-74659.herokuapp.com/jobs/hire/${job._id}/${applicantId}`, 
+        {}, 
+        { headers: { Authorization: `Bearer ${token}` }}
+      );
+  
+      if (response.status === 200) {
+        Alert.alert('Success', 'User has been hired successfully!');
+      
+        // update local state here with new data
+        // for example:
+        setJobs(prevJobs => {
+          return prevJobs.map(j => {
+            if (j._id === response.data._id) {
+              return response.data;
+            } else {
+              return j;
+            }
+          });
+        });
+      }
+      
+    } catch (error) {
+      console.error(error.response.data);
+      Alert.alert('Error', 'Something went wrong while hiring the user');
+    }
+  };
+  
+  const handleReject = async (applicantId) => {
+    const token = await AsyncStorage.getItem('token');
+    axios.put(`http://tranquil-ocean-74659.herokuapp.com/users/${applicantId}/reject`, 
+    {jobId: job._id}, 
+    {headers: { Authorization: `Bearer ${token}` }}
+    ).then((response) => {
+      // handle successful response
+      if(response.status === 200){
+        Alert.alert('Success', 'User has been rejected successfully!');
+        // Remove the rejected applicant from the applicants array
+        setApplicants(applicants.filter(applicant => applicant._id !== applicantId));
+      }
+    }).catch((error) => {
+      // handle error
+      console.error(error.response.data); // This will log the actual error message from the server
+      Alert.alert('Error', 'Something went wrong while rejecting the user');
+    });
+  };
+  
   const renderApplicant = ({ item }) => (
     <View style={styles.applicantCard}>
       <View style={{ flexDirection: 'row' }}>
@@ -79,11 +134,11 @@ export function HireApplicationsScreen({ route, navigation }) {
           <View
             style={{ flexDirection: 'row', marginTop: 15, marginBottom: -5 }}
           >
-            <TouchableOpacity style={styles.button}>
+            <TouchableOpacity style={styles.button} onPress={() => handleHire(item._id)}>
               <Ionicons name="checkmark-circle" size={20} color="#4683fc" />
               <Text style={styles.buttonText}>Hire</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.button}>
+            <TouchableOpacity style={styles.button} onPress={() => handleReject(item._id)}>
               <Ionicons name="close-circle" size={20} color="#4683fc" />
               <Text style={styles.buttonText}>Reject</Text>
             </TouchableOpacity>
@@ -107,36 +162,41 @@ export function HireApplicationsScreen({ route, navigation }) {
         {
           text: 'OK',
           onPress: async () => {
-            // Fetch the token from the async storage
-            const token = await AsyncStorage.getItem('token');
-            console.log(token);
-
-            // Make the DELETE request
-            fetch(`http://tranquil-ocean-74659.herokuapp.com/jobs/${job._id}`, {
-              method: 'DELETE',
-              headers: { Authorization: `Bearer ${token}` },
-            })
-              .then((response) => response.json())
-              .then((data) => {
-                // Show alert message
-                Alert.alert(
-                  'Job Deleted',
-                  'This job has been successfully deleted.',
-                  [
-                    {
-                      text: 'OK',
-                      onPress: () => navigation.navigate('HireScreen'),
-                    },
-                  ]
-                );
-              })
-              .catch((error) => console.error('Error:', error));
+            try {
+              // Fetch the token from the async storage
+              const token = await AsyncStorage.getItem('token');
+  
+              if (!token) {
+                console.log('Token is not stored in AsyncStorage');
+                Alert.alert('Error', 'Authentication token is missing.');
+                return;
+              }
+  
+              console.log('Token:', token);
+  
+              // Make the DELETE request
+              await axios.delete(`http://tranquil-ocean-74659.herokuapp.com/jobs/${job._id}`, {
+                headers: { Authorization: `Bearer ${token}` },
+              });
+  
+              // Show alert message
+              Alert.alert('Job Deleted', 'This job has been successfully deleted.', [
+                {
+                  text: 'OK',
+                  onPress: () => navigation.navigate('HireScreen'),
+                },
+              ]);
+            } catch (error) {
+              console.error('Error:', error.response);
+              Alert.alert('Error', 'Something went wrong while deleting the job');
+            }
           },
         },
       ],
       { cancelable: false }
     );
   };
+  
 
   return (
     <View style={styles.container}>
