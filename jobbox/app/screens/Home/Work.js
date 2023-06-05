@@ -2,118 +2,54 @@ import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import jwt_decode from 'jwt-decode';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { View, Text, TouchableOpacity, FlatList, StyleSheet, ScrollView } from 'react-native';
+import { View, Text, TouchableOpacity, FlatList, StyleSheet, ScrollView, KeyboardAvoidingView } from 'react-native';
 import Modal from 'react-native-modal';
-import { TextInput, Button, List } from 'react-native-paper';
+import { TextInput, List, Menu, Button } from 'react-native-paper';
 import { Ionicons } from '@expo/vector-icons';
 import Collapsible from 'react-native-collapsible';
 import { Picker } from '@react-native-picker/picker';
-
 import { createStackNavigator } from '@react-navigation/stack';
 import { DefaultTheme, Provider as PaperProvider } from 'react-native-paper';
 import { showMessage } from 'react-native-flash-message';
 import LoadingScreen from '../../components/LoadingScreen';
+import {CATEGORIES, SKILLS_BY_CATEGORY, LOCATIONS} from '../constants';
+import DropDownPicker from 'react-native-dropdown-picker';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import { Keyboard } from 'react-native';
+
+const theme = {
+    ...DefaultTheme,
+    colors: {
+      ...DefaultTheme.colors,
+      primary: '#4683FC',
+    },
+  };
+
 
 function WorkScreen({ navigation }) {
     const [searchQuery, setSearchQuery] = useState(''); 
-
-    // At the top of your WorkScreen function...
     const [jobs, setJobs] = useState([]);
     const [categoryFilter, setCategoryFilter] = useState('');
-    const [skillsFilter, setSkillsFilter] = useState('');
-    const [payFilter, setPayFilter] = useState('');
+    const [skillsFilter, setSkillsFilter] = useState([]);
+    const [payFilter, setPayFilter] = useState({ min: '', max: '' });
     const [locationFilter, setLocationFilter] = useState('');
-    const categories = ['Web Development', 'Graphic Design', 'Content Writing', 'Marketing', 'Mobile App Development', 'Home Cleaning', 'Gardening', 'Dog Walking', 'Grocery Delivery', 'Moving'];
-    const FilterModal = ({visible, setVisible, filterData, setFilterData, categories}) => {
-        const [categoryFilter, setCategoryFilter] = useState('');
-        const handleApplyFilters = () => {
-            // apply filters
-            // ...
-        }
-        return (
-            <Modal 
-                isVisible={visible}
-                onBackdropPress={() => setVisible(false)}
-                animationIn='slideInUp'
-                animationOut='slideOutDown'
-                style={styles.modal}
-            >
-                <View style={styles.container}>
-                    <Text style={styles.headerText}>Filter by</Text>
-                    
-                    <View style={styles.filterBox}>
-                        <Text style={styles.filterText}>Category</Text>
-                        <Picker
-                            selectedValue={categoryFilter}
-                            onValueChange={(itemValue) => setCategoryFilter(itemValue)}
-                            style={styles.picker}
-                            dropdownIconColor="#4683FC"
-                        >
-                            <Picker.Item label="Category..." value="" />
-                            {categories.map((category) => (
-                                <Picker.Item key={category} label={category} value={category} />
-                            ))}
-                        </Picker>
-                    </View>
-    
-                    <TouchableOpacity style={styles.applyButton} onPress={handleApplyFilters}>
-                        <Text style={styles.applyButtonText}>Apply Filters</Text>
-                    </TouchableOpacity>
-                </View>
-            </Modal>
-        );
-    };
-    
-    
     const [isLoading, setIsLoading] = useState(false);
     const [refreshing, setRefreshing] = useState(false);
     const [scrollPosition, setScrollPosition] = useState(0);
-
     const [isCategoryModalVisible, setCategoryModalVisible] = useState(false);
     const [isFilterModalVisible, setFilterModalVisible] = useState(false); 
+    const [isKeyboardVisible, setKeyboardVisible] = useState(false);
+    const [visible, setVisible] = useState(false);
+    const [isFilterApplied, setFilterApplied] = useState(false);
 
     useEffect(() => {
-        // Fetch jobs from API when component mounts
         axios.get('/jobs')
-          .then(response => {
-            setJobs(response.data);
-          })
+          .then(response => {setJobs(response.data);})
           .catch(error => {
             console.error('There was an error fetching jobs', error);
           });
       }, []);
-
-    const theme = {
-        ...DefaultTheme,
-        colors: {
-          ...DefaultTheme.colors,
-          primary: '#4683FC', // change the primary color to blue
-        },
-    };
-
-    const Accordion = ({ title, data, renderContent }) => {
-        const [isCollapsed, setIsCollapsed] = useState(true);
       
-        return (
-          <View>
-            <TouchableOpacity onPress={() => setIsCollapsed(!isCollapsed)}>
-              <Text>{title}</Text>
-            </TouchableOpacity>
-            <Collapsible collapsed={isCollapsed}>
-              {data.map((content, index) => (
-                <TouchableOpacity key={index} onPress={() => {
-                  setCategoryFilter(content);
-                  closeCategoryModal();
-                }}>
-                  <Text>{content}</Text>
-                </TouchableOpacity>
-              ))}
-            </Collapsible>
-          </View>
-        );
-      };
-      
-
         const openFilterModal = () => {
             setFilterModalVisible(true);
         };
@@ -121,18 +57,6 @@ function WorkScreen({ navigation }) {
         const closeFilterModal = () => {
             setFilterModalVisible(false);
         };
-
-
-    const openCategoryModal = () => {
-        setCategoryModalVisible(true);
-      };
-    
-    const closeCategoryModal = () => {
-        setCategoryModalVisible(false);
-      };
-      
-
-
       
     const fetchJobs = useCallback(() => {
         setIsLoading(true);
@@ -152,9 +76,28 @@ function WorkScreen({ navigation }) {
     }, []);
 
     const onRefresh = useCallback(() => {
-        setRefreshing(true);
-        fetchJobs();
+        if (!isFilterApplied) {
+          setRefreshing(true);
+          fetchJobs();
+        }
     }, [fetchJobs]);
+
+      const removeFilters = () => {
+        setCategoryFilter('');
+        setPayFilter({ min: ''})
+        setLocationFilter('');
+        setFilterApplied(false);
+        // Refresh after removing filters
+        onRefresh();
+      };
+
+    const openMenu = () => {
+        setVisible(true);
+      };
+      
+      const closeMenu = () => {
+        setVisible(false);
+      };      
 
     useEffect(() => {
     if (scrollPosition === 0) {
@@ -162,11 +105,25 @@ function WorkScreen({ navigation }) {
     }
   }, [scrollPosition, fetchJobs]);
 
+  useEffect(() => {
+    const keyboardDidShowListener = Keyboard.addListener(
+      'keyboardDidShow',
+      () => {
+        setKeyboardVisible(true); // or some other action
+      }
+    );
+    const keyboardDidHideListener = Keyboard.addListener(
+      'keyboardDidHide',
+      () => {
+        setKeyboardVisible(false); // or some other action
+      }
+    );
 
-    useEffect(() => {
-        fetchJobs();
-    }, [fetchJobs]);
-    
+    return () => {
+      keyboardDidHideListener.remove();
+      keyboardDidShowListener.remove();
+    };
+  }, []);
 
     useEffect(() => {
         if (searchQuery.length > 0) {
@@ -179,35 +136,40 @@ function WorkScreen({ navigation }) {
             fetchJobs();
         }
     }, [searchQuery, fetchJobs]);  
-
-
-    const handleSearch = () => {
-        setIsLoading(true);
-        fetch(`http://tranquil-ocean-74659.herokuapp.com/jobs/search?search=${searchQuery}`)
-          .then(response => response.json())
-          .then(data => setJobs(data))
-          .catch(error => console.error('Error:', error));
-      };
       
-      const handleFilter = () => {
+    const handleFilter = () => {
         setIsLoading(true);
+        setFilterApplied(true);
         const filters = {
-          category: categoryFilter,
-          skills: skillsFilter,
-          pay: payFilter,
-          location: locationFilter,
+            category: categoryFilter,
+            skills: skillsFilter,
+            pay: payFilter.min || null,
+            location: locationFilter, 
         };
       
         const query = Object.keys(filters)
-          .filter((key) => filters[key].length > 0)
+          .filter((key) => filters[key])
           .map((key) => `${encodeURIComponent(key)}=${encodeURIComponent(filters[key])}`)
           .join('&');
       
-        fetch(`http://tranquil-ocean-74659.herokuapp.com/jobs/?${query}`)
+          fetch(`http://tranquil-ocean-74659.herokuapp.com/jobs/?${query}`)
           .then(response => response.json())
           .then(data => setJobs(data))
           .catch(error => console.error('Error:', error));
+      };      
+
+      const handleCategoryChange = (category) => {
+        setCategoryFilter(category);
+        // Clear skills filter when changing category
+        setSkillsFilter([]);
+      
+        // Fetch skills for selected category
+        let skillsForCategory = SKILLS_BY_CATEGORY.get(category) || [];
+        setSkillsForCategory(skillsForCategory);
       };
+
+      const categories = CATEGORIES.map(category => category.title);
+
       
       const renderJob = ({ item }) => ( 
         <TouchableOpacity 
@@ -254,84 +216,81 @@ function WorkScreen({ navigation }) {
             </View>
         </TouchableOpacity>
     );
-    
-    
+
     return (
-        
         <View style={styles.container}>
             <View style={styles.searchSection}>
             <Ionicons style={styles.searchIcon} name="ios-search" size={20} color="#000" />
-            <TextInput 
+            <TextInput
                 style={styles.searchInput}
                 onChangeText={setSearchQuery}
                 value={searchQuery}
                 placeholder="Search"
                 placeholderTextColor="gray"
             />
-            {searchQuery.length > 0 &&
+            {searchQuery.length > 0 && (
                 <TouchableOpacity onPress={() => setSearchQuery('')}>
                 <Ionicons name="ios-close" size={20} color="#000" />
                 </TouchableOpacity>
-            }
-            <TouchableOpacity style={styles.filterButton} onPress={openFilterModal}>
-                <Ionicons name="filter" size={24} color="white" />
-            </TouchableOpacity>
-            </View>
+            )}
 
-<Modal 
+            {isFilterApplied ? (
+                              <TouchableOpacity style={styles.filterButton} onPress={removeFilters}>
+                              <Ionicons name="close" size={24} color="white" />
+                                </TouchableOpacity>
+            ) : (
+                <TouchableOpacity style={styles.filterButton} onPress={openFilterModal}>
+                <Ionicons name="filter" size={24} color="white" />
+                </TouchableOpacity>
+            )}
+            </View>
+    <Modal 
     isVisible={isFilterModalVisible} 
-    style={styles.modal} 
-    onBackdropPress={closeFilterModal}
->
+    style={[styles.modal, isKeyboardVisible ? {paddingBottom: 280} : {}]} 
+    onBackdropPress={closeFilterModal}>
     <View style={styles.modalContent}>
-        <Text style={styles.modalTitle}>Filter by:</Text>
+        <Text style={styles.modalTitle}>Filters</Text>
+        <View style={styles.filterBox}>
+        <Picker
+            selectedValue={categoryFilter}
+            onValueChange={(itemValue) => setCategoryFilter(itemValue)}
+            style={styles.picker}
+            dropdownIconColor="#4683FC"
+            >
+            <Picker.Item label="Category..." value="" />
+            {categories.map((category, index) => (
+                <Picker.Item key={index} label={category} value={category} />
+            ))}
+            </Picker>
+        </View>
         <View style={styles.filterBox}>
             <Picker
-                selectedValue={categoryFilter}
-                onValueChange={(itemValue) => setCategoryFilter(itemValue)}
+                selectedValue={locationFilter}
+                onValueChange={(itemValue) => setLocationFilter(itemValue)}
                 style={styles.picker}
                 dropdownIconColor="#4683FC"
             >
-                <Picker.Item label="Category..." value="" />
-                {categories.map((category) => (
-                    <Picker.Item key={category} label={category} value={category} />
+                <Picker.Item label="Location..." value="" />
+                {LOCATIONS.map((location, index) => (
+                    <Picker.Item key={index} label={location} value={location} />
                 ))}
             </Picker>
         </View>
         <View style={styles.filterBox}>
-            <TextInput
-                style={styles.modalInput}
-                onChangeText={setSkillsFilter}
-                value={skillsFilter}
-                placeholder="Skills..."
-                placeholderTextColor="#aaa"
-            />
-        </View>
-        <View style={styles.filterBox}>
-            <TextInput
-                style={styles.modalInput}
-                onChangeText={setPayFilter}
-                value={payFilter}
-                placeholder="Pay..."
-                placeholderTextColor="#aaa"
-            />
-        </View>
-        <View style={styles.filterBox}>
-            <TextInput
-                style={styles.modalInput}
-                onChangeText={setLocationFilter}
-                value={locationFilter}
-                placeholder="Location..."
-                placeholderTextColor="#aaa"
-            />
+                    <TextInput
+                        style={styles.modalInput}
+                        onChangeText={(value) => setPayFilter({...payFilter, min: value})}
+                        value={payFilter.min}
+                        placeholder="Min Pay..."
+                        placeholderTextColor="#aaa"
+                        keyboardType="numeric"
+                    />
         </View>
         <TouchableOpacity onPress={() => { handleFilter(); closeFilterModal(); }} style={styles.applyFilterButton}>
-            <Text style={styles.filterOption}>Apply Filter</Text>
+            <Text style={styles.filterOption}>Apply</Text>
         </TouchableOpacity>
     </View>
-</Modal>
-
-
+        </Modal>
             <FlatList
                 data={jobs}
                 renderItem={renderJob}
@@ -342,30 +301,17 @@ function WorkScreen({ navigation }) {
                 onRefresh={onRefresh}
                 onScroll={event => {
                     setScrollPosition(event.nativeEvent.contentOffset.y);
-                }}
-            />
-    </View>
-    );
-    
-} 
-
+                }}/></View>);} 
 
 function JobDetailScreen({ route, navigation }) {
-    //... your existing JobDetail component code
     const { job } = route.params;
 
     const handleApplyPress = () => {
-        // fetch user data with axios
         (async () => {
-            // Fetch the token from the async storage
             const token = await AsyncStorage.getItem('token');
             console.log(token);
-
-            // Decode the token to get the user ID
             const decodedToken = jwt_decode(token);
             const userId = decodedToken.userId;
-
-            // send post apply request to server
             fetch(`http://tranquil-ocean-74659.herokuapp.com/jobs/apply`, {
                 method: 'POST',
                 headers: {
@@ -373,14 +319,10 @@ function JobDetailScreen({ route, navigation }) {
                 },
                 body: JSON.stringify({
                     jobId: job._id,
-                    userId: userId,
-                }),
-            })
+                    userId: userId,}),})
             .then(response => response.json())
             .then(data => console.log(data))
             .catch(error => console.error('Error:', error));
-
-            // set flashMessage if successful
             showMessage({
                 message: "You have successfully applied for this job!",
                 type: "success",
@@ -388,10 +330,7 @@ function JobDetailScreen({ route, navigation }) {
                 duration: 3000,
                 hideOnPress: true,
                 floating: true,
-            });
-            })();
-    };
-
+            });})(); };
     return (
         <View style={styles.container2}>
             <View style={styles.jobCard2}>
@@ -402,21 +341,20 @@ function JobDetailScreen({ route, navigation }) {
                     <Text style={styles.buttonText2}>Apply</Text>
                 </TouchableOpacity>
             </View>
-        </View>
-    );
-}
-  
-// Define a type for your stack
-const Stack = createStackNavigator();
-  
+        </View>);}
+
+const Stack = createStackNavigator();  
 export default function Work() {
     return (
-      <Stack.Navigator initialRouteName="WorkScreen">
-        <Stack.Screen name="WorkScreen" component={WorkScreen} options={{ headerShown: false }} />
-        <Stack.Screen name="JobDetail" component={JobDetailScreen} options={{headerTitle: '', headerShown: true, headerBackTitle: '', headerBackTitleVisible: false}}/>
-      </Stack.Navigator>   
+      <PaperProvider theme={theme}>
+        <Stack.Navigator initialRouteName="WorkScreen">
+          <Stack.Screen name="WorkScreen" component={WorkScreen} options={{ headerShown: false }} />
+          <Stack.Screen name="JobDetail" component={JobDetailScreen} options={{headerTitle: '', headerShown: true, headerBackTitle: '', headerBackTitleVisible: false}}/>
+        </Stack.Navigator>
+      </PaperProvider>
     );
-}
+  }
+
 const styles = StyleSheet.create({ 
     jobHeader: {
         flexDirection: 'row', 
@@ -532,11 +470,9 @@ const styles = StyleSheet.create({
         shadowColor: '#333',
         shadowOpacity: 0.3,
         shadowRadius: 2,
-        marginHorizontal: 10,
+        borderRadius: 50,
+        marginHorizontal: 5,
     },
-    
-    
-      
     
     filterOption: {
         color: 'white',
@@ -671,10 +607,9 @@ const styles = StyleSheet.create({
         borderColor: 'rgba(0, 0, 0, 0.1)',
     },
     modalTitle: {
-        fontSize: 24,
-        fontWeight: 'bold',
+        fontSize: 20,
         marginBottom: 20,
-        color: '#4683FC',
+        color: '#000',
     },
     filterBox: {
         backgroundColor: '#fff',
