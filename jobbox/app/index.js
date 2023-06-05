@@ -1,4 +1,6 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import axios from 'axios';
 import { Image, Text, View, TouchableOpacity } from 'react-native';
 import { NavigationContainer, useNavigation } from '@react-navigation/native';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
@@ -28,7 +30,6 @@ import EditTargetsScreen from './screens/Activity/EditTargetsScreen';
 import StatusScreen from './screens/StatusScreen';  
 
 
-import { useState } from 'react';
 import Login from './screens/Login'; 
 import Signup from './screens/Signup';
 import { Section } from 'react-native-paper';
@@ -53,6 +54,44 @@ function HomeTopTabs() {
 
 function MyTabs() {
   const navigation = useNavigation(); 
+  const [user, setUser] = useState({});
+  const [hasNotifications, setHasNotifications] = useState(false);
+
+  // Fetch the current user's information
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const token = await AsyncStorage.getItem('token');
+        const response = await axios.get('https://tranquil-ocean-74659.herokuapp.com/auth/user/me', {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        // console.log(response.data);
+        setUser(response.data);
+      } catch (err) {
+        console.error("Failed to fetch user data: ", err);
+      }
+    }
+    fetchUserData();
+  }, []);
+
+  useEffect(() => {
+    const fetchNotifications = async () => {
+      try {
+        const response = await axios.get(`https://tranquil-ocean-74659.herokuapp.com/auth/notifications/${user._id}`); 
+        if (response.data && response.data.length > 0) {
+          setHasNotifications(true);
+        }
+        // console.log(response.data);
+      } catch (err) {
+        console.error(err);
+      }
+    }
+    // Only call fetchNotifications if user._id exists (i.e., if the user data has been fetched)
+    if (user._id) {
+      fetchNotifications();
+    }
+  }, [user]);
+
 
   return (
     <BottomTab.Navigator
@@ -103,6 +142,8 @@ function MyTabs() {
                 <Icon name="chatbox-outline" size={24} />
               </TouchableOpacity>
               <TouchableOpacity onPress={() => navigation.navigate("Notifications")}>
+                {hasNotifications && <View style={{position: 'absolute', right: -2, top: -2, backgroundColor: 'red', borderRadius: 6, width: 12, height: 12, justifyContent: 'center', alignItems: 'center'}}>
+                </View>}
                 <Icon name="notifications-outline" size={24} style={{ marginLeft: 10 }} />
               </TouchableOpacity>
             </View>

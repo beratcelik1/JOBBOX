@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, FlatList, StyleSheet  } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { SwipeListView } from 'react-native-swipe-list-view';
 
 export default function Notifications() {
   const [user, setUser] = useState({});
@@ -59,6 +60,28 @@ export default function Notifications() {
     }
   }, [user]);
 
+  const deleteNotification = async (id) => {
+    const token = await AsyncStorage.getItem('token');
+    try {
+      await axios.delete(`https://tranquil-ocean-74659.herokuapp.com/auth/notifications/${id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setNotifications(notifications.filter((item) => item._id !== id)); // remove the deleted notification from the local state
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const renderHiddenItem = (data, rowMap) => (
+    <TouchableOpacity
+      style={[styles.rowBack, styles.rowBackRight]}
+      onPress={() => deleteNotification(data.item._id)}
+    >
+      <Text style={styles.backTextWhite}>Clear</Text>
+    </TouchableOpacity>
+  );
+
+
   const NotificationCard = ({ item }) => {
     const fromUser = users[item.from];
   
@@ -78,9 +101,9 @@ export default function Notifications() {
 
     return (
       <View style={styles.notificationCard}>
-        <View style={styles.notificationTextContainer}>
+        <View style={styles.notificationContent}>
           <Text style={styles.notificationText}>{message}</Text>
-          <Text style={styles.notificationText}>{timeIn12Hours}</Text>
+          <Text style={styles.timeText}>{timeIn12Hours}</Text>
         </View>
       </View>
     );
@@ -88,10 +111,12 @@ export default function Notifications() {
 
   return (
     <View style={styles.container}>
-      <FlatList
+      <SwipeListView
         data={notifications}
         keyExtractor={item => item._id}
         renderItem={NotificationCard}
+        renderHiddenItem={renderHiddenItem}
+        rightOpenValue={-75}
       />
     </View>
   );
@@ -104,7 +129,7 @@ const styles = StyleSheet.create({
   },
   notificationCard: {
     backgroundColor: 'white',
-    borderRadius: 35,
+    borderRadius: 5,
     marginHorizontal: 10,
     marginBottom: 10,
     borderWidth: 0,
@@ -116,12 +141,35 @@ const styles = StyleSheet.create({
     },
     shadowOpacity: 0.22,
     shadowRadius: 2.22,
+    padding: 13,
   },
-  notificationTextContainer: {
-    margin: 10,
+  notificationContent: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
   },
   notificationText: {
-    paddingLeft: 10,
+    fontSize: 17,
     color: 'black',
+  },
+  timeText: {
+    fontSize: 15,
+    color: 'grey',
+  },
+  rowBack: {
+    alignItems: 'center',
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingLeft: 15,
+  },
+  rowBackRight: {
+    alignItems: 'center',
+    justifyContent: 'flex-end',
+    paddingRight: 15,
+  },
+  backTextWhite: {
+    paddingRight: 15,
+    paddingBottom: 7,
+    color: 'red',
   },
 });
