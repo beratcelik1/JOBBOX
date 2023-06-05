@@ -430,12 +430,11 @@ router.post('/hire/:jobId/:userId', async (req, res) => {
       await job.save();
       res.send(job);
   } catch (err) {
-      console.error(err);
+      console.error('Error:', err, 'Stack:', err.stack);
       res.status(500).send({ error: "Server error" });
   }
 });
  
-
 router.get('/user/:userId/jobs', authenticate, async (req, res) => {
   try {
     const user = await User.findById(req.params.userId);

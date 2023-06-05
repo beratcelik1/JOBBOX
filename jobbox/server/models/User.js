@@ -20,7 +20,7 @@ const UserSchema = new mongoose.Schema({
     location: { type: String, default: '', },
     jobApplications: [{
         job: { type: mongoose.Schema.Types.ObjectId, ref: 'Job' },
-        status: { type: String, default: 'applied' } // can be 'applied', 'hired', 'rejected'
+        status: { type: String, default: 'applied', enum: ['applied', 'hired', 'rejected'] } 
     }]
     
 });
