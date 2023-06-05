@@ -121,7 +121,8 @@ const ChatRoom = ({ route, navigation }) => {
         action: 'message',
         conversationId: currentChat._id,
       };
-      await axios.post("https://tranquil-ocean-74659.herokuapp.com/notifications/", notification);
+      console.log(notification);
+      await axios.post("https://tranquil-ocean-74659.herokuapp.com/auth/notifications/", notification);
     } catch (err) {
       console.log(err);
     }
