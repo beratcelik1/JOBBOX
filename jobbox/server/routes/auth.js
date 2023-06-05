@@ -3,7 +3,8 @@ const bcryptjs = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 
-// const Notifi// cation = require('../models/Notification');
+const Notification = require('../models/Notification');
+
 const router = express.Router();
 
 router.post('/signup', async (req, res) => {
