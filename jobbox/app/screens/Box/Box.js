@@ -64,7 +64,7 @@ function StatusScreen() {
         setJobs(data);
         setLoaded(true);
       } catch (error) {
-        console.error('Error:', error);
+        // console.error('Error:', error);
         setError('Failed to load jobs. Please try again later.');
       }
     };

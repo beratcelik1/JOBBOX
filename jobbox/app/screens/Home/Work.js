@@ -42,13 +42,6 @@ function WorkScreen({ navigation }) {
     const [visible, setVisible] = useState(false);
     const [isFilterApplied, setFilterApplied] = useState(false);
 
-    useEffect(() => {
-        axios.get('/jobs')
-          .then(response => {setJobs(response.data);})
-          .catch(error => {
-            console.error('There was an error fetching jobs', error);
-          });
-      }, []);
       
         const openFilterModal = () => {
             setFilterModalVisible(true);
