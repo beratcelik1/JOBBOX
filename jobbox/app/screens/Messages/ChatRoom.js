@@ -113,6 +113,16 @@ const ChatRoom = ({ route, navigation }) => {
         },
       };
       setMessages(previousMessages => GiftedChat.append(previousMessages, formattedMessage));
+
+      // Create a new notification
+      const notification = {
+        to: currentChat.members.find(member => member !== user._id), // the recipient will be the other member of the chat
+        from: user._id,
+        action: 'message',
+        conversationId: currentChat._id,
+      };
+      console.log(notification);
+      await axios.post("https://tranquil-ocean-74659.herokuapp.com/auth/notifications/", notification);
     } catch (err) {
       console.log(err);
     }
