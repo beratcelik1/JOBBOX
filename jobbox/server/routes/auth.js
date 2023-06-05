@@ -3,8 +3,7 @@ const bcryptjs = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 
-// const Message = require('../models/Message');
-// const Conversation = require('../models/Conversation');
+// const Notifi// cation = require('../models/Notification');
 const router = express.Router();
 
 router.post('/signup', async (req, res) => {
@@ -136,7 +135,46 @@ router.put('/user/me/profilePic', async (req, res) => {
     res.status(401).send({ error: 'Not authorized to access this resource' });
   }
 });
-//...
+
+// update user location
+router.put('/user/me/location', async (req, res) => {
+  const token = req.header('Authorization')?.replace('Bearer ', '');
+  if (!token) {
+    return res.status(401).json({ error: 'Authorization token missing' });
+  }
+
+  try {
+    const data = jwt.verify(token, process.env.JWT_SECRET);
+    const user = await User.findById(data.userId);
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+    user.location = req.body.location;
+    await user.save();
+    res.send(user);
+  } catch {
+    res.status(401).send({ error: 'Not authorized to access this resource' });
+  }
+});
+
+// get user location
+router.get('/user/me/location', async (req, res) => {
+  const token = req.header('Authorization')?.replace('Bearer ', '');
+  if (!token) {
+    return res.status(401).json({ error: 'Authorization token missing' });
+  }
+
+  try {
+    const data = jwt.verify(token, process.env.JWT_SECRET);
+    const user = await User.findById(data.userId);
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+    res.send({ location: user.location });
+  } catch {
+    res.status(401).send({ error: 'Not authorized to access this resource' });
+  }
+});
 
 // get all usernames
 router.get('/users', async (req, res) => {
@@ -144,11 +182,49 @@ router.get('/users', async (req, res) => {
   res.send(users);
 });
 
-router.get('/jobs', async (req, res) => {
+// notifications
+router.post('/notifications', async (req, res) => {
+  const { to, from, action, conversationId, jobId } = req.body;
+
+  // Create new notification
+  const notification = new Notification({ to, from, action, conversationId, jobId });
+
+  // Save notification and return it
+  await notification.save();
+  res.status(201).json(notification);
+});
+
+// Fetch all notifications for a specific user
+router.get('/notifications/:userId', async (req, res) => {
   try {
-    const Job = require('../models/Job');
-    const jobs = await Job.find({}).populate('postedBy', 'firstname lastname');
-    res.json(jobs);
+    const notifications = await Notification.find({ to: req.params.userId }).sort({ createdAt: -1 });
+    res.json(notifications);
+  } catch (err) {
+    res.status(500).send({ error: err.message });
+  }
+});
+
+// Mark a specific notification as read
+router.put('/notifications/:notificationId', async (req, res) => {
+  try {
+    const notification = await Notification.findByIdAndUpdate(req.params.notificationId, { read: true }, { new: true });
+    if (!notification) {
+      return res.status(404).json({ error: 'Notification not found' });
+    }
+    res.json(notification);
+  } catch (err) {
+    res.status(500).send({ error: err.message });
+  }
+});
+
+// Delete a specific notification
+router.delete('/notifications/:notificationId', async (req, res) => {
+  try {
+    const notification = await Notification.findByIdAndDelete(req.params.notificationId);
+    if (!notification) {
+      return res.status(404).json({ error: 'Notification not found' });
+    }
+    res.json({ message: 'Notification deleted successfully' });
   } catch (err) {
     res.status(500).send({ error: err.message });
   }

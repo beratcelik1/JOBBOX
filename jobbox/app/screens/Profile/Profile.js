@@ -1,12 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { View, FlatList, Text, TouchableOpacity, StyleSheet, Image, ActivityIndicator, RefreshControl } from 'react-native';
+import { View, FlatList, Text, TouchableOpacity, StyleSheet, Image, ActivityIndicator, RefreshControl, Modal, Pressable} from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import { TextInput, Button, List } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as ImagePicker from 'expo-image-picker';
 import fetch from 'node-fetch';
 import LoadingScreen from '../../components/LoadingScreen';
+import { LOCATIONS } from '../constants';
+import { Colors } from 'react-native/Libraries/NewAppScreen';
 
 const styles = StyleSheet.create({
   container: {
@@ -82,6 +85,26 @@ const styles = StyleSheet.create({
     marginTop: 5,
     fontSize: 14,
   },
+  modalView: {
+    position: 'absolute',
+    bottom: 0,
+    width: '100%',
+    backgroundColor: 'white',
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    padding: 35,
+    alignItems: 'center',
+    fontSize: 20,
+  },
+  button: {
+    borderRadius: 20,
+    padding: 10,
+    elevation: 2,
+    marginTop: 15,
+  },
+  locationButton: {
+    padding: 5
+  },
 });
 
 const Profile = () => {
@@ -91,6 +114,14 @@ const Profile = () => {
   const navigation = useNavigation();
   const [loading, setLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
+  const [isLocationModalVisible, setIsLocationModalVisible] = useState(false);
+  const [selectedLocation, setSelectedLocation] = useState('Kelowna, BC');
+
+  useEffect(() => {
+    if (user && user.location) {
+      setSelectedLocation(user.location);
+    }
+  }, [user]);
 
   const fetchUserData = async () => {
     try {
@@ -174,6 +205,25 @@ const Profile = () => {
     return unsubscribe;
   }, [navigation]);
 
+  const handleLocationSelect = async (location) => {
+    setSelectedLocation(location);
+    const token = await AsyncStorage.getItem('token');
+    fetch('https://tranquil-ocean-74659.herokuapp.com/auth/user/me/location', {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+      body: JSON.stringify({ location }),
+    })
+    .then(response => response.json())
+    .then(data => {
+      console.log(data);
+    })
+    .catch(error => console.error('Error:', error));
+  
+    setIsLocationModalVisible(false);
+  };
 
   const handleProfilePhotoPress = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -238,10 +288,6 @@ const Profile = () => {
     }
 };
 
-
-  
-  
-  
 return (
   <View style={styles.container}>
     {user ? (
@@ -257,10 +303,36 @@ return (
               <Icon name="star" size={20} color="#f1c40f" />
               <Text>4.5</Text>
             </View>
-            <Text>Kelowna, BC</Text>
+            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <Text>{selectedLocation}</Text>
+            <TouchableOpacity onPress={() => setIsLocationModalVisible(true)}>
+            <View style={styles.locationButton}>
+            <Text><Icon name="edit" size={20} color="#000" /></Text>
+            </View>
+            </TouchableOpacity>
+            </View>
+            <Modal
+          animationType="slide"
+          transparent={true}
+          visible={isLocationModalVisible}
+          onRequestClose={() => setIsLocationModalVisible(false)}
+          presentationStyle='overFullScreen'
+        >
+          <View style={styles.modalView}>
+            {LOCATIONS.map((location, index) => (
+              <List.Item
+                key={index}
+                title={location}
+                onPress={() => handleLocationSelect(location)}
+              />
+            ))}
+            <Pressable style={styles.button} onPress={() => setIsLocationModalVisible(false)}>
+              <Text>Close</Text>
+            </Pressable>
+          </View>
+        </Modal>
           </View>
         </View>
-
         <FlatList 
           data={sections}
           keyExtractor={item => item.id}
