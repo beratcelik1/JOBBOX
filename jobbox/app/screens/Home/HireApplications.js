@@ -229,10 +229,6 @@ export function HireApplicationsScreen({ route, navigation }) {
               onPress={() => navigation.navigate('EditJob', { job })}
               style={styles.editBtn}
             >
-              <Text style={{ fontWeight: 'bold', color: '#4683fc' }}>
-                {' '}
-                Edit job
-              </Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -314,16 +310,16 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    padding: 20,
+    padding: 10,
   },
   title: {
-    fontSize: 24,
+    fontSize: 20,
     fontWeight: 'bold',
     color: '#fff',
   },
   description: {
-    fontSize: 18,
-    marginTop: 10,
+    fontSize: 15,
+    marginTop: 5,
     color: '#fff',
   },
   date: {
