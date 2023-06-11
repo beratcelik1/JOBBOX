@@ -8,23 +8,30 @@ const Notification = require('../models/Notification');
 const router = express.Router();
 
 router.post('/signup', async (req, res) => {
-  const { firstname, lastname, email, password } = req.body;
+  try {
+    const { firstname, lastname, email, password } = req.body;
 
-  // check if user already exists
-  let user = await User.findOne({ email });
-  if (user) {
-    return res.status(400).json({ message: 'User already exists' });
+    // check if user already exists
+    let user = await User.findOne({ email });
+    if (user) {
+      return res.status(400).json({ message: 'User already exists' });
+    }
+
+    // create new user
+    user = new User({ firstname, lastname, email, password });
+
+    // save user and return token
+    await user.save();
+    const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: '1d' });
+
+    console.log('Response:', { token });
+    res.status(201).json({ token });
+  } catch (error) {
+    console.error('Error during signup:', error);
+    res.status(500).json({ message: 'Error during signup' });
   }
-
-  // create new user
-  user = new User({ firstname, lastname, email, password });
-
-  // save user and return token
-  await user.save();
-  const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: '1d' });
-  console.log('Response:', { token });
-  res.status(201).json({ token });
 });
+
 
 router.post('/login', async (req, res) => {
     const { email, password } = req.body;

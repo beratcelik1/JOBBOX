@@ -32,7 +32,6 @@ function StatusBadge({ status }) {
     </View>
   );
 }
-
 function StatusScreen() {
   const [loaded, setLoaded] = useState(false);
   const [jobs, setJobs] = useState([]);
@@ -42,14 +41,16 @@ function StatusScreen() {
     const fetchJobs = async () => {
       setLoaded(false);
       let token;
+      let user;
       try {
-        // Fetch the token from the async storage
+        // Fetch the token and user information from async storage
         token = await AsyncStorage.getItem('token');
+        user = JSON.parse(await AsyncStorage.getItem('user'));
       } catch(e) {
         Alert.alert('Error', 'Could not retrieve user information. Please try again later.');
         return;
       }
-
+    
       // Fetch the jobs from your server
       try {
         const response = await fetch('http://tranquil-ocean-74659.herokuapp.com/jobs/user/jobs', {
@@ -59,16 +60,30 @@ function StatusScreen() {
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
-
-        const data = await response.json();
+    
+        let data = await response.json();
+    
+        // Update job statuses
+        data = data.map(job => {
+          if (job.hiredApplicant && job.hiredApplicant._id === user._id) {
+            job.status = 'hired';
+          } else if (job.rejectedApplicants.some(applicant => applicant._id === user._id)) {
+            job.status = 'rejected';
+          } else if (job.applicants.some(applicant => applicant._id === user._id)) {
+            job.status = 'applied';
+          } else {
+            job.status = 'not applied';
+          }
+          return job;
+        });
+    
         setJobs(data);
         setLoaded(true);
       } catch (error) {
-        // console.error('Error:', error);
         setError('Failed to load jobs. Please try again later.');
       }
     };
-
+    
     fetchJobs();
   }, []);
 
