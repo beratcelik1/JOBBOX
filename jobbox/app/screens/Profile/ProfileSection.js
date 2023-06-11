@@ -3,155 +3,8 @@ import { View, Text, TextInput, Button, StyleSheet, TouchableOpacity} from 'reac
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import { Ionicons } from '@expo/vector-icons';
 import { DefaultTheme, Provider as PaperProvider } from 'react-native-paper';
-
-// const styles = StyleSheet.create({
-//   button2: {
-//     flexDirection: 'row',
-//     alignItems: 'center',
-//     justifyContent: 'center', 
-//     marginHorizontal: 5,
-//     marginLeft: 10,
-//     backgroundColor: '#4683fc',
-//     paddingTop: 8,
-//     paddingBottom: 8,
-//     paddingLeft: 10,
-//     paddingRight: 15,
-//     borderRadius: 10,
-//     shadowColor: '#000',
-//     shadowOffset: {
-//       width: 0,
-//       height: 2,
-//     },
-//     shadowOpacity: 0.25,
-//     shadowRadius: 3.84,
-//     elevation: 5,
-//     width: '50%',
-//   }, 
-//   buttonDel: {
-//     flexDirection: 'row',
-//     alignItems: 'center',
-//     justifyContent: 'center', 
-//     marginHorizontal: 5,
-//     marginLeft: 10,
-//     backgroundColor: '#eb5c52',
-//     paddingTop: 8,
-//     paddingBottom: 8,
-//     paddingLeft: 10,
-//     paddingRight: 15,
-//     borderRadius: 10,
-//     shadowColor: '#000',
-//     shadowOffset: {
-//       width: 0,
-//       height: 2,
-//     },
-//     shadowOpacity: 0.25,
-//     shadowRadius: 3.84,
-//     elevation: 5,
-//     width: '50%',
-//   },
-// });
-const styles = StyleSheet.create({
-  input: {
-      marginBottom: 10,
-      backgroundColor: '#fff',
-      borderColor: '#ccc',
-      borderWidth: 1,
-      borderRadius: 10, 
-      paddingHorizontal: 15, 
-      paddingVertical: 10,
-      fontSize: 18, 
-      color: '#333',
-      shadowColor: '#000',
-      shadowOffset: { width: 0, height: 2 },
-      shadowOpacity: 0.23,
-      shadowRadius: 6.62,
-      elevation: 4, 
-  },
-  container: {
-      flex: 1,
-      padding: 20,
-  },
-  title: {
-      fontSize: 25, 
-      fontWeight: 'bold',
-      marginBottom: 10, 
-      color: '#4683FC' 
-  },
-  text: {
-      fontSize: 15, 
-      marginBottom: 10, 
-  },
-  card: {
-      backgroundColor: '#fff',
-      padding: 20, 
-      marginBottom: 20, 
-      borderRadius: 10, 
-      
-  }, 
-  
-  //   button2: {
-//     flexDirection: 'row',
-//     alignItems: 'center',
-//     justifyContent: 'center', 
-//     marginHorizontal: 5,
-//     marginLeft: 10,
-//     backgroundColor: '#4683fc',
-//     paddingTop: 8,
-//     paddingBottom: 8,
-//     paddingLeft: 10,
-//     paddingRight: 15,
-//     borderRadius: 10,
-    
-//     width: '50%',
-//   }, 
-
-  button2: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      justifyContent: 'center',
-      marginHorizontal: 5,
-      marginLeft: 10,
-      backgroundColor: '#4683fc',
-      paddingTop: 12, 
-      paddingBottom: 12,
-      paddingLeft: 15,
-      paddingRight: 20,
-      borderRadius: 10, 
-      shadowColor: '#000',
-      shadowOffset: {
-        width: 0,
-        height: 2,
-      },
-      shadowOpacity: 0.25,
-      shadowRadius: 15.84,
-      elevation: 5,
-      width: '60%', 
-  },
-  buttonDel: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      justifyContent: 'center',
-      marginHorizontal: 5,
-      marginLeft: 10,
-      backgroundColor: '#eb5c52',
-      paddingTop: 12,
-      paddingBottom: 12,
-      paddingLeft: 15,
-      paddingRight: 20,
-      borderRadius: 10,
-      shadowColor: '#000',
-      shadowOffset: {
-        width: 0,
-        height: 2,
-      },
-      shadowOpacity: 0.25,
-      shadowRadius: 15.84,
-      elevation: 5,
-      width: '60%', 
-  },
-});
-
 
 const ProfileSection = ({ route, navigation }) => {
   const { section } = route.params;
@@ -358,7 +211,7 @@ const ProfileSection = ({ route, navigation }) => {
                   /> 
                   <View style={{ alignItems: 'center'}}> 
                     <TouchableOpacity style={styles.buttonDel} onPress={() => handleDeleteExperience(index)}>
-                        <Ionicons name="trash-outline" size={24} color="#fff" />
+                        <Ionicons name="trash-outline" size={15} color="#fff" />
                         <Text style={{ color: 'white', marginLeft: 5 }}>Delete </Text>
                     </TouchableOpacity>
                   </View>
@@ -432,7 +285,7 @@ const ProfileSection = ({ route, navigation }) => {
             /> 
             <View style={{ alignItems: 'center'}}> 
               <TouchableOpacity style={styles.buttonDel} onPress={() => handleDeleteEducation(index)} >
-                  <Ionicons name="trash-outline" size={24} color="#fff" />
+                  <Ionicons name="trash-outline" size={15} color="#fff" />
                   <Text style={{ color: 'white', marginLeft: 5 }}>Delete </Text>
               </TouchableOpacity>
             </View>
@@ -467,16 +320,24 @@ const ProfileSection = ({ route, navigation }) => {
               }}
             /> 
             <View style={{ alignItems: 'center'}}> 
-              <TouchableOpacity style={styles.buttonDel} onPress={() => handleDeleteEducation(index)} >
-                  <Ionicons name="trash-outline" size={24} color="#fff" />
+              <TouchableOpacity style={styles.buttonDel} onPress={() => handleDeleteSkills(index)} >
+                  <Ionicons name="trash-outline" size={15} color="#fff" />
                   <Text style={{ color: 'white', marginLeft: 5 }}>Delete </Text>
               </TouchableOpacity>
             </View>
 
             {/* <Button title="Delete" onPress={() => handleDeleteSkills(index)} /> */}
             </React.Fragment>
-          ))}
-          <Button title="Add Skill" onPress={addSkill} />
+          ))} 
+
+          <View style={{ alignItems: 'center'}}> 
+              <TouchableOpacity style={styles.button2} onPress={addSkill} >
+                  <Ionicons name="add-circle" size={15} color="#fff" />
+                  <Text style={{ color: 'white', marginLeft: 5 }}>Add Skills</Text>
+              </TouchableOpacity>
+            </View>
+
+          {/* <Button title="Add Skill" onPress={addSkill} /> */}
         </React.Fragment>
       )
       : null
@@ -526,8 +387,14 @@ const ProfileSection = ({ route, navigation }) => {
                   return updatedRecs;
                 });
               }}
-            />
-            <Button title="Delete" onPress={() => handleDeleteRecommendations(index)} />
+            /> 
+            <View style={{ alignItems: 'center'}}> 
+              <TouchableOpacity style={styles.buttonDel} onPress={() => handleDeleteRecommendations(index)} >
+                  <Ionicons name="trash-outline" size={15} color="#fff" />
+                  <Text style={{ color: 'white', marginLeft: 5 }}>Delete </Text>
+              </TouchableOpacity>
+            </View>
+            {/* <Button title="Delete" onPress={() => handleDeleteRecommendations(index)} /> */}
           </React.Fragment>
         ))}
         <Button title="Add Recommendation" onPress={addRecommendation} />
@@ -535,9 +402,14 @@ const ProfileSection = ({ route, navigation }) => {
     )
     : null
 }
+      <View style={{ alignItems: 'center'}}> 
+          <TouchableOpacity style={styles.buttonSave} onPress={handleSave} >
+              <Ionicons name="save-outline" size={15} color="#fff" />
+              <Text style={{ color: 'white', marginLeft: 5 }}>Save </Text>
+          </TouchableOpacity>
+      </View>
 
-
-        <Button title="Save" onPress={handleSave} />
+        {/* <Button title="Save" onPress={handleSave} /> */}
       </View>
     );
   }
@@ -559,6 +431,116 @@ const ProfileSection = ({ route, navigation }) => {
 
     </View>
   );
-};
+}; 
+
+
+const styles = StyleSheet.create({
+  input: {
+      marginBottom: 10,
+      backgroundColor: '#fff',
+      borderColor: '#ccc',
+      borderWidth: 1,
+      borderRadius: 10, 
+      paddingHorizontal: 15, 
+      paddingVertical: 10,
+      fontSize: 18, 
+      color: '#333',
+      shadowColor: '#000',
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.23,
+      shadowRadius: 6.62,
+      elevation: 4, 
+  },
+  container: {
+      flex: 1,
+      padding: 20,
+  },
+  title: {
+      fontSize: 25, 
+      fontWeight: 'bold',
+      marginBottom: 10, 
+      color: '#4683FC' 
+  },
+  text: {
+      fontSize: 15, 
+      marginBottom: 10, 
+  },
+  card: {
+      backgroundColor: '#fff',
+      padding: 20, 
+      marginBottom: 20, 
+      borderRadius: 10, 
+      
+  }, 
+  button2: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+      marginHorizontal: 5,
+      marginLeft: 10,
+      backgroundColor: '#4683fc',
+      paddingTop: 12, 
+      paddingBottom: 12,
+      paddingLeft: 15,
+      paddingRight: 20,
+      borderRadius: 10, 
+      shadowColor: '#000',
+      shadowOffset: {
+        width: 0,
+        height: 2,
+      },
+      shadowOpacity: 0.25,
+      shadowRadius: 15.84,
+      elevation: 5,
+      width: '60%', 
+  },
+  buttonDel: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+      marginHorizontal: 5,
+      marginLeft: 10,
+      marginBottom: 10,
+      backgroundColor: '#eb5c52',
+      paddingTop: 12,
+      paddingBottom: 12,
+      paddingLeft: 15,
+      paddingRight: 20,
+      borderRadius: 10,
+      shadowColor: '#000',
+      shadowOffset: {
+        width: 0,
+        height: 2,
+      },
+      shadowOpacity: 0.25,
+      shadowRadius: 15.84,
+      elevation: 5,
+      width: '60%', 
+  }, 
+  buttonSave: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginHorizontal: 5,
+    marginLeft: 10,
+    marginTop: 10,
+    marginBottom: 10,
+    backgroundColor: '#5ec949',
+    paddingTop: 12,
+    paddingBottom: 12,
+    paddingLeft: 15,
+    paddingRight: 20,
+    borderRadius: 10,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 15.84,
+    elevation: 5,
+    width: '60%', 
+},
+});
 
 export default ProfileSection;
