@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, Button, StyleSheet } from 'react-native';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import FloatingEditButton from '../../components/FloatingEditButton';
+import ExperienceCard from '../../components/ExperienceCard';
 
 const styles = StyleSheet.create({
   container: {
@@ -384,11 +386,34 @@ const ProfileSection = ({ route, navigation }) => {
     );
   }
 
+
+  let section_content="";
+  switch (section.title) {
+    case 'About':
+      section_content=(<Text style={styles.text}>{section.text}</Text>)
+      break;
+      case 'Experience': 
+      section_content = (<Text style={styles.text}>{section.text}</Text>)
+      console.log(e)
+      break;
+      case 'Education':
+        section_content=(<Text style={styles.text}>{section.text}</Text>)
+      break;
+      case 'Skills':
+        section_content=(<Text style={styles.text}>{section.text}</Text>)
+        break;
+    case 'Recommendations':
+      section_content=(<Text style={styles.text}>{section.text}</Text>)
+      break;
+    default:
+      break;
+  }
   return (
     <View style={styles.container}>
       <Text style={styles.title}>{section.title}</Text>
       <Text style={styles.text}>{section.text}</Text>
-      <Button title="Edit" onPress={handleEdit} />
+      {section_content}
+      <FloatingEditButton onPress={handleEdit}/>
     </View>
   );
 };
