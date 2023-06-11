@@ -221,10 +221,11 @@ const ProfileSection = ({ route, navigation }) => {
                 ))} 
                 <View style={{ alignItems: 'center'}}> 
                   <TouchableOpacity style={styles.button2} onPress={addExperience}>
-                      <Icon name="edit" size={15} color="#fff" />
+                      <Icon name="add-circle" size={15} color="#fff" />
                       <Text style={{ color: 'white', marginLeft: 5 }}>Add Experience </Text>
                   </TouchableOpacity>
                 </View>
+
               </React.Fragment>
             )
             : (
@@ -292,8 +293,15 @@ const ProfileSection = ({ route, navigation }) => {
 
             {/* <Button title="Delete" onPress={() => handleDeleteEducation(index)} /> */}
           </React.Fragment>
-        ))}
-        <Button title="Add Education" onPress={addEducation} />
+        ))} 
+
+          <View style={{ alignItems: 'center'}}> 
+              <TouchableOpacity style={styles.button2} onPress={addEducation} >
+                  <Ionicons name="add-circle" size={15} color="#fff" />
+                  <Text style={{ color: 'white', marginLeft: 5 }}>Add Education</Text>
+              </TouchableOpacity>
+            </View>
+        {/* <Button title="Add Education" onPress={addEducation} /> */}
       </React.Fragment>
       
     )
@@ -396,8 +404,15 @@ const ProfileSection = ({ route, navigation }) => {
             </View>
             {/* <Button title="Delete" onPress={() => handleDeleteRecommendations(index)} /> */}
           </React.Fragment>
-        ))}
-        <Button title="Add Recommendation" onPress={addRecommendation} />
+        ))} 
+
+        <View style={{ alignItems: 'center'}}> 
+              <TouchableOpacity style={styles.button2} onPress={addRecommendation} >
+                  <Ionicons name="add-circle" size={15} color="#fff" />
+                  <Text style={{ color: 'white', marginLeft: 5 }}>Add Recommendation</Text>
+              </TouchableOpacity>
+        </View>
+        {/* <Button title="Add Recommendation" onPress={addRecommendation} /> */}
       </React.Fragment>
     )
     : null
