@@ -3,7 +3,7 @@ import { View, Text, TextInput, Button, StyleSheet } from 'react-native';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import FloatingEditButton from '../../components/FloatingEditButton';
-import ExperienceCard from '../../components/ExperienceCard';
+import JobExperienceCard from '../../components/JobExperienceCard';
 
 const styles = StyleSheet.create({
   container: {
@@ -165,7 +165,8 @@ const ProfileSection = ({ route, navigation }) => {
   
       // after the section is successfully updated on the server, navigate back to Profile
       if (response.status === 200) {
-        navigation.goBack();
+        //navigation.goBack();
+        setEditing(false);
       }
   
       setEditing(false);
@@ -393,8 +394,15 @@ const ProfileSection = ({ route, navigation }) => {
       section_content=(<Text style={styles.text}>{section.text}</Text>)
       break;
       case 'Experience': 
-      section_content = (<Text style={styles.text}>{section.text}</Text>)
-      console.log(e)
+      //section_content = (<JobExperienceCard position={section.data[0].position} company={section.data[0].company}/>)
+      section_content=(<JobExperienceCard position={section.data[0].position} company={section.data[0].company}/>)
+      section_content=section.data.map((experience, index) => (
+        <JobExperienceCard
+          key={index}
+          position={experience.position}
+          company={experience.company}
+        />
+      ))
       break;
       case 'Education':
         section_content=(<Text style={styles.text}>{section.text}</Text>)
