@@ -1,29 +1,157 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, Button, StyleSheet } from 'react-native';
+import { View, Text, TextInput, Button, StyleSheet, TouchableOpacity} from 'react-native';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import Icon from 'react-native-vector-icons/MaterialIcons';
+import { DefaultTheme, Provider as PaperProvider } from 'react-native-paper';
 
+// const styles = StyleSheet.create({
+//   button2: {
+//     flexDirection: 'row',
+//     alignItems: 'center',
+//     justifyContent: 'center', 
+//     marginHorizontal: 5,
+//     marginLeft: 10,
+//     backgroundColor: '#4683fc',
+//     paddingTop: 8,
+//     paddingBottom: 8,
+//     paddingLeft: 10,
+//     paddingRight: 15,
+//     borderRadius: 10,
+//     shadowColor: '#000',
+//     shadowOffset: {
+//       width: 0,
+//       height: 2,
+//     },
+//     shadowOpacity: 0.25,
+//     shadowRadius: 3.84,
+//     elevation: 5,
+//     width: '50%',
+//   }, 
+//   buttonDel: {
+//     flexDirection: 'row',
+//     alignItems: 'center',
+//     justifyContent: 'center', 
+//     marginHorizontal: 5,
+//     marginLeft: 10,
+//     backgroundColor: '#eb5c52',
+//     paddingTop: 8,
+//     paddingBottom: 8,
+//     paddingLeft: 10,
+//     paddingRight: 15,
+//     borderRadius: 10,
+//     shadowColor: '#000',
+//     shadowOffset: {
+//       width: 0,
+//       height: 2,
+//     },
+//     shadowOpacity: 0.25,
+//     shadowRadius: 3.84,
+//     elevation: 5,
+//     width: '50%',
+//   },
+// });
 const styles = StyleSheet.create({
+  input: {
+      marginBottom: 10,
+      backgroundColor: '#fff',
+      borderColor: '#ccc',
+      borderWidth: 1,
+      borderRadius: 10, 
+      paddingHorizontal: 15, 
+      paddingVertical: 10,
+      fontSize: 18, 
+      color: '#333',
+      shadowColor: '#000',
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.23,
+      shadowRadius: 6.62,
+      elevation: 4, 
+  },
   container: {
-    flex: 1,
-    padding: 20,
+      flex: 1,
+      padding: 20,
   },
   title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 20,
+      fontSize: 25, 
+      fontWeight: 'bold',
+      marginBottom: 10, 
+      color: '#4683FC' 
   },
   text: {
-    fontSize: 16,
+      fontSize: 15, 
+      marginBottom: 10, 
   },
-  input: {
-    height: 40,
-    borderColor: 'gray',
-    borderWidth: 1,
-    marginBottom: 20,
-    paddingLeft: 10,
+  card: {
+      backgroundColor: '#fff',
+      padding: 20, 
+      marginBottom: 20, 
+      borderRadius: 10, 
+      
+  }, 
+  
+  //   button2: {
+//     flexDirection: 'row',
+//     alignItems: 'center',
+//     justifyContent: 'center', 
+//     marginHorizontal: 5,
+//     marginLeft: 10,
+//     backgroundColor: '#4683fc',
+//     paddingTop: 8,
+//     paddingBottom: 8,
+//     paddingLeft: 10,
+//     paddingRight: 15,
+//     borderRadius: 10,
+    
+//     width: '50%',
+//   }, 
+
+  button2: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+      marginHorizontal: 5,
+      marginLeft: 10,
+      backgroundColor: '#4683fc',
+      paddingTop: 12, 
+      paddingBottom: 12,
+      paddingLeft: 15,
+      paddingRight: 20,
+      borderRadius: 10, 
+      shadowColor: '#000',
+      shadowOffset: {
+        width: 0,
+        height: 2,
+      },
+      shadowOpacity: 0.25,
+      shadowRadius: 15.84,
+      elevation: 5,
+      width: '60%', 
+  },
+  buttonDel: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+      marginHorizontal: 5,
+      marginLeft: 10,
+      backgroundColor: '#eb5c52',
+      paddingTop: 12,
+      paddingBottom: 12,
+      paddingLeft: 15,
+      paddingRight: 20,
+      borderRadius: 10,
+      shadowColor: '#000',
+      shadowOffset: {
+        width: 0,
+        height: 2,
+      },
+      shadowOpacity: 0.25,
+      shadowRadius: 15.84,
+      elevation: 5,
+      width: '60%', 
   },
 });
+
 
 const ProfileSection = ({ route, navigation }) => {
   const { section } = route.params;
@@ -52,7 +180,13 @@ const ProfileSection = ({ route, navigation }) => {
       : [{ name: '', relationship: '', recommendation: '' }]
   );
   
-  
+  const theme = {
+    ...DefaultTheme,
+    colors: {
+      ...DefaultTheme.colors,
+      primary: '#4683FC', // change the primary color to blue
+    },
+  };  
   
   useEffect(() => {
     if (section.title === 'About') {
@@ -112,7 +246,6 @@ const ProfileSection = ({ route, navigation }) => {
     setRecommendations(updatedRecommendations);
   };
   
-  
   const addExperience = () => {
     setExperience(prevExperience => [...prevExperience, {position: '', company: ''}]);
   };
@@ -127,9 +260,7 @@ const ProfileSection = ({ route, navigation }) => {
 
   const addRecommendation = () => {
     setRecommendations(prevRecommendations => [...prevRecommendations, { name: '', relationship: '', recommendation: '' }]);
-  };
-
-  
+  }; 
 
   const handleSave = async () => {
     try {
@@ -180,10 +311,11 @@ const ProfileSection = ({ route, navigation }) => {
         {
           section.title === 'About'
             ? (
-              <React.Fragment>
-                <Text style={styles.text}>About:</Text>
+              <React.Fragment> 
+                <View style={{ borderBottomColor: '#000', borderBottomWidth: 1.5, marginBottom: 15}}/>  
                 <TextInput
                 style={styles.input}
+                theme={theme}
                 value={text}
                 placeholder='About text'
                 onChangeText={setText}
@@ -223,11 +355,23 @@ const ProfileSection = ({ route, navigation }) => {
                         return updatedExperience;
                       });
                     }}
-                  />
-                   <Button title="Delete" onPress={() => handleDeleteExperience(index)} />
+                  /> 
+                  <View style={{ alignItems: 'center'}}> 
+                    <TouchableOpacity style={styles.buttonDel} onPress={() => handleDeleteExperience(index)}>
+                        <Ionicons name="trash-outline" size={24} color="#fff" />
+                        <Text style={{ color: 'white', marginLeft: 5 }}>Delete </Text>
+                    </TouchableOpacity>
+                  </View>
+                  
+                   {/* <Button title="Delete" onPress={() => handleDeleteExperience(index)} /> */}
                   </React.Fragment>
-                ))}
-                <Button title="Add Experience" onPress={addExperience} />
+                ))} 
+                <View style={{ alignItems: 'center'}}> 
+                  <TouchableOpacity style={styles.button2} onPress={addExperience}>
+                      <Icon name="edit" size={15} color="#fff" />
+                      <Text style={{ color: 'white', marginLeft: 5 }}>Add Experience </Text>
+                  </TouchableOpacity>
+                </View>
               </React.Fragment>
             )
             : (
@@ -285,8 +429,15 @@ const ProfileSection = ({ route, navigation }) => {
                 updatedEducation[index].university = text;
                 setEducation(updatedEducation);
               }}
-            />
-            <Button title="Delete" onPress={() => handleDeleteEducation(index)} />
+            /> 
+            <View style={{ alignItems: 'center'}}> 
+              <TouchableOpacity style={styles.buttonDel} onPress={() => handleDeleteEducation(index)} >
+                  <Ionicons name="trash-outline" size={24} color="#fff" />
+                  <Text style={{ color: 'white', marginLeft: 5 }}>Delete </Text>
+              </TouchableOpacity>
+            </View>
+
+            {/* <Button title="Delete" onPress={() => handleDeleteEducation(index)} /> */}
           </React.Fragment>
         ))}
         <Button title="Add Education" onPress={addEducation} />
@@ -314,8 +465,15 @@ const ProfileSection = ({ route, navigation }) => {
                   return updatedSkills;
                 });
               }}
-            />
-            <Button title="Delete" onPress={() => handleDeleteSkills(index)} />
+            /> 
+            <View style={{ alignItems: 'center'}}> 
+              <TouchableOpacity style={styles.buttonDel} onPress={() => handleDeleteEducation(index)} >
+                  <Ionicons name="trash-outline" size={24} color="#fff" />
+                  <Text style={{ color: 'white', marginLeft: 5 }}>Delete </Text>
+              </TouchableOpacity>
+            </View>
+
+            {/* <Button title="Delete" onPress={() => handleDeleteSkills(index)} /> */}
             </React.Fragment>
           ))}
           <Button title="Add Skill" onPress={addSkill} />
@@ -386,9 +544,19 @@ const ProfileSection = ({ route, navigation }) => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>{section.title}</Text>
-      <Text style={styles.text}>{section.text}</Text>
-      <Button title="Edit" onPress={handleEdit} />
+      <Text style={styles.title}>{section.title}</Text>  
+      <View style={{ borderBottomColor: '#000', borderBottomWidth: 1.5, marginBottom: 15}}/>  
+      <View style={styles.card}> 
+        <Text style={styles.text}>{section.text}</Text>
+      </View> 
+
+      <View style={{ alignItems: 'center'}}> 
+        <TouchableOpacity style={styles.button2} onPress={handleEdit}>
+            <Icon name="edit" size={15} color="#fff" />
+            <Text style={{ color: 'white', marginLeft: 5 }}>Edit {section.title}</Text>
+        </TouchableOpacity>
+      </View>
+
     </View>
   );
 };
