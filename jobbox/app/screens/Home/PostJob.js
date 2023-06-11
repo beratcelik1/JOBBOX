@@ -177,18 +177,15 @@ export default function PostJob({ navigation, route }) {
       .then((data) => console.log(data))
       .catch((error) => console.error('Error:', error));
 
-    showMessage({
-      message: !template
-        ? 'Your request has been sent!'
-        : 'Your job is posted!',
-      description:
-        !template &&
-        'you will get a notification when your job post is approved.',
-      type: 'info',
-      floating: true,
-      icon: 'success',
-      duration: 3000,
-    });
+      showMessage({
+        message: !template? 'Your request has been sent!': 'Your job is posted!',
+        description: !template ? 'you will get a notification when your job post is approved.' : '',
+        type: 'info',
+        floating: true,
+        icon: 'success',
+        duration: 3000,
+      });
+      
     navigation.navigate('HireScreen');
   };
 

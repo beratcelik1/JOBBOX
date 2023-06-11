@@ -49,29 +49,28 @@ function StatusScreen() {
         Alert.alert('Error', 'Could not retrieve user information. Please try again later.');
         return;
       }
-
       // Fetch the jobs from your server
       try {
         const response = await fetch('http://tranquil-ocean-74659.herokuapp.com/jobs/user/jobs', {
           headers: { Authorization: `Bearer ${token}` },
         });
-        
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
-
         const data = await response.json();
-        setJobs(data);
+        
+        // Filter the jobs to include only 'applied' and 'hired' jobs
+        const relevantJobs = data.filter(job => ['applied', 'hired'].includes(job.status));
+        
+        setJobs(relevantJobs);
         setLoaded(true);
       } catch (error) {
-        // console.error('Error:', error);
         setError('Failed to load jobs. Please try again later.');
       }
     };
-
     fetchJobs();
   }, []);
-
+  
     const renderJob = ({ item }) => {
         // Provide JSX to render each job in the list
         return (

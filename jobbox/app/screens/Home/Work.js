@@ -57,7 +57,7 @@ function WorkScreen({ navigation }) {
             .then(response => response.json())
             .then(data => {
                 // Update this line to prepend the new data
-                setJobs(data);
+                setJobs(data.reverse());
                 setIsLoading(false);
                 setRefreshing(false);
             })
@@ -123,7 +123,10 @@ function WorkScreen({ navigation }) {
             setIsLoading(true);
             fetch(`http://tranquil-ocean-74659.herokuapp.com/jobs/search?search=${searchQuery}`)
                 .then(response => response.json())
-                .then(data => setJobs(data))
+                .then(data => {
+                    // Reverse the array before setting the state
+                    setJobs(data.reverse());
+                  })
                 .catch(error => console.error('Error:', error));
         } else {
             fetchJobs();
@@ -147,7 +150,10 @@ function WorkScreen({ navigation }) {
       
           fetch(`http://tranquil-ocean-74659.herokuapp.com/jobs/?${query}`)
           .then(response => response.json())
-          .then(data => setJobs(data))
+          .then(data => {
+            // Reverse the array before setting the state
+            setJobs(data.reverse());
+          })
           .catch(error => console.error('Error:', error));
       };      
 
@@ -304,6 +310,30 @@ function JobDetailScreen({ route, navigation }) {
           // Fetch the token from the async storage
           const token = await AsyncStorage.getItem('token');
       
+          // Fetch the user details from the server to get the userId
+          const userResponse = await fetch('http://tranquil-ocean-74659.herokuapp.com/users/me', {
+            headers: {
+              'Authorization': `Bearer ${token}`,
+            },
+          });
+          if (!userResponse.ok) {
+            throw new Error(`HTTP error while fetching user details! status: ${userResponse.status}`);
+          }
+          const user = await userResponse.json();
+      
+          // If the current user is the one who posted the job, do not let them apply
+          if (user._id === job.userId) {
+            showMessage({
+              message: "You cannot apply for a job you posted!",
+              type: "danger",
+              icon: "danger",
+              duration: 3000,
+              hideOnPress: true,
+              floating: true,
+            });
+            return;
+          }
+      
           // Send the POST request to apply for the job
           const response = await fetch(`http://tranquil-ocean-74659.herokuapp.com/jobs/apply/${job._id}`, {
             method: 'POST',
@@ -319,7 +349,7 @@ function JobDetailScreen({ route, navigation }) {
           } else {
             const data = await response.json();
             console.log(data);
-            
+      
             // Show a success message if application is successful
             showMessage({
               message: "You have successfully applied for this job!",
@@ -344,6 +374,7 @@ function JobDetailScreen({ route, navigation }) {
           });
         }
     };
+      
       
     return (
         <View style={styles.container2}> 
@@ -415,9 +446,6 @@ function JobDetailScreen({ route, navigation }) {
                 > 
                     <Text style={styles.buttonText2}> Apply For Job </Text>
                 </TouchableOpacity>
-
-
-
             </View>
         </View>);}
 

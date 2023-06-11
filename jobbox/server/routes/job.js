@@ -310,43 +310,43 @@ router.get('/:jobId', async (req, res) => {
       }
       res.send(job);
   } catch (error) {
-      res.status(500).send(error);
+      res.status(500).send(error); 
   }
 });
 
 // handle apply job
-router.post('/apply', async (req, res) => {
-  const { jobId, userId } = req.body;
+// router.post('/apply', async (req, res) => {
+//   const { jobId, userId } = req.body;
 
-  try {
-    const job = await Job.findByIdAndUpdate(
-      jobId,
-      { $addToSet: { applicants: userId } },
-      { new: true }  // Returns the updated document
-    );
+//   try {
+//     const job = await Job.findByIdAndUpdate(
+//       jobId,
+//       { $addToSet: { applicants: userId } },
+//       { new: true }  // Returns the updated document
+//     );
 
-    if (!job) {
-      return res.status(404).send({ message: "Job not found" });
-    }
+//     if (!job) {
+//       return res.status(404).send({ message: "Job not found" });
+//     }
 
-    // Add job application to the user document
-    const user = await User.findByIdAndUpdate(
-      userId,
-      { $addToSet: { jobApplications: { job: jobId, status: 'applied' } } },
-      { new: true }  // Returns the updated document
-    );
+//     // Add job application to the user document
+//     const user = await User.findByIdAndUpdate(
+//       userId,
+//       { $addToSet: { jobApplications: { job: jobId, status: 'applied' } } },
+//       { new: true }  // Returns the updated document
+//     );
 
-    if (!user) {
-      return res.status(404).send({ message: "User not found" });
-    }
+//     if (!user) {
+//       return res.status(404).send({ message: "User not found" });
+//     }
 
-    console.log(job);
-    res.send(job);
-  } catch (err) {
-    console.error(err);
-    res.status(500).send({ message: "Server error" });
-  }
-});
+//     console.log(job);
+//     res.send(job);
+//   } catch (err) {
+//     console.error(err);
+//     res.status(500).send({ message: "Server error" });
+//   }
+// });
 
 
 // Reject an applicant
@@ -457,8 +457,6 @@ router.post('/hire/:jobId/:userId', async (req, res) => {
   }
 });
 
-
- 
 router.get('/user/:userId/jobs', authenticate, async (req, res) => {
   try {
     const user = await User.findById(req.params.userId);
