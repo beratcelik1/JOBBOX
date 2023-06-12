@@ -35,6 +35,27 @@ router.post('/signup', async (req, res) => {
     console.error('Error during signup:', error);
     res.status(500).json({ message: 'Error during signup' });
   }
+
+  // create new user
+  user = new User({ firstname, lastname, email, password });
+
+  // save user and return token
+  await user.save();
+  const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: '1d' });
+
+
+  const tokenEmail = await new Token({
+    userId: user._id,
+    token: crypto.randomBytes(32).toString("hex")
+  }).save();
+
+  const url = `${process.env.BASE_URL}users/${user._id}/verify/${tokenEmail.token}`;
+
+  await sendEmail(user.email, "Verify Email", url);
+
+
+  console.log('Response:', { token });
+  res.status(201).json({ token });
 });
 
 
