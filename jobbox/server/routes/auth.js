@@ -7,33 +7,13 @@ const Notification = require('../models/Notification');
 
 const router = express.Router();
 
-const Token = require("../models/token");
-const sendEmail = require("../utils/sendEmail");
-const crypto = require("crypto");
-
-
 router.post('/signup', async (req, res) => {
-  try {
-    const { firstname, lastname, email, password } = req.body;
+  const { firstname, lastname, email, password } = req.body;
 
-    // check if user already exists
-    let user = await User.findOne({ email });
-    if (user) {
-      return res.status(400).json({ message: 'User already exists' });
-    }
-
-    // create new user
-    user = new User({ firstname, lastname, email, password });
-
-    // save user and return token
-    await user.save();
-    const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: '1d' });
-
-    console.log('Response:', { token });
-    res.status(201).json({ token });
-  } catch (error) {
-    console.error('Error during signup:', error);
-    res.status(500).json({ message: 'Error during signup' });
+  // check if user already exists
+  let user = await User.findOne({ email });
+  if (user) {
+    return res.status(400).json({ message: 'User already exists' });
   }
 
   // create new user
@@ -42,22 +22,9 @@ router.post('/signup', async (req, res) => {
   // save user and return token
   await user.save();
   const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: '1d' });
-
-
-  const tokenEmail = await new Token({
-    userId: user._id,
-    token: crypto.randomBytes(32).toString("hex")
-  }).save();
-
-  const url = `${process.env.BASE_URL}users/${user._id}/verify/${tokenEmail.token}`;
-
-  await sendEmail(user.email, "Verify Email", url);
-
-
   console.log('Response:', { token });
   res.status(201).json({ token });
 });
-
 
 router.post('/login', async (req, res) => {
     const { email, password } = req.body;
@@ -76,20 +43,6 @@ router.post('/login', async (req, res) => {
         return res.status(400).send({ error: 'Invalid login credentials' });
     }
 
-    // if (!user.verified) {
-    //   let token = await Token.findOne({userId: user._id});
-    //   if(!token) {
-    //     tokenEmail = await new Token({
-    //       userId: user._id,
-    //       token: crypto.randomBytes(32).toString("hex")
-    //     }).save();
-      
-    //     const url = `${process.env.BASE_URL}users/${user._id}/verify/${tokenEmail.token}`;
-      
-    //     await sendEmail(user.email, "Verify Email", url);
-    //   }
-    //   return res.status(400).send({message: 'An Email sent to your account please verify'});
-    // }
     // create and return jwt
     const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: '1d' });
     console.log('Response:', { token });
@@ -277,28 +230,5 @@ router.delete('/notifications/:notificationId', async (req, res) => {
     res.status(500).send({ error: err.message });
   }
 });
-
-// verification route
-router.get("/:id/verify/:token", async(req,res) => {
-  try{
-    const user = await User.findOne({_id: req.params.id});
-    if (!user) return res.status(400).send({message: "Invalid user + link"});
-
-    const token = await Token.findOne({
-      userId:user._id,
-      token: req.params.token
-    });
-
-    if(!token) return res.status(400).send({message: "invalid link"});
-
-    await User.updateOne({_id: user._id, verified: true});
-    await token.remove();
-
-    res.status(200).send({ message: "Email verified successfully"});
-  } catch (error) {
-    res.status(500).send({message: "server error"});
-  }
-  }
-);
 
 module.exports = router;
