@@ -172,7 +172,7 @@ const ProfileSection = ({ route, navigation }) => {
         setEditing(false);
       }
   
-      setEditing(false);
+      //setEditing(false);
     } catch (err) {
       console.error("Failed to update profile section: ", err);
     }
