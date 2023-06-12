@@ -4,7 +4,7 @@ import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import FloatingEditButton from '../../components/FloatingEditButton';
 import JobExperienceCard from '../../components/JobExperienceCard';
-
+import EducationCard from '../../components/EducationCard';
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -394,8 +394,6 @@ const ProfileSection = ({ route, navigation }) => {
       section_content=(<Text style={styles.text}>{section.text}</Text>)
       break;
       case 'Experience': 
-      //section_content = (<JobExperienceCard position={section.data[0].position} company={section.data[0].company}/>)
-      section_content=(<JobExperienceCard position={section.data[0].position} company={section.data[0].company}/>)
       section_content=section.data.map((experience, index) => (
         <JobExperienceCard
           key={index}
@@ -405,7 +403,15 @@ const ProfileSection = ({ route, navigation }) => {
       ))
       break;
       case 'Education':
-        section_content=(<Text style={styles.text}>{section.text}</Text>)
+        section_content=section.data.map((education, index) => (
+          <EducationCard
+            key={index}
+            university={education.university}
+            degree={education.degree}
+            major={education.major}
+            date={education.date}
+          />
+        ))
       break;
       case 'Skills':
         section_content=(<Text style={styles.text}>{section.text}</Text>)

@@ -5,7 +5,7 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 const FloatingEditButton = ({ onPress }) => {
   return (
     <TouchableOpacity style={styles.floatingEditButton} onPress={onPress}>
-      <Icon name="pencil" size={24} color="#ffffff" />
+      <Icon name="pencil" size={30} color="#ffffff" />
     </TouchableOpacity>
   );
 };
@@ -13,11 +13,11 @@ const FloatingEditButton = ({ onPress }) => {
 const styles = StyleSheet.create({
   floatingEditButton: {
     position: 'absolute',
-    bottom: 40,
-    right: 40,
-    width: 50,
-    height: 50,
-    borderRadius: 25,
+    bottom: 50,
+    right: 50,
+    width: 70,
+    height: 70,
+    borderRadius: 35,
     backgroundColor: '#4683fc',
     justifyContent: 'center',
     alignItems: 'center',
