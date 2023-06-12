@@ -5,6 +5,9 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import FloatingEditButton from '../../components/FloatingEditButton';
 import JobExperienceCard from '../../components/JobExperienceCard';
 import EducationCard from '../../components/EducationCard';
+import PlainCard from '../../components/PlainCard';
+import BubbleTextList from '../../components/BubbleTextList';
+import RecommendationCard from '../../components/ReccomendationCard'
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -388,10 +391,10 @@ const ProfileSection = ({ route, navigation }) => {
   }
 
 
-  let section_content="";
+  let section_content;
   switch (section.title) {
     case 'About':
-      section_content=(<Text style={styles.text}>{section.text}</Text>)
+      section_content=(<PlainCard content={section.text}/>)
       break;
       case 'Experience': 
       section_content=section.data.map((experience, index) => (
@@ -414,18 +417,27 @@ const ProfileSection = ({ route, navigation }) => {
         ))
       break;
       case 'Skills':
-        section_content=(<Text style={styles.text}>{section.text}</Text>)
+        section_content=(<BubbleTextList items={section.data} />)
         break;
     case 'Recommendations':
-      section_content=(<Text style={styles.text}>{section.text}</Text>)
+      section_content=section.data.map(
+        (recommendation, index) => (
+          <RecommendationCard
+            key={index}
+            name={recommendation.name}
+            relationship={recommendation.relationship}
+            recommendation={recommendation.recommendation}
+          />
+        )
+      )
       break;
     default:
       break;
   }
+  section_content=section.data.length>0?section_content:(<Text style={styles.text}>{section.text}</Text>);
   return (
     <View style={styles.container}>
       <Text style={styles.title}>{section.title}</Text>
-      <Text style={styles.text}>{section.text}</Text>
       {section_content}
       <FloatingEditButton onPress={handleEdit}/>
     </View>

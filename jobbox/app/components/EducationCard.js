@@ -5,8 +5,7 @@ const EducationCard = ({ university, degree, major, date }) => {
   return (
     <View style={styles.cardContainer}>
       <Text style={styles.universityText}>{university}</Text>
-      <Text style={styles.degreeText}>{degree}</Text>
-      <Text style={styles.majorText}>{major}</Text>
+      <Text style={styles.degreeText}>{degree} {major}</Text>
       <Text style={styles.dateText}>{date}</Text>
     </View>
   );
