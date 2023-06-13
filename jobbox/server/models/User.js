@@ -17,6 +17,9 @@ const UserSchema = new mongoose.Schema({
     spendingTarget: { type: Number, default: 0, },
     conversations: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Conversation', }],
     location: { type: String, default: '', },
+<<<<<<< HEAD
+=======
+    verified: {type: Boolean, default: false, },
     jobApplications: [
         {
           job: { type: mongoose.Schema.Types.ObjectId, ref: 'Job' },
@@ -24,6 +27,7 @@ const UserSchema = new mongoose.Schema({
           dateApplied: { type: Date, default: Date.now }
         }
       ]
+>>>>>>> bbeb1479cdab22a707526bc6dd7f6121da21cc72
     
 });
 

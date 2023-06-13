@@ -55,13 +55,13 @@ export default function Signup({ navigation }) {
                     
                     <View style={styles.firstLastNameContainer}> 
                         <TextInput
-                            label="FirstName"
+                            label="First Name"
                             value={firstname}
                             onChangeText={setFirstName}
                             style={styles.input2}
                         />
                         <TextInput
-                            label="LastName"
+                            label="Last Name"
                             value={lastname}
                             onChangeText={setLastName}
                             style={styles.input2}

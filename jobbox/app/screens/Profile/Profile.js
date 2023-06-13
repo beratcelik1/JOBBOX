@@ -205,6 +205,33 @@ const Profile = () => {
     return unsubscribe;
   }, [navigation]);
 
+  const deleteAccount = async () => {
+    try {
+      const token = await AsyncStorage.getItem('token');
+
+      const response = await fetch('https://tranquil-ocean-74659.herokuapp.com/auth/user/me', {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+      });
+
+      if (response.status === 200) {
+        alert('Account deleted successfully');
+        
+        // Remove user's token from AsyncStorage
+        await AsyncStorage.removeItem('token');
+        
+        // Navigate user back to the Login screen
+        navigation.navigate('Login');
+      } else {
+        alert('Failed to delete account');
+      }
+    } catch (error) {
+      console.error('Failed to delete account: ', error);
+    }
+  };
+
   const handleLocationSelect = async (location) => {
     setSelectedLocation(location);
     const token = await AsyncStorage.getItem('token');
@@ -356,6 +383,14 @@ return (
             />
           }
         />
+        {/* // Button to delete account */}
+          <Button
+            mode="contained"
+            onPress={deleteAccount}
+            style={{margin: 20, backgroundColor: 'red'}}
+          >
+            Delete Account
+          </Button>
       </>
     ) : (
       <ActivityIndicator size="large" color="#0000ff" />
