@@ -134,7 +134,7 @@ const styles = StyleSheet.create({
     // iOS shadow properties
     shadowColor: '#000',
     shadowOffset: {
-      width: -10,
+      width: 0,
       height: 2,
     },
     shadowOpacity: 0.25,

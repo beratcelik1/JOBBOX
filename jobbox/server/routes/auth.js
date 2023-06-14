@@ -22,17 +22,6 @@ router.post('/signup', async (req, res) => {
   // save user and return token
   await user.save();
   const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: '1d' });
-
-  const tokenEmail = await new Token({
-    userId: user._id,
-    token: crypto.randomBytes(32).toString("hex")
-  }).save();
-
-  const url = `${process.env.BASE_URL}users/${user._id}/verify/${tokenEmail.token}`;
-
-  await sendEmail(user.email, "Verify Email", url);
-
-
   console.log('Response:', { token });
   res.status(201).json({ token });
 });
@@ -241,59 +230,5 @@ router.delete('/notifications/:notificationId', async (req, res) => {
     res.status(500).send({ error: err.message });
   }
 });
-
-// verification route
-router.get("/:id/verify/:token", async(req,res) => {
-  try{
-    const user = await User.findOne({_id: req.params.id});
-    if (!user) return res.status(400).send({message: "Invalid user + link"});
-
-    const token = await Token.findOne({
-      userId:user._id,
-      token: req.params.token
-    });
-
-    if(!token) return res.status(400).send({message: "invalid link"});
-
-    await User.updateOne({_id: user._id, verified: true});
-    await token.remove();
-
-    res.status(200).send({ message: "Email verified successfully"});
-  } catch (error) {
-    res.status(500).send({message: "server error"});
-  }
-  }
-);
-
-// // delete a user account
-// router.delete('/user/me', async (req, res) => {
-//   // get token from the Authorization header
-//   const token = req.header('Authorization')?.replace('Bearer ', '');
-//   if (!token) {
-//     return res.status(401).json({ error: 'Authorization token missing' });
-//   }
-
-//   try {
-//     // verify the token and extract the user ID
-//     const data = jwt.verify(token, process.env.JWT_SECRET);
-
-//     // Log the user ID that is being extracted from the JWT
-//     console.log("Extracted User ID:", data.userId);
-
-//     // delete the user with the extracted ID
-//     const user = await User.findByIdAndDelete(data.userId);
-//     if (!user) {
-//       return res.status(404).json({ error: 'User not found' });
-//     }
-
-//     // send a response
-//     res.json({ message: 'User account deleted successfully' });
-//   } catch (error) {
-//     console.error('Error in delete account route:', error);
-//     res.status(500).send({ error: 'An error occurred while trying to delete the account' });
-//   }
-  
-// });
-
 
 module.exports = router;

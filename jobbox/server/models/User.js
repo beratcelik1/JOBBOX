@@ -24,7 +24,9 @@ const UserSchema = new mongoose.Schema({
           status: { type: String, default: 'applied', enum: ['applied', 'hired', 'rejected'] },
           dateApplied: { type: Date, default: Date.now }
         }
-      ]});
+      ]
+    
+});
 
 // hash password before saving
 UserSchema.pre('save', async function (next) {
