@@ -57,7 +57,7 @@ function WorkScreen({ navigation }) {
             .then(response => response.json())
             .then(data => {
                 // Update this line to prepend the new data
-                setJobs(data.reverse());
+                setJobs(data);
                 setIsLoading(false);
                 setRefreshing(false);
             })
@@ -123,10 +123,7 @@ function WorkScreen({ navigation }) {
             setIsLoading(true);
             fetch(`http://tranquil-ocean-74659.herokuapp.com/jobs/search?search=${searchQuery}`)
                 .then(response => response.json())
-                .then(data => {
-                    // Reverse the array before setting the state
-                    setJobs(data.reverse());
-                  })
+                .then(data => setJobs(data))
                 .catch(error => console.error('Error:', error));
         } else {
             fetchJobs();
@@ -150,10 +147,7 @@ function WorkScreen({ navigation }) {
       
           fetch(`http://tranquil-ocean-74659.herokuapp.com/jobs/?${query}`)
           .then(response => response.json())
-          .then(data => {
-            // Reverse the array before setting the state
-            setJobs(data.reverse());
-          })
+          .then(data => setJobs(data))
           .catch(error => console.error('Error:', error));
       };      
 

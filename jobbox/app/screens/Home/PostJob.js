@@ -106,6 +106,7 @@ export default function PostJob({ navigation, route }) {
 
   const handleEdit = async () => {
     const token = await AsyncStorage.getItem('token');
+    
     if (isNaN(pay)) {
       alert('Pay must be valid numbers');
       return;
@@ -124,7 +125,7 @@ export default function PostJob({ navigation, route }) {
       body: JSON.stringify({
         description: jobDescription,
         skills: Array.from(selectedSkills),
-        location: location,
+        location: selectedLocation,
         pay: parseFloat(pay), // ensure pay is a number
         estimatedTime: parseFloat(estimatedTime),
         estimatedTimeUnit: estimatedTimeUnit,
@@ -160,7 +161,7 @@ export default function PostJob({ navigation, route }) {
       title: jobTitle,
       description: jobDescription,
       skills: Array.from(selectedSkills),
-      location: location,
+      location: selectedLocation,
       pay: parseFloat(pay), // ensure pay is a number
       estimatedTime: parseFloat(estimatedTime),
       estimatedTimeUnit: estimatedTimeUnit,

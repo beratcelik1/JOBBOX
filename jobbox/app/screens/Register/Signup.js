@@ -1,8 +1,7 @@
-// screens/Signup.js
-
 import React, { useState } from 'react';
 import { StyleSheet, View, Image, Pressable, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
 import { TextInput, Button, Text } from 'react-native-paper';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const logo = require('../../assets/images/jobboxlogo2.png');
 
@@ -11,38 +10,6 @@ export default function Signup({ navigation }) {
     const [lastname, setLastName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-
-    // const handleSignup = () => {
-    //     fetch('https://tranquil-ocean-74659.herokuapp.com/auth/signup', {
-    //         method: 'POST',
-    //         headers: {
-    //             'Content-Type': 'application/json'
-    //         },
-    //         body: JSON.stringify({ 
-    //             firstname: firstname, 
-    //             lastname: lastname, 
-    //             email: email, 
-    //             password: password 
-    //         })
-    //     })
-    //     .then(response => {
-    //         if (!response.ok) {
-    //             throw new Error(`HTTP error! status: ${response.status}`);
-    //         }
-    //         return response.json();
-    //     })
-    //     .then(data => {
-    //         console.log(data);
-    //         if (data.token) {
-    //             navigation.navigate('MyTabs');
-    //         } else {
-    //             // handle error, show a message to the user
-    //             Alert.alert('Signup Failed', 'An error occurred during signup. Please try again.');
-    //         }
-    //     })
-    //     .catch(error => console.log('Error:', error));
-    // }; 
-    // ...
 
     const handleSignup = () => {
         fetch('https://tranquil-ocean-74659.herokuapp.com/auth/signup', {
