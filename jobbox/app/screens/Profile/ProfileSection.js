@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, Button, StyleSheet } from 'react-native';
+import { View, Text, TextInput, Button, StyleSheet, ScrollView } from 'react-native';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import FloatingEditButton from '../../components/FloatingEditButton';
@@ -181,7 +181,7 @@ const ProfileSection = ({ route, navigation }) => {
 
   if (editing) {
     return (
-      <View style={styles.container}>
+      <ScrollView style={styles.container}>
         <Text style={styles.title}>{section.title}</Text>
         {
           section.title === 'About'
@@ -386,7 +386,7 @@ const ProfileSection = ({ route, navigation }) => {
 
 
         <Button title="Save" onPress={handleSave} />
-      </View>
+      </ScrollView>
     );
   }
 
@@ -436,11 +436,11 @@ const ProfileSection = ({ route, navigation }) => {
   }
   section_content=section.data.length>0?section_content:(<Text style={styles.text}>{section.text}</Text>);
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.container}>
       <Text style={styles.title}>{section.title}</Text>
       {section_content}
       <FloatingEditButton onPress={handleEdit}/>
-    </View>
+    </ScrollView>
   );
 };
 
