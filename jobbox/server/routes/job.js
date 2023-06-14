@@ -3,28 +3,23 @@ const Job = require('../models/Job');
 const User = require('../models/User');
 const router = express.Router();
 const jwt = require('jsonwebtoken');
-// const auth = require('../middleware/auth'); // Make sure to have this middleware to authenticate users
 
 
-// // Middleware for token verification and user fetching
-// const authenticate = async (req, res, next) => {
-//     const token = req.header('Authorization')?.replace('Bearer ', '');
-//     if (!token) {
-//         return res.status(401).json({ error: 'Authorization token missing' });
-//     }
+router.use(async (req, res, next) => {
+  try {
+    const token = req.header('Authorization')?.replace('Bearer ', '');
+    if (!token) throw new Error("Authorization token missing");
 
-//     try {
-//         const data = jwt.verify(token, process.env.JWT_SECRET);
-//         const user = await User.findById(data.userId);
-//         if (!user) {
-//             return res.status(404).json({ error: 'User not found' });
-//         }
-//         req.user = user;
-//         next();
-//     } catch (error) {
-//         res.status(401).send({ error: 'Not authorized to access this resource' });
-//     }
-// };
+    const data = jwt.verify(token, process.env.JWT_SECRET);
+    const user = await User.findById(data.userId);
+    if (!user) throw new Error("User not found");
+
+    req.user = user;  // Attach the user to the request
+    next();  // Move on to the next middleware/route handler
+  } catch (error) {
+    res.status(401).send({ error: error.message });
+  }
+});
 
 // Post a job
 router.post('/', async (req, res) => {
@@ -315,42 +310,6 @@ router.get('/:jobId', async (req, res) => {
       res.status(500).send(error);
   }
 });
-
-// handle apply job
-// router.post('/apply', async (req, res) => {
-//   const { jobId, userId } = req.body;
-
-//   try {
-//     const job = await Job.findByIdAndUpdate(
-//       jobId,
-//       { $addToSet: { applicants: userId } },
-//       { new: true }  // Returns the updated document
-//     );
-
-//     if (!job) {
-//       return res.status(404).send({ message: "Job not found" });
-//     }
-
-//     // Add job application to the user document
-//     const user = await User.findByIdAndUpdate(
-//       userId,
-//       { $addToSet: { jobApplications: { job: jobId, status: 'applied' } } },
-//       { new: true }  // Returns the updated document
-//     );
-
-//     if (!user) {
-//       return res.status(404).send({ message: "User not found" });
-//     }
-
-//     console.log(job);
-//     res.send(job);
-//   } catch (err) {
-//     console.error(err);
-//     res.status(500).send({ message: "Server error" });
-//   }
-// });
-
-
 // Reject an applicant
 router.post('/reject/:jobId/:userId', async (req, res) => {
   const { jobId, userId } = req.params;
@@ -397,46 +356,48 @@ router.post('/reject/:jobId/:userId', async (req, res) => {
   }
 });
 
-// // Hire an applicant
-// router.post('/hire/:jobId/:userId', auth, async (req, res) => {
-//   try {
-//     const job = await Job.findById(req.params.jobId);
-//     const user = await User.findById(req.params.userId);
-//     if (!job || !user) {
-//       return res.status(404).json({ error: 'Job or user not found' });
-//     }
-//     if (job.hiredApplicant) {
-//       return res.status(400).json({ error: 'An applicant has already been hired for this job' });
-//     }
-//     job.hiredApplicant = user._id;
-//     user.jobPostings.push(job._id); // Update the user's jobPostings array
-//     await job.save();
-//     await user.save();
-//     res.status(200).json({ message: 'Applicant hired successfully' });
-//   } catch (err) {
-//     console.error(err);
-//     res.status(500).json({ error: 'Server error' });
-//   }
-// });
 
-// // Reject an applicant
-// router.post('/reject/:jobId/:userId', auth, async (req, res) => {
-//   try {
-//     const job = await Job.findById(req.params.jobId);
-//     const user = await User.findById(req.params.userId);
-//     if (!job || !user) {
-//       return res.status(404).json({ error: 'Job or user not found' });
-//     }
-//     job.rejectedApplicants.push(user._id);
-//     await job.save();
-//     res.status(200).json({ message: 'Applicant rejected successfully' });
-//   } catch (err) {
-//     console.error(err);
-//     res.status(500).json({ error: 'Server error' });
-//   }
-// });
+// Hire an applicant
+router.post('/hire/:jobId/:userId', async (req, res) => {
+  try {
+    const job = await Job.findById(req.params.jobId);
+    const user = await User.findById(req.params.userId);
+    if (!job || !user) {
+      return res.status(404).json({ error: 'Job or user not found' });
+    }
+    if (job.hiredApplicant) {
+      return res.status(400).json({ error: 'An applicant has already been hired for this job' });
+    }
+    job.hiredApplicant = user._id;
+    job.status = 'in progress'; // Set the job status to 'in progress'
+    user.jobPostings.push(job._id); // Update the user's jobPostings array
+    await job.save();
+    await user.save();
+    res.status(200).json({ message: 'Applicant hired successfully' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
 
- 
+
+// Reject an applicant
+router.post('/reject/:jobId/:userId', async (req, res) => {
+  try {
+    const job = await Job.findById(req.params.jobId);
+    const user = await User.findById(req.params.userId);
+    if (!job || !user) {
+      return res.status(404).json({ error: 'Job or user not found' });
+    }
+    job.rejectedApplicants.push(user._id);
+    await job.save();
+    res.status(200).json({ message: 'Applicant rejected successfully' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
 router.get('/user/:userId/jobs', async (req, res) => {
   try {
     const user = await User.findById(req.params.userId);
@@ -452,6 +413,19 @@ router.get('/user/:userId/jobs', async (req, res) => {
   }
 });
 
-
+// Mark a job as completed
+router.patch('/complete/:jobId', async (req, res) => {
+  try {
+    const job = await Job.findById(req.params.jobId);
+    if (!job) {
+      return res.status(404).send({ error: 'Job not found' });
+    }
+    job.status = 'completed';
+    await job.save();
+    res.send(job);
+  } catch (error) {
+    res.status(400).send(error);
+  }
+});
 
 module.exports = router;
