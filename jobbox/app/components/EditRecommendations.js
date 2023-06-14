@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 
-const EditRecommendationCard = ({recommendations,setRecommendations,handleDeleteRecommendations,addRecommendation}) => {
+const EditRecommendationCard = ({recommendations,handleDeleteRecommendations,addRecommendation}) => {
   return (
     <React.Fragment>
         {recommendations.map((rec, index) => (

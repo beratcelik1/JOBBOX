@@ -9,6 +9,7 @@ import PlainCard from '../../components/PlainCard';
 import BubbleTextList from '../../components/BubbleTextList';
 import RecommendationCard from '../../components/ReccomendationCard'
 import FloatingSaveButton from '../../components/FloatingSaveButton';
+import { AntDesign } from '@expo/vector-icons';
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -188,15 +189,18 @@ const ProfileSection = ({ route, navigation }) => {
         {
           section.title === 'About'
             ? (
-              <React.Fragment>
-                <Text style={styles.text}>About:</Text>
+              <View style={{
+                backgroundColor: '#fff',
+                padding: 16,
+                marginBottom: 30,
+                borderRadius: 8,
+              }}>
                 <TextInput
-                style={styles.input}
                 value={text}
                 placeholder='About text'
                 onChangeText={setText}
                 />
-              </React.Fragment>
+              </View>
             )
             : null
         }
@@ -205,7 +209,25 @@ const ProfileSection = ({ route, navigation }) => {
             ? (
               <React.Fragment>
                 {experience.map((exp, index) => (
-                  <React.Fragment key={index}>
+                  <View key={index} style={{
+                    backgroundColor: '#fff',
+                    padding: 16,
+                    marginBottom: 30,
+                    borderRadius: 8,
+                  }}>
+                    <TouchableOpacity style={{
+                      position: 'absolute',
+                      top: -20,
+                      right: 0,
+                      width: 30,
+                      height: 30,
+                      borderRadius: 12,
+                      backgroundColor: '#fff',
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                    }} onPress={()=>handleDeleteExperience(index)}>
+                          <AntDesign name="close" size={18} color="#ff0000" />
+                    </TouchableOpacity>
                     <Text style={styles.text}>Position:</Text>
                     <TextInput
                     style={styles.input}
@@ -232,11 +254,16 @@ const ProfileSection = ({ route, navigation }) => {
                       });
                     }}
                   />
-                   <Button title="Delete" onPress={() => handleDeleteExperience(index)} />
-                  </React.Fragment>
-                ))}
-                <Button title="Add Experience" onPress={addExperience} />
-              </React.Fragment>
+                  </View>
+                ))}<TouchableOpacity onPress={addExperience} style={{
+                  alignItems: 'center',
+                  backgroundColor: '#4683fc',
+                  padding: 10,
+                  marginBottom: 40
+                }}>
+                        <Text style={{color: '#ffffff' }}>Add Experience</Text>
+                      </TouchableOpacity>
+                      </React.Fragment>
             )
             : (
               <React.Fragment>
@@ -249,7 +276,25 @@ const ProfileSection = ({ route, navigation }) => {
     ? (
       <React.Fragment>
         {education.map((edu, index) => (
-          <React.Fragment key={index}>
+          <View key={index} style={{
+            backgroundColor: '#fff',
+            padding: 16,
+            marginBottom: 30,
+            borderRadius: 8,
+          }}>
+          <TouchableOpacity style={{
+    position: 'absolute',
+    top: -20,
+    right: 0,
+    width: 30,
+    height: 30,
+    borderRadius: 12,
+    backgroundColor: '#fff',
+    justifyContent: 'center',
+    alignItems: 'center',
+  }} onPress={()=>handleDeleteEducation(index)}>
+        <AntDesign name="close" size={18} color="#ff0000" />
+      </TouchableOpacity>
             <Text style={styles.text}>Date:</Text>
             <TextInput
               style={styles.input}
@@ -294,10 +339,16 @@ const ProfileSection = ({ route, navigation }) => {
                 setEducation(updatedEducation);
               }}
             />
-            <Button title="Delete" onPress={() => handleDeleteEducation(index)} />
-          </React.Fragment>
+          </View>
         ))}
-        <Button title="Add Education" onPress={addEducation} />
+        <TouchableOpacity onPress={addEducation} style={{
+    alignItems: 'center',
+    backgroundColor: '#4683fc',
+    padding: 10,
+    marginBottom: 40
+  }}>
+          <Text style={{color: '#ffffff' }}>Add Education</Text>
+        </TouchableOpacity>
       </React.Fragment>
       
     )
@@ -309,8 +360,25 @@ const ProfileSection = ({ route, navigation }) => {
       ? (
         <React.Fragment>
           {skills.map((skill, index) => (
-            <React.Fragment key={index}>
-            <Text style={styles.text}>Skill:</Text>
+            <View key={index} style={{
+              backgroundColor: '#fff',
+              padding: 16,
+              marginBottom: 30,
+              borderRadius: 8,
+            }}>
+              <TouchableOpacity style={{
+    position: 'absolute',
+    top: -20,
+    right: 0,
+    width: 30,
+    height: 30,
+    borderRadius: 12,
+    backgroundColor: '#fff',
+    justifyContent: 'center',
+    alignItems: 'center',
+  }} onPress={()=>handleDeleteSkills(index)}>
+        <AntDesign name="close" size={18} color="#ff0000" />
+      </TouchableOpacity>
             <TextInput
               style={styles.input}
               value={skill.title}
@@ -323,10 +391,16 @@ const ProfileSection = ({ route, navigation }) => {
                 });
               }}
             />
-            <Button title="Delete" onPress={() => handleDeleteSkills(index)} />
-            </React.Fragment>
+            </View>
           ))}
-          <Button title="Add Skill" onPress={addSkill} />
+          <TouchableOpacity onPress={addSkill} style={{
+    alignItems: 'center',
+    backgroundColor: '#4683fc',
+    padding: 10,
+    marginBottom: 40
+  }}>
+          <Text style={{color: '#ffffff' }}>Add Skill</Text>
+        </TouchableOpacity>
         </React.Fragment>
       )
       : null
@@ -337,7 +411,25 @@ const ProfileSection = ({ route, navigation }) => {
     ? (
       <React.Fragment>
         {recommendations.map((rec, index) => (
-          <React.Fragment key={index}>
+          <View key={index} style={{
+            backgroundColor: '#fff',
+            padding: 16,
+            marginBottom: 30,
+            borderRadius: 8,
+          }}>
+            <TouchableOpacity style={{
+    position: 'absolute',
+    top: -20,
+    right: 0,
+    width: 30,
+    height: 30,
+    borderRadius: 12,
+    backgroundColor: '#fff',
+    justifyContent: 'center',
+    alignItems: 'center',
+  }} onPress={()=>handleDeleteRecommendations(index)}>
+        <AntDesign name="close" size={18} color="#ff0000" />
+      </TouchableOpacity>
             <Text style={styles.text}>Name:</Text>
             <TextInput
               style={styles.input}
@@ -377,17 +469,21 @@ const ProfileSection = ({ route, navigation }) => {
                 });
               }}
             />
-            <Button title="Delete" onPress={() => handleDeleteRecommendations(index)} />
-          </React.Fragment>
+          </View>
         ))}
-        <Button title="Add Recommendation" onPress={addRecommendation} />
+        <TouchableOpacity onPress={addRecommendation} style={{
+    alignItems: 'center',
+    backgroundColor: '#4683fc',
+    padding: 10,
+    marginBottom: 40
+  }}>
+          <Text style={{color: '#ffffff' }}>Add Recommendation</Text>
+        </TouchableOpacity>
       </React.Fragment>
     )
     : null
 }
 
-
-      
       </ScrollView>
       <FloatingSaveButton onPress={handleSave}/>
       </React.Fragment>
