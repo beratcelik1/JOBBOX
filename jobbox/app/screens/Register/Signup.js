@@ -34,6 +34,7 @@ export default function Signup({ navigation }) {
             console.log(data);
             if (data.token) {
                 await AsyncStorage.setItem('token', data.token); // Store the token here after signup
+                await AsyncStorage.setItem('userId', data.user._id);
                 navigation.navigate('MyTabs');
             } else {
                 // handle error, show a message to the user
