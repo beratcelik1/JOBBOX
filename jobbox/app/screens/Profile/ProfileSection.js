@@ -436,11 +436,14 @@ const ProfileSection = ({ route, navigation }) => {
   }
   section_content=section.data.length>0?section_content:(<Text style={styles.text}>{section.text}</Text>);
   return (
+    <React.Fragment>
     <ScrollView style={styles.container}>
       <Text style={styles.title}>{section.title}</Text>
       {section_content}
-      <FloatingEditButton onPress={handleEdit}/>
+      
     </ScrollView>
+    <FloatingEditButton onPress={handleEdit}/>
+    </React.Fragment>
   );
 };
 
