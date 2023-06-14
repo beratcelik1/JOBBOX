@@ -233,7 +233,6 @@ res.json({ message: 'Job deleted' });
   }
 });
 
-
 // user data 
 router.get('/user/:userId', async (req, res) => {
   try {
@@ -287,6 +286,7 @@ router.post('/apply/:jobId', async (req, res) => {
       res.status(400).send(error);
   }
 }); 
+
 // Get all applicants for a job
 router.get('/applicants/:jobId', async (req, res) => {
   try {
@@ -355,41 +355,41 @@ router.get('/:jobId', async (req, res) => {
 router.post('/reject/:jobId/:userId', async (req, res) => {
   const { jobId, userId } = req.params;
 
-  const token = req.header('Authorization')?.replace('Bearer ', '');
+  const token = req.header('Authorization')?.replace('Bearer ', ''); 
   if (!token) {
-    return res.status(401).send({ error: 'Authorization token missing' });
+    return res.status(401).send({ error: 'Authorization token missing' }); 
   }
 
   try {
-    const data = jwt.verify(token, process.env.JWT_SECRET);
-    const currentUser = await User.findById(data.userId);
+    const data = jwt.verify(token, process.env.JWT_SECRET); 
+    const currentUser = await User.findById(data.userId); 
 
-    if (!currentUser) {
-      return res.status(404).send({ error: 'User not found' });
+    if (!currentUser) { 
+      return res.status(404).send({ error: 'User not found' }); 
+    } 
+
+    const job = await Job.findById(jobId); 
+    if (!job) { 
+      return res.status(404).send({ error: 'Job not found' }); 
     }
 
-    const job = await Job.findById(jobId);
-    if (!job) {
-      return res.status(404).send({ error: 'Job not found' });
+    if (!job.postedBy.equals(currentUser._id)) { 
+      return res.status(403).send({ error: 'You are not authorized to reject applicants for this job' }); 
     }
 
-    if (!job.postedBy.equals(currentUser._id)) {
-      return res.status(403).send({ error: 'You are not authorized to reject applicants for this job' });
+    if (!job.applicants.includes(userId)) { 
+      return res.status(400).send({ error: 'User has not applied for this job' }); 
     }
 
-    if (!job.applicants.includes(userId)) {
-      return res.status(400).send({ error: 'User has not applied for this job' });
-    }
+    job.rejectedApplicants.push(userId); 
+    job.applicants = job.applicants.filter(id => id.toString() !== userId); 
 
-    job.rejectedApplicants.push(userId);
-    job.applicants = job.applicants.filter(id => id.toString() !== userId);
+    const applicant = await User.findById(userId); 
+    const application = applicant.jobApplications.find(app => app.job.equals(jobId)); 
+    application.status = 'rejected';  
+    await applicant.save(); 
 
-    const applicant = await User.findById(userId);
-    const application = applicant.jobApplications.find(app => app.job.equals(jobId));
-    application.status = 'rejected';
-    await applicant.save();
-
-    await job.save();
+    await job.save();  
     res.send(job);
   } catch (err) {
     console.error(err);
@@ -398,43 +398,43 @@ router.post('/reject/:jobId/:userId', async (req, res) => {
 });
 
 // // Hire an applicant
-// router.post('/hire/:jobId/:userId', auth, async (req, res) => {
-//   try {
-//     const job = await Job.findById(req.params.jobId);
-//     const user = await User.findById(req.params.userId);
-//     if (!job || !user) {
-//       return res.status(404).json({ error: 'Job or user not found' });
-//     }
-//     if (job.hiredApplicant) {
-//       return res.status(400).json({ error: 'An applicant has already been hired for this job' });
-//     }
-//     job.hiredApplicant = user._id;
-//     user.jobPostings.push(job._id); // Update the user's jobPostings array
-//     await job.save();
-//     await user.save();
-//     res.status(200).json({ message: 'Applicant hired successfully' });
-//   } catch (err) {
-//     console.error(err);
-//     res.status(500).json({ error: 'Server error' });
-//   }
-// });
+router.post('/hire/:jobId/:userId', auth, async (req, res) => {
+  try {
+    const job = await Job.findById(req.params.jobId);
+    const user = await User.findById(req.params.userId);
+    if (!job || !user) {
+      return res.status(404).json({ error: 'Job or user not found' });
+    }
+    if (job.hiredApplicant) {
+      return res.status(400).json({ error: 'An applicant has already been hired for this job' });
+    }
+    job.hiredApplicant = user._id;
+    user.jobPostings.push(job._id); // Update the user's jobPostings array
+    await job.save();
+    await user.save();
+    res.status(200).json({ message: 'Applicant hired successfully' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
 
 // // Reject an applicant
-// router.post('/reject/:jobId/:userId', auth, async (req, res) => {
-//   try {
-//     const job = await Job.findById(req.params.jobId);
-//     const user = await User.findById(req.params.userId);
-//     if (!job || !user) {
-//       return res.status(404).json({ error: 'Job or user not found' });
-//     }
-//     job.rejectedApplicants.push(user._id);
-//     await job.save();
-//     res.status(200).json({ message: 'Applicant rejected successfully' });
-//   } catch (err) {
-//     console.error(err);
-//     res.status(500).json({ error: 'Server error' });
-//   }
-// });
+router.post('/reject/:jobId/:userId', auth, async (req, res) => {
+  try {
+    const job = await Job.findById(req.params.jobId);
+    const user = await User.findById(req.params.userId);
+    if (!job || !user) {
+      return res.status(404).json({ error: 'Job or user not found' });
+    }
+    job.rejectedApplicants.push(user._id);
+    await job.save();
+    res.status(200).json({ message: 'Applicant rejected successfully' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
 
  
 router.get('/user/:userId/jobs', async (req, res) => {
