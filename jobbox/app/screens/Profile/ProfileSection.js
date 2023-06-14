@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, Button, StyleSheet, ScrollView } from 'react-native';
+import { TouchableOpacity,View, Text, TextInput, Button, StyleSheet, ScrollView } from 'react-native';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import FloatingEditButton from '../../components/FloatingEditButton';
@@ -8,6 +8,7 @@ import EducationCard from '../../components/EducationCard';
 import PlainCard from '../../components/PlainCard';
 import BubbleTextList from '../../components/BubbleTextList';
 import RecommendationCard from '../../components/ReccomendationCard'
+import FloatingSaveButton from '../../components/FloatingSaveButton';
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -181,6 +182,7 @@ const ProfileSection = ({ route, navigation }) => {
 
   if (editing) {
     return (
+      <React.Fragment>
       <ScrollView style={styles.container}>
         <Text style={styles.title}>{section.title}</Text>
         {
@@ -385,8 +387,10 @@ const ProfileSection = ({ route, navigation }) => {
 }
 
 
-        <Button title="Save" onPress={handleSave} />
+      
       </ScrollView>
+      <FloatingSaveButton onPress={handleSave}/>
+      </React.Fragment>
     );
   }
 
@@ -437,9 +441,12 @@ const ProfileSection = ({ route, navigation }) => {
   section_content=section.data.length>0?section_content:(<Text style={styles.text}>{section.text}</Text>);
   return (
     <React.Fragment>
-    <ScrollView style={styles.container}>
+    <ScrollView style={styles.container} >
       <Text style={styles.title}>{section.title}</Text>
+      <TouchableOpacity onLongPress={handleEdit}>
       {section_content}
+      </TouchableOpacity>
+      
       
     </ScrollView>
     <FloatingEditButton onPress={handleEdit}/>
