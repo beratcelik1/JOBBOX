@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import {View,ScrollView,StyleSheet,TouchableOpacity,KeyboardAvoidingView,Platform} from 'react-native';
+import {View,ScrollView,StyleSheet,TouchableOpacity,KeyboardAvoidingView,Platform,Text} from 'react-native';
 import { TextInput, Button, List } from 'react-native-paper';
 import Modal from 'react-native-modal';
 import jwt_decode from 'jwt-decode';
@@ -349,15 +349,31 @@ export default function PostJob({ navigation, route }) {
             ))}
             <Button onPress={() => setIsLocationModalVisible(false)}>Close</Button>
           </View>
-        </Modal>
-        <Button
+        </Modal> 
+
+        <View style={{ justifyContent: 'center', alignItems: 'center' }}>
+          <TouchableOpacity 
+          mode="contained"
+          onPress={editing ? handleEdit : handlePost}
+          style={styles.btn}
+          disabled={!isFormValid()}
+          >
+            <Text style={{ fontWeight: 'bold', color: '#fff' }}>
+              {editing ? 'Save Edit' : 'Post Job'}
+            </Text>
+          </TouchableOpacity>
+        </View>
+
+
+        {/* <Button
           mode="contained"
           onPress={editing ? handleEdit : handlePost}
           style={styles.button}
           disabled={!isFormValid()}
         >
           {editing ? 'Save Edit' : 'Post Job'}
-        </Button>
+        </Button>  */}
+
       </KeyboardAwareScrollView>
     </KeyboardAvoidingView>
   );
@@ -379,6 +395,7 @@ const styles = StyleSheet.create({
   button: {
     marginTop: 8,
     backgroundColor: '#4683FC',
+    color: '#fff',
   },
   inputRow: {
     flexDirection: 'row',
@@ -415,5 +432,16 @@ const styles = StyleSheet.create({
     // Inside your styles definition
     selectedSkill: {
       color: '#4683fc',
-    },  
+    },   
+
+    btn: { 
+      backgroundColor: '#4683fc', 
+      borderRadius: 50, 
+      width: 150, 
+      height: 40, 
+      justifyContent: 'center', 
+      alignItems: 'center', 
+      marginRight: 10,
+      marginTop:5,
+    },
 });

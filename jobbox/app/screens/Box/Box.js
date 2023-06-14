@@ -2,178 +2,165 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, FlatList, ActivityIndicator, TouchableOpacity, Alert } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import jwt_decode from 'jwt-decode';
-import { Ionicons } from '@expo/vector-icons';
+import { Ionicons } from '@expo/vector-icons'; 
+import { useNavigation } from '@react-navigation/native'; 
+import { createStackNavigator } from '@react-navigation/stack';
+import { NavigationContainer } from '@react-navigation/native';
 
-function StatusBadge({ status }) {
-  let text = '';
-  let color = '';
-  switch (status) {
-    case 'open':
-      text = 'Open';
-      color = 'green';
-      break;
-    case 'hired':
-      text = 'Hired';
-      color = 'blue';
-      break;
-    case 'closed':
-      text = 'Closed';
-      color = 'red';
-      break;
-    case 'rejected':
-      text = 'Rejected';
-      color = 'grey';
-      break;
-  }
+import WorkPeriodDetails from './WorkPeriod';
+
+const StatusScreenMain = () => {
+  const navigation = useNavigation();
+
+  // Dummy data
+  const [jobs, setJobs] = useState([
+    { id: '1', title: 'Job 1', status: 'In Progress',
+    myLocation: {
+      latitude: 49.939137625826056,
+      longitude:  -119.39467990636201,
+    },
+    employerLocation: {
+      latitude: 49.94096432668098,
+      longitude:  -119.39825863503745,
+    },
+ 
+  },
+    { id: '2', title: 'Job 2', status: 'Applied', 
+    myLocation: {
+      latitude: 49.939137625826056,
+      longitude:  -119.39467990636201,
+    },
+    employerLocation: {
+      latitude: 49.94096432668098,
+      longitude:  -119.39825863503745,
+    },
+
+  },
+    { id: '3', title: 'Job 3', status: 'Completed',
+    myLocation: {
+      latitude: 49.939137625826056,
+      longitude:  -119.39467990636201,
+    },
+    employerLocation: {
+      latitude: 49.94096432668098,
+      longitude:  -119.39825863503745,
+    },
+
+   },
+    { id: '4', title: 'Job 4', status: 'Completed', 
+    myLocation: {
+      latitude: 49.939137625826056,
+      longitude:  -119.39467990636201,
+    },
+    employerLocation: {
+      latitude: 49.94096432668098,
+      longitude:  -119.39825863503745,
+    },
+
+  },
+    // ... more jobs
+  ]);
+
+  const inProgressJobs = jobs.filter(job => job.status !== 'Completed');
+  const completedJobs = jobs.filter(job => job.status === 'Completed');
+
+  const handleJobPress = (job) => {
+    navigation.navigate('WorkPeriodDetails', { job });
+  };
+
+  const renderJob = ({ item }) => (
+    <TouchableOpacity style={styles.jobCard} onPress={() => handleJobPress(item)}>
+      <Text style={styles.jobTitle}>{item.title}</Text>
+      <View style={[
+        styles.jobStatusContainer,
+        item.status === 'Applied' && { backgroundColor: '#5ec949' },
+        item.status === 'In Progress' && { backgroundColor: '#4683fc' },
+        item.status === 'Completed' && { backgroundColor: '#c7c7c7'}
+      ]}>
+        <Text style={styles.jobStatus}>{item.status}</Text>
+      </View>
+    </TouchableOpacity>
+  );
+  
 
   return (
-    <View style={{ backgroundColor: color, borderRadius: 5, padding: 5, alignSelf: 'flex-start' }}>
-      <Text style={{ color: 'white' }}>{text}</Text>
+    <View style={styles.container}>
+      <Text style={styles.sectionTitle}>In-Progress / Applied Jobs</Text>
+      <FlatList
+        data={inProgressJobs}
+        renderItem={renderJob}
+        keyExtractor={item => item.id}
+      />
+      <Text style={styles.sectionTitle}>Completed Jobs</Text>
+      <FlatList
+        data={completedJobs}
+        renderItem={renderJob}
+        keyExtractor={item => item.id}
+      />
     </View>
   );
-}
+};
 
-function StatusScreen() {
-  const [loaded, setLoaded] = useState(false);
-  const [jobs, setJobs] = useState([]);
-  const [error, setError] = useState(null);
+const Stack = createStackNavigator();
 
-  useEffect(() => {
-    const fetchJobs = async () => {
-      setLoaded(false);
-      let token;
-      try {
-        // Fetch the token from the async storage
-        token = await AsyncStorage.getItem('token');
-      } catch(e) {
-        Alert.alert('Error', 'Could not retrieve user information. Please try again later.');
-        return;
-      }
-
-      // Fetch the jobs from your server
-      try {
-        const response = await fetch('http://tranquil-ocean-74659.herokuapp.com/jobs/user/jobs', {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        const data = await response.json();
-        setJobs(data);
-        setLoaded(true);
-      } catch (error) {
-        // console.error('Error:', error);
-        setError('Failed to load jobs. Please try again later.');
-      }
-    };
-
-    fetchJobs();
-  }, []);
-
-    const renderJob = ({ item }) => {
-        // Provide JSX to render each job in the list
-        return (
-        <TouchableOpacity 
-            style={styles.jobCard}
-            // onPress={() => navigation.navigate('JobDetail', { job: item })} 
-        > 
-            <View style={styles.jobHeader}>  
-                <Text style={styles.jobTitle}>{item.title}</Text>
-                <View style = {{ flexDirection: 'row',justifyContent: 'space-between'}}>
-                    <Text style={styles.jobTitle2}>{item.postedBy?.firstname} {item.postedBy?.lastname} - 4.3 </Text>
-                    <Ionicons name="star" size={13} color="#4683fc" /> 
-                </View>
-            </View>     
-            <View
-                style={{
-                borderBottomColor: '#4683fc',
-                borderBottomWidth: 1.5,
-                marginBottom: 10,
-                }}/>
-
-            <View style = {{ flexDirection: 'row', justifyContent: 'flex-start',}}> 
-                <View style = {{ width: '60%'}} > 
-                    <View style={{flexDirection: 'row', justifyContent: 'flex-start', marginBottom: 5}}> 
-                            <Ionicons name="md-cash" size={20} color="#4683fc" /> 
-                            <Text style={styles.jobDescription}>  {item.pay} $ </Text>
-                        </View> 
-
-                        <View style={{flexDirection: 'row', justifyContent: 'flex-start'}}>
-                            <Ionicons name="md-time" size={20} color="#4683fc" />
-                            <Text style={styles.jobDescription}>  {item.estimatedTime}</Text>
-                            <Text style={styles.jobDescription}>  {item.estimatedTimeUnit}</Text>
-                    </View> 
-                </View> 
-
-                <View style = {{ width: '40%',}}> 
-                    <StatusBadge status={item.status} />
-                </View>
-            </View>
-        </TouchableOpacity>
-        );
-    };
-
-    return (
-        <View style={styles.container}>
-          {error ? (
-            <Text style={{ color: 'red' }}>{error}</Text>
-          ) : loaded ? (
-            <FlatList data={jobs} renderItem={renderJob} keyExtractor={(item, index) => item._id} style={styles.jobList}/>
-          ) : (
-            <ActivityIndicator style={{ marginTop: 30 }} size="large" color="#0000ff"/>
-          )}
-        </View>
-      );
-      
-}
+const StatusScreen = () => (
+  <NavigationContainer independent={true}>
+    <Stack.Navigator initialRouteName="StatusScreenMain">
+      <Stack.Screen name="StatusScreenMain" component={StatusScreenMain} options={{ title: 'Box' }} />
+      <Stack.Screen name="WorkPeriodDetails" component={WorkPeriodDetails} options={{ title: 'Period Details' }} />
+    </Stack.Navigator>
+  </NavigationContainer>
+);
 
 const styles = {
-    container: {
-        flex: 1,
-        marginTop: 10, 
+  container: {
+    flex: 1,
+    padding: 10,
+  },
+  sectionTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginVertical: 10,
+  },
+  jobCard: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: 10,
+    marginVertical: 8,
+    marginLeft: 5,
+    marginRight: 5,
+    backgroundColor: '#fff',
+    borderRadius: 10,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 4,
     },
-    jobCard: {
-        backgroundColor: '#fff',
-        padding: 20,
-        marginBottom: 10,
-        borderRadius: 10,
-        marginLeft: 15,
-        marginRight: 15,
-        // Android shadow properties
-        elevation: 5,
-        // iOS shadow properties
-        shadowColor: '#000',
-        shadowOffset: {
-          width: 0,
-          height: 4,
-        },
-        shadowOpacity: 0.25,
-        shadowRadius: 3.84,
-      },  
-    jobHeader: {
-        flexDirection: 'row', 
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        marginBottom: 10, 
-    },
-    jobTitle: {
-        fontSize: 18,
-        fontWeight: 'bold',
-    },
-    jobTitle2: {
-        fontSize: 13,
-    },
-    jobDescription: {
-        fontSize: 14,
-        color: '#000',
-    },
-    jobDetails: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        marginBottom: 5,
-    },
-}
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+  },
+  jobTitle: {
+    fontSize: 18,
+  },
+  jobStatus: {
+    fontSize: 16,
+    fontWeight: '500',
+  }, 
+  jobStatusContainer: {
+    borderRadius: 20,
+    paddingHorizontal: 20,
+    paddingVertical: 5,
+    justifyContent: 'center',
+    alignItems: 'center',
+    minWidth: 100,
+  },
+  jobStatus: {
+    fontSize: 16,
+    fontWeight: '500',
+    color: '#fff' // Change this color to something else if 'Completed' status is hard to read
+  }
+};
 
 export default StatusScreen;
+
