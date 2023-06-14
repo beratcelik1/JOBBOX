@@ -12,6 +12,7 @@ const conversationRoute = require('./routes/conversations');
 const messageRoute = require('./routes/messages');
 
 const jobRoutes = require('./routes/job');
+const paymentRoute = require('./routes/payment');
 
 // Define storage for the images
 const storage = multer.diskStorage({
@@ -72,6 +73,7 @@ app.use('/jobs', jobRoutes);
 
 app.use("/conversations", conversationRoute);
 app.use("/messages", messageRoute);
+app.use("/payment", paymentRoute);
 
 mongoose
   .connect(process.env.DB_URI, {

@@ -57,7 +57,7 @@ function WorkScreen({ navigation }) {
             .then(response => response.json())
             .then(data => {
                 // Update this line to prepend the new data
-                setJobs(data);
+                setJobs(data.reverse());
                 setIsLoading(false);
                 setRefreshing(false);
             })
@@ -123,7 +123,7 @@ function WorkScreen({ navigation }) {
             setIsLoading(true);
             fetch(`http://tranquil-ocean-74659.herokuapp.com/jobs/search?search=${searchQuery}`)
                 .then(response => response.json())
-                .then(data => setJobs(data))
+                .then(data => setJobs(data.reverse()))
                 .catch(error => console.error('Error:', error));
         } else {
             fetchJobs();
@@ -147,7 +147,7 @@ function WorkScreen({ navigation }) {
       
           fetch(`http://tranquil-ocean-74659.herokuapp.com/jobs/?${query}`)
           .then(response => response.json())
-          .then(data => setJobs(data))
+          .then(data => setJobs(data.reverse()))
           .catch(error => console.error('Error:', error));
       };      
 
@@ -294,7 +294,7 @@ function WorkScreen({ navigation }) {
                 onRefresh={onRefresh}
                 onScroll={event => {
                     setScrollPosition(event.nativeEvent.contentOffset.y);
-                }}/></View>);} 
+}}/></View>);} 
 
 function JobDetailScreen({ route, navigation }) {
     const { job } = route.params;

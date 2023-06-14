@@ -13,14 +13,7 @@ const JobSchema = new mongoose.Schema({
   applicants: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
   hiredApplicant: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }, // New field for hired applicant
   rejectedApplicants: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }], // New field for rejected applicants
-
-  // Added status field
-  status: {
-    type: String,
-    enum: ['open', 'hired', 'closed', 'rejected'], // specify possible statuses
-    default: 'open', // set default status to 'open'
-    required: true,
-  },
+  status: {type: String,required: true, default: 'hiring', enum: ['hiring', 'in progress', 'completed']},
 });
 
 const Job = mongoose.model('Job', JobSchema);

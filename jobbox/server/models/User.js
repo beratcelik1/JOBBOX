@@ -17,15 +17,14 @@ const UserSchema = new mongoose.Schema({
     spendingTarget: { type: Number, default: 0, },
     conversations: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Conversation', }],
     location: { type: String, default: '', },
+    verified: {type: Boolean, default: false, },
     jobApplications: [
         {
           job: { type: mongoose.Schema.Types.ObjectId, ref: 'Job' },
           status: { type: String, default: 'applied', enum: ['applied', 'hired', 'rejected'] },
           dateApplied: { type: Date, default: Date.now }
         }
-      ]
-    
-});
+      ]});
 
 // hash password before saving
 UserSchema.pre('save', async function (next) {
