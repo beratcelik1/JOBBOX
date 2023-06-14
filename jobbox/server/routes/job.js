@@ -40,7 +40,7 @@ router.post('/', async (req, res) => {
             estimatedTime,
             estimatedTimeUnit,
             category,
-            postedBy: req.user._id,
+            postedBy: req.user._id
         });
 
         await job.save();
@@ -282,7 +282,6 @@ router.post('/apply/:jobId', async (req, res) => {
       res.status(400).send(error);
   }
 }); 
-
 // Get all applicants for a job
 router.get('/applicants/:jobId', async (req, res) => {
   try {
@@ -315,41 +314,41 @@ router.get('/:jobId', async (req, res) => {
 router.post('/reject/:jobId/:userId', async (req, res) => {
   const { jobId, userId } = req.params;
 
-  const token = req.header('Authorization')?.replace('Bearer ', ''); 
+  const token = req.header('Authorization')?.replace('Bearer ', '');
   if (!token) {
-    return res.status(401).send({ error: 'Authorization token missing' }); 
+    return res.status(401).send({ error: 'Authorization token missing' });
   }
 
   try {
-    const data = jwt.verify(token, process.env.JWT_SECRET); 
-    const currentUser = await User.findById(data.userId); 
+    const data = jwt.verify(token, process.env.JWT_SECRET);
+    const currentUser = await User.findById(data.userId);
 
-    if (!currentUser) { 
-      return res.status(404).send({ error: 'User not found' }); 
-    } 
-
-    const job = await Job.findById(jobId); 
-    if (!job) { 
-      return res.status(404).send({ error: 'Job not found' }); 
+    if (!currentUser) {
+      return res.status(404).send({ error: 'User not found' });
     }
 
-    if (!job.postedBy.equals(currentUser._id)) { 
-      return res.status(403).send({ error: 'You are not authorized to reject applicants for this job' }); 
+    const job = await Job.findById(jobId);
+    if (!job) {
+      return res.status(404).send({ error: 'Job not found' });
     }
 
-    if (!job.applicants.includes(userId)) { 
-      return res.status(400).send({ error: 'User has not applied for this job' }); 
+    if (!job.postedBy.equals(currentUser._id)) {
+      return res.status(403).send({ error: 'You are not authorized to reject applicants for this job' });
     }
 
-    job.rejectedApplicants.push(userId); 
-    job.applicants = job.applicants.filter(id => id.toString() !== userId); 
+    if (!job.applicants.includes(userId)) {
+      return res.status(400).send({ error: 'User has not applied for this job' });
+    }
 
-    const applicant = await User.findById(userId); 
-    const application = applicant.jobApplications.find(app => app.job.equals(jobId)); 
-    application.status = 'rejected';  
-    await applicant.save(); 
+    job.rejectedApplicants.push(userId);
+    job.applicants = job.applicants.filter(id => id.toString() !== userId);
 
-    await job.save();  
+    const applicant = await User.findById(userId);
+    const application = applicant.jobApplications.find(app => app.job.equals(jobId));
+    application.status = 'rejected';
+    await applicant.save();
+
+    await job.save();
     res.send(job);
   } catch (err) {
     console.error(err);

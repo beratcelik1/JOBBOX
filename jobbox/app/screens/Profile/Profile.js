@@ -223,7 +223,8 @@ const Profile = () => {
         await AsyncStorage.removeItem('token');
         
         // Navigate user back to the Login screen
-        navigation.navigate('Login');
+        // navigation.navigate('Login');
+        setIsAuthenticated(false);
       } else if (response.status === 400) {
         alert('Bad Request: The server could not understand the request due to invalid syntax.');
       } else if (response.status === 401) {
