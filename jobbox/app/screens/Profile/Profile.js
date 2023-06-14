@@ -218,12 +218,20 @@ const Profile = () => {
 
       if (response.status === 200) {
         alert('Account deleted successfully');
-        
+  
         // Remove user's token from AsyncStorage
         await AsyncStorage.removeItem('token');
         
         // Navigate user back to the Login screen
         navigation.navigate('Login');
+      } else if (response.status === 400) {
+        alert('Bad Request: The server could not understand the request due to invalid syntax.');
+      } else if (response.status === 401) {
+        alert('Unauthorized: The request requires user authentication or authorization.');
+      } else if (response.status === 403) {
+        alert('Forbidden: The server understood the request, but is refusing to fulfill it.');
+      } else if (response.status === 404) {
+        alert('Not Found: The server can not find the requested resource. In the browser, this means the URL is not recognized. In an API, this can also mean that the endpoint is valid but the resource itself does not exist.');
       } else {
         alert('Failed to delete account');
       }

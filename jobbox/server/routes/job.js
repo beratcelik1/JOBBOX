@@ -3,31 +3,31 @@ const Job = require('../models/Job');
 const User = require('../models/User');
 const router = express.Router();
 const jwt = require('jsonwebtoken');
-const auth = require('../middleware/auth'); // Make sure to have this middleware to authenticate users
+// const auth = require('../middleware/auth'); // Make sure to have this middleware to authenticate users
 
 
-// Middleware for token verification and user fetching
-const authenticate = async (req, res, next) => {
-    const token = req.header('Authorization')?.replace('Bearer ', '');
-    if (!token) {
-        return res.status(401).json({ error: 'Authorization token missing' });
-    }
+// // Middleware for token verification and user fetching
+// const authenticate = async (req, res, next) => {
+//     const token = req.header('Authorization')?.replace('Bearer ', '');
+//     if (!token) {
+//         return res.status(401).json({ error: 'Authorization token missing' });
+//     }
 
-    try {
-        const data = jwt.verify(token, process.env.JWT_SECRET);
-        const user = await User.findById(data.userId);
-        if (!user) {
-            return res.status(404).json({ error: 'User not found' });
-        }
-        req.user = user;
-        next();
-    } catch (error) {
-        res.status(401).send({ error: 'Not authorized to access this resource' });
-    }
-};
+//     try {
+//         const data = jwt.verify(token, process.env.JWT_SECRET);
+//         const user = await User.findById(data.userId);
+//         if (!user) {
+//             return res.status(404).json({ error: 'User not found' });
+//         }
+//         req.user = user;
+//         next();
+//     } catch (error) {
+//         res.status(401).send({ error: 'Not authorized to access this resource' });
+//     }
+// };
 
 // Post a job
-router.post('/', authenticate, async (req, res) => {
+router.post('/', async (req, res) => {
     try {
         const { title, description, skills, location, pay, estimatedTime, estimatedTimeUnit, category } = req.body;
 
@@ -100,7 +100,7 @@ router.get('/', async (req, res) => {
 });
 
 // Edit a job
-router.patch('/:jobId', authenticate, async (req, res) => {
+router.patch('/:jobId', async (req, res) => {
   const token = req.header('Authorization')?.replace('Bearer ', '');
   if (!token) {
     return res.status(401).json({ error: 'Authorization token missing' });
@@ -143,7 +143,7 @@ router.patch('/:jobId', authenticate, async (req, res) => {
   }
 });  
 
-router.put('/:jobId', authenticate, async (req, res) => {
+router.put('/:jobId', async (req, res) => {
   const token = req.header('Authorization')?.replace('Bearer ', '');
   if (!token) {
     return res.status(401).json({ error: 'Authorization token missing' });
@@ -185,7 +185,7 @@ router.put('/:jobId', authenticate, async (req, res) => {
 });
 
 // Delete a job
-router.delete('/:id', authenticate, async (req, res) => {
+router.delete('/:id', async (req, res) => {
   const token = req.header('Authorization')?.replace('Bearer ', '');
   if (!token) {
     return res.status(401).json({ error: 'Authorization token missing' });
@@ -288,7 +288,7 @@ router.post('/apply/:jobId', async (req, res) => {
   }
 }); 
 // Get all applicants for a job
-router.get('/applicants/:jobId', authenticate, async (req, res) => {
+router.get('/applicants/:jobId', async (req, res) => {
   try {
     const job = await Job.findById(req.params.jobId).populate('applicants', 'firstname lastname profilePic bio rating');
     console.log(job);
@@ -437,7 +437,7 @@ router.post('/reject/:jobId/:userId', async (req, res) => {
 // });
 
  
-router.get('/user/:userId/jobs', authenticate, async (req, res) => {
+router.get('/user/:userId/jobs', async (req, res) => {
   try {
     const user = await User.findById(req.params.userId);
     if (!user) {

@@ -277,6 +277,9 @@ router.delete('/user/me', async (req, res) => {
     // verify the token and extract the user ID
     const data = jwt.verify(token, process.env.JWT_SECRET);
 
+    // Log the user ID that is being extracted from the JWT
+    console.log("Extracted User ID:", data.userId);
+
     // delete the user with the extracted ID
     const user = await User.findByIdAndDelete(data.userId);
     if (!user) {
@@ -285,9 +288,11 @@ router.delete('/user/me', async (req, res) => {
 
     // send a response
     res.json({ message: 'User account deleted successfully' });
-  } catch {
-    res.status(401).send({ error: 'Not authorized to access this resource' });
+  } catch (error) {
+    console.error('Error in delete account route:', error);
+    res.status(500).send({ error: 'An error occurred while trying to delete the account' });
   }
+  
 });
 
 
