@@ -213,76 +213,76 @@ function WorkScreen({ navigation }) {
     return (
         <View style={styles.container}>
             <View style={styles.searchSection}>
-            <Ionicons style={styles.searchIcon} name="ios-search" size={20} color="#000" />
-            <TextInput
-                style={styles.searchInput}
-                onChangeText={setSearchQuery}
-                value={searchQuery}
-                placeholder="Search"
-                placeholderTextColor="gray"
-            />
-            {searchQuery.length > 0 && (
-                <TouchableOpacity onPress={() => setSearchQuery('')}>
-                <Ionicons name="ios-close" size={20} color="#000" />
-                </TouchableOpacity>
-            )}
+                <Ionicons style={styles.searchIcon} name="ios-search" size={20} color="#000" />
+                <TextInput
+                    style={styles.searchInput}
+                    onChangeText={setSearchQuery}
+                    value={searchQuery}
+                    placeholder="Search"
+                    placeholderTextColor="gray"
+                />
+                {searchQuery.length > 0 && (
+                    <TouchableOpacity onPress={() => setSearchQuery('')}>
+                    <Ionicons name="ios-close" size={20} color="#000" />
+                    </TouchableOpacity>
+                )}
 
-            {isFilterApplied ? (
-                              <TouchableOpacity style={styles.filterButton} onPress={removeFilters}>
-                              <Ionicons name="close" size={24} color="white" />
-                                </TouchableOpacity>
-            ) : (
-                <TouchableOpacity style={styles.filterButton} onPress={openFilterModal}>
-                <Ionicons name="filter" size={24} color="white" />
-                </TouchableOpacity>
-            )}
+                {isFilterApplied ? (
+                                <TouchableOpacity style={styles.filterButton} onPress={removeFilters}>
+                                <Ionicons name="close" size={24} color="white" />
+                                    </TouchableOpacity>
+                ) : (
+                    <TouchableOpacity style={styles.filterButton} onPress={openFilterModal}>
+                    <Ionicons name="filter" size={24} color="white" />
+                    </TouchableOpacity>
+                )}
             </View>
-    <Modal 
-    isVisible={isFilterModalVisible} 
-    style={[styles.modal, isKeyboardVisible ? {paddingBottom: 280} : {}]} 
-    onBackdropPress={closeFilterModal}>
-    <View style={styles.modalContent}>
-        <Text style={styles.modalTitle}>Filters</Text>
-        <View style={styles.filterBox}>
-        <Picker
-            selectedValue={categoryFilter}
-            onValueChange={(itemValue) => setCategoryFilter(itemValue)}
-            style={styles.picker}
-            dropdownIconColor="#4683FC"
-            >
-            <Picker.Item label="Category..." value="" />
-            {categories.map((category, index) => (
-                <Picker.Item key={index} label={category} value={category} />
-            ))}
-            </Picker>
-        </View>
-        <View style={styles.filterBox}>
-            <Picker
-                selectedValue={locationFilter}
-                onValueChange={(itemValue) => setLocationFilter(itemValue)}
-                style={styles.picker}
-                dropdownIconColor="#4683FC"
-            >
-                <Picker.Item label="Location..." value="" />
-                {LOCATIONS.map((location, index) => (
-                    <Picker.Item key={index} label={location} value={location} />
-                ))}
-            </Picker>
-        </View>
-        <View style={styles.filterBox}>
-                    <TextInput
-                        style={styles.modalInput}
-                        onChangeText={(value) => setPayFilter({...payFilter, min: value})}
-                        value={payFilter.min}
-                        placeholder="Min Pay..."
-                        placeholderTextColor="#aaa"
-                        keyboardType="numeric"
-                    />
-        </View>
-        <TouchableOpacity onPress={() => { handleFilter(); closeFilterModal(); }} style={styles.applyFilterButton}>
-            <Text style={styles.filterOption}>Apply</Text>
-        </TouchableOpacity>
-    </View>
+            <Modal 
+            isVisible={isFilterModalVisible} 
+            style={[styles.modal, isKeyboardVisible ? {paddingBottom: 280} : {}]} 
+            onBackdropPress={closeFilterModal}>
+            <View style={styles.modalContent}>
+                <Text style={styles.modalTitle}>Filters</Text>
+                <View style={styles.filterBox}>
+                <Picker
+                    selectedValue={categoryFilter}
+                    onValueChange={(itemValue) => setCategoryFilter(itemValue)}
+                    style={styles.picker}
+                    dropdownIconColor="#4683FC"
+                    >
+                    <Picker.Item label="Category..." value="" />
+                    {categories.map((category, index) => (
+                        <Picker.Item key={index} label={category} value={category} />
+                    ))}
+                    </Picker>
+                </View>
+                <View style={styles.filterBox}>
+                    <Picker
+                        selectedValue={locationFilter}
+                        onValueChange={(itemValue) => setLocationFilter(itemValue)}
+                        style={styles.picker}
+                        dropdownIconColor="#4683FC"
+                    >
+                        <Picker.Item label="Location..." value="" />
+                        {LOCATIONS.map((location, index) => (
+                            <Picker.Item key={index} label={location} value={location} />
+                        ))}
+                    </Picker>
+                </View>
+                <View style={styles.filterBox}>
+                            <TextInput
+                                style={styles.modalInput}
+                                onChangeText={(value) => setPayFilter({...payFilter, min: value})}
+                                value={payFilter.min}
+                                placeholder="Min Pay..."
+                                placeholderTextColor="#aaa"
+                                keyboardType="numeric"
+                            />
+                </View>
+                <TouchableOpacity onPress={() => { handleFilter(); closeFilterModal(); }} style={styles.applyFilterButton}>
+                    <Text style={styles.filterOption}>Apply</Text>
+                </TouchableOpacity>
+            </View>
         </Modal>
             <FlatList
                 data={jobs}
@@ -497,6 +497,12 @@ const styles = StyleSheet.create({
         borderRadius: 50,
         paddingLeft: 10,
         margin: 10,
+        elevation: 5,
+        // iOS shadow properties
+        shadowColor: '#000',
+        shadowOffset: {width: 0,height: 2,},
+        shadowOpacity: 0.25,
+        shadowRadius: 3.84,
     },
           
     searchIcon: {
@@ -585,7 +591,7 @@ const styles = StyleSheet.create({
     jobView: {
         width: '100%',
         marginBottom: -15,
-
+        paddingTop: 10, 
     },
     jobCard: {
         backgroundColor: '#fff',
@@ -600,10 +606,10 @@ const styles = StyleSheet.create({
         shadowColor: '#000',
         shadowOffset: {
           width: 0,
-          height: 4,
+          height: 2,
         },
         shadowOpacity: 0.25,
-        shadowRadius: 3.84,
+        shadowRadius: 6.84,
       },
     jobTitle: {
         fontSize: 18,
@@ -623,11 +629,11 @@ const styles = StyleSheet.create({
         elevation: 5,
         shadowColor: "#000",
         shadowOffset: {
-            width: -10,
-            height: 2,
+            width: 0,
+            height: 4,
         },
         shadowOpacity: 0.25,
-        shadowRadius: 3.84,
+        shadowRadius: 12.84,
     },
     title2: {
         fontSize: 18,

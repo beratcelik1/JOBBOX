@@ -141,13 +141,6 @@ const ProfileSection = ({ route, navigation }) => {
       : [{ name: '', relationship: '', recommendation: '' }]
   );
   
-  const theme = {
-    ...DefaultTheme,
-    colors: {
-      ...DefaultTheme.colors,
-      primary: '#4683FC', // change the primary color to blue
-    },
-  };  
   
   useEffect(() => {
     if (section.title === 'About') {

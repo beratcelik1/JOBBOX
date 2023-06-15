@@ -2,11 +2,19 @@ import React, { useRef, useState, useEffect } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import { Image, Text, View, TouchableOpacity } from 'react-native';
-import { NavigationContainer, useNavigation } from '@react-navigation/native';
+import { NavigationContainer, useNavigation ,DefaultTheme} from '@react-navigation/native';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
 import Icon from 'react-native-vector-icons/Ionicons';
+
+const MyTheme = {
+  ...DefaultTheme,
+  colors: {
+    ...DefaultTheme.colors,
+    background: '#fff',
+  },
+};
 
 import { Modalize } from 'react-native-modalize';
 import { Dimensions } from 'react-native';
@@ -365,14 +373,11 @@ export default function App() {
   );
 
   return (
-  
-      <NavigationContainer ref={navigationRef} independent={true} >
-        <RootNavigationContext.Provider value={navigationRef}>
-          {isAuthenticated ? <MainStack /> : <AuthStack />}
-        </RootNavigationContext.Provider>
-        <FlashMessage position="top" />
-      </NavigationContainer>
-    
-    
-  );
+    <NavigationContainer ref={navigationRef} independent={true} theme={MyTheme}>
+      <RootNavigationContext.Provider value={navigationRef}>
+        {isAuthenticated ? <MainStack /> : <AuthStack />}
+      </RootNavigationContext.Provider>
+      <FlashMessage position="top" />
+    </NavigationContainer>
+  )
 }
