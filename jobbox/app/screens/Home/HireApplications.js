@@ -17,10 +17,11 @@ import axios from 'axios';
 import LoadingScreen from '../../components/LoadingScreen';
 
 export function HireApplicationsScreen({ route, navigation }) {
-  const job = route.params.job;
+  const { job, isArchived = false } = route.params;
   const [applicants, setApplicants] = useState();
   const [refreshing, setRefreshing] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [hiredApplicantId, setHiredApplicantId] = useState(null);
 
   const fetchApplicants = async () => {
     try {
@@ -59,6 +60,7 @@ export function HireApplicationsScreen({ route, navigation }) {
       );
       if (response.status === 200) {
         Alert.alert('Success', 'User has been hired successfully!');
+        setHiredApplicantId(applicantId);
         setApplicants(prevApplicants => {
           return prevApplicants.map(a => {
             if (a._id === applicantId) {
@@ -77,7 +79,7 @@ export function HireApplicationsScreen({ route, navigation }) {
   
   const handleReject = async (applicantId) => {
     const token = await AsyncStorage.getItem('token');
-    axios.put(`http://tranquil-ocean-74659.herokuapp.com/users/${applicantId}/reject`, 
+    axios.post(`http://tranquil-ocean-74659.herokuapp.com/jobs/users/${applicantId}/reject`, 
     {jobId: job._id}, 
     {headers: { Authorization: `Bearer ${token}` }}
     ).then((response) => {
@@ -128,12 +130,21 @@ export function HireApplicationsScreen({ route, navigation }) {
 
           <View
             style={{ flexDirection: 'row', marginTop: 15, marginBottom: -5 }}
-          >
-            <TouchableOpacity style={styles.button} onPress={() => handleHire(item._id)}>
+          >{!isArchived && (<>
+            <TouchableOpacity 
+              style={styles.button} 
+              onPress={() => handleHire(item._id)} 
+              disabled={hiredApplicantId === item._id}
+            >
               <Ionicons name="checkmark-circle" size={20} color="#4683fc" />
               <Text style={styles.buttonText}>Hire</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.button} onPress={() => handleReject(item._id)}>
+
+            <TouchableOpacity 
+              style={styles.button} 
+              onPress={() => handleReject(item._id)} 
+              disabled={hiredApplicantId === item._id}
+            >
               <Ionicons name="close-circle" size={20} color="#4683fc" />
               <Text style={styles.buttonText}>Reject</Text>
             </TouchableOpacity>
@@ -141,6 +152,8 @@ export function HireApplicationsScreen({ route, navigation }) {
               <Ionicons name="eye" size={20} color="#4683fc" />
               <Text style={styles.buttonText}>Review</Text>
             </TouchableOpacity>
+            </>
+      )}
           </View>
         </View>
       </View>
@@ -222,6 +235,7 @@ export function HireApplicationsScreen({ route, navigation }) {
           <Text style={styles.description}><Text style ={{fontWeight: 'bold'}}>Skills:</Text> {job.skills}</Text> 
         </View>
         <View style={styles.jobProgressSection}>
+        {!isArchived && (<>
           <TouchableOpacity
             onPress={() =>
               navigation.navigate('PostJob', { template: job, editing: true })
@@ -235,6 +249,8 @@ export function HireApplicationsScreen({ route, navigation }) {
             <Ionicons name="trash-outline" size={24} color="#fff" />
             <Text style={styles.buttonTextDel}>Delete Job</Text>
           </TouchableOpacity>
+          </>
+          )}
           <View style={{ justifyContent: 'center', alignItems: 'center' }}>
             <TouchableOpacity
               onPress={() => navigation.navigate('EditJob', { job })}

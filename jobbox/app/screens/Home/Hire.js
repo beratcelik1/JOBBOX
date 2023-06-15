@@ -22,6 +22,8 @@ function HireScreen({ navigation }) {
   const [searchQuery, setSearchQuery] = useState('');
   const [jobs, setJobs] = useState([]);
   const [allJobs, setAllJobs] = useState([]);
+  const [archivedJobs, setArchivedJobs] = useState([]);
+
 
   useFocusEffect(
     React.useCallback(() => {
@@ -42,9 +44,14 @@ function HireScreen({ navigation }) {
         })
         .then((response) => response.json())
         .then((data) => {
-          // Set the jobs state
-          setAllJobs(data);
-          setJobs(data);
+          // Filter jobs into 'active' and 'archived'
+          const activeJobs = data.filter(job => job.status !== 'in progress');
+          const archived = data.filter(job => job.status === 'in progress');
+        
+          // Set the jobs and archivedJobs states
+          setAllJobs(activeJobs);
+          setJobs(activeJobs);
+          setArchivedJobs(archived);
         })
         .catch((error) => console.error('Error:', error));
 
@@ -134,7 +141,12 @@ function HireScreen({ navigation }) {
           searchQuery={searchQuery}
           setSearchQuery={setSearchQuery}
         />
-
+        <TouchableOpacity
+          onPress={() => navigation.navigate('ArchivedJobsScreen')}
+          style={styles.archiveCard}
+        >
+          <Text style={{ fontWeight: 'bold', color: '#fff', fontSize: 20 }}>Archived Jobs</Text>
+        </TouchableOpacity>
         <FlatList
           data={jobs}
           renderItem={renderJob}
@@ -153,6 +165,110 @@ function HireScreen({ navigation }) {
         </View>
       </React.Fragment>
       {loading && <LoadingScreen />}
+    </View>
+  );
+}
+
+function ArchivedJobsScreen({ navigation }) {
+  const [loading, setloading] = useState(true);
+  const [archivedJobs, setArchivedJobs] = useState([]);
+  const handleJobPress = (job) => {
+    console.log(job);
+    navigation.navigate('HireApplicationsScreen', { job, isArchived: true });
+  };
+
+  useFocusEffect(
+    React.useCallback(() => {
+      const fetchArchivedJobs = async () => {
+        // Fetch the token from the async storage
+        const token = await AsyncStorage.getItem('token');
+        console.log(token);
+
+        // Decode the token to get the user ID
+        const decodedToken = jwt_decode(token);
+        const userId = decodedToken.userId;
+
+        // Fetch the jobs from your server
+        fetch(`http://tranquil-ocean-74659.herokuapp.com/jobs/user/${userId}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        })
+        .then((response) => response.json())
+        .then((data) => {
+          // Filter jobs into 'active' and 'archived'
+          const archived = data.filter(job => job.status === 'in progress');
+          
+          // Set the archivedJobs states
+          setArchivedJobs(archived);
+        })
+        .catch((error) => console.error('Error:', error));
+        
+        setloading(false);
+      };
+
+      fetchArchivedJobs();
+    }, [])
+  );
+
+  const renderJob = ({ item }) => {
+    return ( <View style={styles.jobCard}>
+      <View style={styles.jobHeader}>
+        <Text style={styles.jobTitle}>{item.title}</Text>
+      </View>   
+      <View
+        style={{
+          borderBottomColor: '#fff',
+          borderBottomWidth: 1.5,
+          marginBottom: 10,
+        }}/> 
+
+      <View style = {{ 
+        flexDirection: 'row',
+        justifyContent: 'flex-start',}}> 
+
+        <View style = {{ width: '60%'}} > 
+          <View style={styles.jobDetails}>
+            <Text style={styles.jobDescription}>{item.category}</Text>
+          </View>
+          <View style={styles.jobDetails}>
+            <Text style={styles.jobDescription}>{item.location}</Text>
+          </View>
+        </View> 
+
+        <View style = {{ width: '40%'}}> 
+          <View style={{flexDirection: 'row', justifyContent: 'flex-start', marginBottom: 5}}> 
+            <Ionicons name="md-cash" size={20} color="#fff" /> 
+            <Text style={styles.jobDescription}>  {item.pay} $</Text>
+          </View> 
+
+          <View style={{flexDirection: 'row', justifyContent: 'flex-start'}}>
+            <Ionicons name="md-time" size={20} color="#fff" />
+            <Text style={styles.jobDescription}>  {item.estimatedTime}</Text>
+            <Text style={styles.jobDescription}>  {item.estimatedTimeUnit}</Text>
+          </View> 
+          
+        </View>
+      </View>
+
+      <TouchableOpacity 
+        style={styles.button}
+        onPress={() => handleJobPress(item)}  
+      > 
+        <Text style={styles.buttonText}> View Possible Hires ({item.applicants ? item.applicants.length : 0})</Text>
+      </TouchableOpacity>
+    </View>);
+  };
+
+  return (
+    <View style={styles.container}>
+      {loading && <LoadingScreen />}
+      <FlatList
+        data={archivedJobs}
+        renderItem={renderJob}
+        keyExtractor={(item, index) => item._id.toString()}
+        style={styles.applicantView}
+      />
     </View>
   );
 }
@@ -197,6 +313,11 @@ export default function Hire() {
           headerBackTitleVisible: false,
         }}
       />
+      <HireStack.Screen
+      name="ArchivedJobsScreen"
+      component={ArchivedJobsScreen}
+      options={{ headerTitle: 'Archived Jobs', headerBackTitle: 'Back' }}
+    />
     </HireStack.Navigator>
   );
 }
