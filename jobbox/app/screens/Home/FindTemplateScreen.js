@@ -31,7 +31,7 @@ const FindTemplateScreen = ({ navigation }) => {
       description: '',
       category: CATEGORIES[4].id,
       skills: SKILLS_BY_CATEGORY.get(5),
-      location: LOCATIONS[0].match,
+      location: LOCATIONS[0],
     },
   ]);
 
