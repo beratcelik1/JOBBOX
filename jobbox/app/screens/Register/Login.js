@@ -34,6 +34,7 @@ export default function Login({ navigation, setIsAuthenticated }) {
             console.log(data);
             if (data.token) {
                 await AsyncStorage.setItem('token', data.token);
+                await AsyncStorage.setItem('userId', data.user._id);
                 setIsAuthenticated(true);
             } else {
                 Alert.alert('Login Failed', 'Invalid email or password');

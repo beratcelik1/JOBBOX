@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+
 import { TouchableOpacity,View, Text, TextInput, Button, StyleSheet, ScrollView } from 'react-native';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -10,27 +11,108 @@ import BubbleTextList from '../../components/BubbleTextList';
 import RecommendationCard from '../../components/ReccomendationCard'
 import FloatingSaveButton from '../../components/FloatingSaveButton';
 import { AntDesign } from '@expo/vector-icons';
+
 const styles = StyleSheet.create({
+  input: {
+      marginBottom: 10,
+      backgroundColor: '#fff',
+      borderColor: '#ccc',
+      borderWidth: 1,
+      borderRadius: 10, 
+      paddingHorizontal: 15, 
+      paddingVertical: 10,
+      fontSize: 18, 
+      color: '#333',
+      shadowColor: '#000',
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.23,
+      shadowRadius: 6.62,
+      elevation: 4, 
+  },
   container: {
-    flex: 1,
-    padding: 20,
+      flex: 1,
+      padding: 20,
   },
   title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 20,
+      fontSize: 25, 
+      fontWeight: 'bold',
+      marginBottom: 10, 
+      color: '#4683FC' 
   },
   text: {
-    fontSize: 16,
+      fontSize: 15, 
+      marginBottom: 10, 
   },
-  input: {
-    height: 40,
-    borderColor: 'gray',
-    borderWidth: 1,
-    marginBottom: 20,
-    paddingLeft: 10,
+  card: {
+      backgroundColor: '#fff',
+      padding: 20, 
+      marginBottom: 20, 
+      borderRadius: 10, 
+      
+  }, 
+  
+  //   button2: {
+//     flexDirection: 'row',
+//     alignItems: 'center',
+//     justifyContent: 'center', 
+//     marginHorizontal: 5,
+//     marginLeft: 10,
+//     backgroundColor: '#4683fc',
+//     paddingTop: 8,
+//     paddingBottom: 8,
+//     paddingLeft: 10,
+//     paddingRight: 15,
+//     borderRadius: 10,
+    
+//     width: '50%',
+//   }, 
+
+  button2: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+      marginHorizontal: 5,
+      marginLeft: 10,
+      backgroundColor: '#4683fc',
+      paddingTop: 12, 
+      paddingBottom: 12,
+      paddingLeft: 15,
+      paddingRight: 20,
+      borderRadius: 10, 
+      shadowColor: '#000',
+      shadowOffset: {
+        width: 0,
+        height: 2,
+      },
+      shadowOpacity: 0.25,
+      shadowRadius: 15.84,
+      elevation: 5,
+      width: '60%', 
+  },
+  buttonDel: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+      marginHorizontal: 5,
+      marginLeft: 10,
+      backgroundColor: '#eb5c52',
+      paddingTop: 12,
+      paddingBottom: 12,
+      paddingLeft: 15,
+      paddingRight: 20,
+      borderRadius: 10,
+      shadowColor: '#000',
+      shadowOffset: {
+        width: 0,
+        height: 2,
+      },
+      shadowOpacity: 0.25,
+      shadowRadius: 15.84,
+      elevation: 5,
+      width: '60%', 
   },
 });
+
 
 const ProfileSection = ({ route, navigation }) => {
   const { section } = route.params;
@@ -59,7 +141,13 @@ const ProfileSection = ({ route, navigation }) => {
       : [{ name: '', relationship: '', recommendation: '' }]
   );
   
-  
+  const theme = {
+    ...DefaultTheme,
+    colors: {
+      ...DefaultTheme.colors,
+      primary: '#4683FC', // change the primary color to blue
+    },
+  };  
   
   useEffect(() => {
     if (section.title === 'About') {
@@ -119,7 +207,6 @@ const ProfileSection = ({ route, navigation }) => {
     setRecommendations(updatedRecommendations);
   };
   
-  
   const addExperience = () => {
     setExperience(prevExperience => [...prevExperience, {position: '', company: ''}]);
   };
@@ -134,9 +221,7 @@ const ProfileSection = ({ route, navigation }) => {
 
   const addRecommendation = () => {
     setRecommendations(prevRecommendations => [...prevRecommendations, { name: '', relationship: '', recommendation: '' }]);
-  };
-
-  
+  }; 
 
   const handleSave = async () => {
     try {
@@ -189,6 +274,7 @@ const ProfileSection = ({ route, navigation }) => {
         {
           section.title === 'About'
             ? (
+
               <View style={{
                 backgroundColor: '#fff',
                 padding: 16,
@@ -196,6 +282,7 @@ const ProfileSection = ({ route, navigation }) => {
                 borderRadius: 8,
               }}>
                 <TextInput
+
                 value={text}
                 placeholder='About text'
                 onChangeText={setText}
@@ -253,6 +340,7 @@ const ProfileSection = ({ route, navigation }) => {
                         return updatedExperience;
                       });
                     }}
+
                   />
                   </View>
                 ))}<TouchableOpacity onPress={addExperience} style={{
@@ -264,6 +352,7 @@ const ProfileSection = ({ route, navigation }) => {
                         <Text style={{color: '#ffffff' }}>Add Experience</Text>
                       </TouchableOpacity>
                       </React.Fragment>
+
             )
             : (
               <React.Fragment>
@@ -338,8 +427,10 @@ const ProfileSection = ({ route, navigation }) => {
                 updatedEducation[index].university = text;
                 setEducation(updatedEducation);
               }}
+
             />
           </View>
+
         ))}
         <TouchableOpacity onPress={addEducation} style={{
     alignItems: 'center',
@@ -390,8 +481,10 @@ const ProfileSection = ({ route, navigation }) => {
                   return updatedSkills;
                 });
               }}
+
             />
             </View>
+
           ))}
           <TouchableOpacity onPress={addSkill} style={{
     alignItems: 'center',
@@ -536,6 +629,7 @@ const ProfileSection = ({ route, navigation }) => {
   }
   section_content=section.data.length>0?section_content:(<Text style={styles.text}>{section.text}</Text>);
   return (
+
     <React.Fragment>
     <ScrollView style={styles.container} >
       <Text style={styles.title}>{section.title}</Text>
@@ -547,6 +641,7 @@ const ProfileSection = ({ route, navigation }) => {
     </ScrollView>
     <FloatingEditButton onPress={handleEdit}/>
     </React.Fragment>
+
   );
 };
 

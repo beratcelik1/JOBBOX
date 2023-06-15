@@ -53,27 +53,22 @@ export function HireApplicationsScreen({ route, navigation }) {
     const token = await AsyncStorage.getItem('token');
     try {
       const response = await axios.post(
-        `http://tranquil-ocean-74659.herokuapp.com/jobs/hire/${job._id}/${applicantId}`, 
-        {}, 
+        `http://tranquil-ocean-74659.herokuapp.com/jobs/hire/${job._id}/${applicantId}`, // Here is the change
+        {},
         { headers: { Authorization: `Bearer ${token}` }}
       );
-  
       if (response.status === 200) {
         Alert.alert('Success', 'User has been hired successfully!');
-      
-        // update local state here with new data
-        // for example:
-        setJobs(prevJobs => {
-          return prevJobs.map(j => {
-            if (j._id === response.data._id) {
-              return response.data;
+        setApplicants(prevApplicants => {
+          return prevApplicants.map(a => {
+            if (a._id === applicantId) {
+              return { ...a, hired: true };
             } else {
-              return j;
+              return a;
             }
           });
         });
       }
-      
     } catch (error) {
       console.error(error.response.data);
       Alert.alert('Error', 'Something went wrong while hiring the user');
@@ -201,14 +196,30 @@ export function HireApplicationsScreen({ route, navigation }) {
   return (
     <View style={styles.container}>
       <View style={styles.jobCard}>
-        <Image
-          source={{ uri: job.profilePicture }}
-          style={styles.profileImage}
-        />
-        <View style={{ flex: 1, marginLeft: '-10%' }}>
-          <Text style={styles.title}>{job.title}</Text>
-          <Text style={styles.description}>{job.description}</Text>
-          <Text style={styles.date}>{job.datePosted}</Text>
+        
+        <View style={{ flex: 1, marginLeft: 20, marginBottom: -10, marginRight: 10}}>
+          <Text style={styles.title}>{job.title}</Text> 
+          <View
+            style={{
+              borderBottomColor: '#fff',
+              borderBottomWidth: 1.5,
+              marginBottom: 5,
+              marginTop: 5,
+              
+            }}/>  
+
+          <View style={{flexDirection: 'row', justifyContent: 'flex-start', marginBottom: 5}}> 
+            <View style={{flexDirection: 'row', justifyContent: 'flex-stat', marginBottom: 5, marginRight: 25}}> 
+              <Ionicons name="md-cash" size={20} color="#fff" /> 
+              <Text style={styles.jobDescription}>  {job.pay} $</Text>
+            </View>
+            <View style={{flexDirection: 'row', justifyContent: 'flex-start'}}>
+              <Ionicons name="md-time" size={20} color="#fff" />
+              <Text style={styles.jobDescription}>  {job.estimatedTime}</Text>
+              <Text style={styles.jobDescription}>  {job.estimatedTimeUnit}</Text>
+            </View>  
+          </View>
+          <Text style={styles.description}><Text style ={{fontWeight: 'bold'}}>Skills:</Text> {job.skills}</Text> 
         </View>
         <View style={styles.jobProgressSection}>
           <TouchableOpacity
@@ -229,14 +240,14 @@ export function HireApplicationsScreen({ route, navigation }) {
               onPress={() => navigation.navigate('EditJob', { job })}
               style={styles.editBtn}
             >
-              <Text style={{ fontWeight: 'bold', color: '#4683fc' }}>
-                {' '}
-                Edit job
-              </Text>
             </TouchableOpacity>
           </View>
-        </View>
+        </View> 
+      </View> 
+      <View style ={styles.jobCard2}> 
+          <Text style={styles.description2}><Text style ={{fontWeight: 'bold'}}>Description:</Text> {job.description}</Text>
       </View>
+
       {applicants?.length < 1 ? (
         <View
           style={{
@@ -265,7 +276,14 @@ export function HireApplicationsScreen({ route, navigation }) {
 }
 
 // Styles...
-const styles = StyleSheet.create({
+const styles = StyleSheet.create({ 
+
+  jobDescription: {
+    fontSize: 14,
+    color: '#fff',
+    marginTop: 4,
+  }, 
+
   button2: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -314,16 +332,22 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    padding: 20,
+    padding: 10,
   },
   title: {
-    fontSize: 24,
+    fontSize: 20,
     fontWeight: 'bold',
     color: '#fff',
   },
   description: {
-    fontSize: 18,
-    marginTop: 10,
+    fontSize: 15,
+    marginTop: 5,
+    color: '#fff',
+  }, 
+  description2: {
+    fontSize: 15,
+    marginTop: -25,
+    marginRight: 20,
     color: '#fff',
   },
   date: {
@@ -339,13 +363,22 @@ const styles = StyleSheet.create({
   jobCard: {
     flexDirection: 'row',
     backgroundColor: '#4683fc',
-
     paddingRight: 20,
     paddingTop: 20,
-    paddingLeft: 0,
-    marginBottom: 10,
+    paddingLeft: 0, 
+    paddingBottom: -20,
     marginTop: '-5%',
-    borderRadius: 10,
+    marginLeft: -15,
+    marginRight: -15,
+  }, 
+  jobCard2: {
+    flexDirection: 'row',
+    backgroundColor: '#4683fc',
+    paddingRight: 20,
+    paddingTop: 20,
+    paddingLeft: 20, 
+    paddingBottom: -20,
+    marginBottom: 10,
     marginLeft: -15,
     marginRight: -15,
   },

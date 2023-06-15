@@ -27,7 +27,7 @@ import ProfileSection from './screens/Profile/ProfileSection';
 import WorkHistoryScreen from './screens/Activity/WorkHistoryScreen';
 import HireHistoryScreen from './screens/Activity/HireHistoryScreen';
 import EditTargetsScreen from './screens/Activity/EditTargetsScreen'; 
-import StatusScreen from './screens/Box/Box';  
+import Box from './screens/Box/Box';  
 
 import Login from './screens/Register/Login'; 
 import Signup from './screens/Register/Signup';
@@ -178,7 +178,7 @@ function MyTabs() {
       /> 
     <BottomTab.Screen 
         name=" " 
-        component={StatusScreen} 
+        component={Box} 
         options={{  
           tabBarIcon: ({ focused, color, size }) => (
             <View style={{
