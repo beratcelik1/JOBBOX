@@ -170,8 +170,8 @@ const ProfileSection = ({ route, navigation }) => {
   
       // after the section is successfully updated on the server, navigate back to Profile
       if (response.status === 200) {
-        //navigation.goBack();
-        setEditing(false);
+        navigation.goBack();
+        //setEditing(false);
       }
   
       //setEditing(false);
