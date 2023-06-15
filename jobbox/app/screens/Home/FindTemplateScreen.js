@@ -178,6 +178,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     marginLeft: 20,
     marginRight: 10,
+    marginVertical: 5,
     // Android shadow properties
     elevation: 5,
     // iOS shadow properties
