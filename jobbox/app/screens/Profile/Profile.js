@@ -187,7 +187,8 @@ const Profile = () => {
           title: 'Skills',
           iconName: 'star',
           data: skills.map(skill => ({ title: skill })), // transform each skill to an object with 'title' property
-          text: skills.length > 0 ? skills.join(', ') : 'No information provided.'
+          text: skills.length > 0 ? skills.join(', ') : 'No information provided.',
+          skillList: skills
         },          
         {
           id: '5',

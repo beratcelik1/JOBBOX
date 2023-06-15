@@ -1,4 +1,8 @@
 
+## Windows
+
+to start project run ```.\start ``` in the terminal at root or run ```start.bat```
+
 ```
 JOBBOX-1
 ├─ .DS_Store
@@ -91,3 +95,4 @@ JOBBOX-1
 └─ README.md
 
 ```
+
