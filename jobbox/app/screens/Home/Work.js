@@ -208,29 +208,29 @@ function WorkScreen({ navigation }) {
     return (
         <View style={styles.container}>
             <View style={styles.searchSection}>
-            <Ionicons style={styles.searchIcon} name="ios-search" size={20} color="#000" />
-            <TextInput
-                style={styles.searchInput}
-                onChangeText={setSearchQuery}
-                value={searchQuery}
-                placeholder="Search"
-                placeholderTextColor="gray"
-            />
-            {searchQuery.length > 0 && (
-                <TouchableOpacity onPress={() => setSearchQuery('')}>
-                <Ionicons name="ios-close" size={20} color="#000" />
-                </TouchableOpacity>
-            )}
+                <Ionicons style={styles.searchIcon} name="ios-search" size={20} color="#000" />
+                <TextInput
+                    style={styles.searchInput}
+                    onChangeText={setSearchQuery}
+                    value={searchQuery}
+                    placeholder="Search"
+                    placeholderTextColor="gray"
+                />
+                {searchQuery.length > 0 && (
+                    <TouchableOpacity onPress={() => setSearchQuery('')}>
+                    <Ionicons name="ios-close" size={20} color="#000" />
+                    </TouchableOpacity>
+                )}
 
-            {isFilterApplied ? (
-                              <TouchableOpacity style={styles.filterButton} onPress={removeFilters}>
-                              <Ionicons name="close" size={24} color="white" />
-                                </TouchableOpacity>
-            ) : (
-                <TouchableOpacity style={styles.filterButton} onPress={openFilterModal}>
-                <Ionicons name="filter" size={24} color="white" />
-                </TouchableOpacity>
-            )}
+                {isFilterApplied ? (
+                                <TouchableOpacity style={styles.filterButton} onPress={removeFilters}>
+                                <Ionicons name="close" size={24} color="white" />
+                                    </TouchableOpacity>
+                ) : (
+                    <TouchableOpacity style={styles.filterButton} onPress={openFilterModal}>
+                    <Ionicons name="filter" size={24} color="white" />
+                    </TouchableOpacity>
+                )}
             </View>
     <Modal 
     isVisible={isFilterModalVisible} 
@@ -479,6 +479,12 @@ const styles = StyleSheet.create({
         borderRadius: 50,
         paddingLeft: 10,
         margin: 10,
+        elevation: 5,
+        // iOS shadow properties
+        shadowColor: '#000',
+        shadowOffset: {width: 0,height: 2,},
+        shadowOpacity: 0.25,
+        shadowRadius: 3.84,
     },
           
     searchIcon: {
@@ -567,7 +573,7 @@ const styles = StyleSheet.create({
     jobView: {
         width: '100%',
         marginBottom: -15,
-
+        paddingTop: 10, 
     },
     jobCard: {
         backgroundColor: '#fff',
@@ -582,10 +588,10 @@ const styles = StyleSheet.create({
         shadowColor: '#000',
         shadowOffset: {
           width: 0,
-          height: 4,
+          height: 2,
         },
         shadowOpacity: 0.25,
-        shadowRadius: 3.84,
+        shadowRadius: 6.84,
       },
     jobTitle: {
         fontSize: 18,
@@ -605,11 +611,11 @@ const styles = StyleSheet.create({
         elevation: 5,
         shadowColor: "#000",
         shadowOffset: {
-            width: -10,
-            height: 2,
+            width: 0,
+            height: 4,
         },
         shadowOpacity: 0.25,
-        shadowRadius: 3.84,
+        shadowRadius: 12.84,
     },
     title2: {
         fontSize: 18,

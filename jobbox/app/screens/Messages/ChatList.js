@@ -9,17 +9,19 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 10,
-    marginHorizontal: 10,
+    marginHorizontal: 5,
   },
   card: {
     backgroundColor: '#fff',
     padding: 15,
     marginBottom: 10,
     borderRadius: 5,
+    marginHorizontal: 20,
+    marginVertical:5,
     shadowColor: "#000",
     shadowOffset: {
       width: 0,
-      height: 2,
+      height: 0,
     },
     shadowOpacity: 0.25,
     shadowRadius: 3.84,

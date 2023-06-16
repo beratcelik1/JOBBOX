@@ -141,11 +141,16 @@ const ChatRoom = ({ route, navigation }) => {
           borderTopWidth: 0,
           borderRadius: 35,  // Rounded edges
           marginHorizontal: 10,  // Increase width
-          backgroundColor: 'white',
+          backgroundColor: '#fff',
+          shadowColor: '#000',
+          shadowOffset: {width: 0,height: 2,},
+          shadowOpacity: 0.25,
+          shadowRadius: 3.84,
         }}
         textInputStyle={{
-          paddingTop: 10, 
-          paddingBottom: 10,
+          paddingTop: 7, 
+          marginTop:8,
+          paddingBottom: 7,
           paddingLeft: 8,
         }}
       />

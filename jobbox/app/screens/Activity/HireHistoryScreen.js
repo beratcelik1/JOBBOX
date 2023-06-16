@@ -8,6 +8,8 @@ const styles = StyleSheet.create({
   },
   section: {
     marginBottom: 20,
+    marginHorizontal:5,
+    flex: 1,
   },
   sectionTitle: {
     fontSize: 18,
@@ -19,10 +21,11 @@ const styles = StyleSheet.create({
     padding: 15,
     marginBottom: 10,
     borderRadius: 5,
+    marginHorizontal: 5,
     shadowColor: "#000",
     shadowOffset: {
       width: 0,
-      height: 2,
+      height: 0,
     },
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
@@ -75,6 +78,7 @@ const HireHistoryScreen = () => {
           data={hireHistory}
           keyExtractor={item => item.id}
           renderItem={renderHireHistoryItem}
+          style = {{paddingVertical: 5}}
         />
       </View>
     </View>
