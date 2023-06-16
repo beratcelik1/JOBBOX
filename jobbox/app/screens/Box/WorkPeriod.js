@@ -1,8 +1,11 @@
-import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, Modal, StyleSheet } from 'react-native';
+import React, { useState, useRef } from 'react';
+import { View, Text, TouchableOpacity, Modal, StyleSheet, ScrollView, Button } from 'react-native';
 import { useRoute } from '@react-navigation/native';
-import MapView, { Marker } from 'react-native-maps';
+import { Marker } from 'react-native-maps'; 
+import MapView from 'react-native-maps';
 import { Ionicons } from '@expo/vector-icons';
+import StarRating from 'react-native-star-rating'; // Remember to install this package
+import Icon from 'react-native-vector-icons/MaterialIcons'; 
 
 const WorkPeriodDetails = () => {
   const route = useRoute();
@@ -14,6 +17,7 @@ const WorkPeriodDetails = () => {
 
   const [isModalVisible, setModalVisible] = useState(false);
   const [modalContent, setModalContent] = useState('');
+  const [starCount, setStarCount] = useState(4.3); // Replace 5 with actual job rating
 
   const handlePress = (title, content) => {
     setModalContent({title, content});
@@ -24,8 +28,19 @@ const WorkPeriodDetails = () => {
     setModalVisible(false);
   }
 
+  const onStarRatingPress = (rating) => {
+    setStarCount(rating);
+  }
+
+  const scrollRef = useRef();
+
   return (
-    <View style={styles.container}>
+    <ScrollView 
+      ref={scrollRef}
+      onContentSizeChange={() => scrollRef.current.scrollToEnd({animated: true})}
+      contentContainerStyle={styles.container} 
+    >
+
         <View style={styles.jobCard}> 
         <Text style={styles.jobTitle}>{job.title}</Text>
             <View style={[
@@ -111,22 +126,82 @@ const WorkPeriodDetails = () => {
           <View style={styles.modalView}>
             <Text style={styles.modalTitle}>{modalContent.title}</Text>
             <Text style={styles.modalText}>{modalContent.content}</Text>
+
             <TouchableOpacity style={styles.buttonClose} onPress={closeModal}>
-              <Text style={styles.textStyle}>Close</Text>
+              <Text style={{ color: 'white', marginLeft: 5 }}>Close</Text>
             </TouchableOpacity>
           </View>
         </View>
-      </Modal>
+      </Modal> 
+      {/*End of Modal*/}
 
-    </View>
+      {/* Start of Employer Info */}
+      
+      {/* Start of Employer Info */}
+      <View style={styles.infoCard2}>
+        <View><Text style={styles.infoTitle}>Employed By: John Doe</Text></View>
+        <View><Text style={styles.infoSubtitle}>About Employer</Text></View>
+        <View><Text style={styles.infoText}>This is a brief about for the dummy employer... the dummy employer is not a dummy employer</Text></View>
+        <View style = {{flexDirection: 'row', marginTop: 10}}> 
+          <Text>Employer Rating:  4.3  </Text>
+          <StarRating
+              // disabled={false}
+              maxStars={5}
+              rating={starCount}
+              selectedStar={(rating) => onStarRatingPress(rating)}
+              starSize={17}
+              fullStarColor='#4683fc'
+          />
+
+        </View> 
+          <TouchableOpacity style={styles.buttonClose2} onPress={() => { console.log("Button Pressed!") }}>
+            <Text style={{ color: 'white', marginLeft: 5 }}>Mark as Complete</Text>
+          </TouchableOpacity>
+      </View> 
+      {/* End of Employer Info */}
+
+    </ScrollView>
+    
   );
 };
 
-const styles = {
-  container: {
-    flex: 1,
+const styles = { 
+  buttonClose2: {
+    // flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#4683fc',
+    paddingTop: 8,
+    paddingBottom: 8,
+    paddingLeft: 10,
+    paddingRight: 15,
+    borderRadius: 10,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+    marginTop: 10, // Add this line
+    alignSelf: 'center',  // center the button in the card
+  },
+  infoSubtitle: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#555',
+    marginTop: 5,
+  },
+  buttonComplete: {
+    backgroundColor: 'blue',
+    color: 'white',
     padding: 10,
-    backgroundColor: '#fff'
+    marginTop: 20,
+  },
+  
+  container: {
+    flex: 1, 
+    padding: 10,
   },
   title: {
     fontSize: 24,
@@ -135,7 +210,7 @@ const styles = {
   },
   map: {
     width: '100%',
-    height: '40%',
+    height: '30%',
     borderRadius: 5,
   },
   jobCard: {
@@ -189,8 +264,20 @@ const styles = {
     fontSize: 16,
   },
   infoCard: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: 'row', // updated from 'row'
+    alignItems: 'flex-start', // updated from 'center'
+    padding: 10,
+    marginTop: 10,
+    backgroundColor: '#fff',
+    borderRadius: 10,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+  },   
+  infoCard2: {
+    flexDirection: 'column', // updated from 'row'
+    alignItems: 'flex-start', // updated from 'center'
     padding: 10,
     marginTop: 10,
     backgroundColor: '#fff',
@@ -208,8 +295,8 @@ const styles = {
   },
   infoText: {
     fontSize: 16,
+    marginTop: 2.5,
   }, 
-
 
   modalContainer: {
     flex: 1,
@@ -233,6 +320,24 @@ const styles = {
     elevation: 5
   },
   buttonClose: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginHorizontal: 5,
+    marginLeft: 10,
+    backgroundColor: '#4683fc',
+    paddingTop: 8,
+    paddingBottom: 8,
+    paddingLeft: 10,
+    paddingRight: 15,
+    borderRadius: 10,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
     position: 'absolute',
     bottom: 40,
     marginBottom: 10, 
@@ -244,6 +349,7 @@ const styles = {
   modalText: {
     marginTop: 15
   },
+  
   
   
 };

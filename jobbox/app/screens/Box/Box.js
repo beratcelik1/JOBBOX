@@ -8,7 +8,9 @@ import { useNavigation } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { NavigationContainer, DefaultTheme } from '@react-navigation/native';
 
-import WorkPeriodDetails from './WorkPeriod'; 
+import WorkPeriodDetails from './WorkPeriod';  
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 
 const MyTheme = {
   ...DefaultTheme,
@@ -66,9 +68,6 @@ const BoxMain = () => {
         <Text style={styles.jobStatus}>{item.status}</Text>
       </View>
     </TouchableOpacity>
-
-
-    
   );
 
   return (
@@ -80,18 +79,66 @@ const BoxMain = () => {
       />
     </View>
   );
-};  
+};   
+
+const BoxHiring = () => {
+  // Your BoxHiring screen code goes here
+  return <View><Text>This is the BoxHiring screen</Text></View>;
+};
 
 const Stack = createStackNavigator();
 
-const Box = () => (
-  <NavigationContainer independent={true} theme={MyTheme}>
+
+const BoxMainStack = () => {
+  return (
     <Stack.Navigator initialRouteName="BoxMain">
-      <Stack.Screen name="BoxMain" component={BoxMain} options={{ title: 'Box' }} />
+      <Stack.Screen name="BoxMain" component={BoxMain} options={{  headerTitle: 'Box Employed',
+          headerShown: true,
+          headerBackTitle: '',
+          headerBackTitleVisible: false,}} />
+      <Stack.Screen name="WorkPeriodDetails" component={WorkPeriodDetails} options={{ title: 'Employment Details' }} />
+    </Stack.Navigator>
+  );
+};
+
+const BoxHiringStack = () => {
+  return (
+    <Stack.Navigator initialRouteName="BoxHiring">
+      <Stack.Screen name="BoxHiring" component={BoxHiring} options={{ title: 'Box Hired', }} />
       <Stack.Screen name="WorkPeriodDetails" component={WorkPeriodDetails} options={{ title: 'Period Details' }} />
     </Stack.Navigator>
+  );
+}; 
+
+const Tab = createMaterialTopTabNavigator();
+
+const Box = () => (
+  <NavigationContainer independent={true} theme={MyTheme}>
+    <Tab.Navigator
+      initialRouteName="BoxMainStack"
+      screenOptions={{
+        tabBarActiveTintColor: '#4683fc',
+        tabBarInactiveTintColor: '#000',
+        tabBarIndicatorStyle: { backgroundColor: '#4683fc' },
+        tabBarStyle: { backgroundColor: '#fff' },
+        swipeEnabled: true,
+      }}>
+      <Tab.Screen
+        name="Working"
+        component={BoxMainStack}
+        options={{ title: 'Working' }}
+      />
+      <Tab.Screen
+        name="Hiring"
+        component={BoxHiringStack}
+        options={{ title: 'Hiring' }}
+      />
+    </Tab.Navigator>
   </NavigationContainer>
 );
+
+// ... rest of your code
+
 
 const styles = {
   container: {

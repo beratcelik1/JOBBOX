@@ -59,7 +59,6 @@ function HomeTopTabs() {
   );
 }
 
-
 function MyTabs() {
   const navigation = useNavigation(); 
   const [user, setUser] = useState({});
