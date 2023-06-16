@@ -2,19 +2,15 @@ import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import jwt_decode from 'jwt-decode';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { View, Text, TouchableOpacity, FlatList, StyleSheet, ScrollView, KeyboardAvoidingView } from 'react-native';
+import { View, Text, TouchableOpacity, FlatList, StyleSheet } from 'react-native';
 import Modal from 'react-native-modal';
-import { TextInput, List, Menu, Button } from 'react-native-paper';
+import { TextInput} from 'react-native-paper';
 import { Ionicons } from '@expo/vector-icons';
-import Collapsible from 'react-native-collapsible';
 import { Picker } from '@react-native-picker/picker';
 import { createStackNavigator } from '@react-navigation/stack';
 import { DefaultTheme, Provider as PaperProvider } from 'react-native-paper';
 import { showMessage } from 'react-native-flash-message';
-import LoadingScreen from '../../components/LoadingScreen';
 import {CATEGORIES, SKILLS_BY_CATEGORY, LOCATIONS} from '../constants';
-import DropDownPicker from 'react-native-dropdown-picker';
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { Keyboard } from 'react-native';
 
 const theme = {
@@ -32,14 +28,11 @@ function WorkScreen({ navigation }) {
     const [categoryFilter, setCategoryFilter] = useState('');
     const [skillsFilter, setSkillsFilter] = useState([]);
     const [payFilter, setPayFilter] = useState({ min: '', max: '' });
-    const [locationFilter, setLocationFilter] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const [refreshing, setRefreshing] = useState(false);
     const [scrollPosition, setScrollPosition] = useState(0);
-    const [isCategoryModalVisible, setCategoryModalVisible] = useState(false);
     const [isFilterModalVisible, setFilterModalVisible] = useState(false); 
     const [isKeyboardVisible, setKeyboardVisible] = useState(false);
-    const [visible, setVisible] = useState(false);
     const [isFilterApplied, setFilterApplied] = useState(false);
 
       
@@ -51,46 +44,45 @@ function WorkScreen({ navigation }) {
             setFilterModalVisible(false);
         };
       
-    const fetchJobs = useCallback(() => {
-        setIsLoading(true);
-        fetch('http://tranquil-ocean-74659.herokuapp.com/jobs')
-            .then(response => response.json())
-            .then(data => {
+        const fetchJobs = useCallback(() => {
+            setIsLoading(true);
+            
+            AsyncStorage.getItem('token')
+            .then(token => {
+              fetch('http://tranquil-ocean-74659.herokuapp.com/jobs', {
+                headers: {
+                  'Authorization': `Bearer ${token}`,
+                },
+              })
+              .then(response => response.json())
+              .then(data => {
                 // Update this line to prepend the new data
                 setJobs(data);
                 setIsLoading(false);
                 setRefreshing(false);
-            })
-            .catch(error => {
+              })
+              .catch(error => {
                 console.error('Error:', error);
                 setIsLoading(false);
                 setRefreshing(false);
-            });
-    }, []);
+              });
+            })
+            .catch(err => console.log(err));
+          }, []);
 
-    const onRefresh = useCallback(() => {
-        if (!isFilterApplied) {
-          setRefreshing(true);
-          fetchJobs();
-        }
-    }, [fetchJobs]);
+          const onRefresh = useCallback(() => {
+            setCategoryFilter('');
+            setPayFilter({ min: '' });
+            setFilterApplied(false);
+            fetchJobs(); // fetch jobs after resetting filters
+          }, [fetchJobs]);
 
-      const removeFilters = () => {
-        setCategoryFilter('');
-        setPayFilter({ min: ''})
-        setLocationFilter('');
-        setFilterApplied(false);
-        // Refresh after removing filters
-        onRefresh();
-      };
-
-    const openMenu = () => {
-        setVisible(true);
-      };
-      
-      const closeMenu = () => {
-        setVisible(false);
-      };      
+          const removeFilters = () => {
+            setCategoryFilter('');
+            setPayFilter({ min: ''});
+            setFilterApplied(false);
+            fetchJobs(); // fetch jobs after removing filters
+          };          
 
     useEffect(() => {
     if (scrollPosition === 0) {
@@ -134,10 +126,9 @@ function WorkScreen({ navigation }) {
         setIsLoading(true);
         setFilterApplied(true);
         const filters = {
-            category: categoryFilter,
-            skills: skillsFilter,
-            pay: payFilter.min || null,
-            location: locationFilter, 
+          category: categoryFilter,
+          skills: skillsFilter,
+          pay: payFilter.min || null,
         };
       
         const query = Object.keys(filters)
@@ -145,20 +136,24 @@ function WorkScreen({ navigation }) {
           .map((key) => `${encodeURIComponent(key)}=${encodeURIComponent(filters[key])}`)
           .join('&');
       
-          fetch(`http://tranquil-ocean-74659.herokuapp.com/jobs/?${query}`)
+        AsyncStorage.getItem('token')
+        .then(token => {
+          fetch(`http://tranquil-ocean-74659.herokuapp.com/jobs/?${query}`, {
+            headers: {
+              'Authorization': `Bearer ${token}`,
+            },
+          })
           .then(response => response.json())
-          .then(data => setJobs(data))
-          .catch(error => console.error('Error:', error));
-      };      
-
-      const handleCategoryChange = (category) => {
-        setCategoryFilter(category);
-        // Clear skills filter when changing category
-        setSkillsFilter([]);
-      
-        // Fetch skills for selected category
-        let skillsForCategory = SKILLS_BY_CATEGORY.get(category) || [];
-        setSkillsForCategory(skillsForCategory);
+          .then(data => {
+            setJobs(data);
+            setIsLoading(false);
+          })
+          .catch(error => {
+            console.error('Error:', error);
+            setIsLoading(false);
+          });
+        })
+        .catch(err => console.log(err));
       };
 
       const categories = CATEGORIES.map(category => category.title);
@@ -237,52 +232,39 @@ function WorkScreen({ navigation }) {
                     </TouchableOpacity>
                 )}
             </View>
-            <Modal 
-            isVisible={isFilterModalVisible} 
-            style={[styles.modal, isKeyboardVisible ? {paddingBottom: 280} : {}]} 
-            onBackdropPress={closeFilterModal}>
-            <View style={styles.modalContent}>
-                <Text style={styles.modalTitle}>Filters</Text>
-                <View style={styles.filterBox}>
-                <Picker
-                    selectedValue={categoryFilter}
-                    onValueChange={(itemValue) => setCategoryFilter(itemValue)}
-                    style={styles.picker}
-                    dropdownIconColor="#4683FC"
-                    >
-                    <Picker.Item label="Category..." value="" />
-                    {categories.map((category, index) => (
-                        <Picker.Item key={index} label={category} value={category} />
-                    ))}
-                    </Picker>
-                </View>
-                <View style={styles.filterBox}>
-                    <Picker
-                        selectedValue={locationFilter}
-                        onValueChange={(itemValue) => setLocationFilter(itemValue)}
-                        style={styles.picker}
-                        dropdownIconColor="#4683FC"
-                    >
-                        <Picker.Item label="Location..." value="" />
-                        {LOCATIONS.map((location, index) => (
-                            <Picker.Item key={index} label={location} value={location} />
-                        ))}
-                    </Picker>
-                </View>
-                <View style={styles.filterBox}>
-                            <TextInput
-                                style={styles.modalInput}
-                                onChangeText={(value) => setPayFilter({...payFilter, min: value})}
-                                value={payFilter.min}
-                                placeholder="Min Pay..."
-                                placeholderTextColor="#aaa"
-                                keyboardType="numeric"
-                            />
-                </View>
-                <TouchableOpacity onPress={() => { handleFilter(); closeFilterModal(); }} style={styles.applyFilterButton}>
-                    <Text style={styles.filterOption}>Apply</Text>
-                </TouchableOpacity>
-            </View>
+    <Modal 
+    isVisible={isFilterModalVisible} 
+    style={[styles.modal, isKeyboardVisible ? {paddingBottom: 280} : {}]} 
+    onBackdropPress={closeFilterModal}>
+    <View style={styles.modalContent}>
+        <Text style={styles.modalTitle}>Filters</Text>
+        <View style={styles.filterBox}>
+        <Picker
+            selectedValue={categoryFilter}
+            onValueChange={(itemValue) => setCategoryFilter(itemValue)}
+            style={styles.picker}
+            dropdownIconColor="#4683FC"
+            >
+            <Picker.Item label="Category..." value="" />
+            {categories.map((category, index) => (
+                <Picker.Item key={index} label={category} value={category} />
+            ))}
+            </Picker>
+        </View>
+        <View style={styles.filterBox}>
+                    <TextInput
+                        style={styles.modalInput}
+                        onChangeText={(value) => setPayFilter({...payFilter, min: value})}
+                        value={payFilter.min}
+                        placeholder="Min Pay..."
+                        placeholderTextColor="#aaa"
+                        keyboardType="numeric"
+                    />
+        </View>
+        <TouchableOpacity onPress={() => { handleFilter(); closeFilterModal(); }} style={styles.applyFilterButton}>
+            <Text style={styles.filterOption}>Apply</Text>
+        </TouchableOpacity>
+    </View>
         </Modal>
             <FlatList
                 data={jobs}

@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { View, FlatList, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { CATEGORIES } from '../constants';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 
 const styles = StyleSheet.create({
   container: {
@@ -38,13 +40,24 @@ export default function Services({ navigation }) {
   const [categoriesWithJobs, setCategoriesWithJobs] = useState([]); 
 
   useEffect(() => {
-    fetch(`https://tranquil-ocean-74659.herokuapp.com/jobs`)
-    .then(response => response.json())
-    .then(data => {
-      const uniqueCategories = [...new Set(data.map(job => job.category))];
-      setCategoriesWithJobs(uniqueCategories);
-    })
-    .catch(error => console.error('Error:', error));
+    const fetchJobs = async () => {
+      const token = await AsyncStorage.getItem('token'); // you need to import AsyncStorage
+      console.log('Token: ', token); 
+
+      fetch(`https://tranquil-ocean-74659.herokuapp.com/jobs`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        },
+      })
+      .then(response => response.json())
+      .then(data => {
+        const uniqueCategories = [...new Set(data.map(job => job.category))];
+        setCategoriesWithJobs(uniqueCategories);
+      })
+      .catch(error => console.error('Error:', error));
+    }
+
+    fetchJobs();
   }, []);
   
   return (

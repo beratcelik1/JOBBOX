@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, FlatList, StyleSheet, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function CategoryScreen({ route, navigation }) {
   const { category} = route.params;
@@ -11,7 +12,12 @@ export default function CategoryScreen({ route, navigation }) {
     const fetchJobs = async () => {
       try {
         setLoading(true); // set loading state to true as fetching begins
-        const response = await fetch(`https://tranquil-ocean-74659.herokuapp.com/jobs?category=${encodeURIComponent(category)}`);
+        const token = await AsyncStorage.getItem('token'); // 2. Retrieve the token
+        const response = await fetch(`https://tranquil-ocean-74659.herokuapp.com/jobs?category=${encodeURIComponent(category)}`, {
+          headers: {
+            'Authorization': `Bearer ${token}`, // 3. Include the token
+          },
+        });
         const data = await response.json();
         setJobs(data);
         console.log(data);
