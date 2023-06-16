@@ -9,21 +9,49 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   inputContainer: {
-    marginBottom: 15,
+    marginBottom: 40,
   },
   label: {
     fontSize: 16,
     marginBottom: 5,
   },
   input: {
-    height: 40,
-    borderColor: 'gray',
-    borderWidth: 1,
-    padding: 10,
+    flex: 1,
+    marginTop: 10,
+    paddingVertical: 15,
+    paddingRight: 10,
+    paddingLeft: 20,
+    borderRadius: 50,
+    backgroundColor: '#fff',
+    color: '#424242', 
+    alignContent: 'center',
+    justifyContent: 'center',
+    elevation: 5,
+    // iOS shadow properties
+    shadowColor: '#000',
+    shadowOffset: {width: 0,height: 2,},
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84, 
+    marginHorizontal: 25,
   },
   savedTargets: {
     fontSize: 16,
     marginTop: 15,
+  }, 
+  button: { 
+    backgroundColor: '#fff',
+    padding: 5,
+    marginTop: 10, 
+    borderRadius: 10,
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 10.84,
+    elevation: 5, 
+    marginHorizontal: 50, 
   },
 });
 
@@ -86,8 +114,14 @@ const EditTargetsScreen = ({ navigation }) => {
           value={spendingTarget}
           onChangeText={text => setTargetSpent(text)}
         />
-      </View>
-      <Button title="Update Targets" onPress={handleEditTargets} />
+      </View> 
+
+      <View style={styles.button}>  
+          <Button title="Edit Targets" onPress={handleEditTargets} />
+        </View> 
+
+
+      {/* <Button title="Update Targets" onPress={handleEditTargets} /> */}
     </View>
   );
 };

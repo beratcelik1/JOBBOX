@@ -137,11 +137,12 @@ const styles = StyleSheet.create({
     shadowColor: "#000", // for iOS shadow
     shadowOffset: {
       width: 0,
-      height: 1,
+      height: 0,
     },
     shadowOpacity: 0.22,
-    shadowRadius: 2.22,
+    shadowRadius: 4.22,
     padding: 13,
+    marginTop: 10, 
   },
   notificationContent: {
     flexDirection: 'row',
