@@ -136,17 +136,19 @@ function HireScreen({ navigation }) {
   return (
     <View style={styles.container}>
       <React.Fragment>
-        <SearchBar
-          placeholder={'Find previously created jobs..'}
-          searchQuery={searchQuery}
-          setSearchQuery={setSearchQuery}
-        />
-        <TouchableOpacity
-          onPress={() => navigation.navigate('ArchivedJobsScreen')}
-          style={styles.archiveCard}
-        >
-          <Text style={{ fontWeight: 'bold', color: '#fff', fontSize: 20 }}>Archived Jobs</Text>
-        </TouchableOpacity>
+        <View style={styles.searchContainer}>
+          <TouchableOpacity
+            onPress={() => navigation.navigate('ArchivedJobsScreen')}
+            style={styles.archiveIcon}
+          >
+            <Ionicons name="archive" size={32} color= "#cccccc" />
+          </TouchableOpacity>
+          <SearchBar
+            placeholder={'Find previously created jobs..'}
+            searchQuery={searchQuery}
+            setSearchQuery={setSearchQuery}
+          />
+        </View>
         <FlatList
           data={jobs}
           renderItem={renderJob}
@@ -166,7 +168,7 @@ function HireScreen({ navigation }) {
       </React.Fragment>
       {loading && <LoadingScreen />}
     </View>
-  );
+  );  
 }
 
 function ArchivedJobsScreen({ navigation }) {
@@ -316,7 +318,7 @@ export default function Hire() {
       <HireStack.Screen
       name="ArchivedJobsScreen"
       component={ArchivedJobsScreen}
-      options={{ headerTitle: 'Archived Jobs', headerBackTitle: 'Back' }}
+      options={{ headerTitle: '', headerBackTitleVisible: false }}
     />
     </HireStack.Navigator>
   );
@@ -327,6 +329,34 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     marginBottom: 5,
+  },
+  searchContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    width: '100%',
+    marginBottom: 1,
+    marginTop: 0,
+  },
+  archiveIcon: {
+    backgroundColor: '#fff',
+    padding: 1,
+    height: 40,
+    width: 40,
+    marginTop: -17,
+    marginLeft: -5,
+    marginRight:4,
+    borderRadius: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.23,
+    shadowRadius: 2.62,
+    elevation: 4,
   },
   detailLabel: {
     fontSize: 14,

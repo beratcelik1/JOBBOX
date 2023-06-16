@@ -48,6 +48,7 @@ const styles = StyleSheet.create({
     borderRadius: 50,
     paddingLeft: 10,
     marginBottom: 20,
+    flex: 1,
   },
   searchIcon: {
     padding: 10,
