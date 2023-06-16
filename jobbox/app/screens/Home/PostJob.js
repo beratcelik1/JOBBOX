@@ -148,15 +148,17 @@ export default function PostJob({ navigation, route }) {
   const handlePost = async () => {
     const token = await AsyncStorage.getItem('token');
     console.log("Token: ", token);
+  
     if (isNaN(pay)) {
       alert('Pay must be valid numbers');
       return;
     }
+  
     if (isNaN(estimatedTime)) {
       alert('Estimated Time must be valid numbers');
       return;
     }
-
+  
     const payload = {
       title: jobTitle,
       description: jobDescription,
@@ -165,9 +167,11 @@ export default function PostJob({ navigation, route }) {
       pay: parseFloat(pay), // ensure pay is a number
       estimatedTime: parseFloat(estimatedTime),
       estimatedTimeUnit: estimatedTimeUnit,
-      category: category,
+      category: selectedCategory ? selectedCategory.title : '', // Use title of the selected category
     };
+  
     console.log("Payload: ", payload);
+  
     // Inside your handlePost function...
     fetch('http://tranquil-ocean-74659.herokuapp.com/jobs', {
       method: 'POST',
@@ -181,22 +185,22 @@ export default function PostJob({ navigation, route }) {
       console.log("Response status: ", response.status);
       console.log("Response headers: ", response.headers);
       return response.json();
-  })
-  .then((data) => console.log(data))
-  .catch((error) => {
+    })
+    .then((data) => console.log(data))
+    .catch((error) => {
       console.error('Error:', error);
       alert(JSON.stringify(error)); // To see the error in the app
-  });
-
-      showMessage({
-        message: !template ? 'Your request has been sent!' : 'Your job is posted!',
-        description: !template ? 'you will get a notification when your job post is approved.' : '',
-        type: 'info',
-        floating: true,
-        icon: 'success',
-        duration: 3000,
-      });
-      
+    });
+  
+    showMessage({
+      message: !template ? 'Your request has been sent!' : 'Your job is posted!',
+      description: !template ? 'you will get a notification when your job post is approved.' : '',
+      type: 'info',
+      floating: true,
+      icon: 'success',
+      duration: 3000,
+    });
+  
     navigation.navigate('HireScreen');
   };
 
