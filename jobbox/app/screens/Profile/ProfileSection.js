@@ -1,29 +1,118 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, Button, StyleSheet } from 'react-native';
+
+import { TouchableOpacity,View, Text, TextInput, Button, StyleSheet, ScrollView } from 'react-native';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import FloatingEditButton from '../../components/FloatingEditButton';
+import JobExperienceCard from '../../components/JobExperienceCard';
+import EducationCard from '../../components/EducationCard';
+import PlainCard from '../../components/PlainCard';
+import BubbleTextList from '../../components/BubbleTextList';
+import RecommendationCard from '../../components/ReccomendationCard'
+import FloatingSaveButton from '../../components/FloatingSaveButton';
+import { AntDesign } from '@expo/vector-icons';
 
 const styles = StyleSheet.create({
+  input: {
+      marginBottom: 10,
+      backgroundColor: '#fff',
+      borderColor: '#ccc',
+      borderWidth: 1,
+      borderRadius: 10, 
+      paddingHorizontal: 15, 
+      paddingVertical: 10,
+      fontSize: 18, 
+      color: '#333',
+      shadowColor: '#000',
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.23,
+      shadowRadius: 6.62,
+      elevation: 4, 
+  },
   container: {
-    flex: 1,
-    padding: 20,
+      flex: 1,
+      padding: 20,
   },
   title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 20,
+      fontSize: 25, 
+      fontWeight: 'bold',
+      marginBottom: 10, 
+      color: '#4683FC' 
   },
   text: {
-    fontSize: 16,
+      fontSize: 15, 
+      marginBottom: 10, 
   },
-  input: {
-    height: 40,
-    borderColor: 'gray',
-    borderWidth: 1,
-    marginBottom: 20,
-    paddingLeft: 10,
+  card: {
+      backgroundColor: '#fff',
+      padding: 20, 
+      marginBottom: 20, 
+      borderRadius: 10, 
+      
+  }, 
+  
+  //   button2: {
+//     flexDirection: 'row',
+//     alignItems: 'center',
+//     justifyContent: 'center', 
+//     marginHorizontal: 5,
+//     marginLeft: 10,
+//     backgroundColor: '#4683fc',
+//     paddingTop: 8,
+//     paddingBottom: 8,
+//     paddingLeft: 10,
+//     paddingRight: 15,
+//     borderRadius: 10,
+    
+//     width: '50%',
+//   }, 
+
+  button2: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+      marginHorizontal: 5,
+      marginLeft: 10,
+      backgroundColor: '#4683fc',
+      paddingTop: 12, 
+      paddingBottom: 12,
+      paddingLeft: 15,
+      paddingRight: 20,
+      borderRadius: 10, 
+      shadowColor: '#000',
+      shadowOffset: {
+        width: 0,
+        height: 2,
+      },
+      shadowOpacity: 0.25,
+      shadowRadius: 15.84,
+      elevation: 5,
+      width: '60%', 
+  },
+  buttonDel: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+      marginHorizontal: 5,
+      marginLeft: 10,
+      backgroundColor: '#eb5c52',
+      paddingTop: 12,
+      paddingBottom: 12,
+      paddingLeft: 15,
+      paddingRight: 20,
+      borderRadius: 10,
+      shadowColor: '#000',
+      shadowOffset: {
+        width: 0,
+        height: 2,
+      },
+      shadowOpacity: 0.25,
+      shadowRadius: 15.84,
+      elevation: 5,
+      width: '60%', 
   },
 });
+
 
 const ProfileSection = ({ route, navigation }) => {
   const { section } = route.params;
@@ -51,7 +140,6 @@ const ProfileSection = ({ route, navigation }) => {
       ? section.data 
       : [{ name: '', relationship: '', recommendation: '' }]
   );
-  
   
   
   useEffect(() => {
@@ -112,7 +200,6 @@ const ProfileSection = ({ route, navigation }) => {
     setRecommendations(updatedRecommendations);
   };
   
-  
   const addExperience = () => {
     setExperience(prevExperience => [...prevExperience, {position: '', company: ''}]);
   };
@@ -127,9 +214,7 @@ const ProfileSection = ({ route, navigation }) => {
 
   const addRecommendation = () => {
     setRecommendations(prevRecommendations => [...prevRecommendations, { name: '', relationship: '', recommendation: '' }]);
-  };
-
-  
+  }; 
 
   const handleSave = async () => {
     try {
@@ -164,9 +249,10 @@ const ProfileSection = ({ route, navigation }) => {
       // after the section is successfully updated on the server, navigate back to Profile
       if (response.status === 200) {
         navigation.goBack();
+        //setEditing(false);
       }
   
-      setEditing(false);
+      //setEditing(false);
     } catch (err) {
       console.error("Failed to update profile section: ", err);
     }
@@ -175,20 +261,26 @@ const ProfileSection = ({ route, navigation }) => {
 
   if (editing) {
     return (
-      <View style={styles.container}>
+      <React.Fragment>
+      <ScrollView style={styles.container}>
         <Text style={styles.title}>{section.title}</Text>
         {
           section.title === 'About'
             ? (
-              <React.Fragment>
-                <Text style={styles.text}>About:</Text>
+
+              <View style={{
+                backgroundColor: '#fff',
+                padding: 16,
+                marginBottom: 30,
+                borderRadius: 8,
+              }}>
                 <TextInput
-                style={styles.input}
+
                 value={text}
                 placeholder='About text'
                 onChangeText={setText}
                 />
-              </React.Fragment>
+              </View>
             )
             : null
         }
@@ -197,7 +289,25 @@ const ProfileSection = ({ route, navigation }) => {
             ? (
               <React.Fragment>
                 {experience.map((exp, index) => (
-                  <React.Fragment key={index}>
+                  <View key={index} style={{
+                    backgroundColor: '#fff',
+                    padding: 16,
+                    marginBottom: 30,
+                    borderRadius: 8,
+                  }}>
+                    <TouchableOpacity style={{
+                      position: 'absolute',
+                      top: -20,
+                      right: 0,
+                      width: 30,
+                      height: 30,
+                      borderRadius: 12,
+                      backgroundColor: '#fff',
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                    }} onPress={()=>handleDeleteExperience(index)}>
+                          <AntDesign name="close" size={18} color="#ff0000" />
+                    </TouchableOpacity>
                     <Text style={styles.text}>Position:</Text>
                     <TextInput
                     style={styles.input}
@@ -223,12 +333,19 @@ const ProfileSection = ({ route, navigation }) => {
                         return updatedExperience;
                       });
                     }}
+
                   />
-                   <Button title="Delete" onPress={() => handleDeleteExperience(index)} />
-                  </React.Fragment>
-                ))}
-                <Button title="Add Experience" onPress={addExperience} />
-              </React.Fragment>
+                  </View>
+                ))}<TouchableOpacity onPress={addExperience} style={{
+                  alignItems: 'center',
+                  backgroundColor: '#4683fc',
+                  padding: 10,
+                  marginBottom: 40
+                }}>
+                        <Text style={{color: '#ffffff' }}>Add Experience</Text>
+                      </TouchableOpacity>
+                      </React.Fragment>
+
             )
             : (
               <React.Fragment>
@@ -241,7 +358,25 @@ const ProfileSection = ({ route, navigation }) => {
     ? (
       <React.Fragment>
         {education.map((edu, index) => (
-          <React.Fragment key={index}>
+          <View key={index} style={{
+            backgroundColor: '#fff',
+            padding: 16,
+            marginBottom: 30,
+            borderRadius: 8,
+          }}>
+          <TouchableOpacity style={{
+    position: 'absolute',
+    top: -20,
+    right: 0,
+    width: 30,
+    height: 30,
+    borderRadius: 12,
+    backgroundColor: '#fff',
+    justifyContent: 'center',
+    alignItems: 'center',
+  }} onPress={()=>handleDeleteEducation(index)}>
+        <AntDesign name="close" size={18} color="#ff0000" />
+      </TouchableOpacity>
             <Text style={styles.text}>Date:</Text>
             <TextInput
               style={styles.input}
@@ -285,11 +420,19 @@ const ProfileSection = ({ route, navigation }) => {
                 updatedEducation[index].university = text;
                 setEducation(updatedEducation);
               }}
+
             />
-            <Button title="Delete" onPress={() => handleDeleteEducation(index)} />
-          </React.Fragment>
+          </View>
+
         ))}
-        <Button title="Add Education" onPress={addEducation} />
+        <TouchableOpacity onPress={addEducation} style={{
+    alignItems: 'center',
+    backgroundColor: '#4683fc',
+    padding: 10,
+    marginBottom: 40
+  }}>
+          <Text style={{color: '#ffffff' }}>Add Education</Text>
+        </TouchableOpacity>
       </React.Fragment>
       
     )
@@ -301,8 +444,25 @@ const ProfileSection = ({ route, navigation }) => {
       ? (
         <React.Fragment>
           {skills.map((skill, index) => (
-            <React.Fragment key={index}>
-            <Text style={styles.text}>Skill:</Text>
+            <View key={index} style={{
+              backgroundColor: '#fff',
+              padding: 16,
+              marginBottom: 30,
+              borderRadius: 8,
+            }}>
+              <TouchableOpacity style={{
+    position: 'absolute',
+    top: -20,
+    right: 0,
+    width: 30,
+    height: 30,
+    borderRadius: 12,
+    backgroundColor: '#fff',
+    justifyContent: 'center',
+    alignItems: 'center',
+  }} onPress={()=>handleDeleteSkills(index)}>
+        <AntDesign name="close" size={18} color="#ff0000" />
+      </TouchableOpacity>
             <TextInput
               style={styles.input}
               value={skill.title}
@@ -314,11 +474,19 @@ const ProfileSection = ({ route, navigation }) => {
                   return updatedSkills;
                 });
               }}
+
             />
-            <Button title="Delete" onPress={() => handleDeleteSkills(index)} />
-            </React.Fragment>
+            </View>
+
           ))}
-          <Button title="Add Skill" onPress={addSkill} />
+          <TouchableOpacity onPress={addSkill} style={{
+    alignItems: 'center',
+    backgroundColor: '#4683fc',
+    padding: 10,
+    marginBottom: 40
+  }}>
+          <Text style={{color: '#ffffff' }}>Add Skill</Text>
+        </TouchableOpacity>
         </React.Fragment>
       )
       : null
@@ -329,7 +497,25 @@ const ProfileSection = ({ route, navigation }) => {
     ? (
       <React.Fragment>
         {recommendations.map((rec, index) => (
-          <React.Fragment key={index}>
+          <View key={index} style={{
+            backgroundColor: '#fff',
+            padding: 16,
+            marginBottom: 30,
+            borderRadius: 8,
+          }}>
+            <TouchableOpacity style={{
+    position: 'absolute',
+    top: -20,
+    right: 0,
+    width: 30,
+    height: 30,
+    borderRadius: 12,
+    backgroundColor: '#fff',
+    justifyContent: 'center',
+    alignItems: 'center',
+  }} onPress={()=>handleDeleteRecommendations(index)}>
+        <AntDesign name="close" size={18} color="#ff0000" />
+      </TouchableOpacity>
             <Text style={styles.text}>Name:</Text>
             <TextInput
               style={styles.input}
@@ -369,27 +555,86 @@ const ProfileSection = ({ route, navigation }) => {
                 });
               }}
             />
-            <Button title="Delete" onPress={() => handleDeleteRecommendations(index)} />
-          </React.Fragment>
+          </View>
         ))}
-        <Button title="Add Recommendation" onPress={addRecommendation} />
+        <TouchableOpacity onPress={addRecommendation} style={{
+    alignItems: 'center',
+    backgroundColor: '#4683fc',
+    padding: 10,
+    marginBottom: 40
+  }}>
+          <Text style={{color: '#ffffff' }}>Add Recommendation</Text>
+        </TouchableOpacity>
       </React.Fragment>
     )
     : null
 }
 
-
-        <Button title="Save" onPress={handleSave} />
-      </View>
+      </ScrollView>
+      <FloatingSaveButton onPress={handleSave}/>
+      </React.Fragment>
     );
   }
 
+
+  let section_content;
+  switch (section.title) {
+    case 'About':
+      section_content=(<PlainCard content={section.text}/>)
+      break;
+      case 'Experience': 
+      section_content=section.data.map((experience, index) => (
+        <JobExperienceCard
+          key={index}
+          position={experience.position}
+          company={experience.company}
+        />
+      ))
+      break;
+      case 'Education':
+        section_content=section.data.map((education, index) => (
+          <EducationCard
+            key={index}
+            university={education.university}
+            degree={education.degree}
+            major={education.major}
+            date={education.date}
+          />
+        ))
+      break;
+      case 'Skills':
+        section_content=(<BubbleTextList items={section.data} />)
+        break;
+    case 'Recommendations':
+      section_content=section.data.map(
+        (recommendation, index) => (
+          <RecommendationCard
+            key={index}
+            name={recommendation.name}
+            relationship={recommendation.relationship}
+            recommendation={recommendation.recommendation}
+          />
+        )
+      )
+      break;
+    default:
+      break;
+  }
+  section_content=section.data.length>0?section_content:(<Text style={styles.text}>{section.text}</Text>);
   return (
-    <View style={styles.container}>
+
+    <React.Fragment>
+    <ScrollView style={styles.container} >
       <Text style={styles.title}>{section.title}</Text>
-      <Text style={styles.text}>{section.text}</Text>
-      <Button title="Edit" onPress={handleEdit} />
-    </View>
+      <TouchableOpacity onLongPress={handleEdit}>
+      {section_content}
+      </TouchableOpacity>
+      
+      
+    </ScrollView>
+    <FloatingEditButton onPress={handleEdit}/>
+    </React.Fragment>
+
   );
 };
 

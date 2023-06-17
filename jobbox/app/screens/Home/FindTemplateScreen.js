@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, FlatList, Text, StyleSheet, Button } from 'react-native';
+import { View, FlatList, Text, StyleSheet, Button, TouchableOpacity } from 'react-native';
 import SearchBar from '../../components/SearchBar';
 import { CATEGORIES } from '../constants';
 import { LOCATIONS } from '../constants';
@@ -31,7 +31,7 @@ const FindTemplateScreen = ({ navigation }) => {
       description: '',
       category: CATEGORIES[4].id,
       skills: SKILLS_BY_CATEGORY.get(5),
-      location: LOCATIONS[0].match,
+      location: LOCATIONS[0],
     },
   ]);
 
@@ -77,32 +77,81 @@ const FindTemplateScreen = ({ navigation }) => {
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
           <View style={styles.jobCard}>
-            <Text style={styles.jobTitle}>{item.title}</Text>
-            <Text style={styles.jobDescription}>{item.description}</Text>
-            <Button
-              style={styles.button}
-              onPress={() => handleUseTemplatePress(item)}
-              title="Use template"
-            />
+            <Text style={styles.jobTitle}>{item.title}</Text>  
+
+            <View style={{ alignItems: 'center'}}> 
+              <TouchableOpacity style={styles.button} onPress={() => handleUseTemplatePress(item)} >
+                  {/* <Ionicons name="add-circle" size={15} color="#fff" /> */}
+                  <Text style={{ color: '#000', marginLeft: 5 }}>Use template</Text>
+              </TouchableOpacity>
+            </View>
+
           </View>
         )}
       />
 
       <View style={styles.customJobContainer}>
         <Text style={styles.customJobText}>
-          Can't find what you're looking for?{' '}
-          <Text
-            style={styles.customJobButton}
-            onPress={() => navigation.navigate('PostJob')}>
-            Create a custom job
-          </Text>
+          Can't find what you're looking for?{' '} 
+          <View style={{ alignItems: 'center'}}> 
+              <TouchableOpacity style={styles.button2} onPress={() => navigation.navigate('PostJob')} >
+                  <Text style={{ color: 'white', marginLeft: 5 }}>Create a custom job</Text>
+              </TouchableOpacity>
+          </View>
+          
         </Text>
-      </View>
+      </View> 
+
     </View>
   );
 };
 
-const styles = StyleSheet.create({
+const styles = StyleSheet.create({ 
+  button2: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginHorizontal: 5,
+    marginLeft: 10,
+    marginTop: 25,
+    backgroundColor: '#4683fc',
+    paddingTop: 12, 
+    paddingBottom: 12,
+    paddingLeft: 15,
+    paddingRight: 20,
+    borderRadius: 10, 
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 15.84,
+    elevation: 5,
+  },
+  button: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginHorizontal: 5,
+    marginLeft: 10,
+    marginTop: 15,
+    backgroundColor: '#fff',
+    paddingTop: 12, 
+    paddingBottom: 12,
+    paddingLeft: 15,
+    paddingRight: 20,
+    borderRadius: 10, 
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 15.84,
+    elevation: 5,
+    width: '60%', 
+  },  
   container: {
     flex: 1,
     padding: 10,
@@ -129,12 +178,13 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     marginLeft: 20,
     marginRight: 10,
+    marginVertical: 5,
     // Android shadow properties
     elevation: 5,
     // iOS shadow properties
     shadowColor: '#000',
     shadowOffset: {
-      width: -10,
+      width: 0,
       height: 2,
     },
     shadowOpacity: 0.25,
@@ -144,6 +194,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
   },
+
   jobDescription: {
     fontSize: 14,
     color: '#666',

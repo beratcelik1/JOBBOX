@@ -48,6 +48,13 @@ const styles = StyleSheet.create({
     borderRadius: 50,
     paddingLeft: 10,
     marginBottom: 20,
+    flex: 1,
+    elevation: 5,
+    // iOS shadow properties
+    shadowColor: '#000',
+    shadowOffset: {width: 0,height: 2,},
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
   },
   searchIcon: {
     padding: 10,

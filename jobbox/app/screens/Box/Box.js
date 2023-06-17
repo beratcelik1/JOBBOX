@@ -1,179 +1,193 @@
 import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import { View, Text, FlatList, ActivityIndicator, TouchableOpacity, Alert } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import jwt_decode from 'jwt-decode';
-import { Ionicons } from '@expo/vector-icons';
+import { Ionicons } from '@expo/vector-icons'; 
+import { useNavigation } from '@react-navigation/native'; 
+import { createStackNavigator } from '@react-navigation/stack';
+import { NavigationContainer, DefaultTheme } from '@react-navigation/native';
 
-function StatusBadge({ status }) {
-  let text = '';
-  let color = '';
-  switch (status) {
-    case 'open':
-      text = 'Open';
-      color = 'green';
-      break;
-    case 'hired':
-      text = 'Hired';
-      color = 'blue';
-      break;
-    case 'closed':
-      text = 'Closed';
-      color = 'red';
-      break;
-    case 'rejected':
-      text = 'Rejected';
-      color = 'grey';
-      break;
-  }
+import WorkPeriodDetails from './WorkPeriod';  
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 
-  return (
-    <View style={{ backgroundColor: color, borderRadius: 5, padding: 5, alignSelf: 'flex-start' }}>
-      <Text style={{ color: 'white' }}>{text}</Text>
-    </View>
-  );
-}
+const MyTheme = {
+  ...DefaultTheme,
+  colors: {
+    ...DefaultTheme.colors,
+    background: '#fff',
+  },
+};
 
-function StatusScreen() {
-  const [loaded, setLoaded] = useState(false);
+const BoxMain = () => { 
+  const navigation = useNavigation(); 
+
   const [jobs, setJobs] = useState([]);
-  const [error, setError] = useState(null);
 
   useEffect(() => {
-    const fetchJobs = async () => {
-      setLoaded(false);
-      let token;
-      try {
-        // Fetch the token from the async storage
-        token = await AsyncStorage.getItem('token');
-      } catch(e) {
-        Alert.alert('Error', 'Could not retrieve user information. Please try again later.');
-        return;
-      }
+      const fetchData = async () => {
+          try {
+              const token = await AsyncStorage.getItem('token');
+              const userId = await AsyncStorage.getItem('userId');
+              console.log('userId:', userId);
+              if (!userId) {
+                console.log('User ID not found in storage');
+                return; // or handle this situation some other way
+            }
+              // Use userId here instead of user._id
+              const response = await axios.get(`https://tranquil-ocean-74659.herokuapp.com/jobs/user/${userId}/inprogress`, {
+                  headers: {
+                      Authorization: `Bearer ${token}`,
+                  },
+              });
 
-      // Fetch the jobs from your server
-      try {
-        const response = await fetch('http://tranquil-ocean-74659.herokuapp.com/jobs/user/jobs', {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
+              setJobs(response.data);
+          } catch (err) {
+              console.error(err);
+          }
+      };
 
-        const data = await response.json();
-        setJobs(data);
-        setLoaded(true);
-      } catch (error) {
-        // console.error('Error:', error);
-        setError('Failed to load jobs. Please try again later.');
-      }
-    };
+      fetchData();
+  }, []); 
 
-    fetchJobs();
-  }, []);
+  
+  const handleJobPress = (job) => {
+    navigation.navigate('WorkPeriodDetails', { job });
+  };
+  
+  const renderItem = ({ item }) => ( 
+    <TouchableOpacity style={styles.jobCard} onPress={() => handleJobPress(item)}>
+      <Text style={styles.jobTitle}>{item.title}</Text>
+      <View style={[
+        styles.jobStatusContainer,
+        item.status === 'Applied' && { backgroundColor: '#5ec949' },
+        item.status === 'in progress' && { backgroundColor: '#4683fc' },
+        item.status === 'Completed' && { backgroundColor: '#c7c7c7'}
+      ]}>
+        <Text style={styles.jobStatus}>{item.status}</Text>
+      </View>
+    </TouchableOpacity>
+  );
 
-    const renderJob = ({ item }) => {
-        // Provide JSX to render each job in the list
-        return (
-        <TouchableOpacity 
-            style={styles.jobCard}
-            // onPress={() => navigation.navigate('JobDetail', { job: item })} 
-        > 
-            <View style={styles.jobHeader}>  
-                <Text style={styles.jobTitle}>{item.title}</Text>
-                <View style = {{ flexDirection: 'row',justifyContent: 'space-between'}}>
-                    <Text style={styles.jobTitle2}>{item.postedBy?.firstname} {item.postedBy?.lastname} - 4.3 </Text>
-                    <Ionicons name="star" size={13} color="#4683fc" /> 
-                </View>
-            </View>     
-            <View
-                style={{
-                borderBottomColor: '#4683fc',
-                borderBottomWidth: 1.5,
-                marginBottom: 10,
-                }}/>
+  return (
+    <View style = {{flex: 1}}>
+      <FlatList
+        data={jobs}
+        renderItem={renderItem}
+        keyExtractor={(item) => item._id}
+      />
+    </View>
+  );
+};   
 
-            <View style = {{ flexDirection: 'row', justifyContent: 'flex-start',}}> 
-                <View style = {{ width: '60%'}} > 
-                    <View style={{flexDirection: 'row', justifyContent: 'flex-start', marginBottom: 5}}> 
-                            <Ionicons name="md-cash" size={20} color="#4683fc" /> 
-                            <Text style={styles.jobDescription}>  {item.pay} $ </Text>
-                        </View> 
+const BoxHiring = () => {
+  // Your BoxHiring screen code goes here
+  return <View><Text>This is the BoxHiring screen</Text></View>;
+};
 
-                        <View style={{flexDirection: 'row', justifyContent: 'flex-start'}}>
-                            <Ionicons name="md-time" size={20} color="#4683fc" />
-                            <Text style={styles.jobDescription}>  {item.estimatedTime}</Text>
-                            <Text style={styles.jobDescription}>  {item.estimatedTimeUnit}</Text>
-                    </View> 
-                </View> 
+const Stack = createStackNavigator();
 
-                <View style = {{ width: '40%',}}> 
-                    <StatusBadge status={item.status} />
-                </View>
-            </View>
-        </TouchableOpacity>
-        );
-    };
 
-    return (
-        <View style={styles.container}>
-          {error ? (
-            <Text style={{ color: 'red' }}>{error}</Text>
-          ) : loaded ? (
-            <FlatList data={jobs} renderItem={renderJob} keyExtractor={(item, index) => item._id} style={styles.jobList}/>
-          ) : (
-            <ActivityIndicator style={{ marginTop: 30 }} size="large" color="#0000ff"/>
-          )}
-        </View>
-      );
-      
-}
+const BoxMainStack = () => {
+  return (
+    <Stack.Navigator initialRouteName="BoxMain">
+      <Stack.Screen name="BoxMain" component={BoxMain} options={{  headerTitle: 'Box Employed',
+          headerShown: true,
+          headerBackTitle: '',
+          headerBackTitleVisible: false,}} />
+      <Stack.Screen name="WorkPeriodDetails" component={WorkPeriodDetails} options={{ title: 'Employment Details' }} />
+    </Stack.Navigator>
+  );
+};
+
+const BoxHiringStack = () => {
+  return (
+    <Stack.Navigator initialRouteName="BoxHiring">
+      <Stack.Screen name="BoxHiring" component={BoxHiring} options={{ title: 'Box Hired', }} />
+      <Stack.Screen name="WorkPeriodDetails" component={WorkPeriodDetails} options={{ title: 'Period Details' }} />
+    </Stack.Navigator>
+  );
+}; 
+
+const Tab = createMaterialTopTabNavigator();
+
+const Box = () => (
+  <NavigationContainer independent={true} theme={MyTheme}>
+    <Tab.Navigator
+      initialRouteName="BoxMainStack"
+      screenOptions={{
+        tabBarActiveTintColor: '#4683fc',
+        tabBarInactiveTintColor: '#000',
+        tabBarIndicatorStyle: { backgroundColor: '#4683fc' },
+        tabBarStyle: { backgroundColor: '#fff' },
+        swipeEnabled: true,
+      }}>
+      <Tab.Screen
+        name="Working"
+        component={BoxMainStack}
+        options={{ title: 'Working' }}
+      />
+      <Tab.Screen
+        name="Hiring"
+        component={BoxHiringStack}
+        options={{ title: 'Hiring' }}
+      />
+    </Tab.Navigator>
+  </NavigationContainer>
+);
+
+// ... rest of your code
+
 
 const styles = {
-    container: {
-        flex: 1,
-        marginTop: 10, 
+  container: {
+    flex: 1,
+    padding: 10,
+    backgroundColor: '#fff',
+  },
+  sectionTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginVertical: 10,
+  },
+  jobCard: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: 10,
+    marginVertical: 8,
+    marginHorizontal: 20,
+    backgroundColor: '#fff',
+    borderRadius: 10,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
     },
-    jobCard: {
-        backgroundColor: '#fff',
-        padding: 20,
-        marginBottom: 10,
-        borderRadius: 10,
-        marginLeft: 15,
-        marginRight: 15,
-        // Android shadow properties
-        elevation: 5,
-        // iOS shadow properties
-        shadowColor: '#000',
-        shadowOffset: {
-          width: 0,
-          height: 4,
-        },
-        shadowOpacity: 0.25,
-        shadowRadius: 3.84,
-      },  
-    jobHeader: {
-        flexDirection: 'row', 
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        marginBottom: 10, 
-    },
-    jobTitle: {
-        fontSize: 18,
-        fontWeight: 'bold',
-    },
-    jobTitle2: {
-        fontSize: 13,
-    },
-    jobDescription: {
-        fontSize: 14,
-        color: '#000',
-    },
-    jobDetails: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        marginBottom: 5,
-    },
-}
+    shadowOpacity: 0.25,
+    shadowRadius: 6.84,
+  },
+  jobTitle: {
+    fontSize: 18,
+  },
+  jobStatus: {
+    fontSize: 16,
+    fontWeight: '500',
+  }, 
+  jobStatusContainer: {
+    borderRadius: 20,
+    paddingHorizontal: 20,
+    paddingVertical: 5,
+    justifyContent: 'center',
+    alignItems: 'center',
+    minWidth: 100,
+  },
+  jobStatus: {
+    fontSize: 16,
+    fontWeight: '500',
+    color: '#fff' // Change this color to something else if 'Completed' status is hard to read
+  }
+};
 
-export default StatusScreen;
+export default Box;

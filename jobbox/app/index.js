@@ -2,11 +2,19 @@ import React, { useRef, useState, useEffect } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import { Image, Text, View, TouchableOpacity } from 'react-native';
-import { NavigationContainer, useNavigation } from '@react-navigation/native';
+import { NavigationContainer, useNavigation ,DefaultTheme} from '@react-navigation/native';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
 import Icon from 'react-native-vector-icons/Ionicons';
+
+const MyTheme = {
+  ...DefaultTheme,
+  colors: {
+    ...DefaultTheme.colors,
+    background: '#fff',
+  },
+};
 
 import { Modalize } from 'react-native-modalize';
 import { Dimensions } from 'react-native';
@@ -27,7 +35,7 @@ import ProfileSection from './screens/Profile/ProfileSection';
 import WorkHistoryScreen from './screens/Activity/WorkHistoryScreen';
 import HireHistoryScreen from './screens/Activity/HireHistoryScreen';
 import EditTargetsScreen from './screens/Activity/EditTargetsScreen'; 
-import StatusScreen from './screens/Box/Box';  
+import Box from './screens/Box/Box';  
 
 import Login from './screens/Register/Login'; 
 import Signup from './screens/Register/Signup';
@@ -50,7 +58,6 @@ function HomeTopTabs() {
     </TopTab.Navigator>
   );
 }
-
 
 function MyTabs() {
   const navigation = useNavigation(); 
@@ -178,7 +185,7 @@ function MyTabs() {
       /> 
     <BottomTab.Screen 
         name=" " 
-        component={StatusScreen} 
+        component={Box} 
         options={{  
           tabBarIcon: ({ focused, color, size }) => (
             <View style={{
@@ -365,14 +372,11 @@ export default function App() {
   );
 
   return (
-  
-      <NavigationContainer ref={navigationRef} independent={true} >
-        <RootNavigationContext.Provider value={navigationRef}>
-          {isAuthenticated ? <MainStack /> : <AuthStack />}
-        </RootNavigationContext.Provider>
-        <FlashMessage position="top" />
-      </NavigationContainer>
-    
-    
-  );
+    <NavigationContainer ref={navigationRef} independent={true} theme={MyTheme}>
+      <RootNavigationContext.Provider value={navigationRef}>
+        {isAuthenticated ? <MainStack /> : <AuthStack />}
+      </RootNavigationContext.Provider>
+      <FlashMessage position="top" />
+    </NavigationContainer>
+  )
 }

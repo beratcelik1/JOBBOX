@@ -1,8 +1,7 @@
-// screens/Signup.js
-
 import React, { useState } from 'react';
 import { StyleSheet, View, Image, Pressable, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
 import { TextInput, Button, Text } from 'react-native-paper';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const logo = require('../../assets/images/jobboxlogo2.png');
 
@@ -18,11 +17,11 @@ export default function Signup({ navigation }) {
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ 
-                firstname: firstname, 
-                lastname: lastname, 
-                email: email, 
-                password: password 
+            body: JSON.stringify({
+                firstname: firstname,
+                lastname: lastname,
+                email: email,
+                password: password
             })
         })
         .then(response => {
@@ -31,9 +30,11 @@ export default function Signup({ navigation }) {
             }
             return response.json();
         })
-        .then(data => {
+        .then(async data => {
             console.log(data);
             if (data.token) {
+                await AsyncStorage.setItem('token', data.token); // Store the token here after signup
+                await AsyncStorage.setItem('userId', data.user._id);
                 navigation.navigate('MyTabs');
             } else {
                 // handle error, show a message to the user

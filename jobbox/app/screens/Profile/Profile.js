@@ -12,6 +12,26 @@ import { LOCATIONS } from '../constants';
 import { Colors } from 'react-native/Libraries/NewAppScreen';
 
 const styles = StyleSheet.create({
+  button2: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginHorizontal: 5,
+    marginLeft: 10,
+    backgroundColor: '#4683fc',
+    paddingTop: 8,
+    paddingBottom: 8,
+    paddingLeft: 10,
+    paddingRight: 15,
+    borderRadius: 10,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+  },
   container: {
     flex: 1,
     marginTop: 5,
@@ -102,9 +122,6 @@ const styles = StyleSheet.create({
     elevation: 2,
     marginTop: 15,
   },
-  locationButton: {
-    padding: 5
-  },
 });
 
 const Profile = () => {
@@ -170,7 +187,8 @@ const Profile = () => {
           title: 'Skills',
           iconName: 'star',
           data: skills.map(skill => ({ title: skill })), // transform each skill to an object with 'title' property
-          text: skills.length > 0 ? skills.join(', ') : 'No information provided.'
+          text: skills.length > 0 ? skills.join(', ') : 'No information provided.',
+          skillList: skills
         },          
         {
           id: '5',
@@ -341,10 +359,9 @@ return (
             </View>
             <View style={{ flexDirection: 'row', alignItems: 'center' }}>
             <Text>{selectedLocation}</Text>
-            <TouchableOpacity onPress={() => setIsLocationModalVisible(true)}>
-            <View style={styles.locationButton}>
-            <Text><Icon name="edit" size={20} color="#000" /></Text>
-            </View>
+            <TouchableOpacity style={styles.button2} onPress={() => setIsLocationModalVisible(true)}>
+              <Icon name="edit" size={15} color="#fff" />
+              <Text style={{ color: 'white', marginLeft: 5 }}>Edit Location</Text>
             </TouchableOpacity>
             </View>
             <Modal

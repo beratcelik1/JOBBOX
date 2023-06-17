@@ -11,7 +11,6 @@ import { showMessage } from 'react-native-flash-message';
 
 export default function PostJob({ navigation, route }) {
   const { template, editing } = route.params || {};
-
   const [jobTitle, setJobTitle] = useState('');
   const [jobDescription, setJobDescription] = useState('');
   const [skills, setSkills] = useState([]);
@@ -85,7 +84,7 @@ export default function PostJob({ navigation, route }) {
     setSkills(SKILLS_BY_CATEGORY.get(categoryId) || []); // set skills for selected category
     setSelectedSkills(new Set()); // reset selected skills when category changes
     toggleCategoryModal();
-};
+ };
   const handleSelectSkill = (skill) => {
     setSelectedSkills((prevSkills) => {
       const newSkills = new Set(prevSkills);
@@ -107,6 +106,7 @@ export default function PostJob({ navigation, route }) {
 
   const handleEdit = async () => {
     const token = await AsyncStorage.getItem('token');
+    
     if (isNaN(pay)) {
       alert('Pay must be valid numbers');
       return;
@@ -125,7 +125,7 @@ export default function PostJob({ navigation, route }) {
       body: JSON.stringify({
         description: jobDescription,
         skills: Array.from(selectedSkills),
-        location: location,
+        location: selectedLocation,
         pay: parseFloat(pay), // ensure pay is a number
         estimatedTime: parseFloat(estimatedTime),
         estimatedTimeUnit: estimatedTimeUnit,
@@ -147,14 +147,31 @@ export default function PostJob({ navigation, route }) {
 
   const handlePost = async () => {
     const token = await AsyncStorage.getItem('token');
+    console.log("Token: ", token);
+  
     if (isNaN(pay)) {
       alert('Pay must be valid numbers');
       return;
     }
+  
     if (isNaN(estimatedTime)) {
       alert('Estimated Time must be valid numbers');
       return;
     }
+  
+    const payload = {
+      title: jobTitle,
+      description: jobDescription,
+      skills: Array.from(selectedSkills),
+      location: selectedLocation,
+      pay: parseFloat(pay), // ensure pay is a number
+      estimatedTime: parseFloat(estimatedTime),
+      estimatedTimeUnit: estimatedTimeUnit,
+      category: selectedCategory ? selectedCategory.title : '', // Use title of the selected category
+    };
+  
+    console.log("Payload: ", payload);
+  
     // Inside your handlePost function...
     fetch('http://tranquil-ocean-74659.herokuapp.com/jobs', {
       method: 'POST',
@@ -162,33 +179,28 @@ export default function PostJob({ navigation, route }) {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`, // Add this line
       },
-      body: JSON.stringify({
-        title: jobTitle,
-        description: jobDescription,
-        skills: Array.from(selectedSkills),
-        location: location,
-        pay: parseFloat(pay), // ensure pay is a number
-        estimatedTime: parseFloat(estimatedTime),
-        estimatedTimeUnit: estimatedTimeUnit,
-        category: category,
-      }),
+      body: JSON.stringify(payload)
     })
-      .then((response) => response.json())
-      .then((data) => console.log(data))
-      .catch((error) => console.error('Error:', error));
-
+    .then((response) => {
+      console.log("Response status: ", response.status);
+      console.log("Response headers: ", response.headers);
+      return response.json();
+    })
+    .then((data) => console.log(data))
+    .catch((error) => {
+      console.error('Error:', error);
+      alert(JSON.stringify(error)); // To see the error in the app
+    });
+  
     showMessage({
-      message: !template
-        ? 'Your request has been sent!'
-        : 'Your job is posted!',
-      description:
-        !template &&
-        'you will get a notification when your job post is approved.',
+      message: !template ? 'Your request has been sent!' : 'Your job is posted!',
+      description: !template ? 'you will get a notification when your job post is approved.' : '',
       type: 'info',
       floating: true,
       icon: 'success',
       duration: 3000,
     });
+  
     navigation.navigate('HireScreen');
   };
 
@@ -354,8 +366,7 @@ export default function PostJob({ navigation, route }) {
           mode="contained"
           onPress={editing ? handleEdit : handlePost}
           style={styles.button}
-          disabled={!isFormValid()}
-        >
+          disabled={!isFormValid()}>
           {editing ? 'Save Edit' : 'Post Job'}
         </Button>
       </KeyboardAwareScrollView>
