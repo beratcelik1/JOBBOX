@@ -349,10 +349,11 @@ export default function App() {
         component={JobScreen}
         options={{headerTitle: ' ', headerBackTitle: '', headerBackTitleVisible: false,}}  
       />
-       <Stack.Screen name="ProfileSection" component={ProfileSection} 
+       <Stack.Screen 
+       name="ProfileSection" 
+       component={ProfileSection} 
        options={{headerTitle: 'Profile', headerBackTitle: '', headerBackTitleVisible: false }} 
       />
-
        <Stack.Screen 
         name="WorkHistoryScreen" 
         component={WorkHistoryScreen} 

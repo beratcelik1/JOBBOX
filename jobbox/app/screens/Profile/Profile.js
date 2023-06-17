@@ -242,7 +242,7 @@ const Profile = () => {
         
         // Navigate user back to the Login screen
         // navigation.navigate('Login');
-        setIsAuthenticated(false);
+        // setIsAuthenticated(false);
       } else if (response.status === 400) {
         alert('Bad Request: The server could not understand the request due to invalid syntax.');
       } else if (response.status === 401) {
@@ -410,13 +410,13 @@ return (
           }
         />
         {/* // Button to delete account */}
-          <Button
-            mode="contained"
-            onPress={deleteAccount}
-            style={{margin: 20, backgroundColor: 'red'}}
-          >
-            Delete Account
-          </Button>
+        <Button
+          mode="contained"
+          onPress={deleteAccount}
+          style={{margin: 20, backgroundColor: 'red'}}
+        >
+          Delete Account
+        </Button>
       </>
     ) : (
       <ActivityIndicator size="large" color="#0000ff" />
