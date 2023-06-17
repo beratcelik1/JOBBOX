@@ -34,6 +34,7 @@ import WorkHistoryScreen from './screens/Activity/WorkHistoryScreen';
 import HireHistoryScreen from './screens/Activity/HireHistoryScreen';
 import EditTargetsScreen from './screens/Activity/EditTargetsScreen'; 
 import Box from './screens/Box/Box';  
+import SettingsScreen from './components/Settings';
 
 import Login from './screens/Register/Login'; 
 import Signup from './screens/Register/Signup';
@@ -61,7 +62,7 @@ function MyTabs() {
   const navigation = useNavigation(); 
   const [user, setUser] = useState({});
   const [hasNotifications, setHasNotifications] = useState(false);
-
+  const modalizeRef = useRef(null);
   // Fetch the current user's information
   useEffect(() => {
     const fetchUserData = async () => {
@@ -127,179 +128,139 @@ function MyTabs() {
       }
     }
   }, [user]);
-
-
-
+  const handleMenu =  () => {
+    console.log("handle out")
+    modalizeRef.current?.open();
+  };
+  const commonOptions = {
+    headerTitle: () => (
+      <View style={{ alignItems: 'center' }}>
+        <Image source={logo} style={{ width: 170, height: 30 }} />
+      </View>
+    ),
+    headerLeft: () => (
+      <View style={{ marginLeft: 10 }}>
+        <Image source={logo2} style={{ width: 30, height: 30 }} />
+      </View>
+    ),
+    headerRight: () => (
+      <View style={{ flexDirection: 'row', marginRight: 10 }}>
+        <TouchableOpacity onPress={() => navigation.navigate("Messages")}>
+          <Icon name="chatbox-outline" size={24} />
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => navigation.navigate("Notifications")}>
+          {hasNotifications && (
+            <View style={{ position: 'absolute', right: -2, top: -2, backgroundColor: 'red', borderRadius: 6, width: 12, height: 12, justifyContent: 'center', alignItems: 'center' }} />
+          )}
+          <Icon name="notifications-outline" size={24} style={{ marginLeft: 0 }} />
+        </TouchableOpacity>
+        <TouchableOpacity onPress={handleMenu}>
+          <Icon name="ellipsis-vertical-outline" size={24} />
+        </TouchableOpacity>
+      </View>
+    ),
+  };
+  
   return (
+    <>
     <BottomTab.Navigator
-    initialRouteName="Home"
-    screenOptions={({ route }) => ({
-      tabBarIcon: ({ focused, color, size }) => {
-        let iconName;
+      initialRouteName="Home"
+      screenOptions={({ route }) => ({
+        tabBarIcon: ({ focused, color, size }) => {
+          let iconName;
   
-        if (route.name === 'Home') {
-          iconName = focused ? 'home' : 'home-outline';
-        } else if (route.name === 'Categories') {
-          iconName = focused ? 'md-grid' : 'md-grid-outline';
-        } else if (route.name === 'Activity') {
-          iconName = focused ? 'wallet' : 'wallet-outline';
-        } else if (route.name === 'Profile') {
-          iconName = focused ? 'person' : 'person-outline';
-        }
+          if (route.name === 'Home') {
+            iconName = focused ? 'home' : 'home-outline';
+          } else if (route.name === 'Categories') {
+            iconName = focused ? 'md-grid' : 'md-grid-outline';
+          } else if (route.name === 'Activity') {
+            iconName = focused ? 'wallet' : 'wallet-outline';
+          } else if (route.name === 'Profile') {
+            iconName = focused ? 'person' : 'person-outline';
+          }
   
-        return <Icon name={iconName} size={size} color={color} />;
-      },
-      tabBarActiveTintColor: '#4683fc',
-      tabBarInactiveTintColor: 'gray',
-      tabBarStyle: [
-        {
-          display: 'flex'
+          return <Icon name={iconName} size={size} color={color} />;
         },
-        null
-      ]
-    })}
-  >
-      <BottomTab.Screen 
-        name="Home" 
-        component={HomeTopTabs} 
-        options={{ 
-          headerTitle: () => (
-            <View style={{ alignItems: 'center' }}>
-              <Image source={logo} style={{ width: 170, height: 30 }} />
-            </View>
-          ),
-          headerLeft: () => (
-            <View style={{ marginLeft: 10 }}>
-              <Image source={logo2} style={{ width: 30, height: 30 }} />
-            </View>
-          ),
-          headerRight: () => (
-            <View style={{ flexDirection: 'row', marginRight: 10 }}>
-              <TouchableOpacity onPress={() => navigation.navigate("Notifications")}>
-                {hasNotifications && <View style={{position: 'absolute', right: -2, top: -2, backgroundColor: 'red', borderRadius: 6, width: 12, height: 12, justifyContent: 'center', alignItems: 'center'}}>
-                </View>}
-                <Icon name="notifications-outline" size={24} style={{ marginLeft: 10 }} />
-              </TouchableOpacity>
-            </View>
-          ),
+        tabBarActiveTintColor: '#4683fc',
+        tabBarInactiveTintColor: 'gray',
+        tabBarStyle: [
+          {
+            display: 'flex',
+          },
+          null,
+        ],
+      })}
+    >
+      <BottomTab.Screen
+        name="Home"
+        component={HomeTopTabs}
+        options={{
+          ...commonOptions,
         }}
       />
-      <BottomTab.Screen 
-        name="Categories" 
-        component={Services} 
-        options={{ 
-          headerTitle: () => (
-            <View style={{ alignItems: 'center' }}>
-              <Image source={logo} style={{ width: 170, height: 30 }} />
-            </View>
-          ),
-          headerLeft: () => (
-            <View style={{ marginLeft: 10 }}>
-              <Image source={logo2} style={{ width: 30, height: 30 }} />
-            </View>
-          ),
-          headerRight: () => (
-            <View style={{ flexDirection: 'row', marginRight: 10 }}>
-              <TouchableOpacity onPress={() => navigation.navigate("Notifications")}>
-                <Icon name="notifications-outline" size={24} style={{ marginLeft: 10 }} />
-              </TouchableOpacity>
-            </View>
-          ),
+      <BottomTab.Screen
+        name="Categories"
+        component={Services}
+        options={{
+          ...commonOptions,
         }}
-      /> 
-    <BottomTab.Screen 
-        name=" " 
-        component={Box} 
-        options={{  
+      />
+      <BottomTab.Screen
+        name=" "
+        component={Box}
+        options={{
           tabBarIcon: ({ focused, color, size }) => (
-            <View style={{
-              width: 70, 
-              height: 50, 
-              borderRadius: 30, 
-              marginBottom: -20, 
-              backgroundColor: focused ? '#4683FC' : '#D3D3D3',
-              justifyContent: 'center', 
-              alignItems: 'center'
-            }}>
-              <Icon 
-                name={focused ? 'cube' : 'cube-outline'} 
-                size={size} 
-                color={focused ? 'white' : 'gray'} 
-              />
+            <View
+              style={{
+                width: 70,
+                height: 50,
+                borderRadius: 30,
+                marginBottom: -20,
+                backgroundColor: focused ? '#4683FC' : '#D3D3D3',
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}
+            >
+              <Icon name={focused ? 'cube' : 'cube-outline'} size={size} color={focused ? 'white' : 'gray'} />
             </View>
           ),
-          tabBarButton: (props) => (
-            <TouchableOpacity {...props} />
-          ),
-          headerTitle: () => (
-            <View style={{ alignItems: 'center' }}>
-              <Image source={logo} style={{ width: 170, height: 30 }} />
-            </View>
-          ),
-          headerLeft: () => (
-            <View style={{ marginLeft: 10 }}>
-              <Image source={logo2} style={{ width: 30, height: 30 }} />
-            </View>
-          ),
-          headerRight: () => (
-            <View style={{ flexDirection: 'row', marginRight: 10 }}>
-              <TouchableOpacity onPress={() => navigation.navigate("Notifications")}>
-                <Icon name="notifications-outline" size={24} style={{ marginLeft: 10 }} />
-              </TouchableOpacity>
-            </View>
-          ),
+          tabBarButton: (props) => <TouchableOpacity {...props} />,
+          ...commonOptions,
         }}
-      /> 
-
-
-    <BottomTab.Screen 
-      name="Activity" 
-      component={Activity} 
-      options={{ 
-        headerTitle: () => (
-          <View style={{ alignItems: 'center' }}>
-            <Image source={logo} style={{ width: 170, height: 30 }} />
-          </View>
-        ),
-        headerLeft: () => (
-          <View style={{ marginLeft: 10 }}>
-            <Image source={logo2} style={{ width: 30, height: 30 }} />
-          </View>
-        ),
-        headerRight: () => (
-          <View style={{ flexDirection: 'row', marginRight: 10 }}>
-            <TouchableOpacity onPress={() => navigation.navigate("Notifications")}>
-              <Icon name="notifications-outline" size={24} style={{ marginLeft: 10 }} />
-            </TouchableOpacity>
-          </View>
-        ),
-      }}
-    />
-    <BottomTab.Screen 
-      name="Profile" 
-      component={Profile} 
-      options={{ 
-        headerTitle: () => (
-          <View style={{ alignItems: 'center' }}>
-            <Image source={logo} style={{ width: 170, height: 30 }} />
-          </View>
-        ),
-        headerLeft: () => (
-          <View style={{ marginLeft: 10 }}>
-            <Image source={logo2} style={{ width: 30, height: 30 }} />
-          </View>
-        ),
-        headerRight: () => (
-          <View style={{ flexDirection: 'row', marginRight: 10 }}>
-            <TouchableOpacity onPress={() => navigation.navigate("Notifications")}>
-              <Icon name="notifications-outline" size={24} style={{ marginLeft: 10 }} />
-            </TouchableOpacity>
-          </View>
-        ),
-      }}
-    />
+      />
+      <BottomTab.Screen
+        name="Activity"
+        component={Activity}
+        options={{
+          ...commonOptions,
+        }}
+      />
+      <BottomTab.Screen
+        name="Profile"
+        component={Profile}
+        options={{
+          ...commonOptions,
+        }}
+      />
     </BottomTab.Navigator>
+    <Modalize
+      ref={modalizeRef}
+      snapPoint={Dimensions.get('window').height * 0.4}
+      modalHeight={Dimensions.get('window').height * 0.8}
+    >
+      <View style={{ padding: 20 }}>
+        <TouchableOpacity onPress={() => {
+    modalizeRef.current?.close();navigation.navigate('Settings')}}>
+          <Text style={{ fontSize: 20, marginBottom: 20 }}>Settings</Text>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => console.log('Sign Out')}>
+          <Text style={{ fontSize: 20 }}>Sign Out</Text>
+        </TouchableOpacity>
+      </View>
+    </Modalize>
+    </>
   );
+  
 }
 export default function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -329,9 +290,20 @@ export default function App() {
   const MainStack = () => (
     <Stack.Navigator >
       <Stack.Screen 
-        name="MyTabs" 
-        component={MyTabs} 
-        options={{ headerShown: false }} 
+      name="MyTabs" 
+      options={{ headerShown: false }}
+      component={()=><MyTabs setIsAuthenticated={setIsAuthenticated}/>}
+    >
+    </Stack.Screen>
+      <Stack.Screen 
+        name="Messages" 
+        component={ChatHandler} 
+        options={{ headerBackTitle: 'Back', headerBackTitleVisible: false }} 
+      />
+      <Stack.Screen 
+        name="ChatRoom" 
+        component={ChatRoom} 
+        options={{ headerBackTitle: 'Back', headerBackTitleVisible: false }} 
       />
       <Stack.Screen 
         name="Notifications" 
@@ -373,6 +345,8 @@ export default function App() {
         component={EditTargetsScreen} 
         options={{ headerBackTitle: '', headerBackTitleVisible: false }} 
       />
+      
+      <Stack.Screen name="Settings" component={SettingsScreen} options={{ headerShown: false }} />
     </Stack.Navigator>
   );
 
@@ -382,6 +356,7 @@ export default function App() {
         {isAuthenticated ? <MainStack /> : <AuthStack />}
       </RootNavigationContext.Provider>
       <FlashMessage position="top" />
+      
     </NavigationContainer>
   )
 }
