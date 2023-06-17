@@ -35,14 +35,14 @@ import ProfileSection from './screens/Profile/ProfileSection';
 import WorkHistoryScreen from './screens/Activity/WorkHistoryScreen';
 import HireHistoryScreen from './screens/Activity/HireHistoryScreen';
 import EditTargetsScreen from './screens/Activity/EditTargetsScreen'; 
-import Box from './screens/Box/Box';  
-import SettingsScreen from './components/Settings';
+import Box from './screens/Box/Box'; 
 
 import Login from './screens/Register/Login'; 
 import Signup from './screens/Register/Signup';
 
 import { Section } from 'react-native-paper';
 import FlashMessage from 'react-native-flash-message';
+import SettingsPage from './components/Settings';
 
 const logo = require('./assets/images/jobboxlogo4.png');
 const logo2 = require('./assets/images/jobboxlogotek.png');
@@ -60,7 +60,7 @@ function HomeTopTabs() {
   );
 }
 
-function MyTabs() {
+function MyTabs({handleSignOut}) {
   const navigation = useNavigation(); 
   const [user, setUser] = useState({});
   const [hasNotifications, setHasNotifications] = useState(false);
@@ -131,7 +131,6 @@ function MyTabs() {
       </View>
     ),
   };
-  
   return (
     <>
     <BottomTab.Navigator
@@ -224,7 +223,7 @@ function MyTabs() {
     modalizeRef.current?.close();navigation.navigate('Settings')}}>
           <Text style={{ fontSize: 20, marginBottom: 20 }}>Settings</Text>
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => console.log('Sign Out')}>
+        <TouchableOpacity onPress={() => {console.log('Sign Out');handleSignOut()}}>
           <Text style={{ fontSize: 20 }}>Sign Out</Text>
         </TouchableOpacity>
       </View>
@@ -236,7 +235,9 @@ function MyTabs() {
 export default function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const navigationRef = React.useRef();
+  const [signOutFlag, setSignOutFlag] = useState(false);
 
+  
   const AuthStack = () => (
     <Stack.Navigator 
       screenOptions={{ 
@@ -258,12 +259,12 @@ export default function App() {
 
   );
   
-  const MainStack = () => (
+  const MainStack = ({handleSignOut}) => (
     <Stack.Navigator >
       <Stack.Screen 
       name="MyTabs" 
       options={{ headerShown: false }}
-      component={()=><MyTabs setIsAuthenticated={setIsAuthenticated}/>}
+      component={()=><MyTabs handleSignOut={handleSignOut}/>}
     >
     </Stack.Screen>
       <Stack.Screen 
@@ -317,14 +318,19 @@ export default function App() {
         options={{ headerBackTitle: '', headerBackTitleVisible: false }} 
       />
       
-      <Stack.Screen name="Settings" component={SettingsScreen} options={{ headerShown: false }} />
+      <Stack.Screen name="Settings" 
+      component={SettingsPage} 
+      options={{ headerTitle: 'Settings', }} />
     </Stack.Navigator>
   );
+  const handleSignOut = async () => {
+    
+  };
 
   return (
     <NavigationContainer ref={navigationRef} independent={true} theme={MyTheme}>
       <RootNavigationContext.Provider value={navigationRef}>
-        {isAuthenticated ? <MainStack /> : <AuthStack />}
+        {isAuthenticated ? <MainStack handleSignOut={handleSignOut}/> : <AuthStack />}
       </RootNavigationContext.Provider>
       <FlashMessage position="top" />
       
