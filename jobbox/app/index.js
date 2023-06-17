@@ -42,7 +42,7 @@ import Signup from './screens/Register/Signup';
 
 import { Section } from 'react-native-paper';
 import FlashMessage from 'react-native-flash-message';
-import SettingsPage from './components/Settings';
+import SettingsPage from './screens/Settings/Settings';
 
 const logo = require('./assets/images/jobboxlogo4.png');
 const logo2 = require('./assets/images/jobboxlogotek.png');
@@ -223,7 +223,7 @@ function MyTabs({handleSignOut}) {
     modalizeRef.current?.close();navigation.navigate('Settings')}}>
           <Text style={{ fontSize: 20, marginBottom: 20 }}>Settings</Text>
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => {console.log('Sign Out');handleSignOut()}}>
+        <TouchableOpacity onPress={() => {console.log('Sign Out');modalizeRef.current?.close();handleSignOut()}}>
           <Text style={{ fontSize: 20 }}>Sign Out</Text>
         </TouchableOpacity>
       </View>
@@ -323,10 +323,11 @@ export default function App() {
       options={{ headerTitle: 'Settings', }} />
     </Stack.Navigator>
   );
-  const handleSignOut = async () => {
-    
+  const handleSignOut = () => {
+    console.log("signing out")
+    setIsAuthenticated(false)
+    console.log(isAuthenticated)
   };
-
   return (
     <NavigationContainer ref={navigationRef} independent={true} theme={MyTheme}>
       <RootNavigationContext.Provider value={navigationRef}>
