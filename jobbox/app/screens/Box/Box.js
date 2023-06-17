@@ -7,6 +7,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import { NavigationContainer, DefaultTheme } from '@react-navigation/native';
 import WorkPeriodDetails from './WorkPeriod';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
+import ChatHandler from '../Messages/ChatHandler';
 
 const MyTheme = {
   ...DefaultTheme,
@@ -90,6 +91,11 @@ function HiringStackNavigator({ hiringJobs }) {
           headerBackTitleVisible: false,
           headerTitleAlign: 'center',
         }}/>
+      <HiringStack.Screen
+        name="ChatHandler"
+        component={ChatHandler}
+        options={{ /* you can set options here like in your other stacks */ }}
+      />
     </HiringStack.Navigator>
   );
 }
@@ -107,6 +113,11 @@ function WorkingStackNavigator({ workingJobs }) {
           headerBackTitleVisible: false,
           headerTitleAlign: 'center',
         }} />
+      <WorkingStack.Screen
+        name="ChatHandler"
+        component={ChatHandler}
+        options={{ /* you can set options here like in your other stacks */ }}
+      />
     </WorkingStack.Navigator>
   );
 }

@@ -5,46 +5,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 // import { SearchBar } from 'react-native-elements';
 import SearchBar from '../../components/SearchBar';
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 10,
-    marginHorizontal: 5,
-  },
-  card: {
-    backgroundColor: '#fff',
-    padding: 15,
-    marginBottom: 10,
-    borderRadius: 5,
-    marginHorizontal: 20,
-    marginVertical:5,
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 0,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
-  },
-  label: {
-    fontSize: 18,
-    // fontWeight: 'bold',
-  },
-  chatListItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  profileImage: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    marginRight: 10,
-    backgroundColor: '#d3d3d3',
-  },
-});
-
-function ChatList({ navigateToChat, navigation }) {
+function ChatList({ navigateToChat, navigation, userId, postedBy }) {
   const [users, setUsers] = useState([]);
   const [search, setSearch] = useState('');
   const [filteredDataSource, setFilteredDataSource] = useState([]);
@@ -54,28 +15,28 @@ function ChatList({ navigateToChat, navigation }) {
 
   // Fetch the current user's information
   useEffect(() => {
-    const fetchUserData = async () => {
-      try {
-        const token = await AsyncStorage.getItem('token');
-        const response = await axios.get('https://tranquil-ocean-74659.herokuapp.com/auth/user/me', {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        setUser(response.data);
-        
-        // Get conversations for current user after fetching user data
-        try {
-          const res = await axios.get("https://tranquil-ocean-74659.herokuapp.com/conversations/" + response.data._id);
-          setConversations(res.data);
-        } catch (err) {
-          console.log(err);
+    fetch('http://tranquil-ocean-74659.herokuapp.com/auth/users')
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
         }
-      } catch (err) {
-        console.error("Failed to fetch user data: ", err);
-      }
-    }
-    fetchUserData();
+        return response.json();
+      })
+      .then(users => {
+        // Filter the users to only include employers or employees
+        let filteredUsers = [];
+        if(userId == postedBy) {
+          // If the current user is an employer, filter the users to only include hired applicants
+          filteredUsers = users.filter(user => user.isHiredApplicant);
+        } else {
+          // If the current user is a hired applicant, filter the users to only include employers
+          filteredUsers = users.filter(user => job.postedBy);
+        }
+        setUsers(filteredUsers);
+        setFilteredDataSource(filteredUsers);
+      })
+      .catch(error => console.error('Error:', error));
   }, []);
-
   // Get conversations for current user
   useEffect(() => {
     const getConversations = async () => {
@@ -186,5 +147,45 @@ function ChatList({ navigateToChat, navigation }) {
     </View>
   );
 }
+
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    padding: 10,
+    marginHorizontal: 5,
+  },
+  card: {
+    backgroundColor: '#fff',
+    padding: 15,
+    marginBottom: 10,
+    borderRadius: 5,
+    marginHorizontal: 20,
+    marginVertical:5,
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 0,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+  },
+  label: {
+    fontSize: 18,
+    // fontWeight: 'bold',
+  },
+  chatListItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  profileImage: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    marginRight: 10,
+    backgroundColor: '#d3d3d3',
+  },
+});
 
 export default ChatList;

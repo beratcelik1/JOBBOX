@@ -22,6 +22,7 @@ const WorkPeriodDetails = () => {
   const [modalContent, setModalContent] = useState('');
   const [starCount, setStarCount] = useState(4.3); // Replace 5 with actual job rating
 
+
   const handlePress = (title, content) => {
     setModalContent({title, content});
     setModalVisible(true);
@@ -36,6 +37,30 @@ const WorkPeriodDetails = () => {
   }
 
   const scrollRef = useRef();
+
+  const navigateToChat = async () => {
+    // Receiver would be determined by the work period
+    const receiverId = job.postedBy;
+    const receiverName = job.hiredApplicant;
+
+    // Get current user's id from AsyncStorage
+    const userId = await AsyncStorage.getItem('userId');
+
+    // Check if conversation already exists
+    let conversation = await axios.get(`http://tranquil-ocean-74659.herokuapp.com/conversations/find/${userId}/${receiverId}`);
+  
+    // If it doesn't, create a new one
+    if (!conversation.data) {
+      conversation = await axios.post(`http://tranquil-ocean-74659.herokuapp.com/conversations`, {
+        senderId: userId,
+        receiverId: receiverId
+      });
+    }
+
+    // Navigate to the ChatRoom screen
+    navigation.navigate('ChatRoom', {currentChatId: conversation.data, receiverName: receiverName});
+  };
+
 
   return (
     <ScrollView 
@@ -63,9 +88,6 @@ const WorkPeriodDetails = () => {
           longitude: -119.39467990636201,
           latitudeDelta: 0.0922, 
           longitudeDelta: 0.0421,
-
-          // latitude: job.myLocation.latitude,
-          // longitude: job.myLocation.longitude,
         }}
       >
         <Marker 
@@ -107,13 +129,22 @@ const WorkPeriodDetails = () => {
       {/* End of Job Description */}
 
       {/* Start of Message your Employer */}
-      <TouchableOpacity onPress={() => handlePress('Message your Employer', 'John Doe')}>
+      <TouchableOpacity onPress={navigateToChat}>
         <View style={styles.infoCard}>
           <Ionicons name="chatbubble" size={24} color="#4683fc" marginLeft ="2%" marginRight ="2%" />
           <View style={styles.infoTextContainer}>
             <Text style={styles.infoTitle}>Message your employer</Text>
             <Text style={styles.infoText}>John Doe</Text>
-            <Button title="Chat" onPress={() => navigation.navigate('ChatRoom', { currentChatId: job.postedBy === user._id ? job.hiredApplicant : job.postedBy })} />
+            <Button
+              title="Chat"
+              onPress={() =>
+                navigation.navigate('ChatHandler', {
+                  jobId: job._id,
+                  postedBy: job.postedBy, // Assuming you have this field
+                  hiredApplicant: job.hiredApplicant // Assuming you have this field
+                })
+              }
+            />
           </View>
         </View>
       </TouchableOpacity>
