@@ -18,31 +18,48 @@ router.get('/search', async (req, res) => {
 
 // Get all jobs
 router.get('/', async (req, res) => {
-try {
-  const { category, skills, location, pay } = req.query;
-  let query = {};
-
-  if(category) {
-    query.category = category;
+  const token = req.header('Authorization')?.replace('Bearer ', '');
+  if (!token) {
+    return res.status(401).json({ error: 'Authorization token missing' });
   }
+  
+  try {
+    const data = jwt.verify(token, process.env.JWT_SECRET);
+    const user = await User.findById(data.userId);
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
 
-  if(skills) {
-    query.skills = new RegExp(skills, 'i');
+    const { category, skills, pay } = req.query;
+    let query = {};
+
+    if(category) {
+      query.category = category;
+    }
+
+    if(skills) {
+      query.skills = new RegExp(skills, 'i');
+    }
+
+    // Set location to user's location
+    query.location = { $regex: user.location, $options: 'i' };
+
+    if(pay) {
+      query.pay = { $gte: Number(pay) };
+    }
+
+    query.status = 'hiring';
+
+    console.log("Query: ", query);
+
+    const jobs = await Job.find(query).populate('postedBy', 'firstname lastname');
+
+    console.log("Jobs: ", jobs);
+    
+    res.send(jobs);
+  } catch (error) {
+    res.status(500).send(error);
   }
-
-  if(location) {
-    query.location = new RegExp(location, 'i');
-  }
-
-  if(pay) {
-    query.pay = { $gte: Number(pay) }; // returns jobs with pay greater than or equal to the pay query
-  }
-
-  const jobs = await Job.find(query).populate('postedBy', 'firstname lastname');
-  res.send(jobs);
-} catch (error) {
-  res.status(500).send(error);
-}
 });
 
 // Post a job
@@ -210,9 +227,6 @@ if (!job.postedBy.equals(user._id)) {
   console.log('User is not authorized to delete this job');
   return res.status(403).json({ error: 'You are not authorized to delete this job' });
 }
-
-// If the job is an instance of the Job model, then it should have the .remove method
-// If it doesn't, you could try deleting by id directly on the model
 try {
   await Job.findByIdAndRemove(job._id);
 } catch (error) {
@@ -311,52 +325,6 @@ router.get('/:jobId', async (req, res) => {
       res.status(500).send(error);
   }
 });
-// Reject an applicant
-router.post('/reject/:jobId/:userId', async (req, res) => {
-  const { jobId, userId } = req.params;
-
-  const token = req.header('Authorization')?.replace('Bearer ', '');
-  if (!token) {
-    return res.status(401).send({ error: 'Authorization token missing' });
-  }
-
-  try {
-    const data = jwt.verify(token, process.env.JWT_SECRET);
-    const currentUser = await User.findById(data.userId);
-
-    if (!currentUser) {
-      return res.status(404).send({ error: 'User not found' });
-    }
-
-    const job = await Job.findById(jobId);
-    if (!job) {
-      return res.status(404).send({ error: 'Job not found' });
-    }
-
-    if (!job.postedBy.equals(currentUser._id)) {
-      return res.status(403).send({ error: 'You are not authorized to reject applicants for this job' });
-    }
-
-    if (!job.applicants.includes(userId)) {
-      return res.status(400).send({ error: 'User has not applied for this job' });
-    }
-
-    job.rejectedApplicants.push(userId);
-    job.applicants = job.applicants.filter(id => id.toString() !== userId);
-
-    const applicant = await User.findById(userId);
-    const application = applicant.jobApplications.find(app => app.job.equals(jobId));
-    application.status = 'rejected';
-    await applicant.save();
-
-    await job.save();
-    res.send(job);
-  } catch (err) {
-    console.error(err);
-    res.status(500).send({ error: "Server error" });
-  }
-});
-
 
 // Hire an applicant
 router.post('/hire/:jobId/:userId', async (req, res) => {
@@ -381,36 +349,25 @@ router.post('/hire/:jobId/:userId', async (req, res) => {
   }
 });
 
-
 // Reject an applicant
-router.post('/reject/:jobId/:userId', async (req, res) => {
+router.post('/users/:userId/reject', async (req, res) => {
   try {
-    const job = await Job.findById(req.params.jobId);
+    const job = await Job.findById(req.body.jobId);
     const user = await User.findById(req.params.userId);
     if (!job || !user) {
       return res.status(404).json({ error: 'Job or user not found' });
     }
-    job.rejectedApplicants.push(user._id);
+    // Remove the user's ID from the job's applicants array
+    const index = job.applicants.indexOf(user._id);
+    if (index > -1) {
+      job.applicants.splice(index, 1);
+    }
+    // Save the updated job
     await job.save();
-    res.status(200).json({ message: 'Applicant rejected successfully' });
+    res.status(200).json({ message: 'User has been rejected successfully' });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Server error' });
-  }
-});
-
-router.get('/user/:userId/jobs', async (req, res) => {
-  try {
-    const user = await User.findById(req.params.userId);
-    if (!user) {
-      return res.status(404).json({ error: 'User not found' });
-    }
-    const jobs = await Job.find({ 
-      _id: { $in: user.jobApplications.filter(app => app.status !== 'rejected').map(app => app.job) }
-    }).populate('postedBy', 'firstname lastname');
-    res.send(jobs);
-  } catch (error) {
-    res.status(500).send(error);
   }
 });
 
@@ -429,6 +386,7 @@ router.patch('/complete/:jobId', async (req, res) => {
   }
 });
 
+//box-page get inprogress jobs
 router.get('/user/:userId/inprogress', async (req, res) => {
   try {
     const user = await User.findById(req.params.userId);

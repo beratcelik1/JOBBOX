@@ -16,7 +16,7 @@ const UserSchema = new mongoose.Schema({
     earningTarget: { type: Number, default: 0, },
     spendingTarget: { type: Number, default: 0, },
     conversations: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Conversation', }],
-    location: { type: String, default: '', },
+    location: { type: String, default: "Kelowna, BC", },
     verified: {type: Boolean, default: false, },
     jobApplications: [
         {
