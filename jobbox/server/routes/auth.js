@@ -2,8 +2,10 @@ const express = require('express');
 const bcryptjs = require('bcryptjs'); 
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
-
 const Notification = require('../models/Notification');
+const Token = require('../models/token'); // Import your token model
+const sendEmail = require('../utils/sendEmail'); // Import your sendEmail function
+const crypto = require("crypto");
 
 const router = express.Router();
 
@@ -22,6 +24,15 @@ router.post('/signup', async (req, res) => {
   // save user and return token
   await user.save();
   const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: '1d' });
+
+  const tokenEmail = await new Token({
+    userId: user._id,
+    token: crypto.randomBytes(32).toString("hex")
+  }).save();
+
+  const url = `https://tranquil-ocean-74659.herokuapp.com/auth/users/${user._id}/verify/${tokenEmail.token}`;
+
+  await sendEmail(user.email, "Verify Email", url);
 
   console.log('Response:', { token, user: { _id: user._id } });
   res.status(201).json({ token, user: { _id: user._id } });
@@ -47,7 +58,7 @@ router.post('/login', async (req, res) => {
     // create and return jwt
     const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: '1d' });
     console.log('Response:', { token });
-    res.send({ token, user: { _id: user._id } });
+    res.send({ token,  user: { _id: user._id, verified: user.verified } });
 });
 
 router.put('/user/me', async (req, res) => {
@@ -233,27 +244,27 @@ router.delete('/notifications/:notificationId', async (req, res) => {
 });
 
 // verification route
-router.get("/:id/verify/:token", async(req,res) => {
+router.get("/users/:userId/verify/:token", async(req,res) => {
   try{
-    const user = await User.findOne({_id: req.params.id});
+    const user = await User.findOne({_id: req.params.userId});
     if (!user) return res.status(400).send({message: "Invalid user + link"});
 
     const token = await Token.findOne({
-      userId:user._id,
+      userId: user._id,
       token: req.params.token
     });
 
     if(!token) return res.status(400).send({message: "invalid link"});
 
-    await User.updateOne({_id: user._id, verified: true});
-    await token.remove();
+    await User.updateOne({_id: user._id}, { verified: true });
+    await Token.deleteOne({ _id: token._id });
 
     res.status(200).send({ message: "Email verified successfully"});
   } catch (error) {
+    console.error(error);
     res.status(500).send({message: "server error"});
   }
-  }
-);
+});
 
 // delete a user account
 router.delete('/user/me', async (req, res) => {
