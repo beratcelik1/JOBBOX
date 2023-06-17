@@ -1,15 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { View, Text, FlatList, ActivityIndicator, TouchableOpacity, Alert } from 'react-native';
+import { View, Text, FlatList, TouchableOpacity } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import jwt_decode from 'jwt-decode';
-import { Ionicons } from '@expo/vector-icons'; 
-import { useNavigation } from '@react-navigation/native'; 
+import { useNavigation } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { NavigationContainer, DefaultTheme } from '@react-navigation/native';
-
-import WorkPeriodDetails from './WorkPeriod';  
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import WorkPeriodDetails from './WorkPeriod';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 
 const MyTheme = {
@@ -20,38 +16,9 @@ const MyTheme = {
   },
 };
 
-const BoxMain = () => { 
-  const navigation = useNavigation(); 
+const BoxHiring = ({ hiringJobs }) => {
+  const navigation = useNavigation();
 
-  const [jobs, setJobs] = useState([]);
-
-  useEffect(() => {
-      const fetchData = async () => {
-          try {
-              const token = await AsyncStorage.getItem('token');
-              const userId = await AsyncStorage.getItem('userId');
-              console.log('userId:', userId);
-              if (!userId) {
-                console.log('User ID not found in storage');
-                return; // or handle this situation some other way
-            }
-              // Use userId here instead of user._id
-              const response = await axios.get(`https://tranquil-ocean-74659.herokuapp.com/jobs/user/${userId}/inprogress`, {
-                  headers: {
-                      Authorization: `Bearer ${token}`,
-                  },
-              });
-
-              setJobs(response.data);
-          } catch (err) {
-              console.error(err);
-          }
-      };
-
-      fetchData();
-  }, []); 
-
-  
   const handleJobPress = (job) => {
     navigation.navigate('WorkPeriodDetails', { job });
   };
@@ -71,74 +38,121 @@ const BoxMain = () => {
   );
 
   return (
-    <View style = {{flex: 1}}>
-      <FlatList
-        data={jobs}
-        renderItem={renderItem}
-        keyExtractor={(item) => item._id}
-      />
+    <View style={{flex: 1}}>
+      <FlatList data={hiringJobs} renderItem={renderItem} keyExtractor={(item) => item._id} />
     </View>
   );
-};   
-
-const BoxHiring = () => {
-  // Your BoxHiring screen code goes here
-  return <View><Text>This is the BoxHiring screen</Text></View>;
 };
 
-const Stack = createStackNavigator();
+const BoxWorking = ({ workingJobs }) => {
+  const navigation = useNavigation();
 
+  const handleJobPress = (job) => {
+    navigation.navigate('WorkPeriodDetails', { job });
+  };
+  
+  const renderItem = ({ item }) => ( 
+    <TouchableOpacity style={styles.jobCard} onPress={() => handleJobPress(item)}>
+      <Text style={styles.jobTitle}>{item.title}</Text>
+      <View style={[
+        styles.jobStatusContainer,
+        item.status === 'Applied' && { backgroundColor: '#5ec949' },
+        item.status === 'in progress' && { backgroundColor: '#4683fc' },
+        item.status === 'Completed' && { backgroundColor: '#c7c7c7'}
+      ]}>
+        <Text style={styles.jobStatus}>{item.status}</Text>
+      </View>
+    </TouchableOpacity>
+  );
 
-const BoxMainStack = () => {
   return (
-    <Stack.Navigator initialRouteName="BoxMain">
-      <Stack.Screen name="BoxMain" component={BoxMain} options={{  headerTitle: 'Box Employed',
-          headerShown: true,
-          headerBackTitle: '',
-          headerBackTitleVisible: false,}} />
-      <Stack.Screen name="WorkPeriodDetails" component={WorkPeriodDetails} options={{ title: 'Employment Details' }} />
-    </Stack.Navigator>
+    <View style={{flex: 1}}>
+      <FlatList data={workingJobs} renderItem={renderItem} keyExtractor={(item) => item._id} />
+    </View>
   );
 };
 
-const BoxHiringStack = () => {
-  return (
-    <Stack.Navigator initialRouteName="BoxHiring">
-      <Stack.Screen name="BoxHiring" component={BoxHiring} options={{ title: 'Box Hired', }} />
-      <Stack.Screen name="WorkPeriodDetails" component={WorkPeriodDetails} options={{ title: 'Period Details' }} />
-    </Stack.Navigator>
-  );
-}; 
 
 const Tab = createMaterialTopTabNavigator();
+const HiringStack = createStackNavigator();
+const WorkingStack = createStackNavigator();
 
-const Box = () => (
-  <NavigationContainer independent={true} theme={MyTheme}>
-    <Tab.Navigator
-      initialRouteName="BoxMainStack"
-      screenOptions={{
-        tabBarActiveTintColor: '#4683fc',
-        tabBarInactiveTintColor: '#000',
-        tabBarIndicatorStyle: { backgroundColor: '#4683fc' },
-        tabBarStyle: { backgroundColor: '#fff' },
-        swipeEnabled: true,
-      }}>
-      <Tab.Screen
-        name="Working"
-        component={BoxMainStack}
-        options={{ title: 'Working' }}
-      />
-      <Tab.Screen
-        name="Hiring"
-        component={BoxHiringStack}
-        options={{ title: 'Hiring' }}
-      />
-    </Tab.Navigator>
-  </NavigationContainer>
-);
+function HiringStackNavigator({ hiringJobs }) {
+  return (
+    <HiringStack.Navigator>
+      <HiringStack.Screen name="BoxHiring" children={() => <BoxHiring hiringJobs={hiringJobs} />} options={{ headerShown: false }}/>
+      <HiringStack.Screen name="WorkPeriodDetails" component={WorkPeriodDetails} options={{
+          headerTitle: '',
+          headerShown: true,
+          headerTransparent: true,
+          headerTintColor: '#4683fc',
+          headerBackTitle: '',
+          headerBackTitleVisible: false,
+          headerTitleAlign: 'center',
+        }}/>
+    </HiringStack.Navigator>
+  );
+}
 
-// ... rest of your code
+function WorkingStackNavigator({ workingJobs }) {
+  return (
+    <WorkingStack.Navigator>
+      <WorkingStack.Screen name="BoxWorking" children={() => <BoxWorking workingJobs={workingJobs}/>} options={{ headerShown: false }}/>
+      <WorkingStack.Screen name="WorkPeriodDetails" component={WorkPeriodDetails} options={{
+          headerTitle: '',
+          headerShown: true,
+          headerTransparent: true,
+          headerTintColor: '#4683fc',
+          headerBackTitle: '',
+          headerBackTitleVisible: false,
+          headerTitleAlign: 'center',
+        }} />
+    </WorkingStack.Navigator>
+  );
+}
 
+const Box = () => {
+  const [hiringJobs, setHiringJobs] = useState([]);
+  const [workingJobs, setWorkingJobs] = useState([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const token = await AsyncStorage.getItem('token');
+        const userId = await AsyncStorage.getItem('userId');
+        if (!userId) {
+          console.log('User ID not found in storage');
+          return;
+        }
+
+        const response = await axios.get(`https://tranquil-ocean-74659.herokuapp.com/jobs/user/${userId}/inprogress`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        const hiring = response.data.filter(job => job.postedBy._id === userId);
+        const working = response.data.filter(job => job.hiredApplicant._id === userId);
+
+        setHiringJobs(hiring);
+        setWorkingJobs(working);
+      } catch (err) {
+        console.error(err);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  return (
+    <NavigationContainer independent={true} theme={MyTheme}>
+      <Tab.Navigator initialRouteName="Working" screenOptions={{ tabBarActiveTintColor: '#4683fc', tabBarInactiveTintColor: '#000', tabBarIndicatorStyle: { backgroundColor: '#4683fc' }, tabBarStyle: { backgroundColor: '#fff' }, swipeEnabled: true }}>
+      <Tab.Screen name="Hiring" children={() => <HiringStackNavigator hiringJobs={hiringJobs} />} options={{ title: 'Hiring' }} />
+        <Tab.Screen name="Working" children={() => <WorkingStackNavigator workingJobs={workingJobs} />} options={{ title: 'Working' }} />
+      </Tab.Navigator>
+    </NavigationContainer>
+  );
+};
 
 const styles = {
   container: {
@@ -186,7 +200,7 @@ const styles = {
   jobStatus: {
     fontSize: 16,
     fontWeight: '500',
-    color: '#fff' // Change this color to something else if 'Completed' status is hard to read
+    color: '#fff'
   }
 };
 

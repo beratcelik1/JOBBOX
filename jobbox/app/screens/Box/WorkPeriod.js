@@ -215,6 +215,7 @@ const styles = {
   },
   jobCard: {
     flexDirection: 'row',
+    flex: '0',
     justifyContent: 'space-between',
     alignItems: 'center',
     padding: 10,
