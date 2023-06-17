@@ -23,18 +23,20 @@ router.post('/signup', async (req, res) => {
   await user.save();
   const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: '1d' });
 
-  const tokenEmail = await new Token({
-    userId: user._id,
-    token: crypto.randomBytes(32).toString("hex")
-  }).save();
+  // const tokenEmail = await new Token({
+  //   userId: user._id,
+  //   token: crypto.randomBytes(32).toString("hex")
+  // }).save();
 
-  const url = `${process.env.BASE_URL}users/${user._id}/verify/${tokenEmail.token}`;
+  // const url = `${process.env.BASE_URL}users/${user._id}/verify/${tokenEmail.token}`;
 
-  await sendEmail(user.email, "Verify Email", url);
+  // await sendEmail(user.email, "Verify Email", url);
 
+  // console.log('Response:', { token });
+  // res.status(201).json({ token });
 
-  console.log('Response:', { token });
-  res.status(201).json({ token });
+  console.log('Response:', { token, user: { _id: user._id } });
+  res.status(201).json({ token, user: { _id: user._id } });
 });
 
 router.post('/login', async (req, res) => {
@@ -57,7 +59,7 @@ router.post('/login', async (req, res) => {
     // create and return jwt
     const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: '1d' });
     console.log('Response:', { token });
-    res.send({ token });
+    res.send({ token, user: { _id: user._id } });
 });
 
 router.put('/user/me', async (req, res) => {

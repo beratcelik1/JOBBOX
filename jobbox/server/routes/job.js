@@ -4,93 +4,94 @@ const User = require('../models/User');
 const router = express.Router();
 const jwt = require('jsonwebtoken');
 
-
-router.use(async (req, res, next) => {
-  try {
-    const token = req.header('Authorization')?.replace('Bearer ', '');
-    if (!token) throw new Error("Authorization token missing");
-
-    const data = jwt.verify(token, process.env.JWT_SECRET);
-    const user = await User.findById(data.userId);
-    if (!user) throw new Error("User not found");
-
-    req.user = user;  // Attach the user to the request
-    next();  // Move on to the next middleware/route handler
-  } catch (error) {
-    res.status(401).send({ error: error.message });
-  }
-});
-
-// Post a job
-router.post('/', async (req, res) => {
-    try {
-        const { title, description, skills, location, pay, estimatedTime, estimatedTimeUnit, category } = req.body;
-
-        // TODO: Add input validation based on your requirements
-        if (!title || !description) {
-            return res.status(400).json({ error: 'Missing necessary fields' });
-        }
-
-        const job = new Job({
-            title,
-            description,
-            skills,
-            location,
-            pay,
-            estimatedTime,
-            estimatedTimeUnit,
-            category,
-            postedBy: req.user._id
-        });
-
-        await job.save();
-        req.user.jobPostings.push(job._id);
-        await req.user.save();
-
-        res.status(201).send(job);
-    } catch (error) {
-        res.status(400).send(error);
-    }
-});
-
 // Get jobs by title
 router.get('/search', async (req, res) => {
-    const search = req.query.search;
+  const search = req.query.search;
 
-    try {
-        const jobs = await Job.find({ title: new RegExp(search, 'i') });
-        res.send(jobs);
-    } catch (error) {
-        res.status(500).send(error);
-    }
+  try {
+      const jobs = await Job.find({ title: new RegExp(search, 'i') });
+      res.send(jobs);
+  } catch (error) {
+      res.status(500).send(error);
+  }
 });
 
 // Get all jobs
 router.get('/', async (req, res) => {
+try {
+  const { category, skills, location, pay } = req.query;
+  let query = {};
+
+  if(category) {
+    query.category = category;
+  }
+
+  if(skills) {
+    query.skills = new RegExp(skills, 'i');
+  }
+
+  if(location) {
+    query.location = new RegExp(location, 'i');
+  }
+
+  if(pay) {
+    query.pay = { $gte: Number(pay) }; // returns jobs with pay greater than or equal to the pay query
+  }
+
+  const jobs = await Job.find(query).populate('postedBy', 'firstname lastname');
+  res.send(jobs);
+} catch (error) {
+  res.status(500).send(error);
+}
+});
+
+// Post a job
+router.post('/', async (req, res) => {
+  const token = req.header('Authorization')?.replace('Bearer ', '');
+  if (!token) {
+      return res.status(401).json({ error: 'Authorization token missing' });
+  }
+
+  let user;
+
   try {
-    const { category, skills, location, pay } = req.query;
-    let query = {};
-
-    if(category) {
-      query.category = category;
-    }
-
-    if(skills) {
-      query.skills = new RegExp(skills, 'i');
-    }
-
-    if(location) {
-      query.location = new RegExp(location, 'i');
-    }
-
-    if(pay) {
-      query.pay = { $gte: Number(pay) }; // returns jobs with pay greater than or equal to the pay query
-    }
-
-    const jobs = await Job.find(query).populate('postedBy', 'firstname lastname');
-    res.send(jobs);
+      const data = jwt.verify(token, process.env.JWT_SECRET);
+      user = await User.findById(data.userId);
+      if (!user) {
+          throw new Error("User not found");
+      }
   } catch (error) {
-    res.status(500).send(error);
+      return res.status(401).send({ error: error.message });
+  }
+
+  try {
+      const { title, description, skills, location, pay, estimatedTime, estimatedTimeUnit, category } = req.body;
+
+      // TODO: Add input validation based on your requirements
+      if (!title || !description) {
+          return res.status(400).json({ error: 'Missing necessary fields' });
+      }
+
+      const job = new Job({ 
+          title, 
+          description, 
+          skills, 
+          location, 
+          pay, 
+          estimatedTime, 
+          estimatedTimeUnit, 
+          category, 
+          postedBy: user._id 
+      });
+
+      await job.save();
+
+      user.jobPostings.push(job._id);
+      await user.save();
+
+      res.status(201).send(job);
+  } catch (error) {
+      res.status(400).send(error);
   }
 });
 
@@ -425,6 +426,26 @@ router.patch('/complete/:jobId', async (req, res) => {
     res.send(job);
   } catch (error) {
     res.status(400).send(error);
+  }
+});
+
+router.get('/user/:userId/inprogress', async (req, res) => {
+  try {
+    const user = await User.findById(req.params.userId);
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+    const jobs = await Job.find({
+      status: 'in progress',
+      $or: [
+        { postedBy: user._id },
+        { hiredApplicant: user._id }
+      ]
+    }).populate('hiredApplicant').populate('postedBy');
+    res.send(jobs);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send(error);
   }
 });
 
