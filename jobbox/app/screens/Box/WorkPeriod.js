@@ -6,15 +6,18 @@ import MapView from 'react-native-maps';
 import { Ionicons } from '@expo/vector-icons';
 import StarRating from 'react-native-star-rating'; // Remember to install this package
 import Icon from 'react-native-vector-icons/MaterialIcons'; 
+import ChatRoom from '../Messages/ChatRoom';
+import { useNavigation } from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const WorkPeriodDetails = () => {
   const route = useRoute();
+  const navigation = useNavigation();
   const { job } = route.params;
   const startTime = 'June 1, 2023';
   const startTimestamp = '8:00 AM';
   const endTime = 'June 30, 2023';
   const endTimestamp = '5:00 PM';
-
   const [isModalVisible, setModalVisible] = useState(false);
   const [modalContent, setModalContent] = useState('');
   const [starCount, setStarCount] = useState(4.3); // Replace 5 with actual job rating
@@ -38,7 +41,7 @@ const WorkPeriodDetails = () => {
     <ScrollView 
       ref={scrollRef}
       onContentSizeChange={() => scrollRef.current.scrollToEnd({animated: true})}
-      contentContainerStyle={styles.container} 
+      contentContainerStyle={[styles.container, {marginTop: 30}]}
     >
 
         <View style={styles.jobCard}> 
@@ -110,10 +113,11 @@ const WorkPeriodDetails = () => {
           <View style={styles.infoTextContainer}>
             <Text style={styles.infoTitle}>Message your employer</Text>
             <Text style={styles.infoText}>John Doe</Text>
+            <Button title="Chat" onPress={() => navigation.navigate('ChatRoom', { currentChatId: job.postedBy === user._id ? job.hiredApplicant : job.postedBy })} />
           </View>
         </View>
       </TouchableOpacity>
-      {/* End of Message your Employer */}
+      {/* End of Message your Employer/EMPLOYEE */}
 
       {/* Modal */}
       <Modal

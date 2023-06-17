@@ -4,13 +4,6 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import { Text, StyleSheet, View, TextInput} from 'react-native';
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    paddingBottom: 30, // adjust this value as per your needs
-  },
-});
-
 const ChatRoom = ({ route, navigation }) => {
   const [conversations, setConversations] = useState([]);
   const [messages, setMessages] = useState([]);
@@ -193,5 +186,13 @@ const ChatRoom = ({ route, navigation }) => {
     </View>
   );
 };
+
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    paddingBottom: 30, // adjust this value as per your needs
+  },
+});
 
 export default ChatRoom;
