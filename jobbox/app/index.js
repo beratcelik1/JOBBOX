@@ -41,6 +41,11 @@ import Signup from './screens/Register/Signup';
 import { Section } from 'react-native-paper';
 import FlashMessage from 'react-native-flash-message';
 import SettingsPage from './screens/Settings/Settings';
+import ChangePasswordScreen from './screens/Settings/ChangePassword';
+import DeleteAccountScreen from './screens/Settings/DeleteAccount';
+import AccountSecurityScreen from './screens/Settings/AccountSecurity';
+import FAQScreen from './screens/Settings/FAQ';
+import PushNotificationsComponent from './screens/Settings/PushNotifications';
 
 const logo = require('./assets/images/jobboxlogo4.png');
 const logo2 = require('./assets/images/jobboxlogotek.png');
@@ -288,6 +293,11 @@ export default function App() {
 
   );
   
+  const handleSignOut = () => {
+    console.log("signing out")
+    setIsAuthenticated(false)
+    console.log(isAuthenticated)
+  };
   const MainStack = ({handleSignOut}) => (
     <Stack.Navigator >
       
@@ -348,16 +358,39 @@ export default function App() {
         options={{ headerBackTitle: '', headerBackTitleVisible: false }} 
       />
       
-      <Stack.Screen name="Settings" 
-      component={SettingsPage} 
-      options={{ headerTitle: 'Settings', }} />
+      <Stack.Screen
+        name="Settings"
+        component={()=><SettingsPage handleSignOut={handleSignOut}/>}
+        options={{ headerTitle: 'Settings' }}
+      />
+      <Stack.Screen
+        name="ChangePassword"
+        component={ChangePasswordScreen}
+        options={{ headerTitle: 'Change Password' }}
+      />
+      <Stack.Screen
+        name="AccountSecurity"
+        component={AccountSecurityScreen}
+        options={{ headerTitle: 'Account Security' }}
+      />
+      <Stack.Screen
+        name="DeleteAccount"
+        component={DeleteAccountScreen}
+        options={{ headerTitle: 'Delete Account' }}
+      />
+      <Stack.Screen
+        name="FAQ"
+        component={FAQScreen}
+        options={{ headerTitle: 'FAQ' }}
+      />
+      <Stack.Screen
+        name="PushNotification"
+        component={PushNotificationsComponent}
+        options={{ headerTitle: 'Notification Settings' }}
+      />
+
     </Stack.Navigator>
   );
-  const handleSignOut = () => {
-    console.log("signing out")
-    setIsAuthenticated(false)
-    console.log(isAuthenticated)
-  };
 
   return (
     <NavigationContainer key = {isAuthenticated?1:0} ref={navigationRef} independent={true} theme={MyTheme}>

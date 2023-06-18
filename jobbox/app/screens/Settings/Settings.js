@@ -3,7 +3,7 @@ import { ScrollView,View, Text, TouchableOpacity, StyleSheet } from 'react-nativ
 import { useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/Ionicons';
 
-const SettingsPage = () => {
+const SettingsPage = ({handleSignOut}) => {
   const navigation = useNavigation();
 
   const handleChangePassword = () => {
@@ -51,50 +51,50 @@ const SettingsPage = () => {
     <ScrollView style={styles.container}>
       <View style={styles.sectionContainer}>
         <Text style={styles.sectionTitle}>Account Settings</Text>
-        <TouchableOpacity style={styles.option} onPress={() => console.log('Change Password')}>
+        <TouchableOpacity style={styles.option} onPress={handleChangePassword}>
           <Text style={styles.optionText}>Change Password</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.option} onPress={() => console.log('Account Security')}>
+        <TouchableOpacity style={styles.option} onPress={handleAccountSecurity}>
           <Text style={styles.optionText}>Account Security</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.option} onPress={() => console.log('Delete Account')}>
+        <TouchableOpacity style={styles.option} onPress={handleDeleteAccount}>
           <Text style={styles.optionText}>Delete Account</Text>
         </TouchableOpacity>
       </View>
 
       <View style={styles.sectionContainer}>
         <Text style={styles.sectionTitle}>Notification Settings</Text>
-        <TouchableOpacity style={styles.option} onPress={() => console.log('Push Notifications')}>
+        <TouchableOpacity style={styles.option} onPress={handlePushNotifications}>
           <Text style={styles.optionText}>Push Notifications</Text>
         </TouchableOpacity>
       </View>
 
       <View style={styles.sectionContainer}>
         <Text style={styles.sectionTitle}>App Settings</Text>
-        <TouchableOpacity style={styles.option} onPress={() => console.log('App Theme')}>
+        <TouchableOpacity style={styles.option} onPress={handleAppTheme}>
           <Text style={styles.optionText}>App Theme</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.option} onPress={() => console.log('Font Size')}>
+        <TouchableOpacity style={styles.option} onPress={handleFontSize}>
           <Text style={styles.optionText}>Font Size</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.option} onPress={() => console.log('Layout Settings')}>
+        <TouchableOpacity style={styles.option} onPress={handleLayoutSettings}>
           <Text style={styles.optionText}>Layout Settings</Text>
         </TouchableOpacity>
       </View>
 
       <View style={styles.sectionContainer}>
         <Text style={styles.sectionTitle}>Help and Support</Text>
-        <TouchableOpacity style={styles.option} onPress={() => console.log('FAQ')}>
+        <TouchableOpacity style={styles.option} onPress={handleFAQ}>
           <Text style={styles.optionText}>FAQ</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.option} onPress={() => console.log('Contact Support')}>
+        <TouchableOpacity style={styles.option} onPress={handleContactSupport}>
           <Text style={styles.optionText}>Contact Support</Text>
         </TouchableOpacity>
       </View>
 
       <View style={styles.sectionContainer}>
         <Text style={styles.sectionTitle}>General</Text>
-        <TouchableOpacity style={styles.option} onPress={handleLogout}>
+        <TouchableOpacity style={styles.option} onPress={handleSignOut}>
           <Text style={[styles.optionText, styles.logoutText]}>Sign Out</Text>
         </TouchableOpacity>
       </View>
