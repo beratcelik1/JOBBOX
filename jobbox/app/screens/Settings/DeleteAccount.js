@@ -1,11 +1,23 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 
-const DeleteAccountScreen = () => {
-  const handleDeleteAccount = () => {
+const DeleteAccountScreen = ({handleSignOut}) => {
+  const handleDeleteAccount = async () => {
     
     // Implement logic to delete the account
     console.log("deleting account")
+    try {
+      const token = await AsyncStorage.getItem('token');
+      const response = await axios.delete('https://tranquil-ocean-74659.herokuapp.com/auth/user/me', {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      console.log(response.data.message); // User account deleted successfully
+    handleSignOut();
+      // Perform any additional actions after successful deletion
+    } catch (err) {
+      console.error("Failed to delete user account: ", err);
+    }
+
   };
 
   return (
