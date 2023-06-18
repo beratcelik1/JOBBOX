@@ -376,7 +376,7 @@ export default function App() {
       />
       <Stack.Screen
         name="DeleteAccount"
-        component={DeleteAccountScreen}
+        component={()=><DeleteAccountScreen handleSignOut={handleSignOut}/>}
         options={{ headerTitle: 'Delete Account' }}
       />
       <Stack.Screen
