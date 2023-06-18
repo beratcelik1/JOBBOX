@@ -48,6 +48,7 @@ import DeleteAccountScreen from './screens/Settings/DeleteAccount';
 import AccountSecurityScreen from './screens/Settings/AccountSecurity';
 import FAQScreen from './screens/Settings/FAQ';
 import PushNotificationsComponent from './screens/Settings/PushNotifications';
+import ContactUsScreen from './screens/Settings/ContactUs';
 
 const logo = require('./assets/images/jobboxlogo4.png');
 const logo2 = require('./assets/images/jobboxlogotek.png');
@@ -378,7 +379,7 @@ export default function App() {
       />
       <Stack.Screen
         name="ContactSupport"
-        component={AccountSecurityScreen}
+        component={ContactUsScreen}
         options={{ headerTitle: 'Contact Us' }}
       />
     </Stack.Navigator>
