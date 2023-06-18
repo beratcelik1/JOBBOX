@@ -75,7 +75,7 @@ const SettingsPage = ({handleSignOut}) => {
           <Text style={styles.optionText}>App Theme</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.option} onPress={handleFontSize}>
-          <Text style={styles.optionText}>Font Size</Text>
+          <Text style={styles.optionText}>Font Options</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.option} onPress={handleLayoutSettings}>
           <Text style={styles.optionText}>Layout Settings</Text>

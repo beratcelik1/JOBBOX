@@ -384,11 +384,32 @@ export default function App() {
         options={{ headerTitle: 'FAQ' }}
       />
       <Stack.Screen
-        name="PushNotification"
+        name="PushNotifications"
         component={PushNotificationsComponent}
         options={{ headerTitle: 'Notification Settings' }}
       />
+      {/*change these to respective when complete*/}
 
+      <Stack.Screen
+        name="AppTheme"
+        component={AccountSecurityScreen}
+        options={{ headerTitle: 'Theme Options' }}
+      />
+      <Stack.Screen
+        name="FontSize"
+        component={AccountSecurityScreen}
+        options={{ headerTitle: 'Font Options' }}
+      />
+      <Stack.Screen
+        name="LayoutSettings"
+        component={AccountSecurityScreen}
+        options={{ headerTitle: 'Layout Settings' }}
+      />
+      <Stack.Screen
+        name="ContactSupport"
+        component={AccountSecurityScreen}
+        options={{ headerTitle: 'Contact Us' }}
+      />
     </Stack.Navigator>
   );
 
