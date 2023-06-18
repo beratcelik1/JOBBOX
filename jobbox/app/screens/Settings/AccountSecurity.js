@@ -6,7 +6,6 @@ const AccountSecurityScreen = () => {
   return (
     <View style={styles.container}>
       <MaterialCommunityIcons name="package-variant-closed" size={100} color="gray" />
-      <Text style={styles.text}>Account Security</Text>
       <Text style={styles.subtext}>This section is under construction.</Text>
     </View>
   );
