@@ -3,7 +3,9 @@ import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 
 const DeleteAccountScreen = () => {
   const handleDeleteAccount = () => {
+    
     // Implement logic to delete the account
+    console.log("deleting account")
   };
 
   return (
