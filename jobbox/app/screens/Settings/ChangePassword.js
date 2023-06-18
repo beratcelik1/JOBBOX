@@ -53,7 +53,7 @@ const ChangePasswordScreen = () => {
       const token = await AsyncStorage.getItem('token');
       console.log(token);
       const response = await axios.put(
-        'https://tranquil-ocean-74659.herokuapp.com/user/me/change-password',
+        'https://tranquil-ocean-74659.herokuapp.com/auth/user/me/change-password',
         { currentPassword, newPassword },
         {
           headers: { Authorization: `Bearer ${token}` },
