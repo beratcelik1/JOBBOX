@@ -261,6 +261,7 @@ export default function App() {
   
   const MainStack = ({handleSignOut}) => (
     <Stack.Navigator >
+      
       <Stack.Screen 
       name="MyTabs" 
       options={{ headerShown: false }}
@@ -328,8 +329,9 @@ export default function App() {
     setIsAuthenticated(false)
     console.log(isAuthenticated)
   };
+
   return (
-    <NavigationContainer ref={navigationRef} independent={true} theme={MyTheme}>
+    <NavigationContainer key = {isAuthenticated?1:0} ref={navigationRef} independent={true} theme={MyTheme}>
       <RootNavigationContext.Provider value={navigationRef}>
         {isAuthenticated ? <MainStack handleSignOut={handleSignOut}/> : <AuthStack />}
       </RootNavigationContext.Provider>
