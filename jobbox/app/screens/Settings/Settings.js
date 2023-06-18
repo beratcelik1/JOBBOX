@@ -6,6 +6,42 @@ import Icon from 'react-native-vector-icons/Ionicons';
 const SettingsPage = () => {
   const navigation = useNavigation();
 
+  const handleChangePassword = () => {
+    navigation.navigate('ChangePassword');
+  };
+
+  const handleAccountSecurity = () => {
+    navigation.navigate('AccountSecurity');
+  };
+
+  const handleDeleteAccount = () => {
+    navigation.navigate('DeleteAccount');
+  };
+
+  const handlePushNotifications = () => {
+    navigation.navigate('PushNotifications');
+  };
+
+  const handleAppTheme = () => {
+    navigation.navigate('AppTheme');
+  };
+
+  const handleFontSize = () => {
+    navigation.navigate('FontSize');
+  };
+
+  const handleLayoutSettings = () => {
+    navigation.navigate('LayoutSettings');
+  };
+
+  const handleFAQ = () => {
+    navigation.navigate('FAQ');
+  };
+
+  const handleContactSupport = () => {
+    navigation.navigate('ContactSupport');
+  };
+
   const handleLogout = () => {
     // Implement your logout logic here
     console.log('User logged out');
