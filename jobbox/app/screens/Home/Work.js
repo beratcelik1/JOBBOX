@@ -158,7 +158,6 @@ function WorkScreen({ navigation }) {
 
       const categories = CATEGORIES.map(category => category.title);
 
-      
       const renderJob = ({ item }) => ( 
         <TouchableOpacity 
                 style={styles.jobCard}
@@ -199,7 +198,6 @@ function WorkScreen({ navigation }) {
                         <Text style={styles.jobDescription}>  {item.estimatedTime}</Text>
                         <Text style={styles.jobDescription}>  {item.estimatedTimeUnit}</Text>
                     </View> 
-                
                 </View>
             </View>
         </TouchableOpacity>
@@ -218,40 +216,40 @@ function WorkScreen({ navigation }) {
                 />
                 {searchQuery.length > 0 && (
                     <TouchableOpacity onPress={() => setSearchQuery('')}>
-                    <Ionicons name="ios-close" size={20} color="#000" />
+                        <Ionicons name="ios-close" size={20} color="#000" />
                     </TouchableOpacity>
                 )}
 
                 {isFilterApplied ? (
-                                <TouchableOpacity style={styles.filterButton} onPress={removeFilters}>
-                                <Ionicons name="close" size={24} color="white" />
-                                    </TouchableOpacity>
+                    <TouchableOpacity style={styles.filterButton} onPress={removeFilters}>
+                        <Ionicons name="close" size={24} color="white" />
+                    </TouchableOpacity>
                 ) : (
                     <TouchableOpacity style={styles.filterButton} onPress={openFilterModal}>
-                    <Ionicons name="filter" size={24} color="white" />
+                        <Ionicons name="filter" size={24} color="white" />
                     </TouchableOpacity>
                 )}
             </View>
-    <Modal 
-    isVisible={isFilterModalVisible} 
-    style={[styles.modal, isKeyboardVisible ? {paddingBottom: 280} : {}]} 
-    onBackdropPress={closeFilterModal}>
-    <View style={styles.modalContent}>
-        <Text style={styles.modalTitle}>Filters</Text>
-        <View style={styles.filterBox}>
-        <Picker
-            selectedValue={categoryFilter}
-            onValueChange={(itemValue) => setCategoryFilter(itemValue)}
-            style={styles.picker}
-            dropdownIconColor="#4683FC"
-            >
-            <Picker.Item label="Category..." value="" />
-            {categories.map((category, index) => (
-                <Picker.Item key={index} label={category} value={category} />
-            ))}
-            </Picker>
-        </View>
-        <View style={styles.filterBox}>
+            <Modal 
+                isVisible={isFilterModalVisible} 
+                style={[styles.modal, isKeyboardVisible ? {paddingBottom: 280} : {}]} 
+                onBackdropPress={closeFilterModal}>
+            <View style={styles.modalContent}>
+                <Text style={styles.modalTitle}>Filters</Text>
+                <View style={styles.filterBox}>
+                    <Picker
+                        selectedValue={categoryFilter}
+                        onValueChange={(itemValue) => setCategoryFilter(itemValue)}
+                        style={styles.picker}
+                        dropdownIconColor="#4683FC"
+                        >
+                        <Picker.Item label="Category..." value="" />
+                        {categories.map((category, index) => (
+                            <Picker.Item key={index} label={category} value={category} />
+                        ))}
+                    </Picker>
+                </View>
+                <View style={styles.filterBox}>
                     <TextInput
                         style={styles.modalInput}
                         onChangeText={(value) => setPayFilter({...payFilter, min: value})}
@@ -260,12 +258,12 @@ function WorkScreen({ navigation }) {
                         placeholderTextColor="#aaa"
                         keyboardType="numeric"
                     />
-        </View>
-        <TouchableOpacity onPress={() => { handleFilter(); closeFilterModal(); }} style={styles.applyFilterButton}>
-            <Text style={styles.filterOption}>Apply</Text>
-        </TouchableOpacity>
-    </View>
-        </Modal>
+                </View>
+                <TouchableOpacity onPress={() => { handleFilter(); closeFilterModal(); }} style={styles.applyFilterButton}>
+                    <Text style={styles.filterOption}>Apply</Text>
+                </TouchableOpacity>
+            </View>
+                </Modal>
             <FlatList
                 data={jobs}
                 renderItem={renderJob}
@@ -274,9 +272,10 @@ function WorkScreen({ navigation }) {
                 onEndReachedThreshold={0.5}
                 refreshing={refreshing}
                 onRefresh={onRefresh}
-                onScroll={event => {
-                    setScrollPosition(event.nativeEvent.contentOffset.y);
-                }}/></View>);} 
+                onScroll={event => { setScrollPosition(event.nativeEvent.contentOffset.y);}}
+            />  
+        </View> 
+    );} 
 
 function JobDetailScreen({ route, navigation }) {
     const { job } = route.params;
@@ -337,14 +336,8 @@ function JobDetailScreen({ route, navigation }) {
                         <Ionicons name="star" size={13} color="#4683fc" /> 
                     </View>
                 </View>     
-                <View
-                    style={{
-                    borderBottomColor: '#4683fc',
-                    borderBottomWidth: 1.5,
-                    marginBottom: 10,
-                    }}/> 
-                
-                    
+                <View style={{ borderBottomColor: '#4683fc', borderBottomWidth: 1.5, marginBottom: 10, }}/>  
+
                 <View style={styles.jobDetails}> 
                     <View style={styles.jobDetails}>
                         <Ionicons name="md-grid" size={20} color="#4683fc" /> 
@@ -397,9 +390,6 @@ function JobDetailScreen({ route, navigation }) {
                 > 
                     <Text style={styles.buttonText2}> Apply For Job </Text>
                 </TouchableOpacity>
-
-
-
             </View>
         </View>);}
 

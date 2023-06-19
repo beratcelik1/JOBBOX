@@ -214,7 +214,8 @@ function ArchivedJobsScreen({ navigation }) {
   );
 
   const renderJob = ({ item }) => {
-    return ( <View style={styles.jobCard}>
+    return (
+    <View style={styles.jobCardArchive}>
       <View style={styles.jobHeader}>
         <Text style={styles.jobTitle}>{item.title}</Text>
       </View>   
@@ -404,7 +405,25 @@ const styles = StyleSheet.create({
     },
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
-  }, 
+  },  
+  jobCardArchive: {
+    backgroundColor: '#cccc',
+    padding: 20,
+    marginBottom: 10,
+    borderRadius: 10,
+    marginLeft: 30,
+    marginRight: 10,
+    // Android shadow properties
+    elevation: 5,
+    // iOS shadow properties
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+  },
   button: { 
     backgroundColor: '#f2f3f5',
     padding: 15,
