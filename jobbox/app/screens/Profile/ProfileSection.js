@@ -50,23 +50,6 @@ const styles = StyleSheet.create({
       borderRadius: 10, 
       
   }, 
-  
-  //   button2: {
-//     flexDirection: 'row',
-//     alignItems: 'center',
-//     justifyContent: 'center', 
-//     marginHorizontal: 5,
-//     marginLeft: 10,
-//     backgroundColor: '#4683fc',
-//     paddingTop: 8,
-//     paddingBottom: 8,
-//     paddingLeft: 10,
-//     paddingRight: 15,
-//     borderRadius: 10,
-    
-//     width: '50%',
-//   }, 
-
   button2: {
       flexDirection: 'row',
       alignItems: 'center',
@@ -266,16 +249,14 @@ const ProfileSection = ({ route, navigation }) => {
         <Text style={styles.title}>{section.title}</Text>
         {
           section.title === 'About'
-            ? (
-
+            ? ( 
               <View style={{
                 backgroundColor: '#fff',
                 padding: 16,
                 marginBottom: 30,
                 borderRadius: 8,
-              }}>
+              }}> 
                 <TextInput
-
                 value={text}
                 placeholder='About text'
                 onChangeText={setText}
@@ -362,21 +343,20 @@ const ProfileSection = ({ route, navigation }) => {
             backgroundColor: '#fff',
             padding: 16,
             marginBottom: 30,
-            borderRadius: 8,
-          }}>
-          <TouchableOpacity style={{
-    position: 'absolute',
-    top: -20,
-    right: 0,
-    width: 30,
-    height: 30,
-    borderRadius: 12,
-    backgroundColor: '#fff',
-    justifyContent: 'center',
-    alignItems: 'center',
-  }} onPress={()=>handleDeleteEducation(index)}>
-        <AntDesign name="close" size={18} color="#ff0000" />
-      </TouchableOpacity>
+            borderRadius: 8, }}>
+            <TouchableOpacity style={{
+              position: 'absolute',
+              top: -20,
+              right: 0,
+              width: 30,
+              height: 30,
+              borderRadius: 12,
+              backgroundColor: '#fff',
+              justifyContent: 'center',
+              alignItems: 'center',
+            }} onPress={()=>handleDeleteEducation(index)}>
+              <AntDesign name="close" size={18} color="#ff0000" />
+            </TouchableOpacity>
             <Text style={styles.text}>Date:</Text>
             <TextInput
               style={styles.input}

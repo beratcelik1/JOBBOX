@@ -330,7 +330,7 @@ const styles = {
   modalContainer: {
     flex: 1,
     justifyContent: 'flex-end',
-    backgroundColor: 'rgba(0,0,0,0.1)',
+    
   },
   modalView: {
     height: '80%', // This will cover 80% of the screen height
@@ -342,10 +342,10 @@ const styles = {
     shadowColor: "#000",
     shadowOffset: {
       width: 0,
-      height: 2
+      height: -7
     },
     shadowOpacity: 0.25,
-    shadowRadius: 4,
+    shadowRadius: 6.84,
     elevation: 5
   },
   buttonClose: {
