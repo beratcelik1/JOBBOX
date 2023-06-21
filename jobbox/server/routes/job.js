@@ -135,7 +135,7 @@ router.patch('/:jobId', async (req, res) => {
           return res.status(401).json({ error: 'User not authorized to edit this job' });
       }
 
-      const { title, description, skills, location, pay, estimatedTime, estimatedTimeUnit, category } = req.body;
+      const { title, description, skills, location, pay, estimatedTime, estimatedTimeUnit, category, startDateTime, endDateTime } = req.body;
 
       if (title) job.title = title;
       if (description) job.description = description;
@@ -145,6 +145,8 @@ router.patch('/:jobId', async (req, res) => {
       if (estimatedTime) job.estimatedTime = estimatedTime;
       if (estimatedTimeUnit) job.estimatedTimeUnit = estimatedTimeUnit;
       if (category) job.category = category;
+      if (startDateTime) job.startDateTime = startDateTime;
+      if (endDateTime) job.endDateTime = endDateTime;
       
       // save the updated job
       await job.save();
