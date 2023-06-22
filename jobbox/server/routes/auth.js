@@ -265,8 +265,7 @@ router.get("/users/:userId/verify/:token", async(req,res) => {
     res.status(500).send({message: "server error"});
   }
 });
-
-router.put('/user/me/change-password', async (req, res) => { // from settings page - user logged in - no need for verification
+router.put('/user/me/change-password', async (req, res) => {
   const { currentPassword, newPassword } = req.body;
   console.log(req.body);
   // get token from the Authorization header
@@ -305,59 +304,6 @@ router.put('/user/me/change-password', async (req, res) => { // from settings pa
     res.status(500).send({ error: 'An error occurred while trying to change the password' });
   }
 });
-
-router.post('/forgotPassword', async (req, res) => { // from login page - will send code to users email
-  const { email } = req.body;
-  const user = await User.findOne({ email });
-
-  if (!user) {
-    return res.status(404).json({ message: 'User not found' });
-  }
-
-  // generate a 6 digit code
-  const code = crypto.randomBytes(3).toString('hex');
-
-  // create a password reset token and link it to the user's account
-  const passwordResetToken = new Token({
-    userId: user._id,
-    token: code,
-  });
-
-  await passwordResetToken.save();
-
-  // send an email to the user with the code
-  await sendEmail(user.email, "Password Reset Code", `Your password reset code is: ${code}`);
-
-  res.status(200).json({ message: 'Password reset code sent to email' });
-});
-
-router.post('/resetPassword', async (req, res) => { // from login page - will be able to verify and change password
-  const { email, code, newPassword } = req.body;
-
-  const user = await User.findOne({ email });
-
-  if (!user) {
-    return res.status(404).json({ message: 'User not found' });
-  }
-
-  const passwordResetToken = await Token.findOne({ userId: user._id, token: code });
-
-  if (!passwordResetToken) {
-    return res.status(400).json({ message: 'Invalid or expired password reset code' });
-  }
-
-  // hash the new password before saving it
-  const hashedPassword = await bcryptjs.hash(newPassword, 10);
-
-  user.password = hashedPassword;
-  await user.save();
-
-  // delete the password reset code
-  await Token.findByIdAndDelete(passwordResetToken._id);
-
-  res.status(200).json({ message: 'Password updated successfully' });
-});
-
 // delete a user account
 router.delete('/user/me', async (req, res) => {
   // get token from the Authorization header
@@ -387,6 +333,7 @@ router.delete('/user/me', async (req, res) => {
   }
   
 });
+
 
 
 module.exports = router;
