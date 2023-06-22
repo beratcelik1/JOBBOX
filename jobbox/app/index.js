@@ -39,6 +39,7 @@ import Box from './screens/Box/Box';
 
 import Login from './screens/Register/Login'; 
 import Signup from './screens/Register/Signup';
+import ForgotPassword from './screens/Register/ForgotPassword';
 
 import { Section } from 'react-native-paper';
 import FlashMessage from 'react-native-flash-message';
@@ -302,14 +303,14 @@ export default function App() {
         {props => <Login {...props} setIsAuthenticated={setIsAuthenticated} />}
       </Stack.Screen>
       <Stack.Screen name="Signup" component={Signup} options={{ headerShown: false }} />
+      <Stack.Screen name="ForgotPassword" component={ForgotPassword} options={{ headerShown: false }} />
       <Stack.Screen 
         name="MyTabs" 
         component={MyTabs} 
         options={{ headerShown: false }} 
       />
     </Stack.Navigator>
-
-  );
+);
   
   const MainStack = () => (
     <Stack.Navigator >
