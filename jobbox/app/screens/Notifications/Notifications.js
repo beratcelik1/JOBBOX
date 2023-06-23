@@ -31,6 +31,11 @@ export default function Notifications() {
     const fetchUserData = async () => {
       try {
         const token = await AsyncStorage.getItem('token');
+        const userId = await AsyncStorage.getItem('userId');
+        if (!userId) {
+          console.log('User ID not found in storage');
+          return;
+        }
         const response = await axios.get('https://tranquil-ocean-74659.herokuapp.com/auth/user/me', {
           headers: { Authorization: `Bearer ${token}` },
         });
@@ -55,10 +60,9 @@ export default function Notifications() {
       }
     }
     // Only call fetchNotifications if user._id exists (i.e., if the user data has been fetched)
-    if (user._id) {
+
       fetchNotifications();
       intervalId = setInterval(fetchNotifications, 3000);
-    }
 
     return () => {
       if (intervalId) {
