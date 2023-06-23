@@ -1,4 +1,8 @@
 export const formatDateTime = (dateTime) => {
+  if(typeof dateTime === "string" || typeof dateTime === "number") {
+    dateTime = new Date(dateTime);
+  }
+
   // Get the date in the format "month/day/year"
   const formattedDate = `${dateTime?.getMonth() + 1}/${dateTime?.getDate()}/${dateTime?.getFullYear()}`;
 
