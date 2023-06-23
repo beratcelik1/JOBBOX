@@ -304,6 +304,56 @@ router.put('/user/me/change-password', async (req, res) => {
     res.status(500).send({ error: 'An error occurred while trying to change the password' });
   }
 });
+
+router.post('/forgotPassword', async (req, res) => {
+  const { email } = req.body;
+  const user = await User.findOne({ email });
+
+  if (!user) {
+    return res.status(404).json({ message: 'User not found' });
+  }
+
+  // generate a 6 digit code
+  const code = crypto.randomBytes(3).toString('hex');
+
+  // create a password reset token and link it to the user's account
+  const passwordResetToken = new Token({
+    userId: user._id,
+    token: code,
+  });
+
+  await passwordResetToken.save();
+
+  // send an email to the user with the code
+  await sendEmail(user.email, "Password Reset Code", `Your password reset code is: ${code}`);
+
+  res.status(200).json({ message: 'Password reset code sent to email' });
+});
+
+router.post('/resetPassword', async (req, res) => {
+  const { email, code, newPassword } = req.body;
+
+  const user = await User.findOne({ email });
+
+  if (!user) {
+    return res.status(404).json({ message: 'User not found' });
+  }
+
+  const passwordResetToken = await Token.findOne({ userId: user._id, token: code });
+
+  if (!passwordResetToken) {
+    return res.status(400).json({ message: 'Invalid or expired password reset code' });
+  }
+
+  user.password = newPassword;
+  await user.save();
+
+  await Token.findByIdAndDelete(passwordResetToken._id);
+
+  res.status(200).json({ message: 'Password updated successfully' });
+});
+
+
 // delete a user account
 router.delete('/user/me', async (req, res) => {
   // get token from the Authorization header

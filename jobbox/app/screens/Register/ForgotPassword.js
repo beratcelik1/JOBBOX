@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { StyleSheet, View, TextInput, Alert, KeyboardAvoidingView, Platform } from 'react-native';
+import { StyleSheet, View, Alert, KeyboardAvoidingView, Platform } from 'react-native';
 import axios from 'axios';
-import { Text, Button } from 'react-native-paper'; // import Button from 'react-native-paper'
+import { TextInput, Text, Button } from 'react-native-paper'; // import Button from 'react-native-paper'
 
 const ForgotPassword = ({ navigation }) => {
   const [email, setEmail] = useState('');
