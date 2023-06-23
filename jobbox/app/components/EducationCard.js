@@ -16,7 +16,12 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     padding: 16,
     marginBottom: 16,
-    borderRadius: 8,
+    borderRadius: 8, 
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.23,
+    shadowRadius: 3.62,
+    elevation: 4,  
   },
   universityText: {
     fontSize: 18,

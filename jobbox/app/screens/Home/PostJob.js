@@ -8,6 +8,7 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 import { DefaultTheme, Provider as PaperProvider } from 'react-native-paper';
 import { TIME_UNITS, CATEGORIES, SKILLS_BY_CATEGORY, LOCATIONS } from '../constants';
 import { showMessage } from 'react-native-flash-message';
+import DateTimePickerComponent from '../../components/DateTimePicker';
 
 export default function PostJob({ navigation, route }) {
   const { template, editing } = route.params || {};
@@ -26,6 +27,10 @@ export default function PostJob({ navigation, route }) {
   const [selectedSkills, setSelectedSkills] = useState(new Set());
   const [selectedLocation, setSelectedLocation] = useState('');
   const [isLocationModalVisible, setIsLocationModalVisible] = useState(false);
+
+  // for date/time picker
+  const [startDateTime, setStartDateTime] = useState(new Date());
+  const [endDateTime, setEndDateTime] = useState(new Date());
 
   const scrollViewRef = useRef();
   const jobDescriptionRef = useRef();
@@ -60,7 +65,9 @@ export default function PostJob({ navigation, route }) {
       estimatedTime !== '' &&
       !!estimatedTimeUnit &&
       pay !== ''  &&
-      jobDescription !== ''
+      jobDescription !== '' &&
+      !!startDateTime &&
+      !!endDateTime
     );
   };
 
@@ -168,6 +175,8 @@ export default function PostJob({ navigation, route }) {
       estimatedTime: parseFloat(estimatedTime),
       estimatedTimeUnit: estimatedTimeUnit,
       category: selectedCategory ? selectedCategory.title : '', // Use title of the selected category
+      startDateTime: startDateTime,
+      endDateTime: endDateTime,
     };
   
     console.log("Payload: ", payload);
@@ -281,6 +290,12 @@ export default function PostJob({ navigation, route }) {
             <TouchableOpacity style={styles.overlay} onPress={toggleModal} />
           </View>
         </View>
+        <DateTimePickerComponent
+          startDateTime={startDateTime}
+          setStartDateTime={setStartDateTime}
+          endDateTime={endDateTime}
+          setEndDateTime={setEndDateTime}
+        />
         <TextInput
           label="Pay"
           value={pay}
