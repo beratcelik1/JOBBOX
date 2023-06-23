@@ -10,7 +10,7 @@ const RecommendationCard = ({ name, relationship, recommendation }) => {
       <Text style={styles.recommendationText}>{recommendation}</Text>
     </View>
   );
-};
+}; 
 
 const styles = StyleSheet.create({
   cardContainer: {
