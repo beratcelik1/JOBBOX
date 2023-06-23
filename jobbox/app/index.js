@@ -299,11 +299,9 @@ export default function App() {
   const MainStack = ({handleSignOut}) => (
     <Stack.Navigator >
       
-      <Stack.Screen 
-      name="MyTabs" 
-      options={{ headerShown: false }}
-      component={()=><MyTabs handleSignOut={handleSignOut}/>}
-    >
+      <Stack.Screen name="MyTabs" options={{ headerShown: false }}>
+    {() => <MyTabs handleSignOut={handleSignOut} />}
+    
     </Stack.Screen>
       <Stack.Screen 
         name="Notifications" 
@@ -346,11 +344,10 @@ export default function App() {
         options={{ headerBackTitle: '', headerBackTitleVisible: false }} 
       />
       
-      <Stack.Screen
-        name="Settings"
-        component={()=><SettingsPage handleSignOut={handleSignOut}/>}
-        options={{ headerTitle: 'Settings' }}
-      />
+      <Stack.Screen name="Settings" options={{ headerTitle: 'Settings' }}>
+    {() => <SettingsPage handleSignOut={handleSignOut} />}
+      </Stack.Screen>
+
       <Stack.Screen
         name="ChangePassword"
         component={ChangePasswordScreen}
@@ -361,11 +358,10 @@ export default function App() {
         component={AccountSecurityScreen}
         options={{ headerTitle: 'Account Security' }}
       />
-      <Stack.Screen
-        name="DeleteAccount"
-        component={()=><DeleteAccountScreen handleSignOut={handleSignOut}/>}
-        options={{ headerTitle: 'Delete Account' }}
-      />
+      <Stack.Screen name="DeleteAccount" options={{ headerTitle: 'Delete Account' }}>
+    {() => <DeleteAccountScreen handleSignOut={handleSignOut} />}
+      </Stack.Screen>
+
       <Stack.Screen
         name="FAQ"
         component={FAQScreen}
