@@ -144,12 +144,15 @@ function ChatList({ navigateToChat, navigation }) {
   // };
 
   return (
-    <View style={styles.container}>
-      <SearchBar
-  placeholder={'Search users...'}
-  searchQuery={search}
-  setSearchQuery={searchFilterFunction}
-/>
+    <View style={styles.container}> 
+      <View style = {{height: 65}}> 
+        <SearchBar
+          placeholder={'Search users...'}
+          searchQuery={search}
+          setSearchQuery={searchFilterFunction}
+        />
+      </View> 
+     
       {search.length > 0 ?
         <FlatList
           data={searchResults}

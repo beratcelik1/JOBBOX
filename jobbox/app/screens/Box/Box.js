@@ -11,6 +11,7 @@ import { NavigationContainer, DefaultTheme } from '@react-navigation/native';
 import WorkPeriodDetails from './WorkPeriod';  
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
+import { ScrollView } from 'react-native-gesture-handler';
 
 const MyTheme = {
   ...DefaultTheme,
@@ -88,32 +89,32 @@ const BoxHiring = () => {
 
 const Stack = createStackNavigator();
 
-
 const BoxMainStack = () => {
-  return (
+  return ( 
     <Stack.Navigator initialRouteName="BoxMain">
-      <Stack.Screen name="BoxMain" component={BoxMain} options={{  headerTitle: 'Box Employed',
+      <Stack.Screen name="BoxMain" component={BoxMain} options={{  headerTitle: 'Current Jobs',
           headerShown: true,
           headerBackTitle: '',
           headerBackTitleVisible: false,}} />
       <Stack.Screen name="WorkPeriodDetails" component={WorkPeriodDetails} options={{ title: 'Employment Details' }} />
-    </Stack.Navigator>
+    </Stack.Navigator> 
   );
 };
 
 const BoxHiringStack = () => {
-  return (
-    <Stack.Navigator initialRouteName="BoxHiring">
-      <Stack.Screen name="BoxHiring" component={BoxHiring} options={{ title: 'Box Hired', }} />
-      <Stack.Screen name="WorkPeriodDetails" component={WorkPeriodDetails} options={{ title: 'Period Details' }} />
-    </Stack.Navigator>
+  return ( 
+      <Stack.Navigator initialRouteName="BoxHiring">
+        <Stack.Screen name="BoxHiring" component={BoxHiring} options={{ title: 'Box Hired', }} />
+        <Stack.Screen name="WorkPeriodDetails" component={WorkPeriodDetails} options={{ title: 'Period Details' }} />
+      </Stack.Navigator>
+    
   );
 }; 
 
 const Tab = createMaterialTopTabNavigator();
 
-const Box = () => (
-  <NavigationContainer independent={true} theme={MyTheme}>
+const Box = () => ( 
+  <NavigationContainer independent={true} theme={MyTheme}> 
     <Tab.Navigator
       initialRouteName="BoxMainStack"
       screenOptions={{
@@ -122,7 +123,8 @@ const Box = () => (
         tabBarIndicatorStyle: { backgroundColor: '#4683fc' },
         tabBarStyle: { backgroundColor: '#fff' },
         swipeEnabled: true,
-      }}>
+      }}>  
+
       <Tab.Screen
         name="Working"
         component={BoxMainStack}
@@ -138,7 +140,6 @@ const Box = () => (
 );
 
 // ... rest of your code
-
 
 const styles = {
   container: {

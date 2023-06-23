@@ -7,6 +7,7 @@ import { Ionicons } from '@expo/vector-icons';
 import StarRating from 'react-native-star-rating'; // Remember to install this package
 import { formatDateTime } from '../../utils/formatDateTime';
 import Icon from 'react-native-vector-icons/MaterialIcons'; 
+import { FlatList } from 'react-native';
 
 const WorkPeriodDetails = () => {
   const route = useRoute();
@@ -18,7 +19,38 @@ const WorkPeriodDetails = () => {
 
   const [isModalVisible, setModalVisible] = useState(false);
   const [modalContent, setModalContent] = useState('');
-  const [starCount, setStarCount] = useState(4.3); // Replace 5 with actual job rating
+  const [starCount, setStarCount] = useState(4.3); // Replace 5 with actual job rating 
+
+  const data = [
+    {
+      key: 'Job Description',
+      title: 'Job Description',
+      content: 'This is a sample job description...',
+      icon: 'information-circle',
+      color: '#4683fc',
+    },
+    {
+      key: 'Message your Employer',
+      title: 'Message your employer',
+      content: 'John Doe',
+      icon: 'chatbubble',
+      color: '#4683fc',
+    },
+    {
+      key: 'Employer Info',
+      title: 'Employed By: John Doe',
+      content: 'This is a brief about for the dummy employer... the dummy employer is not a dummy employer',
+      icon: 'person',
+      color: '#4683fc',
+    },
+    {
+      key: 'Additional Card',
+      title: 'Sample Title',
+      content: 'Sample Text',
+      icon: 'information-circle',
+      color: '#4683fc',
+    },
+  ];
 
   const handlePress = (title, content) => {
     setModalContent({title, content});
@@ -33,27 +65,21 @@ const WorkPeriodDetails = () => {
     setStarCount(rating);
   }
 
-  const scrollRef = useRef();
-
-  return (
-    <ScrollView 
-      ref={scrollRef}
-      onContentSizeChange={() => scrollRef.current.scrollToEnd({animated: true})}
-      contentContainerStyle={styles.container} 
-    >
-
-        <View style={styles.jobCard}> 
+  return ( 
+    
+    <View style = {styles.container} >   
+    
+      <View style={styles.jobCard}> 
         <Text style={styles.jobTitle}>{job.title}</Text>
-            <View style={[
-                styles.jobStatusContainer,
-                job.status === 'Applied' && { backgroundColor: '#5ec949' },
-                job.status === 'in progress' && { backgroundColor: '#4683fc' },
-                job.status === 'Completed' && { backgroundColor: '#c7c7c7'}
-            ]}>
-                <Text style={styles.jobStatus}>{job.status}</Text>
-            </View>
-        </View> 
-
+          <View style={[
+              styles.jobStatusContainer,
+              job.status === 'Applied' && { backgroundColor: '#5ec949' },
+              job.status === 'in progress' && { backgroundColor: '#4683fc' },
+              job.status === 'Completed' && { backgroundColor: '#c7c7c7'}
+          ]}>
+              <Text style={styles.jobStatus}>{job.status}</Text>
+          </View>
+      </View> 
       <MapView 
         style={styles.map}
         initialRegion={{ 
@@ -75,8 +101,8 @@ const WorkPeriodDetails = () => {
           title="Employer Location"
         />
       </MapView>
-
-       {/* Start and End Times */}
+      <ScrollView style = {{marginHorizontal: 0}}> 
+       {/* Start and End Times */} 
 
       <View style={styles.timeContainer}>
         <View style={styles.timeBox}>
@@ -91,9 +117,8 @@ const WorkPeriodDetails = () => {
         </View>
       </View> 
       
-
      {/* Start of Job Description */}
-     <TouchableOpacity onPress={() => handlePress('Job Description', 'This is a sample job description...')}>
+      <TouchableOpacity onPress={() => handlePress('Job Description', 'This is a sample job description... ')}>
         <View style={styles.infoCard}>
           <Ionicons name="information-circle" size={24} color="#4683fc" marginLeft ="2%" marginRight ="2%" />
           <View style={styles.infoTextContainer}>
@@ -116,28 +141,6 @@ const WorkPeriodDetails = () => {
       </TouchableOpacity>
       {/* End of Message your Employer */}
 
-      {/* Modal */}
-      <Modal
-        animationType="slide"
-        transparent={true}
-        visible={isModalVisible}
-        onRequestClose={closeModal}
-      >
-        <View style={styles.modalContainer}>
-          <View style={styles.modalView}>
-            <Text style={styles.modalTitle}>{modalContent.title}</Text>
-            <Text style={styles.modalText}>{modalContent.content}</Text>
-
-            <TouchableOpacity style={styles.buttonClose} onPress={closeModal}>
-              <Text style={{ color: 'white', marginLeft: 5 }}>Close</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </Modal> 
-      {/*End of Modal*/}
-
-      {/* Start of Employer Info */}
-      
       {/* Start of Employer Info */}
       <View style={styles.infoCard2}>
         <View><Text style={styles.infoTitle}>Employed By: John Doe</Text></View>
@@ -159,9 +162,31 @@ const WorkPeriodDetails = () => {
             <Text style={{ color: 'white', marginLeft: 5 }}>Mark as Complete</Text>
           </TouchableOpacity>
       </View> 
-      {/* End of Employer Info */}
+      {/* End of Employer Info */}  
+  
 
-    </ScrollView>
+      {/* Modal */}
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={isModalVisible}
+        onRequestClose={closeModal}
+      >
+        <View style={styles.modalContainer}>
+          <View style={styles.modalView}>
+            <Text style={styles.modalTitle}>{modalContent.title}</Text>
+            <Text style={styles.modalText}>{modalContent.content}</Text>
+
+            <TouchableOpacity style={styles.buttonClose} onPress={closeModal}>
+              <Text style={{ color: 'white', marginLeft: 5 }}>Close</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal> 
+      {/*End of Modal*/} 
+      </ScrollView> 
+    </View>
+    
     
   );
 };
@@ -202,7 +227,8 @@ const styles = {
   
   container: {
     flex: 1, 
-    padding: 10,
+    paddingHorizontal: 10,
+    marginVertical: 5,
   },
   title: {
     fontSize: 24,
@@ -249,7 +275,7 @@ const styles = {
   timeContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginTop: 15,
+    marginTop: 0,
   },
   timeBox: {
     flex: 1,
@@ -274,7 +300,8 @@ const styles = {
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.25,
-    shadowRadius: 3.84,
+    shadowRadius: 3.84, 
+    marginHorizontal: 5,
   },   
   infoCard2: {
     flexDirection: 'column', // updated from 'row'
@@ -286,7 +313,9 @@ const styles = {
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.25,
-    shadowRadius: 3.84,
+    shadowRadius: 3.84, 
+    marginHorizontal: 5, 
+    marginBottom: 5,
   },
   infoTextContainer: {
     marginLeft: 10,
@@ -302,7 +331,7 @@ const styles = {
   modalContainer: {
     flex: 1,
     justifyContent: 'flex-end',
-    backgroundColor: 'rgba(0,0,0,0.1)',
+    
   },
   modalView: {
     height: '80%', // This will cover 80% of the screen height
@@ -314,10 +343,10 @@ const styles = {
     shadowColor: "#000",
     shadowOffset: {
       width: 0,
-      height: 2
+      height: -7
     },
     shadowOpacity: 0.25,
-    shadowRadius: 4,
+    shadowRadius: 6.84,
     elevation: 5
   },
   buttonClose: {
