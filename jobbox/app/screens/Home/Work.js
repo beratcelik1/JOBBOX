@@ -12,6 +12,7 @@ import { DefaultTheme, Provider as PaperProvider } from 'react-native-paper';
 import { showMessage } from 'react-native-flash-message';
 import {CATEGORIES, SKILLS_BY_CATEGORY, LOCATIONS} from '../constants';
 import { Keyboard } from 'react-native';
+import { formatDateTime } from '../../utils/formatDateTime';
 
 const theme = {
     ...DefaultTheme,
@@ -280,6 +281,8 @@ function WorkScreen({ navigation }) {
 
 function JobDetailScreen({ route, navigation }) {
     const { job } = route.params;
+    const [startDate, startTime] = formatDateTime(job.startDateTime);
+    const [endDate, endTime] = formatDateTime(job.endDateTime);
 
     const handleApplyPress = async () => {
         try {
@@ -375,7 +378,21 @@ function JobDetailScreen({ route, navigation }) {
                         <Text style={{color: '#4683fc', fontWeight: '700'}}>  Time: </Text>
                     </View>
                     <Text style={styles.jobDescription}>{job.estimatedTime}  {job.estimatedTimeUnit}</Text>
-                </View> 
+                </View>
+                <View style={styles.jobDetails}> 
+                    <View style={styles.jobDetails}>
+                        <Ionicons name="md-calendar" size={20} color="#4683fc" /> 
+                        <Text style={{color: '#4683fc', fontWeight: '700'}}>  Start Date/Time: </Text>
+                    </View>
+                    <Text style={styles.jobDescription}>{startDate} {startTime}</Text>
+                </View>
+                <View style={styles.jobDetails}> 
+                    <View style={styles.jobDetails}>
+                        <Ionicons name="md-calendar" size={20} color="#4683fc" /> 
+                        <Text style={{color: '#4683fc', fontWeight: '700'}}>  End Date/Time: </Text>
+                    </View>
+                    <Text style={styles.jobDescription}>{endDate} {endTime}</Text>
+                </View>
                 <View
                     style={{
                     borderBottomColor: '#4683fc',
