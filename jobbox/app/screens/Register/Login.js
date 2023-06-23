@@ -3,9 +3,10 @@ import React, { useState } from 'react';
 import { StyleSheet, View, Image, Switch, TouchableOpacity, Pressable, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
 import { TextInput, Button, Text } from 'react-native-paper';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import PropTypes from 'prop-types';
+
 
 const logo = require('../../assets/images/jobboxlogo2.png');
+
 
 export default function Login({ navigation, setIsAuthenticated }) {
     const [username, setUsername] = useState('');

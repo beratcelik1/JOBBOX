@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-import { TouchableOpacity,View, Text, TextInput, Button, StyleSheet, ScrollView, Keyboard } from 'react-native';
+import { TouchableOpacity,View, Text, TextInput, Button, StyleSheet, ScrollView } from 'react-native';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import FloatingEditButton from '../../components/FloatingEditButton';
@@ -29,26 +29,6 @@ const styles = StyleSheet.create({
       shadowRadius: 6.62,
       elevation: 4, 
   },
-  button2: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginHorizontal: 5,
-    marginLeft: 10,
-    backgroundColor: '#4683fc',
-    paddingTop: 8,
-    paddingBottom: 8,
-    paddingLeft: 10,
-    paddingRight: 15,
-    borderRadius: 10,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
-  },
   container: {
       flex: 1,
       padding: 20,
@@ -70,10 +50,26 @@ const styles = StyleSheet.create({
       borderRadius: 10, 
       
   }, 
+  
+  //   button2: {
+//     flexDirection: 'row',
+//     alignItems: 'center',
+//     justifyContent: 'center', 
+//     marginHorizontal: 5,
+//     marginLeft: 10,
+//     backgroundColor: '#4683fc',
+//     paddingTop: 8,
+//     paddingBottom: 8,
+//     paddingLeft: 10,
+//     paddingRight: 15,
+//     borderRadius: 10,
+    
+//     width: '50%',
+//   }, 
+
   button2: {
       flexDirection: 'row',
       alignItems: 'center',
-      alignSelf: 'center',
       justifyContent: 'center',
       marginHorizontal: 5,
       marginLeft: 10,
@@ -117,6 +113,7 @@ const styles = StyleSheet.create({
   },
 });
 
+
 const ProfileSection = ({ route, navigation }) => {
   const { section } = route.params;
   const [editing, setEditing] = useState(false);
@@ -143,27 +140,7 @@ const ProfileSection = ({ route, navigation }) => {
       ? section.data 
       : [{ name: '', relationship: '', recommendation: '' }]
   );
-  const [isKeyboardVisible, setKeyboardVisible] = useState(false);
-
- useEffect(() => {
-    const keyboardDidShowListener = Keyboard.addListener(
-      'keyboardDidShow',
-      () => {
-        setKeyboardVisible(true); // or some other action
-      }
-    );
-    const keyboardDidHideListener = Keyboard.addListener(
-      'keyboardDidHide',
-      () => {
-        setKeyboardVisible(false); // or some other action
-      }
-    );
-
-    return () => {
-      keyboardDidHideListener.remove();
-      keyboardDidShowListener.remove();
-    };
-  }, []);
+  
   
   useEffect(() => {
     if (section.title === 'About') {
@@ -284,23 +261,24 @@ const ProfileSection = ({ route, navigation }) => {
 
   if (editing) {
     return (
-    <React.Fragment>
+      <React.Fragment>
       <ScrollView style={styles.container}>
         <Text style={styles.title}>{section.title}</Text>
         {
           section.title === 'About'
-            ? ( 
+            ? (
+
               <View style={{
                 backgroundColor: '#fff',
                 padding: 16,
                 marginBottom: 30,
                 borderRadius: 8,
-                }}>  
+              }}>
                 <TextInput
+
                 value={text}
                 placeholder='About text'
                 onChangeText={setText}
-                style={styles.input}
                 />
               </View>
             )
@@ -316,7 +294,7 @@ const ProfileSection = ({ route, navigation }) => {
                     padding: 16,
                     marginBottom: 30,
                     borderRadius: 8,
-                    }}>
+                  }}>
                     <TouchableOpacity style={{
                       position: 'absolute',
                       top: -20,
@@ -342,27 +320,31 @@ const ProfileSection = ({ route, navigation }) => {
                         return updatedExperience;
                       });
                     }}
-                    />
-                    <Text style={styles.text}>Company:</Text>
-                    <TextInput
-                      style={styles.input}
-                      value={exp.company}
-                      placeholder='Company'
-                      onChangeText={(text) => {
-                        setExperience((prevExperience) => {
-                          const updatedExperience = [...prevExperience];
-                          updatedExperience[index].company = text;
-                          return updatedExperience;
-                        });
-                      }}
+                  />
+                  <Text style={styles.text}>Company:</Text>
+                  <TextInput
+                    style={styles.input}
+                    value={exp.company}
+                    placeholder='Company'
+                    onChangeText={(text) => {
+                      setExperience((prevExperience) => {
+                        const updatedExperience = [...prevExperience];
+                        updatedExperience[index].company = text;
+                        return updatedExperience;
+                      });
+                    }}
 
-                    />
+                  />
                   </View>
-                  ))}   
-                    <TouchableOpacity style={styles.button2} onPress={addExperience}>
-                      <Text style={{ color: 'white', marginLeft: 5 }}>Add Experience</Text>
-                    </TouchableOpacity>
-                </React.Fragment>
+                ))}<TouchableOpacity onPress={addExperience} style={{
+                  alignItems: 'center',
+                  backgroundColor: '#4683fc',
+                  padding: 10,
+                  marginBottom: 40
+                }}>
+                        <Text style={{color: '#ffffff' }}>Add Experience</Text>
+                      </TouchableOpacity>
+                      </React.Fragment>
 
             )
             : (
@@ -371,212 +353,226 @@ const ProfileSection = ({ route, navigation }) => {
             )
         }
 
-        {
-          section.title === 'Education'
-            ? (
-              <React.Fragment>
-                {education.map((edu, index) => (
-                  <View key={index} style={{
-                    backgroundColor: '#fff',
-                    padding: 16,
-                    marginBottom: 30,
-                    borderRadius: 8, }}>
-                    <TouchableOpacity style={{
-                      position: 'absolute',
-                      top: -20,
-                      right: 0,
-                      width: 30,
-                      height: 30,
-                      borderRadius: 12,
-                      backgroundColor: '#fff',
-                      justifyContent: 'center',
-                      alignItems: 'center',
-                    }} onPress={()=>handleDeleteEducation(index)}>
-                      <AntDesign name="close" size={18} color="#ff0000" />
-                    </TouchableOpacity>
-                    <Text style={styles.text}>Date:</Text>
-                    <TextInput
-                      style={styles.input}
-                      value={edu.date}
-                      placeholder='Date'
-                      onChangeText={(text) => {
-                        let updatedEducation = [...education];
-                        updatedEducation[index].date = text;
-                        setEducation(updatedEducation);
-                      }}
-                    />
-                    <Text style={styles.text}>Degree:</Text>
-                    <TextInput
-                      style={styles.input}
-                      value={edu.degree}
-                      placeholder='Degree'
-                      onChangeText={(text) => {
-                        let updatedEducation = [...education];
-                        updatedEducation[index].degree = text;
-                        setEducation(updatedEducation);
-                      }}
-                    />
-                    <Text style={styles.text}>Major:</Text>
-                    <TextInput
-                      style={styles.input}
-                      value={edu.major}
-                      placeholder='Major'
-                      onChangeText={(text) => {
-                        let updatedEducation = [...education];
-                        updatedEducation[index].major = text;
-                        setEducation(updatedEducation);
-                      }}
-                    />
-                    <Text style={styles.text}>University:</Text>
-                    <TextInput
-                      style={styles.input}
-                      value={edu.university}
-                      placeholder='University'
-                      onChangeText={(text) => {
-                        let updatedEducation = [...education];
-                        updatedEducation[index].university = text;
-                        setEducation(updatedEducation);
-                      }}
+{
+  section.title === 'Education'
+    ? (
+      <React.Fragment>
+        {education.map((edu, index) => (
+          <View key={index} style={{
+            backgroundColor: '#fff',
+            padding: 16,
+            marginBottom: 30,
+            borderRadius: 8,
+          }}>
+          <TouchableOpacity style={{
+    position: 'absolute',
+    top: -20,
+    right: 0,
+    width: 30,
+    height: 30,
+    borderRadius: 12,
+    backgroundColor: '#fff',
+    justifyContent: 'center',
+    alignItems: 'center',
+  }} onPress={()=>handleDeleteEducation(index)}>
+        <AntDesign name="close" size={18} color="#ff0000" />
+      </TouchableOpacity>
+            <Text style={styles.text}>Date:</Text>
+            <TextInput
+              style={styles.input}
+              value={edu.date}
+              placeholder='Date'
+              onChangeText={(text) => {
+                let updatedEducation = [...education];
+                updatedEducation[index].date = text;
+                setEducation(updatedEducation);
+              }}
+            />
+            <Text style={styles.text}>Degree:</Text>
+            <TextInput
+              style={styles.input}
+              value={edu.degree}
+              placeholder='Degree'
+              onChangeText={(text) => {
+                let updatedEducation = [...education];
+                updatedEducation[index].degree = text;
+                setEducation(updatedEducation);
+              }}
+            />
+            <Text style={styles.text}>Major:</Text>
+            <TextInput
+              style={styles.input}
+              value={edu.major}
+              placeholder='Major'
+              onChangeText={(text) => {
+                let updatedEducation = [...education];
+                updatedEducation[index].major = text;
+                setEducation(updatedEducation);
+              }}
+            />
+            <Text style={styles.text}>University:</Text>
+            <TextInput
+              style={styles.input}
+              value={edu.university}
+              placeholder='University'
+              onChangeText={(text) => {
+                let updatedEducation = [...education];
+                updatedEducation[index].university = text;
+                setEducation(updatedEducation);
+              }}
 
-                    />
-                  </View>
+            />
+          </View>
 
-                ))}
-                <TouchableOpacity style={styles.button2} onPress={addEducation}>
-                      <Text style={{ color: 'white', marginLeft: 5 }}>Add Education</Text>
-                </TouchableOpacity>
-              </React.Fragment>
-              
-            )
-            : null
-        }
+        ))}
+        <TouchableOpacity onPress={addEducation} style={{
+    alignItems: 'center',
+    backgroundColor: '#4683fc',
+    padding: 10,
+    marginBottom: 40
+  }}>
+          <Text style={{color: '#ffffff' }}>Add Education</Text>
+        </TouchableOpacity>
+      </React.Fragment>
+      
+    )
+    : null
+}
 
-        {
-          section.title === 'Skills'
-            ? (
-              <React.Fragment>
-                {skills.map((skill, index) => (
-                <View key={index} style={{
-                  backgroundColor: '#fff',
-                  padding: 16,
-                  marginBottom: 30,
-                  borderRadius: 8,
-                  }}>
-                    <TouchableOpacity style={{
-                      position: 'absolute',
-                      top: -20,
-                      right: 0,
-                      width: 30,
-                      height: 30,
-                      borderRadius: 12,
-                      backgroundColor: '#fff',
-                      justifyContent: 'center',
-                      alignItems: 'center',
-                          }} onPress={()=>handleDeleteSkills(index)}>
-                    <AntDesign name="close" size={18} color="#ff0000" />
-                  </TouchableOpacity>
-                  <TextInput
-                    style={styles.input}
-                    value={skill.title}
-                    placeholder='Skill'
-                    onChangeText={(text) => {
-                      setSkills((prevSkills) => {
-                        const updatedSkills = [...prevSkills];
-                        updatedSkills[index].title = text;
-                        return updatedSkills;
-                      });
-                    }}
+{
+    section.title === 'Skills'
+      ? (
+        <React.Fragment>
+          {skills.map((skill, index) => (
+            <View key={index} style={{
+              backgroundColor: '#fff',
+              padding: 16,
+              marginBottom: 30,
+              borderRadius: 8,
+            }}>
+              <TouchableOpacity style={{
+    position: 'absolute',
+    top: -20,
+    right: 0,
+    width: 30,
+    height: 30,
+    borderRadius: 12,
+    backgroundColor: '#fff',
+    justifyContent: 'center',
+    alignItems: 'center',
+  }} onPress={()=>handleDeleteSkills(index)}>
+        <AntDesign name="close" size={18} color="#ff0000" />
+      </TouchableOpacity>
+            <TextInput
+              style={styles.input}
+              value={skill.title}
+              placeholder='Skill'
+              onChangeText={(text) => {
+                setSkills((prevSkills) => {
+                  const updatedSkills = [...prevSkills];
+                  updatedSkills[index].title = text;
+                  return updatedSkills;
+                });
+              }}
 
-                  />
-                </View>
+            />
+            </View>
 
-                ))}
-                
-                <TouchableOpacity style={styles.button2} onPress={addSkill}>
-                  <Text style={{ color: 'white', marginLeft: 5 }}>Add Skill</Text>
-                </TouchableOpacity>
-                
-              </React.Fragment>
-            )
-            : null
-        }
+          ))}
+          <TouchableOpacity onPress={addSkill} style={{
+    alignItems: 'center',
+    backgroundColor: '#4683fc',
+    padding: 10,
+    marginBottom: 40
+  }}>
+          <Text style={{color: '#ffffff' }}>Add Skill</Text>
+        </TouchableOpacity>
+        </React.Fragment>
+      )
+      : null
+  }
 
-        {
-          section.title === 'Recommendations'
-            ? (
-              <React.Fragment>
-                {recommendations.map((rec, index) => (
-                  <View key={index} style={{
-                    backgroundColor: '#fff',
-                    padding: 16,
-                    marginBottom: 30,
-                    borderRadius: 8,
-                    }}>
-                    <TouchableOpacity style={{
-                      position: 'absolute',
-                      top: -20,
-                      right: 0,
-                      width: 30,
-                      height: 30,
-                      borderRadius: 12,
-                      backgroundColor: '#fff',
-                      justifyContent: 'center',
-                      alignItems: 'center',
-                      }} onPress={()=>handleDeleteRecommendations(index)}>
-                        <AntDesign name="close" size={18} color="#ff0000" />
-                    </TouchableOpacity>
-                    <Text style={styles.text}>Name:</Text>
-                    <TextInput
-                      style={styles.input}
-                      value={rec.name}
-                      placeholder='Name'
-                      onChangeText={(text) => {
-                        setRecommendations((prevRecs) => {
-                          const updatedRecs = [...prevRecs];
-                          updatedRecs[index].name = text;
-                          return updatedRecs;
-                        });
-                      }}
-                    />
-                    <Text style={styles.text}>Relationship:</Text>
-                    <TextInput
-                      style={styles.input}
-                      value={rec.relationship}
-                      placeholder='Relationship'
-                      onChangeText={(text) => {
-                        setRecommendations((prevRecs) => {
-                          const updatedRecs = [...prevRecs];
-                          updatedRecs[index].relationship = text;
-                          return updatedRecs;
-                        });
-                      }}
-                      />
-                      <Text style={styles.text}>Recommendation:</Text>
-                    <TextInput
-                      style={styles.input}
-                      value={rec.recommendation}
-                      placeholder='Recommendation'
-                      onChangeText={(text) => {
-                        setRecommendations((prevRecs) => {
-                          const updatedRecs = [...prevRecs];
-                          updatedRecs[index].recommendation = text;
-                          return updatedRecs;
-                        });
-                      }}
-                    />
-                  </View>
-                ))}
-                
-                <TouchableOpacity style={styles.button2} onPress={addRecommendation}>
-                  <Text style={{ color: 'white', marginLeft: 5 }}>Add Recommendation</Text>
-                </TouchableOpacity>
-              </React.Fragment>
-            )
-            : null
-        }
+{
+  section.title === 'Recommendations'
+    ? (
+      <React.Fragment>
+        {recommendations.map((rec, index) => (
+          <View key={index} style={{
+            backgroundColor: '#fff',
+            padding: 16,
+            marginBottom: 30,
+            borderRadius: 8,
+          }}>
+            <TouchableOpacity style={{
+    position: 'absolute',
+    top: -20,
+    right: 0,
+    width: 30,
+    height: 30,
+    borderRadius: 12,
+    backgroundColor: '#fff',
+    justifyContent: 'center',
+    alignItems: 'center',
+  }} onPress={()=>handleDeleteRecommendations(index)}>
+        <AntDesign name="close" size={18} color="#ff0000" />
+      </TouchableOpacity>
+            <Text style={styles.text}>Name:</Text>
+            <TextInput
+              style={styles.input}
+              value={rec.name}
+              placeholder='Name'
+              onChangeText={(text) => {
+                setRecommendations((prevRecs) => {
+                  const updatedRecs = [...prevRecs];
+                  updatedRecs[index].name = text;
+                  return updatedRecs;
+                });
+              }}
+            />
+            <Text style={styles.text}>Relationship:</Text>
+            <TextInput
+              style={styles.input}
+              value={rec.relationship}
+              placeholder='Relationship'
+              onChangeText={(text) => {
+                setRecommendations((prevRecs) => {
+                  const updatedRecs = [...prevRecs];
+                  updatedRecs[index].relationship = text;
+                  return updatedRecs;
+                });
+              }}
+            />
+            <Text style={styles.text}>Recommendation:</Text>
+            <TextInput
+              style={styles.input}
+              value={rec.recommendation}
+              placeholder='Recommendation'
+              onChangeText={(text) => {
+                setRecommendations((prevRecs) => {
+                  const updatedRecs = [...prevRecs];
+                  updatedRecs[index].recommendation = text;
+                  return updatedRecs;
+                });
+              }}
+            />
+          </View>
+        ))}
+        <TouchableOpacity onPress={addRecommendation} style={{
+    alignItems: 'center',
+    backgroundColor: '#4683fc',
+    padding: 10,
+    marginBottom: 40
+  }}>
+          <Text style={{color: '#ffffff' }}>Add Recommendation</Text>
+        </TouchableOpacity>
+      </React.Fragment>
+    )
+    : null
+}
+
       </ScrollView>
       <FloatingSaveButton onPress={handleSave}/>
-    </React.Fragment>
+      </React.Fragment>
     );
   }
 
@@ -587,13 +583,12 @@ const ProfileSection = ({ route, navigation }) => {
       section_content=(<PlainCard content={section.text}/>)
       break;
       case 'Experience': 
-      section_content=section.data.map((experience, index) => ( 
+      section_content=section.data.map((experience, index) => (
         <JobExperienceCard
-        key={index}
-        position={experience.position}
-        company={experience.company}
+          key={index}
+          position={experience.position}
+          company={experience.company}
         />
-        
       ))
       break;
       case 'Education':

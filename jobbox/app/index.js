@@ -25,6 +25,8 @@ import Profile from './screens/Profile/Profile';
 import Services from './screens/Services/Services';
 import Hire from './screens/Home/Hire';
 import Work from './screens/Home/Work';
+import ChatHandler from './screens/Messages/ChatHandler';
+import ChatRoom from './screens/Messages/ChatRoom';
 import Notifications from './screens/Notifications/Notifications';
 import PostJob from './screens/Home/PostJob';
 import Category from './screens/Services/Category';
@@ -86,52 +88,21 @@ function MyTabs({handleSignOut}) {
     fetchUserData();
   }, []);
 
-  // useEffect(() => {
-  //   const fetchNotifications = async () => {
-  //     try {
-  //       const response = await axios.get(`https://tranquil-ocean-74659.herokuapp.com/auth/notifications/${user._id}`); 
-  //       if (response.data && response.data.length > 0) {
-  //         setHasNotifications(true);
-  //       }
-  //       // console.log(response.data);
-  //     } catch (err) {
-  //       console.error(err);
-  //     }
-  //   }
-  //   // Only call fetchNotifications if user._id exists (i.e., if the user data has been fetched)
-  //   if (user._id) {
-  //     fetchNotifications();
-  //   }
-  // }, [user]);
-
   useEffect(() => {
     const fetchNotifications = async () => {
       try {
         const response = await axios.get(`https://tranquil-ocean-74659.herokuapp.com/auth/notifications/${user._id}`); 
         if (response.data && response.data.length > 0) {
           setHasNotifications(true);
-        } else {
-          setHasNotifications(false);
         }
         // console.log(response.data);
       } catch (err) {
         console.error(err);
       }
     }
-
-    let intervalId;
-
     // Only call fetchNotifications if user._id exists (i.e., if the user data has been fetched)
     if (user._id) {
       fetchNotifications();
-      intervalId = setInterval(fetchNotifications, 3000); // Fetch every 3 seconds
-    }
-
-    // Clean up the interval on unmount
-    return () => {
-      if (intervalId) {
-        clearInterval(intervalId);
-      }
     }
   }, [user]);
   const handleMenu =  () => {
@@ -166,7 +137,6 @@ function MyTabs({handleSignOut}) {
       </View>
     ),
   };
-
   return (
     <>
     <BottomTab.Navigator
@@ -187,7 +157,6 @@ function MyTabs({handleSignOut}) {
   
           return <Icon name={iconName} size={size} color={color} />;
         },
-
         tabBarActiveTintColor: '#4683fc',
         tabBarInactiveTintColor: 'gray',
         tabBarStyle: [
@@ -210,7 +179,6 @@ function MyTabs({handleSignOut}) {
         component={Services}
         options={{
           ...commonOptions,
-
         }}
       />
       <BottomTab.Screen
@@ -218,7 +186,6 @@ function MyTabs({handleSignOut}) {
         component={Box}
         options={{
           tabBarIcon: ({ focused, color, size }) => (
-
             <View
               style={{
                 width: 70,
@@ -231,13 +198,11 @@ function MyTabs({handleSignOut}) {
               }}
             >
               <Icon name={focused ? 'cube' : 'cube-outline'} size={size} color={focused ? 'white' : 'gray'} />
-
             </View>
           ),
           tabBarButton: (props) => <TouchableOpacity {...props} />,
           ...commonOptions,
         }}
-
       />
       <BottomTab.Screen
         name="Activity"
@@ -253,7 +218,6 @@ function MyTabs({handleSignOut}) {
           ...commonOptions,
         }}
       />
-
     </BottomTab.Navigator>
     <Modalize
       ref={modalizeRef}
@@ -315,6 +279,16 @@ export default function App() {
       component={()=><MyTabs handleSignOut={handleSignOut}/>}
     >
     </Stack.Screen>
+      <Stack.Screen 
+        name="Messages" 
+        component={ChatHandler} 
+        options={{ headerBackTitle: 'Back', headerBackTitleVisible: false }} 
+      />
+      <Stack.Screen 
+        name="ChatRoom" 
+        component={ChatRoom} 
+        options={{ headerBackTitle: 'Back', headerBackTitleVisible: false }} 
+      />
       <Stack.Screen 
         name="Notifications" 
         component={Notifications} 

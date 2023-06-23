@@ -114,15 +114,7 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 20,
     padding: 35,
     alignItems: 'center',
-    fontSize: 20, 
-    shadowColor: "#000",
-    shadowOffset: {
-        width: 0,
-        height: -7,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 6.84,
-    elevation: 5, 
+    fontSize: 20,
   },
   button: {
     borderRadius: 20,
@@ -350,11 +342,10 @@ return (
                 title={location}
                 onPress={() => handleLocationSelect(location)}
               />
-            ))} 
-
-            <TouchableOpacity style={styles.button2} onPress={() => setIsLocationModalVisible(false)}>
-              <Text style={{ color: 'white', marginLeft: 5 }}>Close</Text>
-            </TouchableOpacity> 
+            ))}
+            <Pressable style={styles.button} onPress={() => setIsLocationModalVisible(false)}>
+              <Text>Close</Text>
+            </Pressable>
           </View>
         </Modal>
           </View>
