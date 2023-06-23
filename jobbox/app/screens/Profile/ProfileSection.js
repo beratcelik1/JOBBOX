@@ -140,7 +140,27 @@ const ProfileSection = ({ route, navigation }) => {
       ? section.data 
       : [{ name: '', relationship: '', recommendation: '' }]
   );
-  
+  const [isKeyboardVisible, setKeyboardVisible] = useState(false);
+
+ useEffect(() => {
+    const keyboardDidShowListener = Keyboard.addListener(
+      'keyboardDidShow',
+      () => {
+        setKeyboardVisible(true); // or some other action
+      }
+    );
+    const keyboardDidHideListener = Keyboard.addListener(
+      'keyboardDidHide',
+      () => {
+        setKeyboardVisible(false); // or some other action
+      }
+    );
+
+    return () => {
+      keyboardDidHideListener.remove();
+      keyboardDidShowListener.remove();
+    };
+  }, []);
   
   useEffect(() => {
     if (section.title === 'About') {
@@ -336,12 +356,12 @@ const ProfileSection = ({ route, navigation }) => {
 
                   />
                   </View>
-                ))}<TouchableOpacity onPress={addExperience} style={{
+                ))}<TouchableOpacity onPress={addExperience} style={[{
                   alignItems: 'center',
                   backgroundColor: '#4683fc',
                   padding: 10,
                   marginBottom: 40
-                }}>
+                },isKeyboardVisible ? {paddingBottom: 280} : {}]}>
                         <Text style={{color: '#ffffff' }}>Add Experience</Text>
                       </TouchableOpacity>
                       </React.Fragment>
@@ -425,12 +445,12 @@ const ProfileSection = ({ route, navigation }) => {
           </View>
 
         ))}
-        <TouchableOpacity onPress={addEducation} style={{
+        <TouchableOpacity onPress={addEducation} style={[{
     alignItems: 'center',
     backgroundColor: '#4683fc',
     padding: 10,
     marginBottom: 40
-  }}>
+  },isKeyboardVisible ? {paddingBottom: 280} : {}]}>
           <Text style={{color: '#ffffff' }}>Add Education</Text>
         </TouchableOpacity>
       </React.Fragment>
@@ -479,12 +499,12 @@ const ProfileSection = ({ route, navigation }) => {
             </View>
 
           ))}
-          <TouchableOpacity onPress={addSkill} style={{
+          <TouchableOpacity onPress={addSkill} style={[{
     alignItems: 'center',
     backgroundColor: '#4683fc',
     padding: 10,
     marginBottom: 40
-  }}>
+  },isKeyboardVisible ? {paddingBottom: 280} : {}]}>
           <Text style={{color: '#ffffff' }}>Add Skill</Text>
         </TouchableOpacity>
         </React.Fragment>
@@ -557,12 +577,12 @@ const ProfileSection = ({ route, navigation }) => {
             />
           </View>
         ))}
-        <TouchableOpacity onPress={addRecommendation} style={{
+        <TouchableOpacity onPress={addRecommendation} style={[{
     alignItems: 'center',
     backgroundColor: '#4683fc',
     padding: 10,
     marginBottom: 40
-  }}>
+  },isKeyboardVisible ? {paddingBottom: 280} : {}]}>
           <Text style={{color: '#ffffff' }}>Add Recommendation</Text>
         </TouchableOpacity>
       </React.Fragment>
