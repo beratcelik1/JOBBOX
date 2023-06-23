@@ -7,7 +7,8 @@ import { createStackNavigator } from '@react-navigation/stack';
 import { NavigationContainer, DefaultTheme } from '@react-navigation/native';
 import WorkPeriodDetails from './WorkPeriod';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
-import ChatHandler from '../Messages/ChatHandler';
+import ChatScreen from './ChatScreen'; 
+
 
 const MyTheme = {
   ...DefaultTheme,
@@ -91,11 +92,15 @@ function HiringStackNavigator({ hiringJobs }) {
           headerBackTitleVisible: false,
           headerTitleAlign: 'center',
         }}/>
-      <HiringStack.Screen
-        name="ChatHandler"
-        component={ChatHandler}
-        options={{ /* you can set options here like in your other stacks */ }}
-      />
+      <HiringStack.Screen name="ChatScreen" component={ChatScreen} options={{
+          headerTitle: 'Chat',
+          headerShown: true,
+          headerTransparent: true,
+          headerTintColor: '#4683fc',
+          headerBackTitle: '',
+          headerBackTitleVisible: false,
+          headerTitleAlign: 'center',
+        }}/>
     </HiringStack.Navigator>
   );
 }
@@ -113,14 +118,19 @@ function WorkingStackNavigator({ workingJobs }) {
           headerBackTitleVisible: false,
           headerTitleAlign: 'center',
         }} />
-      <WorkingStack.Screen
-        name="ChatHandler"
-        component={ChatHandler}
-        options={{ /* you can set options here like in your other stacks */ }}
-      />
+      <WorkingStack.Screen name="ChatScreen" component={ChatScreen} options={{
+          headerTitle: 'Chat',
+          headerShown: true,
+          headerTransparent: true,
+          headerTintColor: '#4683fc',
+          headerBackTitle: '',
+          headerBackTitleVisible: false,
+          headerTitleAlign: 'center',
+        }}/>
     </WorkingStack.Navigator>
   );
 }
+
 
 const Box = () => {
   const [hiringJobs, setHiringJobs] = useState([]);
@@ -142,8 +152,9 @@ const Box = () => {
           },
         });
 
-        const hiring = response.data.filter(job => job.postedBy._id === userId);
-        const working = response.data.filter(job => job.hiredApplicant._id === userId);
+        const hiring = response.data.filter(job => job.postedBy && job.postedBy._id === userId);
+        const working = response.data.filter(job => job.hiredApplicant && job.hiredApplicant._id === userId);
+
 
         setHiringJobs(hiring);
         setWorkingJobs(working);

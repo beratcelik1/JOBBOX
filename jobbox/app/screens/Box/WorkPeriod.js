@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { View, Text, TouchableOpacity, Modal, StyleSheet, ScrollView, Button } from 'react-native';
 import { useRoute } from '@react-navigation/native';
 import { Marker } from 'react-native-maps'; 
@@ -6,9 +6,9 @@ import MapView from 'react-native-maps';
 import { Ionicons } from '@expo/vector-icons';
 import StarRating from 'react-native-star-rating'; // Remember to install this package
 import Icon from 'react-native-vector-icons/MaterialIcons'; 
-import ChatRoom from '../Messages/ChatRoom';
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import ChatScreen from './ChatScreen'; 
 
 const WorkPeriodDetails = () => {
   const route = useRoute();
@@ -21,8 +21,20 @@ const WorkPeriodDetails = () => {
   const [isModalVisible, setModalVisible] = useState(false);
   const [modalContent, setModalContent] = useState('');
   const [starCount, setStarCount] = useState(4.3); // Replace 5 with actual job rating
+  const [user, setUser] = useState(null);
 
-
+  useEffect(() => {
+    const fetchUser = async () => {
+      const user = await AsyncStorage.getItem('userId');
+      console.log('user:', user);
+      setUser(user);
+    }
+  
+    console.log('job:', job._id);
+  
+    fetchUser();
+  }, []);
+  
   const handlePress = (title, content) => {
     setModalContent({title, content});
     setModalVisible(true);
@@ -38,30 +50,65 @@ const WorkPeriodDetails = () => {
 
   const scrollRef = useRef();
 
-  const navigateToChat = async () => {
-    // Receiver would be determined by the work period
-    const receiverId = job.postedBy;
-    const receiverName = job.hiredApplicant;
 
-    // Get current user's id from AsyncStorage
-    const userId = await AsyncStorage.getItem('userId');
-
-    // Check if conversation already exists
-    let conversation = await axios.get(`http://tranquil-ocean-74659.herokuapp.com/conversations/find/${userId}/${receiverId}`);
+  const fetchConversationId = async (firstUserId, secondUserId) => {
+    const response = await fetch(`https://tranquil-ocean-74659.herokuapp.com/conversations/find/${firstUserId}/${secondUserId}/${job._id}`);
+    const data = await response.json();
   
-    // If it doesn't, create a new one
-    if (!conversation.data) {
-      conversation = await axios.post(`http://tranquil-ocean-74659.herokuapp.com/conversations`, {
-        senderId: userId,
-        receiverId: receiverId
-      });
+    if (response.ok) {
+      return data._id;  // Returns the conversation's id
+    } else {
+      // If not found, create a new conversation and return its id
+      if (data.error === 'No valid conversation found') {
+        const newConversationResponse = await fetch('https://tranquil-ocean-74659.herokuapp.com/conversations/', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            jobId: job._id,
+            senderId: firstUserId,
+            receiverId: secondUserId,
+            // Other necessary fields for creating a new conversation
+          }),
+        });
+        const newConversationData = await newConversationResponse.json();
+        if (newConversationResponse.ok) {
+          return newConversationData._id;  // Returns the newly created conversation's id
+        } else {
+          throw new Error(newConversationData.error);
+        }
+      } else {
+        throw new Error(data.error);
+      }
     }
-
-    // Navigate to the ChatRoom screen
-    navigation.navigate('ChatRoom', {currentChatId: conversation.data, receiverName: receiverName});
   };
-
-
+  
+  const handleChatNavigation = async () => {
+    if (user && job) {
+      let firstUserId = user;
+      let secondUserId = job.postedBy && job.postedBy._id === user ? job.hiredApplicant && job.hiredApplicant._id : job.postedBy && job.postedBy._id;
+      console.log('firstUserId:', firstUserId);
+      console.log('secondUserId:', secondUserId);
+      
+      if (firstUserId === secondUserId) {
+        // You can handle this error however you want, maybe show a message to the user
+        console.error('Cannot start a conversation with yourself.');
+        return;
+      }
+  
+      try {
+        const conversationId = await fetchConversationId(firstUserId, secondUserId);
+        console.log('converstaionID:', conversationId);  // Move this line here
+        navigation.navigate('ChatScreen', { jobId: job._id, senderId: user, conversationId });
+      } catch (error) {
+        // handle error here
+        console.error('Failed to get conversation:', error);
+      }
+    }
+  };
+  
+  
   return (
     <ScrollView 
       ref={scrollRef}
@@ -129,25 +176,15 @@ const WorkPeriodDetails = () => {
       {/* End of Job Description */}
 
       {/* Start of Message your Employer */}
-      <TouchableOpacity onPress={navigateToChat}>
-        <View style={styles.infoCard}>
-          <Ionicons name="chatbubble" size={24} color="#4683fc" marginLeft ="2%" marginRight ="2%" />
-          <View style={styles.infoTextContainer}>
-            <Text style={styles.infoTitle}>Message your employer</Text>
-            <Text style={styles.infoText}>John Doe</Text>
-            <Button
-              title="Chat"
-              onPress={() =>
-                navigation.navigate('ChatHandler', {
-                  jobId: job._id,
-                  postedBy: job.postedBy, // Assuming you have this field
-                  hiredApplicant: job.hiredApplicant // Assuming you have this field
-                })
-              }
-            />
-          </View>
-        </View>
-      </TouchableOpacity>
+      <TouchableOpacity onPress={handleChatNavigation}>
+    <View style={styles.infoCard}>
+      <Ionicons name="chatbubble" size={24} color="#4683fc" marginLeft ="2%" marginRight ="2%" />
+      <View style={styles.infoTextContainer}>
+        <Text style={styles.infoTitle}>Message your employer</Text>
+        <Text style={styles.infoText}>John Doe</Text>
+      </View>
+    </View>
+  </TouchableOpacity>
       {/* End of Message your Employer/EMPLOYEE */}
 
       {/* Modal */}
