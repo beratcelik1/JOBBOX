@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { TouchableOpacity,View, Text, TextInput, Button, StyleSheet, ScrollView } from 'react-native';
+import { TouchableOpacity,View, Text, TextInput, Button, StyleSheet, ScrollView, Keyboard } from 'react-native';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import FloatingEditButton from '../../components/FloatingEditButton';
@@ -9,7 +9,7 @@ import PlainCard from '../../components/PlainCard';
 import BubbleTextList from '../../components/BubbleTextList';
 import RecommendationCard from '../../components/ReccomendationCard'
 import FloatingSaveButton from '../../components/FloatingSaveButton';
-import { AntDesign } from '@expo/vector-icons';
+import { AntDesign } from '@expo/vector-icons'; 
 
 const styles = StyleSheet.create({
   input: {
