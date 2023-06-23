@@ -5,16 +5,17 @@ import { Marker } from 'react-native-maps';
 import MapView from 'react-native-maps';
 import { Ionicons } from '@expo/vector-icons';
 import StarRating from 'react-native-star-rating'; // Remember to install this package
+import { formatDateTime } from '../../utils/formatDateTime';
 import Icon from 'react-native-vector-icons/MaterialIcons'; 
 import { FlatList } from 'react-native';
 
 const WorkPeriodDetails = () => {
   const route = useRoute();
   const { job } = route.params;
-  const startTime = 'June 1, 2023';
-  const startTimestamp = '8:00 AM';
-  const endTime = 'June 30, 2023';
-  const endTimestamp = '5:00 PM';
+  
+  // Extract the date and time from the startDateTime and endDateTime
+  const [startDate, startTime] = formatDateTime(job.startDateTime);
+  const [endDate, endTime] = formatDateTime(job.endDateTime);
 
   const [isModalVisible, setModalVisible] = useState(false);
   const [modalContent, setModalContent] = useState('');
@@ -106,13 +107,13 @@ const WorkPeriodDetails = () => {
       <View style={styles.timeContainer}>
         <View style={styles.timeBox}>
           <Text style={styles.timeTitle}>Start</Text>
+          <Text style={styles.timeText}>{startDate}</Text>
           <Text style={styles.timeText}>{startTime}</Text>
-          <Text style={styles.timeText}>{startTimestamp}</Text>
         </View>
         <View style={styles.timeBox} marginLeft='2%'>
           <Text style={styles.timeTitle}>End</Text>
+          <Text style={styles.timeText}>{endDate}</Text>
           <Text style={styles.timeText}>{endTime}</Text>
-          <Text style={styles.timeText}>{endTimestamp}</Text>
         </View>
       </View> 
       

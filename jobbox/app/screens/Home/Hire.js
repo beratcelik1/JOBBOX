@@ -16,6 +16,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { showMessage } from 'react-native-flash-message';
 import { ActivityIndicator } from 'react-native-paper';
 import LoadingScreen from '../../components/LoadingScreen';
+import { formatDateTime } from '../../utils/formatDateTime';
 
 function HireScreen({ navigation }) {
   const [loading, setloading] = useState(true);
@@ -84,54 +85,63 @@ function HireScreen({ navigation }) {
     navigation.navigate('HireApplicationsScreen', { job: job });
   };
 
-  const renderJob = ({ item }) => (
-    <View style={styles.jobCard}>
-      <View style={styles.jobHeader}>
-        <Text style={styles.jobTitle}>{item.title}</Text>
-      </View>   
-      <View
-        style={{
-          borderBottomColor: '#fff',
-          borderBottomWidth: 1.5,
-          marginBottom: 10,
-        }}/> 
+  const renderJob = ({ item }) => {
+    const [startDate, startTime] = formatDateTime(item.startDateTime);
+    const [endDate, endTime] = formatDateTime(item.endDateTime);
+    
+    return (
+      <View style={styles.jobCard}>
+        <View style={styles.jobHeader}>
+          <Text style={styles.jobTitle}>{item.title}</Text>
+        </View>   
+        <View
+          style={{
+            borderBottomColor: '#fff',
+            borderBottomWidth: 1.5,
+            marginBottom: 10,
+          }}/> 
 
-      <View style = {{ 
-        flexDirection: 'row',
-        justifyContent: 'flex-start',}}> 
+        <View style = {{ 
+          flexDirection: 'row',
+          justifyContent: 'flex-start',}}> 
 
-        <View style = {{ width: '60%'}} > 
-          <View style={styles.jobDetails}>
-            <Text style={styles.jobDescription}>{item.category}</Text>
-          </View>
-          <View style={styles.jobDetails}>
-            <Text style={styles.jobDescription}>{item.location}</Text>
-          </View>
-        </View> 
-
-        <View style = {{ width: '40%'}}> 
-          <View style={{flexDirection: 'row', justifyContent: 'flex-start', marginBottom: 5}}> 
-            <Ionicons name="md-cash" size={20} color="#fff" /> 
-            <Text style={styles.jobDescription}>  {item.pay} $</Text>
+          <View style = {{ width: '60%'}} > 
+            <View style={styles.jobDetails}>
+              <Text style={styles.jobDescription}>{item.category}</Text>
+            </View>
+            <View style={styles.jobDetails}>
+              <Text style={styles.jobDescription}>{item.location}</Text>
+            </View>
           </View> 
 
-          <View style={{flexDirection: 'row', justifyContent: 'flex-start'}}>
-            <Ionicons name="md-time" size={20} color="#fff" />
-            <Text style={styles.jobDescription}>  {item.estimatedTime}</Text>
-            <Text style={styles.jobDescription}>  {item.estimatedTimeUnit}</Text>
-          </View> 
-          
+          <View style = {{ width: '40%'}}> 
+            <View style={{flexDirection: 'row', justifyContent: 'flex-start', marginBottom: 5}}> 
+              <Ionicons name="md-cash" size={20} color="#fff" /> 
+              <Text style={styles.jobDescription}>  {item.pay} $</Text>
+            </View> 
+
+            <View style={{flexDirection: 'row', justifyContent: 'flex-start'}}>
+              <Ionicons name="md-time" size={20} color="#fff" />
+              <Text style={styles.jobDescription}>  {item.estimatedTime}</Text>
+              <Text style={styles.jobDescription}>  {item.estimatedTimeUnit}</Text>
+            </View> 
+          </View>
         </View>
-      </View>
+        
+        <View style={{flexDirection: 'row', justifyContent: 'flex-start'}}>
+          <Text style={styles.jobDescription}>Start Date/Time {startDate}/{startTime}</Text>
+          <Text style={styles.jobDescription}>End Date/Time {endDate}/{endTime}</Text>
+        </View>
 
-      <TouchableOpacity 
-        style={styles.button}
-        onPress={() => handleJobPress(item)}  
-      > 
-        <Text style={styles.buttonText}> View Possible Hires ({item.applicants ? item.applicants.length : 0})</Text>
-      </TouchableOpacity>
-    </View>
-  );  
+        <TouchableOpacity 
+          style={styles.button}
+          onPress={() => handleJobPress(item)}  
+        > 
+          <Text style={styles.buttonText}> View Possible Hires ({item.applicants ? item.applicants.length : 0})</Text>
+        </TouchableOpacity>
+      </View>
+    );
+  };
 
   return (
     <View style={styles.container}>
@@ -214,8 +224,10 @@ function ArchivedJobsScreen({ navigation }) {
   );
 
   const renderJob = ({ item }) => {
-    return (
-    <View style={styles.jobCardArchive}>
+    const [startDate, startTime] = formatDateTime(item.startDateTime);
+    const [endDate, endTime] = formatDateTime(item.endDateTime);
+
+    return ( <View style={styles.jobCard}>
       <View style={styles.jobHeader}>
         <Text style={styles.jobTitle}>{item.title}</Text>
       </View>   
@@ -252,6 +264,11 @@ function ArchivedJobsScreen({ navigation }) {
           </View> 
           
         </View>
+      </View>
+
+      <View style={{flexDirection: 'column', justifyContent: 'flex-start'}}>
+        <Text style={styles.jobDescription}>Start Date/Time {startDate}/{startTime}</Text>
+        <Text style={styles.jobDescription}>End Date/Time {endDate}/{endTime}</Text>
       </View>
 
       <TouchableOpacity 
