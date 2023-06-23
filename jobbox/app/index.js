@@ -151,9 +151,6 @@ function MyTabs({handleSignOut}) {
     ),
     headerRight: () => (
       <View style={{ flexDirection: 'row', marginRight: 10 }}>
-        <TouchableOpacity onPress={() => navigation.navigate("Messages")}>
-          <Icon name="chatbox-outline" size={24} />
-        </TouchableOpacity>
         <TouchableOpacity onPress={() => navigation.navigate("Notifications")}>
           {hasNotifications && (
             <View style={{ position: 'absolute', right: -2, top: -2, backgroundColor: 'red', borderRadius: 6, width: 12, height: 12, justifyContent: 'center', alignItems: 'center' }} />
@@ -308,16 +305,6 @@ export default function App() {
       component={()=><MyTabs handleSignOut={handleSignOut}/>}
     >
     </Stack.Screen>
-      <Stack.Screen 
-        name="Messages" 
-        component={ChatHandler} 
-        options={{ headerBackTitle: 'Back', headerBackTitleVisible: false }} 
-      />
-      <Stack.Screen 
-        name="ChatRoom" 
-        component={ChatRoom} 
-        options={{ headerBackTitle: 'Back', headerBackTitleVisible: false }} 
-      />
       <Stack.Screen 
         name="Notifications" 
         component={Notifications} 
