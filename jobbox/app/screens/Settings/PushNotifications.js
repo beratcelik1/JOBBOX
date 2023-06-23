@@ -14,7 +14,7 @@ const PushNotificationsComponent = () => {
       <View style={styles.switchContainer}>
         <Text style={styles.label}>Enable Push Notifications</Text>
         <Switch
-          trackColor={{  false: '#fff', true: '#4683fc' }}
+          trackColor={{ false: '#767577', true: '#81b0ff' }}
           thumbColor={isEnabled ? '#f5dd4b' : '#f4f3f4'}
           ios_backgroundColor="#3e3e3e"
           onValueChange={toggleSwitch}
