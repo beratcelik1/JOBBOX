@@ -148,7 +148,7 @@ const WorkPeriodDetails = () => {
           title="Employer Location"
         />
       </MapView>
-      <ScrollView style = {{marginHorizontal: 0}}> 
+      
        {/* Start and End Times */} 
 
       <View style={styles.timeContainer}>
@@ -178,14 +178,14 @@ const WorkPeriodDetails = () => {
 
       {/* Start of Message your Employer */}
       <TouchableOpacity onPress={handleChatNavigation}>
-    <View style={styles.infoCard}>
-      <Ionicons name="chatbubble" size={24} color="#4683fc" marginLeft ="2%" marginRight ="2%" />
-      <View style={styles.infoTextContainer}>
-        <Text style={styles.infoTitle}>Message your employer</Text>
-        <Text style={styles.infoText}>John Doe</Text>
-      </View>
-    </View>
-  </TouchableOpacity>
+        <View style={styles.infoCard}>
+          <Ionicons name="chatbubble" size={24} color="#4683fc" marginLeft ="2%" marginRight ="2%" />
+          <View style={styles.infoTextContainer}>
+            <Text style={styles.infoTitle}>Message your employer</Text>
+            <Text style={styles.infoText}>John Doe</Text>
+          </View>
+        </View>
+      </TouchableOpacity>
       {/* End of Message your Employer/EMPLOYEE */}
 
       {/* Modal */}
@@ -253,10 +253,7 @@ const WorkPeriodDetails = () => {
         </View>
       </Modal> 
       {/*End of Modal*/} 
-      </ScrollView> 
-    </View>
-    
-    
+    </ScrollView> 
   );
 };
 
