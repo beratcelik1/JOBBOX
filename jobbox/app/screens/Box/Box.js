@@ -9,6 +9,7 @@ import WorkPeriodDetails from './WorkPeriod';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import ChatScreen from './ChatScreen'; 
 
+import { ScrollView } from 'react-native-gesture-handler';
 
 const MyTheme = {
   ...DefaultTheme,
