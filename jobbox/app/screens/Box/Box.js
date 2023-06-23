@@ -168,7 +168,7 @@ const Box = () => {
 
   return (
     <NavigationContainer independent={true} theme={MyTheme}>
-      <Tab.Navigator initialRouteName="Working" screenOptions={{ tabBarActiveTintColor: '#4683fc', tabBarInactiveTintColor: '#000', tabBarIndicatorStyle: { backgroundColor: '#4683fc' }, tabBarStyle: { backgroundColor: '#fff' }, swipeEnabled: true }}>
+      <Tab.Navigator initialRouteName="Hiring" screenOptions={{ tabBarActiveTintColor: '#4683fc', tabBarInactiveTintColor: '#000', tabBarIndicatorStyle: { backgroundColor: '#4683fc' }, tabBarStyle: { backgroundColor: '#fff' }, swipeEnabled: true }}>
       <Tab.Screen name="Hiring" children={() => <HiringStackNavigator hiringJobs={hiringJobs} />} options={{ title: 'Hiring' }} />
         <Tab.Screen name="Working" children={() => <WorkingStackNavigator workingJobs={workingJobs} />} options={{ title: 'Working' }} />
       </Tab.Navigator>

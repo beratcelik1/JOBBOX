@@ -200,9 +200,6 @@ function MyTabs() {
           ),
           headerRight: () => (
             <View style={{ flexDirection: 'row', marginRight: 10 }}>
-              <TouchableOpacity onPress={() => navigation.navigate("Messages")}>
-                <Icon name="chatbox-outline" size={24} />
-              </TouchableOpacity>
               <TouchableOpacity onPress={() => navigation.navigate("Notifications")}>
                 <Icon name="notifications-outline" size={24} style={{ marginLeft: 10 }} />
               </TouchableOpacity>
@@ -246,9 +243,6 @@ function MyTabs() {
           ),
           headerRight: () => (
             <View style={{ flexDirection: 'row', marginRight: 10 }}>
-              <TouchableOpacity onPress={() => navigation.navigate("Messages")}>
-                <Icon name="chatbox-outline" size={24} />
-              </TouchableOpacity>
               <TouchableOpacity onPress={() => navigation.navigate("Notifications")}>
                 <Icon name="notifications-outline" size={24} style={{ marginLeft: 10 }} />
               </TouchableOpacity>
@@ -274,9 +268,6 @@ function MyTabs() {
         ),
         headerRight: () => (
           <View style={{ flexDirection: 'row', marginRight: 10 }}>
-            <TouchableOpacity onPress={() => navigation.navigate("Messages")}>
-              <Icon name="chatbox-outline" size={24} />
-            </TouchableOpacity>
             <TouchableOpacity onPress={() => navigation.navigate("Notifications")}>
               <Icon name="notifications-outline" size={24} style={{ marginLeft: 10 }} />
             </TouchableOpacity>
@@ -300,9 +291,6 @@ function MyTabs() {
         ),
         headerRight: () => (
           <View style={{ flexDirection: 'row', marginRight: 10 }}>
-            <TouchableOpacity onPress={() => navigation.navigate("Messages")}>
-              <Icon name="chatbox-outline" size={24} />
-            </TouchableOpacity>
             <TouchableOpacity onPress={() => navigation.navigate("Notifications")}>
               <Icon name="notifications-outline" size={24} style={{ marginLeft: 10 }} />
             </TouchableOpacity>
