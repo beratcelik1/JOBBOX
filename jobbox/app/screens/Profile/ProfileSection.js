@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-import { TouchableOpacity,View, Text, TextInput, Button, StyleSheet, ScrollView, Keyboard } from 'react-native';
+import { TouchableOpacity,View, Text, TextInput, Button, StyleSheet, ScrollView, Keyboard, KeyboardAvoidingView, Platform } from 'react-native';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import FloatingEditButton from '../../components/FloatingEditButton';
@@ -10,7 +10,9 @@ import PlainCard from '../../components/PlainCard';
 import BubbleTextList from '../../components/BubbleTextList';
 import RecommendationCard from '../../components/ReccomendationCard'
 import FloatingSaveButton from '../../components/FloatingSaveButton';
-import { AntDesign } from '@expo/vector-icons';
+import { AntDesign } from '@expo/vector-icons'; 
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'; 
+
 
 const styles = StyleSheet.create({
   input: {
@@ -284,8 +286,14 @@ const ProfileSection = ({ route, navigation }) => {
 
   if (editing) {
     return (
-    <React.Fragment>
-      <ScrollView style={styles.container}>
+    <React.Fragment> 
+      <KeyboardAvoidingView 
+            behavior={Platform.OS === 'ios' ? 'padding' : null}
+            style={{ flex: 1, padding: 15, justifyContent: 'center',}}
+        >  
+      <KeyboardAwareScrollView style={styles.container}>
+
+      
         <Text style={styles.title}>{section.title}</Text>
         {
           section.title === 'About'
@@ -574,8 +582,11 @@ const ProfileSection = ({ route, navigation }) => {
             )
             : null
         }
-      </ScrollView>
-      <FloatingSaveButton onPress={handleSave}/>
+      
+      </KeyboardAwareScrollView>
+
+      <FloatingSaveButton onPress={handleSave}/> 
+      </KeyboardAvoidingView>
     </React.Fragment>
     );
   }
@@ -627,20 +638,16 @@ const ProfileSection = ({ route, navigation }) => {
   }
   section_content=section.data.length>0?section_content:(<Text style={styles.text}>{section.text}</Text>);
   return (
-
     <React.Fragment>
-    <ScrollView style={styles.container} >
-      <Text style={styles.title}>{section.title}</Text>
-      <TouchableOpacity onLongPress={handleEdit}>
-      {section_content}
-      </TouchableOpacity>
-      
-      
-    </ScrollView>
-    <FloatingEditButton onPress={handleEdit}/>
+      <KeyboardAwareScrollView style={styles.container}>
+        <Text style={styles.title}>{section.title}</Text>
+        <TouchableOpacity onLongPress={handleEdit}>{section_content}</TouchableOpacity>
+        <FloatingEditButton onPress={handleEdit}/>
+      </KeyboardAwareScrollView>
     </React.Fragment>
-
   );
+  
+  
 };
 
 export default ProfileSection;
