@@ -227,9 +227,7 @@ export function HireApplicationsScreen({ route, navigation }) {
             <Ionicons name="md-time" size={20} color="#fff" />
             <Text style={styles.jobDescription}>  {job.estimatedTime}</Text>
             <Text style={styles.jobDescription}>  {job.estimatedTimeUnit}</Text>
-          </View>   
-
-          
+          </View>  
         </View> 
 
         <View style = {{ justifyContent: 'flex-start', marginBottom:5}}>
