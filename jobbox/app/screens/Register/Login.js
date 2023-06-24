@@ -32,10 +32,6 @@ export default function Login({ navigation, setIsAuthenticated }) {
         .then(async data => {
             console.log(data);
             if (data.token) {
-            //     await AsyncStorage.setItem('token', data.token);
-            //     await AsyncStorage.setItem('userId', data.user._id);
-            //     setIsAuthenticated(true);
-                // console.log(isRemembered);
                 if (data.user.verified) {
                     console.log(isRemembered);
                     await AsyncStorage.setItem('remember', JSON.stringify(isRemembered));
