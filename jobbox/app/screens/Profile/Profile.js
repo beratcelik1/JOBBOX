@@ -10,6 +10,8 @@ import fetch from 'node-fetch';
 import LoadingScreen from '../../components/LoadingScreen';
 import { LOCATIONS } from '../constants';
 import { Colors } from 'react-native/Libraries/NewAppScreen';
+import defaultImage from '../../assets/images/defaultimage3.png';
+
 
 const styles = StyleSheet.create({
   button2: {
@@ -140,7 +142,7 @@ const Profile = () => {
   const [loading, setLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const [isLocationModalVisible, setIsLocationModalVisible] = useState(false);
-  const [selectedLocation, setSelectedLocation] = useState('Kelowna, BC');
+  const [selectedLocation, setSelectedLocation] = useState('');
 
   useEffect(() => {
     if (user && user.location) {
@@ -234,6 +236,7 @@ const Profile = () => {
   const handleLocationSelect = async (location) => {
     setSelectedLocation(location);
     const token = await AsyncStorage.getItem('token');
+    await AsyncStorage.setItem('location', location);
     fetch('https://tranquil-ocean-74659.herokuapp.com/auth/user/me/location', {
       method: 'PUT',
       headers: {
@@ -320,7 +323,7 @@ return (
       <>
         <View style={styles.headerContainer}>
           <TouchableOpacity onPress={handleProfilePhotoPress}>
-          <Image style={styles.profileImage} source={{uri: user.profilePic}} />
+          <Image style={styles.profileImage} source={user && user.profilePic ? {uri: user.profilePic} : defaultImage} />
             {loading && <LoadingScreen />}
           </TouchableOpacity>
           <View>

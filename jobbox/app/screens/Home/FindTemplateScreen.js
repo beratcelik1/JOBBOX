@@ -66,12 +66,14 @@ const FindTemplateScreen = ({ navigation }) => {
 
 
   return (
-    <View style={styles.container}>
-      <SearchBar
-        placeholder={'Look for a template..'}
-        search={search}
-        setSearchQuery={setSearch}
-      />
+    <View style={styles.container}> 
+      <View style = {{height:60}}> 
+        <SearchBar
+          placeholder={'Look for a template..'}
+          search={search}
+          setSearchQuery={setSearch}
+        />
+      </View>
       <FlatList
         data={flatListData}
         keyExtractor={(item) => item.id}
