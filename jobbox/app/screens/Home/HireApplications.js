@@ -70,7 +70,15 @@ export function HireApplicationsScreen({ route, navigation }) {
             }
           });
         });
-      }
+        // Send notification
+      const notification = {
+        to: applicantId, 
+        from: user._id, // Assuming `user` is defined in your component and refers to the current user
+        action: 'hired',
+        jobId: job._id,
+      };
+      await axios.post('https://tranquil-ocean-74659.herokuapp.com/auth/notifications', notification);
+    }
     } catch (error) {
       console.error(error.response.data);
       Alert.alert('Error', 'Something went wrong while hiring the user');
