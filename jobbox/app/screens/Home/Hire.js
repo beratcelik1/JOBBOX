@@ -282,7 +282,7 @@ function ArchivedJobsScreen({ navigation }) {
         style={styles.button}
         onPress={() => handleJobPress(item)}  
       > 
-        <Text style={styles.buttonText}> View Possible Hires ({item.applicants ? item.applicants.length : 0})</Text>
+        <Text style={styles.buttonText}> View Job details</Text>
       </TouchableOpacity>
     </View>);
   };
