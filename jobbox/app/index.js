@@ -292,8 +292,9 @@ export default function App() {
     </Stack.Navigator>
 );
   
-  const handleSignOut = () => {
+  const handleSignOut = async () => {
     console.log("signing out")
+    await AsyncStorage.removeItem('remember');
     setIsAuthenticated(false)
     console.log(isAuthenticated)
   };
