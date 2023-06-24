@@ -227,7 +227,7 @@ function ArchivedJobsScreen({ navigation }) {
     const [startDate, startTime] = formatDateTime(item.startDateTime);
     const [endDate, endTime] = formatDateTime(item.endDateTime);
 
-    return ( <View style={styles.jobCard}>
+    return ( <View style={styles.jobCardArchive}>
       <View style={styles.jobHeader}>
         <Text style={styles.jobTitle}>{item.title}</Text>
       </View>   
