@@ -269,6 +269,7 @@ router.get("/users/:userId/verify/:token", async(req,res) => {
     res.status(500).send({message: "server error"});
   }
 });
+
 router.put('/user/me/change-password', async (req, res) => {
   const { currentPassword, newPassword } = req.body;
   console.log(req.body);
@@ -379,6 +380,8 @@ router.delete('/user/me', async (req, res) => {
     if (!user) {
       return res.status(404).json({ error: 'User not found' });
     }
+
+    await Token.deleteMany({ userId: user._id });
 
     // send a response
     res.json({ message: 'User account deleted successfully' });

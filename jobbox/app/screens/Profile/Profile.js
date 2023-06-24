@@ -231,42 +231,6 @@ const Profile = () => {
     return unsubscribe;
   }, [navigation]);
 
-  const deleteAccount = async () => {
-    try {
-      const token = await AsyncStorage.getItem('token');
-
-      const response = await fetch('https://tranquil-ocean-74659.herokuapp.com/auth/user/me', {
-        method: 'DELETE',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-        },
-      });
-
-      if (response.status === 200) {
-        alert('Account deleted successfully');
-  
-        // Remove user's token from AsyncStorage
-        await AsyncStorage.removeItem('token');
-        
-        // Navigate user back to the Login screen
-        // navigation.navigate('Login');
-        // setIsAuthenticated(false);
-      } else if (response.status === 400) {
-        alert('Bad Request: The server could not understand the request due to invalid syntax.');
-      } else if (response.status === 401) {
-        alert('Unauthorized: The request requires user authentication or authorization.');
-      } else if (response.status === 403) {
-        alert('Forbidden: The server understood the request, but is refusing to fulfill it.');
-      } else if (response.status === 404) {
-        alert('Not Found: The server can not find the requested resource. In the browser, this means the URL is not recognized. In an API, this can also mean that the endpoint is valid but the resource itself does not exist.');
-      } else {
-        alert('Failed to delete account');
-      }
-    } catch (error) {
-      console.error('Failed to delete account: ', error);
-    }
-  };
-
   const handleLocationSelect = async (location) => {
     setSelectedLocation(location);
     const token = await AsyncStorage.getItem('token');
@@ -418,14 +382,6 @@ return (
             />
           }
         />
-        {/* // Button to delete account */}
-        <Button
-          mode="contained"
-          onPress={deleteAccount}
-          style={{margin: 20, backgroundColor: 'red'}}
-        >
-          Delete Account
-        </Button>
       </>
     ) : (
       <ActivityIndicator size="large" color="#0000ff" />
