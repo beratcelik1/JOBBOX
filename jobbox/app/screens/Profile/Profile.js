@@ -161,6 +161,11 @@ const Profile = () => {
       console.log("Profile pic path: ", response.data.profilePic); 
       setUser(response.data);
 
+          // Set the user's location
+    if (response.data && response.data.location) {
+      setSelectedLocation(response.data.location);
+    }
+
       const about = Array.isArray(response.data.about) ? response.data.about : [];
       const experience = Array.isArray(response.data.experience) ? response.data.experience : [];
       const education = Array.isArray(response.data.education) ? response.data.education : [];
