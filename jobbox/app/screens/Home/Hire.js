@@ -158,7 +158,7 @@ function HireScreen({ navigation }) {
             onPress={() => navigation.navigate('ArchivedJobsScreen')}
             style={styles.archiveIcon}
           >
-            <Ionicons name="archive" size={32} color= "#cccccc" />
+            <Ionicons name="archive" size={32} color= "#b8b8b8" />
           </TouchableOpacity>
           <SearchBar
             placeholder={'Find previously created jobs..'}
@@ -234,7 +234,7 @@ function ArchivedJobsScreen({ navigation }) {
     const [startDate, startTime] = formatDateTime(item.startDateTime);
     const [endDate, endTime] = formatDateTime(item.endDateTime);
 
-    return ( <View style={styles.jobCard}>
+    return ( <View style={styles.jobCardArchive}>
       <View style={styles.jobHeader}>
         <Text style={styles.jobTitle}>{item.title}</Text>
       </View>   
@@ -273,22 +273,23 @@ function ArchivedJobsScreen({ navigation }) {
         </View>
       </View>
 
-      <View style={{ flexDirection: 'column', justifyContent: 'flex-start'}}> 
-        <View> 
-          <Text> Start Date: </Text>
-          <Text style={styles.jobDescription}>{startDate}</Text>
+      <View style={{  justifyContent: 'flex-start'}}> 
+          <View style={{ flexDirection: 'row', justifyContent: 'flex-start'}}> 
+            <Text style = {{marginTop: 4, color: '#fff', fontWeight: '700'}}>Start Date:  </Text>
+            <Text style={styles.jobDescription}>{startDate}</Text>
+          </View> 
+
+          <View style={{ flexDirection: 'row', justifyContent: 'flex-start'}}> 
+            <Text style = {{marginTop: 4, color: '#fff', fontWeight: '700'}}>Start Time:  </Text>
+            <Text style={styles.jobDescription}>{startTime}</Text>
+          </View>
         </View>
-        <View> 
-          <Text> Start Time: </Text>
-          <Text style={styles.jobDescription}>{startTime}</Text>
-        </View>
-      </View>
 
       <TouchableOpacity 
         style={styles.button}
         onPress={() => handleJobPress(item)}  
       > 
-        <Text style={styles.buttonText}> View Possible Hires ({item.applicants ? item.applicants.length : 0})</Text>
+        <Text style={styles.buttonText}> View Job details</Text>
       </TouchableOpacity>
     </View>);
   };
@@ -437,7 +438,7 @@ const styles = StyleSheet.create({
     shadowRadius: 3.84,
   },  
   jobCardArchive: {
-    backgroundColor: '#cccc',
+    backgroundColor: '#b8b8b8',
     padding: 20,
     marginBottom: 10,
     borderRadius: 10,
