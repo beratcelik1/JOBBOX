@@ -207,64 +207,50 @@ export function HireApplicationsScreen({ route, navigation }) {
   
 
   return (
-    <View style={styles.container}>
+    <View style={styles.container}> 
       <View style={styles.jobCard}> 
+        <Text style={styles.title}>{job.title}</Text> 
+        <View style={{ borderBottomColor: '#fff', borderBottomWidth: 1.5, marginBottom: 5, marginTop: 5, }}/>  
 
-        <View style = {{flexDirection: 'row'}}> 
-          <View style={{ flex: 1, marginLeft: 20, marginBottom: -10, marginRight: 10}}>
-            <Text style={styles.title}>{job.title}</Text> 
-            <View
-              style={{
-                borderBottomColor: '#fff',
-                borderBottomWidth: 1.5,
-                marginBottom: 5,
-                marginTop: 5,
-                
-              }}/>  
-
-            <View style={{flexDirection: 'row', justifyContent: 'flex-start', marginBottom: 5}}> 
-              <View style={{flexDirection: 'row', justifyContent: 'flex-stat', marginBottom: 5, marginRight: 25}}> 
-                <Ionicons name="md-cash" size={20} color="#fff" /> 
-                <Text style={styles.jobDescription}>  {job.pay} $</Text>
-              </View>
-              <View style={{flexDirection: 'row', justifyContent: 'flex-start'}}>
-                <Ionicons name="md-time" size={20} color="#fff" />
-                <Text style={styles.jobDescription}>  {job.estimatedTime}</Text>
-                <Text style={styles.jobDescription}>  {job.estimatedTimeUnit}</Text>
-              </View>  
-            </View>
-            <Text style={styles.description}><Text style ={{fontWeight: 'bold'}}>Skills:</Text> {job.skills}</Text> 
+        <View style={{flexDirection: 'row', justifyContent: 'flex-start', marginBottom: 5, alignSelf: 'center'}}> 
+          <View style={{flexDirection: 'row', justifyContent: 'flex-start', marginBottom: 5, marginRight: 25}}> 
+            <Ionicons name="md-cash" size={20} color="#fff" /> 
+            <Text style={styles.jobDescription}>  {job.pay} $</Text>
           </View>
-          <View style={styles.jobProgressSection}>
-          {!isArchived && (<>
+          <View style={{flexDirection: 'row', justifyContent: 'flex-start'}}>
+            <Ionicons name="md-time" size={20} color="#fff" />
+            <Text style={styles.jobDescription}>  {job.estimatedTime}</Text>
+            <Text style={styles.jobDescription}>  {job.estimatedTimeUnit}</Text>
+          </View>  
+        </View> 
+
+        <View style = {{ justifyContent: 'flex-start', marginBottom:5}}>
+          <Text style ={{fontWeight: 'bold',fontSize: 15, color: '#fff',}}>Skills:</Text>  
+          <Text style={styles.description}>{job.skills} </Text> 
+        </View> 
+        <View style = {{ justifyContent: 'flex-start' }}>
+          <Text style ={{fontWeight: 'bold',fontSize: 15, color: '#fff',}}>Description:</Text>  
+          <Text style={styles.description}>{job.description} </Text> 
+        </View> 
+        <View style={{ borderBottomColor: '#fff', borderBottomWidth: 1.5, marginBottom: 5, marginTop: 10, }}/>  
+        <View style={styles.jobProgressSection}>
+            {!isArchived && (<> 
+            <TouchableOpacity onPress={handleDeleteJob} style={styles.buttonDel}>
+              <Ionicons name="trash-outline" size={24} color="#fff" />
+              <Text style={styles.buttonTextDel}>Delete Job</Text>
+            </TouchableOpacity>
             <TouchableOpacity
-              onPress={() =>
-                navigation.navigate('PostJob', { template: job, editing: true })
-              }
+              onPress={() => navigation.navigate('PostJob', { template: job, editing: true })}
               style={styles.button2}
             >
               <Ionicons name="create-outline" size={24} color="#4683fc" />
               <Text style={styles.buttonText2}>Edit post</Text>
             </TouchableOpacity>
-            <TouchableOpacity onPress={handleDeleteJob} style={styles.buttonDel}>
-              <Ionicons name="trash-outline" size={24} color="#fff" />
-              <Text style={styles.buttonTextDel}>Delete Job</Text>
-            </TouchableOpacity>
+            
             </>
-            )}
-            <View style={{ justifyContent: 'center', alignItems: 'center' }}>
-              <TouchableOpacity
-                onPress={() => navigation.navigate('EditJob', { job })}
-                style={styles.editBtn}
-              >
-              </TouchableOpacity>
-            </View>
-          </View> 
+            )} 
         </View>
-        <View style= {{marginTop: 0, marginLeft: 20}}>  
-          <Text style={styles.description2}><Text style ={{fontWeight: 'bold'}}>Description:</Text> {job.description}</Text>
-        </View>
-      </View> 
+      </View>
 
       {applicants?.length < 1 ? (
         <View
@@ -319,7 +305,8 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
     elevation: 5,
-    marginBottom: 10,
+    marginBottom: 10, 
+    marginLeft: 15,
   },
   buttonText2: {
     marginLeft: 5,
@@ -356,17 +343,13 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 'bold',
     color: '#fff',
+    alignSelf: 'center',
   },
   description: {
     fontSize: 15,
-    marginTop: 5,
-    color: '#fff',
-  }, 
-  description2: {
-    fontSize: 15,
-    marginTop: -25,
-    marginRight: 20,
-    color: '#fff',
+    color: '#fff', 
+    marginRight: 30,
+    marginLeft: 20,
   },
   date: {
     fontSize: 14,
@@ -379,17 +362,11 @@ const styles = StyleSheet.create({
     color: '#fff9',
   },
   jobCard: {
-    // flexDirection: 'row',
     backgroundColor: '#4683fc',
-    paddingRight: 20,
-    paddingTop: 20,
-    paddingLeft: 0, 
-    // paddingBottom: -20,
-    marginTop: '-5%',
-    marginLeft: -15,
-    marginRight: -15,
-  }, 
-
+    borderRadius: 10,
+    paddingHorizontal: 10,
+    paddingTop:10
+  },    
   applicantView: {
     marginLeft: -15,
     marginRight: -15,
@@ -403,9 +380,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 15, 
     marginVertical: 10,
     borderRadius: 10,
-    // Android shadow properties
     elevation: 5,
-    // iOS shadow properties
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
@@ -473,8 +448,9 @@ const styles = StyleSheet.create({
   },
 
   jobProgressSection: {
-    alignItems: 'flex-end',
-    marginBottom: 20,
+    flexDirection: 'row',
+    justifyContent: 'center', 
+    marginTop: 10,
   },
   progressBar: {
     height: 20,

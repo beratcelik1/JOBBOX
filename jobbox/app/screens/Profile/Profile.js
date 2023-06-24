@@ -49,10 +49,10 @@ const styles = StyleSheet.create({
     shadowColor: "#000",
     shadowOffset: {
         width: 0,
-        height: 7,
+        height: 1,
     },
     shadowOpacity: 0.25,
-    shadowRadius: 3.84,
+    shadowRadius: 6.84,
     elevation: 5,
   },
   profileImage: {
