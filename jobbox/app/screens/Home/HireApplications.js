@@ -14,14 +14,20 @@ import { createStackNavigator } from '@react-navigation/stack';
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
-import LoadingScreen from '../../components/LoadingScreen';
+import LoadingScreen from '../../components/LoadingScreen'; 
+
+import { formatDateTime } from '../../utils/formatDateTime';
 
 export function HireApplicationsScreen({ route, navigation }) {
-  const { job, isArchived = false } = route.params;
+  const { job, isArchived = false } = route.params; 
   const [applicants, setApplicants] = useState();
   const [refreshing, setRefreshing] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [hiredApplicantId, setHiredApplicantId] = useState(null);
+  const [hiredApplicantId, setHiredApplicantId] = useState(null);  
+
+  const [startDate, startTime] = formatDateTime(job.startDateTime);
+  const [endDate, endTime] = formatDateTime(job.endDateTime);
+  
 
   const fetchApplicants = async () => {
     try {
@@ -216,7 +222,7 @@ export function HireApplicationsScreen({ route, navigation }) {
 
   return (
     <View style={styles.container}> 
-      <View style={styles.jobCard}> 
+      <View style={[styles.jobCard, {backgroundColor: isArchived ? '#b8b8b8' : '#4683fc'}]}> 
         <Text style={styles.title}>{job.title}</Text> 
         <View style={{ borderBottomColor: '#fff', borderBottomWidth: 1.5, marginBottom: 5, marginTop: 5, }}/>  
 
@@ -234,7 +240,7 @@ export function HireApplicationsScreen({ route, navigation }) {
 
         <View style = {{ justifyContent: 'flex-start', marginBottom:5}}>
           <Text style ={{fontWeight: 'bold',fontSize: 15, color: '#fff',}}>Skills:</Text>  
-          <Text style={styles.description}>{job.skills} </Text> 
+          <Text style={styles.description}>{job.skills}  </Text>  
         </View> 
         <View style = {{ justifyContent: 'flex-start' }}>
           <Text style ={{fontWeight: 'bold',fontSize: 15, color: '#fff',}}>Description:</Text>  
@@ -257,8 +263,25 @@ export function HireApplicationsScreen({ route, navigation }) {
             
             </>
             )} 
-        </View>
-      </View>
+        </View>  
+        
+        {isArchived && 
+        <View style={styles.timeContainer}>
+          <View style={styles.timeBox}>
+            <Text style={styles.timeTitle}>Start</Text>
+            <Text style={styles.timeText}>{startDate}</Text>
+            <Text style={styles.timeText}>{startTime}</Text>
+          </View>
+          <View style={styles.timeBox} marginLeft='2%'>
+            <Text style={styles.timeTitle}>End</Text>
+            <Text style={styles.timeText}>{endDate}</Text>
+            <Text style={styles.timeText}>{endTime}</Text>
+          </View>
+        </View> }
+
+      </View> 
+
+      {isArchived && <Text style = {{alignSelf: 'center', fontWeight: '800', marginTop: 10, fontSize: 15, color: '#4683fc'}}>Hired Applicant</Text>}
 
       {applicants?.length < 1 ? (
         <View
@@ -289,13 +312,34 @@ export function HireApplicationsScreen({ route, navigation }) {
 
 // Styles...
 const styles = StyleSheet.create({ 
-
+  timeContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: -5,
+    marginBottom: 5
+  },
+  timeBox: {
+    flex: 1,
+    alignItems: 'center',
+    backgroundColor: '#fff',
+    paddingVertical: 7, 
+    borderRadius: 10
+  },
+  timeTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#b8b8b8',
+  },
+  timeText: {
+    fontSize: 13,
+    color: '#b8b8b8',
+  },
   jobDescription: {
     fontSize: 14,
     color: '#fff',
     marginTop: 4,
+    
   }, 
-
   button2: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -370,7 +414,6 @@ const styles = StyleSheet.create({
     color: '#fff9',
   },
   jobCard: {
-    backgroundColor: '#4683fc',
     borderRadius: 10,
     paddingHorizontal: 10,
     paddingTop:10
