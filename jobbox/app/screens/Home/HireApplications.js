@@ -154,7 +154,10 @@ export function HireApplicationsScreen({ route, navigation }) {
               <Ionicons name="close-circle" size={20} color="#4683fc" />
               <Text style={styles.buttonText}>Reject</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.button}>
+            <TouchableOpacity
+              style={styles.button}
+              onPress={() => navigation.navigate('Profile', { userId: item._id })}
+            >
               <Ionicons name="eye" size={20} color="#4683fc" />
               <Text style={styles.buttonText}>Review</Text>
             </TouchableOpacity>

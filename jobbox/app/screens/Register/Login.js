@@ -36,11 +36,9 @@ export default function Login({ navigation, setIsAuthenticated }) {
                     console.log(isRemembered);
                     await AsyncStorage.setItem('remember', JSON.stringify(isRemembered));
                     // Only save to AsyncStorage if "Remember Me" is checked
-                    if (isRemembered) {
                         console.log(isRemembered);
                         await AsyncStorage.setItem('token', data.token);
                         await AsyncStorage.setItem('userId', data.user._id);
-                    }
                     setIsAuthenticated(true);
                 } else {
                     showMessage({
