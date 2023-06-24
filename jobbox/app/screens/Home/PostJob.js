@@ -15,7 +15,6 @@ export default function PostJob({ navigation, route }) {
   const [jobTitle, setJobTitle] = useState('');
   const [jobDescription, setJobDescription] = useState('');
   const [skills, setSkills] = useState([]);
-  const [location, setLocation] = useState('');
   const [pay, setPay] = useState('');
   const [estimatedTime, setEstimatedTime] = useState('');
   const [estimatedTimeUnit, setEstimatedTimeUnit] = useState('minutes');
@@ -26,7 +25,7 @@ export default function PostJob({ navigation, route }) {
   const [isSkillsModalVisible, setIsSkillsModalVisible] = useState(false);
   const [selectedSkills, setSelectedSkills] = useState(new Set());
   const [selectedLocation, setSelectedLocation] = useState('');
-  const [isLocationModalVisible, setIsLocationModalVisible] = useState(false);
+
 
   // for date/time picker
   const [startDateTime, setStartDateTime] = useState(new Date());
@@ -42,26 +41,32 @@ export default function PostJob({ navigation, route }) {
       primary: '#4683FC', // change the primary color to blue
     },
   };
-
   useEffect(() => {
     if (template) {
-      setJobTitle(template.title);
-      setJobDescription(template.description);
-      setSkills(template.skills);
-      setLocation(template.location);
-      setPay(template.pay?.toString());
-      setEstimatedTime(template.estimatedTime?.toString());
-      setEstimatedTimeUnit(template.estimatedTimeUnit);
-      setCategory(template.category);
+        setJobTitle(template.title);
+        setJobDescription(template.description);
+        setSkills(template.skills);
+        setPay(template.pay?.toString());
+        setEstimatedTime(template.estimatedTime?.toString());
+        setEstimatedTimeUnit(template.estimatedTimeUnit);
+        setCategory(template.category);
+
+        // Fetch user location from AsyncStorage
+        const fetchLocation = async () => {
+            const location = await AsyncStorage.getItem('location');
+            setSelectedLocation(location);
+        }
+        fetchLocation();
     }
-  }, [template]);
+}, [template]);
+
 
   const isFormValid = () => {
     return (
       jobTitle !== '' &&
-      !!selectedCategory  &&
-      !!selectedSkills  &&
-      !!selectedLocation &&
+      !!selectedCategory &&
+      !!selectedSkills &&
+      !!selectedLocation && // Add this line
       estimatedTime !== '' &&
       !!estimatedTimeUnit &&
       pay !== ''  &&
@@ -105,11 +110,15 @@ export default function PostJob({ navigation, route }) {
     setIsSkillsModalVisible(false);
   };
 
-  const handleSelectLocation = (location) => {
-    setSelectedLocation(location);
-    setIsLocationModalVisible(false);
-  };
-  
+  useEffect(() => {
+    const fetchLocation = async () => {
+        const location = await AsyncStorage.getItem('location');
+        setSelectedLocation(location);
+    }
+
+    fetchLocation();
+}, []);
+
 
   const handleEdit = async () => {
     const token = await AsyncStorage.getItem('token');
@@ -127,13 +136,13 @@ export default function PostJob({ navigation, route }) {
       method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`, // Add this line
+        Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify({
         description: jobDescription,
         skills: Array.from(selectedSkills),
-        location: selectedLocation,
-        pay: parseFloat(pay), // ensure pay is a number
+        location: selectedLocation, // Add this line
+        pay: parseFloat(pay),
         estimatedTime: parseFloat(estimatedTime),
         estimatedTimeUnit: estimatedTimeUnit,
       }),
@@ -170,14 +179,15 @@ export default function PostJob({ navigation, route }) {
       title: jobTitle,
       description: jobDescription,
       skills: Array.from(selectedSkills),
-      location: selectedLocation,
-      pay: parseFloat(pay), // ensure pay is a number
+      location: selectedLocation, // Add this line
+      pay: parseFloat(pay),
       estimatedTime: parseFloat(estimatedTime),
       estimatedTimeUnit: estimatedTimeUnit,
-      category: selectedCategory ? selectedCategory.title : '', // Use title of the selected category
+      category: selectedCategory ? selectedCategory.title : '',
       startDateTime: startDateTime,
       endDateTime: endDateTime,
     };
+    
   
     console.log("Payload: ", payload);
   
@@ -258,18 +268,6 @@ export default function PostJob({ navigation, route }) {
         <TouchableOpacity
           style={styles.overlay}
           onPress={() => setIsSkillsModalVisible(true)}
-        />
-      </View>
-      <View style={styles.overlayContainer}>
-        <TextInput
-          label="Location"
-          value={selectedLocation}
-          style={styles.input}
-          theme={theme}
-        />
-        <TouchableOpacity
-          style={styles.overlay}
-          onPress={() => setIsLocationModalVisible(true)}
         />
       </View>
         <View style={styles.inputRow}>
@@ -361,22 +359,6 @@ export default function PostJob({ navigation, route }) {
               <Button onPress={() => setIsSkillsModalVisible(false)}>Close</Button>
             </View>
           </Modal>
-          <Modal
-          isVisible={isLocationModalVisible}
-          style={styles.modal}
-          onBackdropPress={() => setIsLocationModalVisible(false)}
-        >
-          <View style={styles.modalContent}>
-            {LOCATIONS.map((location, index) => (
-              <List.Item
-                key={index}
-                title={location}
-                onPress={() => handleSelectLocation(location)}
-              />
-            ))}
-            <Button onPress={() => setIsLocationModalVisible(false)}>Close</Button>
-          </View>
-        </Modal>
         <Button
           mode="contained"
           onPress={editing ? handleEdit : handlePost}
