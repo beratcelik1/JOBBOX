@@ -10,7 +10,7 @@ import { useFocusEffect } from '@react-navigation/native';
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 10,
+    padding: 10, 
   },
   section: {
     marginBottom: 5,
@@ -236,13 +236,15 @@ const Activity = () => {
         </TouchableOpacity>
       </View>
 
-      <View style={styles.section}>
+      <View style={styles.section} >
         <TouchableOpacity
           style={styles.button}
           onPress={() => navigation.navigate('HireHistoryScreen')}>
           <Text style={styles.buttonText}>Hire History</Text>
           {hireHistory.map(item => <View key={item.id}>{renderHireHistoryItem({item})}</View>)}
         </TouchableOpacity>
+      </View> 
+      <View style= {{marginBottom: 30}}> 
       </View>
     </ScrollView>
   );

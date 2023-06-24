@@ -5,9 +5,7 @@ import { TextInput, Button, Text } from 'react-native-paper';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { showMessage } from 'react-native-flash-message';
 
-
 const logo = require('../../assets/images/jobboxlogo2.png');
-
 
 export default function Login({ navigation, setIsAuthenticated }) {
     const [username, setUsername] = useState('');
