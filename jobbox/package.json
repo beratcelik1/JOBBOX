@@ -3,7 +3,8 @@
     "start": "expo start",
     "android": "expo start --android",
     "ios": "expo start --ios",
-    "web": "expo start --web"
+    "web": "expo start --web",
+    "postinstall": "patch-package"
   },
   "dependencies": {
     "@react-native-async-storage/async-storage": "1.17.11",
@@ -15,6 +16,7 @@
     "@react-navigation/stack": "^6.3.16",
     "axios": "^1.4.0",
     "cors": "^2.8.5",
+    "deprecated-react-native-prop-types": "^4.1.0",
     "expo": "^48.0.7",
     "expo-constants": "~14.2.1",
     "expo-device": "~5.2.1",
@@ -26,7 +28,8 @@
     "firebase": "^9.22.0",
     "jwt-decode": "^3.1.2",
     "multer": "^1.4.5-lts.1",
-    "prop-types": "^15.8.1",
+    "nodemailer": "^6.9.3",
+    "patch-package": "^7.0.0",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-native": "0.71.8",

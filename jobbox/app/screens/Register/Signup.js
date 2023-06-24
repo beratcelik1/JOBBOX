@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { StyleSheet, View, Image, Pressable, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
 import { TextInput, Button, Text } from 'react-native-paper';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { showMessage } from 'react-native-flash-message';
 
 const logo = require('../../assets/images/jobboxlogo2.png');
 
@@ -35,7 +36,14 @@ export default function Signup({ navigation }) {
             if (data.token) {
                 await AsyncStorage.setItem('token', data.token); // Store the token here after signup
                 await AsyncStorage.setItem('userId', data.user._id);
-                navigation.navigate('MyTabs');
+                showMessage({
+                    message: 'Verify your account and Log In Here!',
+                    type: 'info',
+                    floating: true,
+                    icon: 'success',
+                    duration: 4000,
+                  });
+                navigation.navigate('Login');
             } else {
                 // handle error, show a message to the user
                 Alert.alert('Signup Failed', 'An error occurred during signup. Please try again.');
@@ -56,13 +64,13 @@ export default function Signup({ navigation }) {
                     
                     <View style={styles.firstLastNameContainer}> 
                         <TextInput
-                            label="FirstName"
+                            label="First Name"
                             value={firstname}
                             onChangeText={setFirstName}
                             style={styles.input2}
                         />
                         <TextInput
-                            label="LastName"
+                            label="Last Name"
                             value={lastname}
                             onChangeText={setLastName}
                             style={styles.input2}
