@@ -82,7 +82,7 @@ router.post('/', async (req, res) => {
   }
 
   try {
-      const { title, description, skills, location, pay, estimatedTime, estimatedTimeUnit, category } = req.body;
+      const { title, description, skills, location, pay, estimatedTime, estimatedTimeUnit, category, startDateTime, endDateTime } = req.body;
 
       // TODO: Add input validation based on your requirements
       if (!title || !description) {
@@ -98,7 +98,9 @@ router.post('/', async (req, res) => {
           estimatedTime, 
           estimatedTimeUnit, 
           category, 
-          postedBy: user._id 
+          postedBy: user._id,
+          startDateTime,
+          endDateTime
       });
 
       await job.save();

@@ -3,8 +3,10 @@ const bcryptjs = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 const Notification = require('../models/Notification');
-const Token = require('../models/token'); // Import your token model
-const sendEmail = require('../utils/sendEmail'); // Import your sendEmail function
+const Token = require('../models/token'); 
+const sendEmail = require('../utils/sendEmail'); 
+const { verificationEmail } = require('../utils/emailTemplates');
+const { passwordResetEmail } = require('../utils/emailTemplates');
 const crypto = require("crypto");
 
 const router = express.Router();
@@ -32,7 +34,9 @@ router.post('/signup', async (req, res) => {
 
   const url = `https://tranquil-ocean-74659.herokuapp.com/auth/users/${user._id}/verify/${tokenEmail.token}`;
 
-  await sendEmail(user.email, "Verify Email", url);
+  const emailContent = verificationEmail(url);
+
+  await sendEmail(user.email, "Email Verification - JOBBOX", null, emailContent);
 
   console.log('Response:', { token, user: { _id: user._id } });
   res.status(201).json({ token, user: { _id: user._id } });
@@ -313,10 +317,10 @@ router.post('/forgotPassword', async (req, res) => {
     return res.status(404).json({ message: 'User not found' });
   }
 
-  // generate a 6 digit code
   const code = crypto.randomBytes(3).toString('hex');
 
-  // create a password reset token and link it to the user's account
+  await Token.deleteOne({ userId: user._id });
+
   const passwordResetToken = new Token({
     userId: user._id,
     token: code,
@@ -324,8 +328,9 @@ router.post('/forgotPassword', async (req, res) => {
 
   await passwordResetToken.save();
 
-  // send an email to the user with the code
-  await sendEmail(user.email, "Password Reset Code", `Your password reset code is: ${code}`);
+  const emailContent = passwordResetEmail(code);
+
+  await sendEmail(user.email, "Password Reset Code - JOBBOX", null, emailContent);
 
   res.status(200).json({ message: 'Password reset code sent to email' });
 });
