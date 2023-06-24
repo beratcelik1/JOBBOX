@@ -128,9 +128,16 @@ function HireScreen({ navigation }) {
           </View>
         </View>
         
-        <View style={{flexDirection: 'row', justifyContent: 'flex-start'}}>
-          <Text style={styles.jobDescription}>Start Date/Time {startDate}/{startTime}</Text>
-          <Text style={styles.jobDescription}>End Date/Time {endDate}/{endTime}</Text>
+        <View style={{  justifyContent: 'flex-start'}}> 
+          <View style={{ flexDirection: 'row', justifyContent: 'flex-start'}}> 
+            <Text style = {{marginTop: 4, color: '#fff', fontWeight: '700'}}>Start Date:  </Text>
+            <Text style={styles.jobDescription}>{startDate}</Text>
+          </View> 
+
+          <View style={{ flexDirection: 'row', justifyContent: 'flex-start'}}> 
+            <Text style = {{marginTop: 4, color: '#fff', fontWeight: '700'}}>Start Time:  </Text>
+            <Text style={styles.jobDescription}>{startTime}</Text>
+          </View>
         </View>
 
         <TouchableOpacity 
@@ -266,9 +273,15 @@ function ArchivedJobsScreen({ navigation }) {
         </View>
       </View>
 
-      <View style={{flexDirection: 'column', justifyContent: 'flex-start'}}>
-        <Text style={styles.jobDescription}>Start Date/Time {startDate}/{startTime}</Text>
-        <Text style={styles.jobDescription}>End Date/Time {endDate}/{endTime}</Text>
+      <View style={{ flexDirection: 'column', justifyContent: 'flex-start'}}> 
+        <View> 
+          <Text> Start Date: </Text>
+          <Text style={styles.jobDescription}>{startDate}</Text>
+        </View>
+        <View> 
+          <Text> Start Time: </Text>
+          <Text style={styles.jobDescription}>{startTime}</Text>
+        </View>
       </View>
 
       <TouchableOpacity 
