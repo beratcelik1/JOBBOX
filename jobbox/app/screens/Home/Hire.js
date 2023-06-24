@@ -158,7 +158,7 @@ function HireScreen({ navigation }) {
             onPress={() => navigation.navigate('ArchivedJobsScreen')}
             style={styles.archiveIcon}
           >
-            <Ionicons name="archive" size={32} color= "#cccccc" />
+            <Ionicons name="archive" size={32} color= "#b8b8b8" />
           </TouchableOpacity>
           <SearchBar
             placeholder={'Find previously created jobs..'}
@@ -438,7 +438,7 @@ const styles = StyleSheet.create({
     shadowRadius: 3.84,
   },  
   jobCardArchive: {
-    backgroundColor: '#cccc',
+    backgroundColor: '#b8b8b8',
     padding: 20,
     marginBottom: 10,
     borderRadius: 10,
