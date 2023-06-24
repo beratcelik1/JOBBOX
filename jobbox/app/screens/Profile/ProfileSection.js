@@ -642,8 +642,11 @@ const ProfileSection = ({ route, navigation }) => {
       <KeyboardAwareScrollView style={styles.container}>
         <Text style={styles.title}>{section.title}</Text>
         <TouchableOpacity onLongPress={handleEdit}>{section_content}</TouchableOpacity>
+        
         <FloatingEditButton onPress={handleEdit}/>
+        
       </KeyboardAwareScrollView>
+        
     </React.Fragment>
   );
   
