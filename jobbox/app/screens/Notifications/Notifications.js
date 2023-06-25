@@ -134,7 +134,7 @@ export default function Notifications() {
     // Only call fetchNotifications if user._id exists (i.e., if the user data has been fetched)
     if (user._id) {
       fetchNotifications();
-      intervalId = setInterval(fetchNotifications, 15000);
+      intervalId = setInterval(fetchNotifications, 600000);
     }
 
     return () => {
