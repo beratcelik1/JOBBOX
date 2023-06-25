@@ -1,11 +1,10 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { GiftedChat, Bubble, InputToolbar } from 'react-native-gifted-chat';
+import { GiftedChat, Bubble, InputToolbar} from 'react-native-gifted-chat';
 import axios from 'axios';
-import { View, StyleSheet, Text } from 'react-native';
+import { View, StyleSheet, Text, TouchableOpacity} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const ChatScreen = ({ route }) => {
-  const { jobId, senderId, conversationId, receiverId } = route.params;
+const ChatScreen = ({ jobId, senderId, conversationId, closeModal }) => { 
 // take conversationId from params
   const [messages, setMessages] = useState([]);
   const [user, setUser] = useState({});
@@ -123,37 +122,30 @@ const ChatScreen = ({ route }) => {
 
   return (
     <View style={styles.container}>
-    <GiftedChat
-      messages={messages}
-      onSend={messages => handleSend(messages)}
-      user={{ _id: user._id }}
-      renderAvatar={null}
-      renderInputToolbar={props => renderInputToolbar(props)}
-      renderBubble={props => {
-        return (
-          <Bubble
-            {...props}
-            textStyle={{
-              left: {
-                color: 'black', 
-              },
-            }}
-            timeTextStyle={{
-              left: {
-                color: 'black', 
-              },
-            }}
-            wrapperStyle={{
-              left: {
-                backgroundColor: 'white',
-                borderColor: '#F9F7F6',
-                borderWidth: 0,
-              },
-            }}
-          />
-        );
-      }}
-    />
+      <GiftedChat
+        messages={messages}
+        onSend={messages => handleSend(messages)}
+        user={{ _id: user._id }}
+        renderAvatar={null}
+        renderInputToolbar={props => renderInputToolbar(props)}
+        renderBubble={props => {
+          return (
+            <Bubble
+              {...props}
+              textStyle={{ left: { color: 'black' } }}
+              timeTextStyle={{ left: { color: 'black' } }}
+              wrapperStyle={{
+                left: {
+                  backgroundColor: 'white',
+                  borderColor: '#F9F7F6',
+                  borderWidth: 0,
+                },
+              }}
+            />
+          );
+        }}
+      /> 
+      
     </View>
   );
 };

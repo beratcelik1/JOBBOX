@@ -1,15 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import axios from 'axios';
-import { View, Text, FlatList, TouchableOpacity } from 'react-native';
+import { View, Text, FlatList, TouchableOpacity, Modal} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { NavigationContainer, DefaultTheme } from '@react-navigation/native';
-import WorkPeriodDetails from './WorkPeriod';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
-import ChatScreen from './ChatScreen'; 
-
-import { ScrollView } from 'react-native-gesture-handler';
+import ChatScreen from './ChatScreen';  
+import { formatDateTime } from '../../utils/formatDateTime'; 
+import WorkPeriodDetails from './WorkPeriod';  
 
 const MyTheme = {
   ...DefaultTheme,
@@ -20,11 +19,17 @@ const MyTheme = {
 };
 
 const BoxHiring = ({ hiringJobs }) => {
-  const navigation = useNavigation();
+  const navigation = useNavigation(); 
+
+  const [modalVisible, setModalVisible] = useState(false);
+  const [selectedJob, setSelectedJob] = useState(null);
+
 
   const handleJobPress = (job) => {
-    navigation.navigate('WorkPeriodDetails', { job });
-  };
+    setSelectedJob(job);
+    setModalVisible(true);
+  }; 
+
   
   const renderItem = ({ item }) => ( 
     <TouchableOpacity style={styles.jobCard} onPress={() => handleJobPress(item)}>
@@ -42,18 +47,40 @@ const BoxHiring = ({ hiringJobs }) => {
 
   return (
     <View style={{flex: 1}}>
-      <FlatList data={hiringJobs} renderItem={renderItem} keyExtractor={(item) => item._id} />
+      <FlatList 
+        data={hiringJobs} 
+        renderItem={renderItem} 
+        keyExtractor={(item) => item._id} 
+      />
+      <Modal 
+        visible={modalVisible} 
+        animationType="slide" 
+        transparent={false} 
+        onRequestClose={() => setModalVisible(false)}
+      >
+        <WorkPeriodDetails  
+          job={selectedJob} 
+          closeModal={() => setModalVisible(false)} 
+        />
+
+      </Modal>
     </View>
   );
 };
 
 const BoxWorking = ({ workingJobs }) => {
-  const navigation = useNavigation();
+  const navigation = useNavigation(); 
+
+  const [modalVisible, setModalVisible] = useState(false);
+  const [selectedJob, setSelectedJob] = useState(null);
+
 
   const handleJobPress = (job) => {
-    navigation.navigate('WorkPeriodDetails', { job });
-  };
-  
+    setSelectedJob(job);
+    setModalVisible(true);
+  }; 
+
+ 
   const renderItem = ({ item }) => ( 
     <TouchableOpacity style={styles.jobCard} onPress={() => handleJobPress(item)}>
       <Text style={styles.jobTitle}>{item.title}</Text>
@@ -70,11 +97,27 @@ const BoxWorking = ({ workingJobs }) => {
 
   return (
     <View style={{flex: 1}}>
-      <FlatList data={workingJobs} renderItem={renderItem} keyExtractor={(item) => item._id} />
+      <FlatList 
+        data={workingJobs} 
+        renderItem={renderItem} 
+        keyExtractor={(item) => item._id} 
+      />
+      <Modal 
+        visible={modalVisible} 
+        animationType="slide" 
+        transparent={false} 
+        onRequestClose={() => setModalVisible(false)}
+      >
+        <WorkPeriodDetails  
+          job={selectedJob} 
+          closeModal={() => setModalVisible(false)} 
+        />
+
+      </Modal>
     </View>
   );
+  
 };
-
 
 const Tab = createMaterialTopTabNavigator();
 const HiringStack = createStackNavigator();
@@ -131,7 +174,6 @@ function WorkingStackNavigator({ workingJobs }) {
     </WorkingStack.Navigator>
   );
 }
-
 
 const Box = () => {
   const [hiringJobs, setHiringJobs] = useState([]);

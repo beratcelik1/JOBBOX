@@ -10,13 +10,13 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import ChatScreen from './ChatScreen'; 
-import { FlatList } from 'react-native';
+import { FlatList } from 'react-native'; 
 
-const WorkPeriodDetails = () => {
-  const route = useRoute();
+import { PanGestureHandler, State } from 'react-native-gesture-handler';
+
+const WorkPeriodDetails = ({ job, closeModal }) => {  
   const navigation = useNavigation();
-  const { job } = route.params;
-  
+
   // Extract the date and time from the startDateTime and endDateTime
   const [startDate, startTime] = formatDateTime(job.startDateTime);
   const [endDate, endTime] = formatDateTime(job.endDateTime);
@@ -24,7 +24,11 @@ const WorkPeriodDetails = () => {
   const [isModalVisible, setModalVisible] = useState(false);
   const [modalContent, setModalContent] = useState('');
   const [starCount, setStarCount] = useState(4.3); // Replace 5 with actual job rating
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState(null); 
+
+  const [chatModalVisible, setChatModalVisible] = useState(false);
+  const [conversationId, setConversationId] = useState(null);
+
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -43,7 +47,7 @@ const WorkPeriodDetails = () => {
     setModalVisible(true);
   }
 
-  const closeModal = () => {
+  const closeModalFun = () => {
     setModalVisible(false);
   }
 
@@ -87,38 +91,37 @@ const WorkPeriodDetails = () => {
     }
   };
   
-  const handleChatNavigation = async () => {
-    if (user && job) {
-      let firstUserId = user;
-      let secondUserId = job.postedBy && job.postedBy._id === user ? job.hiredApplicant && job.hiredApplicant._id : job.postedBy && job.postedBy._id;
-      console.log('firstUserId:', firstUserId);
-      console.log('secondUserId:', secondUserId);
-      
-      if (firstUserId === secondUserId) {
-        // You can handle this error however you want, maybe show a message to the user
-        console.error('Cannot start a conversation with yourself.');
-        return;
-      }
-  
-      try {
-        const conversationId = await fetchConversationId(firstUserId, secondUserId);
-        console.log('converstaionID:', conversationId);  // Move this line here
-        navigation.navigate('ChatScreen', { jobId: job._id, senderId: user, conversationId,  receiverId: secondUserId});
-      } catch (error) {
-        // handle error here
-        console.error('Failed to get conversation:', error);
-      }
-    }
-  };
-  
-  
-  return (
-    <ScrollView 
-      ref={scrollRef}
-      onContentSizeChange={() => scrollRef.current.scrollToEnd({animated: true})}
-      contentContainerStyle={[styles.container, {marginTop: 30}]}
-    >
 
+  const [secondUser, setSecondUser] = useState(null);
+
+const handleChatNavigation = async () => {
+  if (user && job) {
+    let firstUserId = user;
+    let secondUserObj = job.postedBy && job.postedBy._id === user ? job.hiredApplicant : job.postedBy;
+    let secondUserId = secondUserObj && secondUserObj._id;
+
+    if (firstUserId === secondUserId) {
+      // You can handle this error however you want, maybe show a message to the user
+      console.error('Cannot start a conversation with yourself.');
+      return;
+    }
+
+    try {
+      const convId = await fetchConversationId(firstUserId, secondUserId);
+      console.log('converstaionID:', convId); // Move this line here
+      setConversationId(convId); // Store the conversationId in the state
+      setChatModalVisible(true); // Open the chat modal
+      setSecondUser(secondUserObj); // Set the second user
+    } catch (error) {
+      // handle error here
+      console.error('Failed to get conversation:', error);
+    }
+  }
+};
+
+
+  return (
+    <View style={styles.container}>
         <View style={styles.jobCard}> 
         <Text style={styles.jobTitle}>{job.title}</Text>
           <View style={[
@@ -193,14 +196,14 @@ const WorkPeriodDetails = () => {
         animationType="slide"
         transparent={true}
         visible={isModalVisible}
-        onRequestClose={closeModal}
+        onRequestClose={closeModalFun}
       >
         <View style={styles.modalContainer}>
           <View style={styles.modalView}>
             <Text style={styles.modalTitle}>{modalContent.title}</Text>
             <Text style={styles.modalText}>{modalContent.content}</Text>
 
-            <TouchableOpacity style={styles.buttonClose} onPress={closeModal}>
+            <TouchableOpacity style={styles.buttonClose} onPress={closeModalFun}>
               <Text style={{ color: 'white', marginLeft: 5 }}>Close</Text>
             </TouchableOpacity>
           </View>
@@ -231,33 +234,81 @@ const WorkPeriodDetails = () => {
             <Text style={{ color: 'white', marginLeft: 5 }}>Mark as Complete</Text>
           </TouchableOpacity>
       </View> 
-      {/* End of Employer Info */}  
-  
-
+      {/* End of Employer Info */}     
+      <View style = {{flex:1}}> 
+      </View>
+        <TouchableOpacity style={styles.closeBtn} onPress={closeModal}>
+            <Text style={{ color: '#4683fc', marginLeft: 5 }}>Close</Text>
+        </TouchableOpacity>
+      
       {/* Modal */}
       <Modal
         animationType="slide"
         transparent={true}
         visible={isModalVisible}
-        onRequestClose={closeModal}
+        onRequestClose={closeModalFun}
       >
         <View style={styles.modalContainer}>
           <View style={styles.modalView}>
             <Text style={styles.modalTitle}>{modalContent.title}</Text>
             <Text style={styles.modalText}>{modalContent.content}</Text>
 
-            <TouchableOpacity style={styles.buttonClose} onPress={closeModal}>
+            <TouchableOpacity style={styles.buttonClose} onPress={closeModalFun}>
               <Text style={{ color: 'white', marginLeft: 5 }}>Close</Text>
             </TouchableOpacity>
           </View>
         </View>
-      </Modal> 
-      {/*End of Modal*/} 
-    </ScrollView> 
+      </Modal>  
+      {/*End of Modal*/}   
+
+      {/* chat Modal */}
+      
+  <Modal
+    animationType="slide"
+    transparent={true}
+    visible={chatModalVisible}
+    onRequestClose={() => setChatModalVisible(false)} // This will close the modal when back is pressed
+  >
+    <View style={{ flex: 1, justifyContent: 'flex-end' }}>
+      <PanGestureHandler
+        onHandlerStateChange={({ nativeEvent }) => {
+          if (nativeEvent.oldState === State.ACTIVE) {
+            setChatModalVisible(false);
+          }
+        }}
+        direction="down"
+      >
+        <View style={{ height: '92%', backgroundColor: 'white', shadowColor: '#000',
+        shadowOffset: {width: 0,height: 2,},
+        shadowOpacity: 0.25,
+        shadowRadius: 6.84,
+        elevation: 5, borderRadius: 10 }}>
+          <View style = {{height: 55, marginTop: 10}}>
+            <TouchableOpacity style={styles.closeBtn2} onPress={closeModal}>
+               <Ionicons name="close-circle" size={24} color="#4683fc" marginLeft = "1%"/>
+            </TouchableOpacity>
+          </View>
+          <ChatScreen jobId={job._id} senderId={user} conversationId={conversationId} closeModal={() => setChatModalVisible(false)} />
+        </View>
+      </PanGestureHandler>
+    </View>
+  </Modal>
+
+      {/*End of Modal*/}
+
+    </View> 
   );
 };
 
 const styles = { 
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    margin: '5%',  // adjust this value for your needs
+    backgroundColor: 'white',
+    borderRadius: 20,
+},
   buttonClose2: {
     // flexDirection: 'row',
     alignItems: 'center',
@@ -294,7 +345,7 @@ const styles = {
   container: {
     flex: 1, 
     paddingHorizontal: 10,
-    marginVertical: 5,
+    marginTop: 70
   },
   title: {
     fontSize: 24,
@@ -382,7 +433,7 @@ const styles = {
     shadowOpacity: 0.25,
     shadowRadius: 3.84, 
     marginHorizontal: 5, 
-    marginBottom: 5,
+    marginBottom: 10,
   },
   infoTextContainer: {
     marginLeft: 10,
@@ -438,6 +489,79 @@ const styles = {
     position: 'absolute',
     bottom: 40,
     marginBottom: 10, 
+  }, 
+   buttonClose: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginHorizontal: 5,
+    marginLeft: 10,
+    backgroundColor: '#4683fc',
+    paddingTop: 8,
+    paddingBottom: 8,
+    paddingLeft: 10,
+    paddingRight: 15,
+    borderRadius: 10,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+    position: 'absolute',
+    bottom: 40,
+    marginBottom: 10, 
+  }, 
+  closeBtn2: { 
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginHorizontal: 5,
+    marginLeft: 10,
+    backgroundColor: '#fff',
+    paddingTop: 8,
+    paddingBottom: 8,
+    paddingLeft: 10,
+    paddingRight: 15,
+    borderRadius: 10,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+    bottom: 40,
+    marginBottom: -5, 
+    marginTop: 20,
+    alignSelf: 'center'
+  }, 
+  closeBtn: { 
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginHorizontal: 5,
+    marginLeft: 10,
+    backgroundColor: '#fff',
+    paddingTop: 8,
+    paddingBottom: 8,
+    paddingLeft: 10,
+    paddingRight: 15,
+    borderRadius: 10,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+    bottom: 40,
+    marginBottom: -5, 
+    marginTop: 20,
+    alignSelf: 'center',
   },
   modalTitle: {
     fontSize: 20,
