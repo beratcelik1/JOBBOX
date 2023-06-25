@@ -76,14 +76,15 @@ export function HireApplicationsScreen({ route, navigation }) {
             }
           });
         });
+        const userId = await AsyncStorage.getItem('userId')
         // Send notification
-      const notification = {
-        to: applicantId, 
-        from: user._id, // Assuming `user` is defined in your component and refers to the current user
-        action: 'hired',
-        jobId: job._id,
-      };
-      await axios.post('https://tranquil-ocean-74659.herokuapp.com/auth/notifications', notification);
+        const notification = {
+          to: applicantId, 
+          from: userId, // Assuming `user` is defined in your component and refers to the current user
+          action: 'hired',
+          jobId: job._id,
+        };
+        await axios.post('https://tranquil-ocean-74659.herokuapp.com/auth/notifications', notification);
     }
     } catch (error) {
       console.error(error.response.data);
@@ -96,12 +97,21 @@ export function HireApplicationsScreen({ route, navigation }) {
     axios.post(`http://tranquil-ocean-74659.herokuapp.com/jobs/users/${applicantId}/reject`, 
     {jobId: job._id}, 
     {headers: { Authorization: `Bearer ${token}` }}
-    ).then((response) => {
+    ).then(async (response) => {
       // handle successful response
       if(response.status === 200){
         Alert.alert('Success', 'User has been rejected successfully!');
         // Remove the rejected applicant from the applicants array
         setApplicants(applicants.filter(applicant => applicant._id !== applicantId));
+        const userId = await AsyncStorage.getItem('userId')
+        // Send notification
+        const notification = {
+          to: applicantId, 
+          from: userId, // Assuming `user` is defined in your component and refers to the current user
+          action: 'rejected',
+          jobId: job._id,
+        };
+        await axios.post('https://tranquil-ocean-74659.herokuapp.com/auth/notifications', notification);
       }
     }).catch((error) => {
       // handle error
