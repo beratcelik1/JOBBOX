@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, Button, TextInput, StyleSheet } from 'react-native';
+import { View, Text, Button, TextInput, StyleSheet,TouchableOpacity} from 'react-native';
+
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -14,16 +15,35 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 16,
     marginBottom: 5,
+    marginLeft: 10, 
+    marginTop: 25, 
+    fontWeight: '700',
+    alignSelf: 'center'
+  }, 
+  inputWithIcon: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#fff',
+    borderRadius: 10,
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+    alignSelf: 'center',
+    marginHorizontal: 20, 
   },
+
   input: {
     flex: 1,
-    marginTop: 10,
     paddingVertical: 15,
-    paddingRight: 10,
-    paddingLeft: 20,
-    borderRadius: 50,
-    backgroundColor: '#fff',
-    color: '#424242', 
+    paddingRight: 30,
+    paddingLeft: 30,
+    borderRadius: 10,
+    backgroundColor: 'transparent',
     alignContent: 'center',
     justifyContent: 'center',
     elevation: 5,
@@ -32,7 +52,11 @@ const styles = StyleSheet.create({
     shadowOffset: {width: 0,height: 2,},
     shadowOpacity: 0.25,
     shadowRadius: 3.84, 
-    marginHorizontal: 25,
+    alignSelf: 'center',
+    color: '#000'
+  },
+  icon: {
+    marginHorizontal: 10,
   },
   savedTargets: {
     fontSize: 16,
@@ -40,7 +64,8 @@ const styles = StyleSheet.create({
   }, 
   button: { 
     backgroundColor: '#fff',
-    padding: 5,
+    paddingHorizontal: 20, 
+    paddingVertical: 15,
     marginTop: 10, 
     borderRadius: 10,
     shadowColor: "#000",
@@ -51,7 +76,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 10.84,
     elevation: 5, 
-    marginHorizontal: 50, 
+    alignSelf: 'center' 
   },
 });
 
@@ -101,27 +126,31 @@ const EditTargetsScreen = ({ navigation }) => {
     <View style={styles.container}>
       <View style={styles.inputContainer}>
         <Text style={styles.label}>Monthly Earning Target</Text>
-        <TextInput
-          style={styles.input}
-          value={earningTarget}
-          onChangeText={text => setTargetEarning(text)}
-        />
-      </View>
-      <View style={styles.inputContainer}>
-        <Text style={styles.label}>Monthly Spending Target</Text>
-        <TextInput
-          style={styles.input}
-          value={spendingTarget}
-          onChangeText={text => setTargetSpent(text)}
-        />
+        <View style={styles.inputWithIcon}>
+          <TextInput
+            style={styles.input}
+            value={earningTarget}
+            onChangeText={text => setTargetEarning(text)}
+          />
+          <Text style={styles.icon}>$</Text>
+        </View>
       </View> 
 
-      <View style={styles.button}>  
-          <Button title="Edit Targets" onPress={handleEditTargets} />
-        </View> 
+      <View style={styles.inputContainer}>
+        <Text style={styles.label}>Monthly Spending Target</Text>
+        <View style={styles.inputWithIcon}>
+          <TextInput
+            style={styles.input}
+            value={spendingTarget}
+            onChangeText={text => setTargetSpent(text)}
+          />
+          <Text style={styles.icon}>$</Text>
+        </View>
+      </View>
 
-
-      {/* <Button title="Update Targets" onPress={handleEditTargets} /> */}
+      <TouchableOpacity style={styles.button} onPress={handleEditTargets}>
+        <Text style = {{fontWeight: '700', color: '#4683fc'}}>Save Targets </Text>
+      </TouchableOpacity>
     </View>
   );
 };

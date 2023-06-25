@@ -11,6 +11,7 @@ import LoadingScreen from '../../components/LoadingScreen';
 import { LOCATIONS } from '../constants';
 import { Colors } from 'react-native/Libraries/NewAppScreen';
 import defaultImage from '../../assets/images/defaultimage3.png';
+import * as FileSystem from 'expo-file-system';
 
 
 const styles = StyleSheet.create({
@@ -157,8 +158,8 @@ const Profile = () => {
         headers: { Authorization: `Bearer ${token}` },
       });
 
-      console.log("Response data: ", response.data); // log the response data
-      console.log("Profile pic path: ", response.data.profilePic); 
+      // console.log("Response data: ", response.data); // log the response data
+      // console.log("Profile pic path: ", response.data.profilePic); 
       setUser(response.data);
 
           // Set the user's location
@@ -268,59 +269,40 @@ const Profile = () => {
     });
 
     if (!result.canceled) {
-        let localUri = result.assets[0].uri;
-        let filename = localUri.split('/').pop();
-
-        // Infer the type of the image
-        let match = /\.(\w+)$/.exec(filename);
-        let type = match ? `image/${match[1]}` : `image`;
-
-        let formData = new FormData();
-        formData.append('image', { uri: localUri, name: filename, type });
-
-        const token = await AsyncStorage.getItem('token');
-
-        try {
-          let response = await axios.post(
-            'https://tranquil-ocean-74659.herokuapp.com/upload',
-            formData,
-            {
-              headers: {
-                'Content-Type': 'multipart/form-data',
-                Authorization: `Bearer ${token}`,
-              },
-            }
+      let localUri = result.assets[0].uri;
+  
+      // Infer the type of the image
+      let match = /\.(\w+)$/.exec(localUri);
+      let type = match ? `image/${match[1]}` : `image`;
+  
+      // Convert image to base64 string
+      let base64Image = await FileSystem.readAsStringAsync(localUri, { encoding: 'base64' });
+  
+      // Include the MIME type in the base64 string
+      let base64ImageWithType = `data:${type};base64,${base64Image}`;
+  
+      const token = await AsyncStorage.getItem('token');
+  
+      try {
+          let response = await axios.put(
+              'https://tranquil-ocean-74659.herokuapp.com/auth/user/me/profilePic',
+              { profilePic: base64ImageWithType },
+              { headers: { Authorization: `Bearer ${token}` }, }
           );
-        
-          if (response.data && response.data.path) {
-            let imagePath = response.data.path;
-            let imageUrl = 'https://tranquil-ocean-74659.herokuapp.com' + imagePath;
-        
-            try {
-              let profilePicResponse = await axios.put(
-                'https://tranquil-ocean-74659.herokuapp.com/auth/user/me/profilePic',
-                { profilePic: imageUrl },
-                { headers: { Authorization: `Bearer ${token}`, }, }
-              );
-        
-              if (profilePicResponse.data) {
-                setUser((prevUser) => ({
+  
+          if (response.data) {
+              setUser((prevUser) => ({
                   ...prevUser,
-                  profilePic: profilePicResponse.data.profilePic,
-                }));
-        
-                alert('Profile photo updated successfully!');
-              }
-            } catch (err) {
-              console.error("Failed to update profile picture: ", err);
-            }
+                  profilePic: response.data.profilePic,
+              }));
+  
+              alert('Profile photo updated successfully!');
           }
-        } catch (err) {
-          console.error("Failed to upload image: ", err);
-        }
-        
-    }
-};
+      } catch (err) {
+          console.error("Failed to update profile picture: ", err);
+      }
+  }
+  };
 
 return (
   <View style={styles.container}>
