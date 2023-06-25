@@ -110,7 +110,7 @@ function MyTabs({handleSignOut}) {
     // Only call fetchNotifications if user._id exists (i.e., if the user data has been fetched)
     if (user._id) {
       fetchNotifications();
-      intervalId = setInterval(fetchNotifications, 3000); // Fetch every 3 seconds
+      intervalId = setInterval(fetchNotifications, 600000); // Fetch every 3 seconds
     }
 
     // Clean up the interval on unmount

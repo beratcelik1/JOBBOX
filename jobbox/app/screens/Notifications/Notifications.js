@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { SwipeListView } from 'react-native-swipe-list-view';
+import { Swipeable } from 'react-native-gesture-handler'; // import Swipeable
 
-function NotificationCard({ item, users }) {
+function NotificationCard({ item, users, onSwipe }) {
   const [jobTitle, setJobTitle] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const fromUser = users[item.from];
@@ -63,8 +64,20 @@ function NotificationCard({ item, users }) {
   hours = hours ? hours : 12; // the hour '0' should be '12'
   const timeIn12Hours = `${hours}:${minutes} ${ampm}`;
 
+  const renderRightAction = () => {
+    return (
+      <TouchableOpacity
+        style={styles.rowBackRight}
+        onPress={onSwipe}
+      >
+        <Text style={styles.backTextWhite}>Clear</Text>
+      </TouchableOpacity>
+    );
+  };
+
   return (
-    <View style={styles.notificationCard}>
+    <Swipeable renderRightActions={renderRightAction}>
+      <View style={styles.notificationCard}>
       <View style={styles.notificationContent}>
         <Text style={styles.notificationText}>{message}</Text>
       </View>
@@ -72,6 +85,7 @@ function NotificationCard({ item, users }) {
         <Text style={styles.timeText}>{timeIn12Hours}</Text>
       </View>
     </View>
+    </Swipeable>
   );
 };
 
@@ -146,6 +160,7 @@ export default function Notifications() {
 
   const deleteNotification = async (id) => {
     const token = await AsyncStorage.getItem('token');
+    console.log("hi");
     try {
       await axios.delete(`https://tranquil-ocean-74659.herokuapp.com/auth/notifications/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
@@ -158,24 +173,27 @@ export default function Notifications() {
 
   const renderHiddenItem = (data, rowMap) => (
     <TouchableOpacity
-      style={[styles.rowBack, styles.rowBackRight]}
-      onPress={() => deleteNotification(data.item._id)}
-    >
-      <Text style={styles.backTextWhite}>Clear</Text>
-    </TouchableOpacity>
-  );
+    style={[styles.rowBack, styles.rowBackRight]}
+    onPress={() => deleteNotification(data.item._id)}
+  >
+    <Text style={styles.backTextWhite}>Clear</Text>
+  </TouchableOpacity>
+);
 
-  return (
-    <View style={styles.container}>
-      <SwipeListView
-        data={notifications}
-        keyExtractor={item => item._id}
-        renderItem={({item}) => <NotificationCard item={item} users={users} />} // Pass props to NotificationCard
-        renderHiddenItem={renderHiddenItem}
-        rightOpenValue={-75}
-      />
-    </View>
-  );
+return (
+  <View style={styles.container}>
+    <FlatList
+      data={notifications}
+      keyExtractor={item => item._id}
+      renderItem={({item}) => 
+        <NotificationCard 
+          item={item} 
+          users={users} 
+          onSwipe={() => deleteNotification(item._id)}
+        />}
+    />
+  </View>
+);
 }
 
 const styles = StyleSheet.create({
@@ -215,7 +233,8 @@ const styles = StyleSheet.create({
   rowBackRight: {
     alignItems: 'center',
     justifyContent: 'flex-end',
-    paddingRight: 15,
+    paddingRight: 8,
+    paddingBottom: 20,
   },
   backTextWhite: {
     paddingRight: 15,
