@@ -1,5 +1,5 @@
 import React, { Component, useState, useEffect } from 'react';
-import { Button, TextInput } from 'react-native';
+import { Button, TextInput,} from 'react-native'
 import { useNavigation } from '@react-navigation/native';
 import { View, FlatList, Text, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
 import PieChart from 'react-native-pie-chart'
@@ -42,6 +42,22 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
   },
+  button2: { 
+    backgroundColor: '#fff',
+    paddingHorizontal: 60, 
+    paddingVertical: 15,
+    marginTop: 10, 
+    borderRadius: 10,
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 10.84,
+    elevation: 5, 
+    alignSelf: 'center' 
+  }, 
   button: { 
     backgroundColor: '#fff',
     padding: 10,
@@ -167,17 +183,18 @@ const Activity = () => {
 
   let earnCalc;
   if (earningTarget !== 0 && earningTarget != null && earningTarget != '') {
-    earnCalc = ((totalEarnings/earningTarget)*100);
+    earnCalc = Math.min((totalEarnings / earningTarget) * 100, 100);
   } else {
     earnCalc = 100;
   }
-  
+
   let spentCalc;
   if (spendingTarget !== 0 && spendingTarget != null && spendingTarget != '') {
-    spentCalc = ((totalSpent/spendingTarget)*100);
+    spentCalc = Math.min((totalSpent / spendingTarget) * 100, 100);
   } else {
     spentCalc = 100;
   }
+
   
   const navigation = useNavigation();
   const widthAndHeight = 150
@@ -197,15 +214,13 @@ const Activity = () => {
               widthAndHeight={widthAndHeight}
               series={seriesEarn}
               sliceColor={['#4683fc','#fff']}
-              // coverRadius={0.7}
-              // coverFill={'#FFF'}
+            
             />
             <PieChart
               widthAndHeight={widthAndHeight}
               series={seriesSpent}
               sliceColor={['#c0c2c7','#fff']}
-              // coverRadius={0.7}
-              // coverFill={'#FFF'}
+
             />
         </View>
 
@@ -220,11 +235,12 @@ const Activity = () => {
         }}/>
         
         <WalletDetail label="Monthly Earning Target" value={`$${earningTarget}`} />
-        <WalletDetail label="Monthly Spending Target" value={`$${spendingTarget}`} />
-        
-        <View style={styles.button}>  
-          <Button title="Edit Targets"onPress={() => navigation.navigate('EditTargetsScreen')} />
-        </View>
+        <WalletDetail label="Monthly Spending Target" value={`$${spendingTarget}`} /> 
+
+        <TouchableOpacity style={styles.button2} onPress={() => navigation.navigate('EditTargetsScreen')} >
+          <Text style = {{fontWeight: '700', color: '#4683fc'}}>Edit Targets </Text>
+        </TouchableOpacity>
+  
       </View>
    
       <View style={styles.section}>
