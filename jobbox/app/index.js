@@ -89,6 +89,7 @@ function MyTabs({handleSignOut}) {
     fetchUserData();
   }, []);
 
+
   useEffect(() => {
     const fetchNotifications = async () => {
       try {
@@ -382,7 +383,7 @@ export default function App() {
         options={{ headerTitle: 'Contact Us' }}
       />
       <Stack.Screen 
-      name="ApplicantProfile" 
+      name="Reviewing" 
       component={ApplicantProfile} 
       options={{headerBackTitle: '', headerBackTitleVisible: false}} 
     />

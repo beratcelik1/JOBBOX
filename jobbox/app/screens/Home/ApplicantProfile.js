@@ -123,35 +123,45 @@ const ApplicantProfile = ({route}) => {
                 <Text style={styles.name}>{applicant.firstname} {applicant.lastname}</Text>
                 <View style={styles.reviews}>
                   <Icon name="star" size={20} color="#f1c40f" />
-                  <Text>4.5</Text>
+                  <Text style = {{color: '#fff'}}>4.5</Text>
                 </View>
-                <View>
-                  <Text>{applicant.location}</Text>
+                <View style = {{marginTop: 2.5}}>
+                  <Text style = {{color: '#fff'}}>{applicant.location}</Text>
                 </View>
               </View>
             </View>
           )}
-                <FlatList
-        data={sections}
-        keyExtractor={item => item.id}
-        contentContainerStyle={{ paddingBottom: 5 }}
-        renderItem={({ item }) => (
-          <View style={styles.sectionContainer}>
-            <Icon name={item.iconName} size={24} color="#4683fc" style={styles.sectionIcon} />
-            <Text>
-              <Text style={styles.sectionTitle}>{item.title}</Text>
-              <Text style={styles.sectionText}>{item.text}</Text> {/* Add this line to display the content */}
-            </Text>
-          </View>
-        )}
-        numColumns={1}
-        refreshControl={
-          <RefreshControl
-            refreshing={refreshing}
-            onRefresh={onRefresh}
-          />
-        }
-      />
+        <FlatList
+          data={sections}
+          keyExtractor={item => item.id}
+          contentContainerStyle={{ paddingBottom: 40}}
+          renderItem={({ item }) => ( 
+            
+            <View style={styles.sectionContainer}> 
+              <View style ={{flexDirection: 'row'}}> 
+                <Icon name={item.iconName} size={24} color="#4683fc" style={styles.sectionIcon} />
+                <Text style={styles.sectionTitle}>{item.title}</Text>
+              </View>
+              <View
+              style={{
+                borderBottomColor: '#4683fc',
+                borderBottomWidth: 1.5,
+                marginBottom: 10,
+                marginTop: 5, 
+              }}/> 
+              <View style ={{marginLeft: 10, flex: 1}}> 
+                <Text style={styles.sectionText}>{item.text}</Text>  
+              </View>
+            </View>
+          )}
+          numColumns={1}
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={onRefresh}
+            />
+          }
+        />
 
         </>
       )}
@@ -190,10 +200,11 @@ const styles = StyleSheet.create({
       marginLeft: 5,
       marginRight: 5, 
       margingTop: 10, 
-      padding: 20,
+      padding: 10,
+      paddingLeft: 20,
       marginBottom: 7,
       borderRadius: 10,
-      backgroundColor: '#f8f9fa',
+      backgroundColor: '#4683fc',
       shadowColor: "#000",
       shadowOffset: {
           width: 0,
@@ -213,20 +224,21 @@ const styles = StyleSheet.create({
     name: {
       fontSize: 24,
       fontWeight: 'bold',
+      color: '#fff'
     },
     reviews: {
       flexDirection: 'row',
       alignItems: 'center',
+      marginTop: 5
     },
     sectionContainer: {
-      flexDirection: 'row',
-      alignItems: 'center',
+      
+      flexDirection: 'column',
       marginTop: 20,
       padding: 15,
       borderRadius: 10,
       marginRight:15,
       marginLeft:15,
-      height: 75,
       backgroundColor: '#fff',
       // Android shadow properties
       elevation: 5,
@@ -242,15 +254,13 @@ const styles = StyleSheet.create({
     },
     sectionIcon: {
       marginRight: 10,
-      marginLeft: '10%',
+      marginLeft: 5,
     },
     sectionTitle: {
       fontSize: 18,
       fontWeight: 'bold',
     },
     sectionText: {
-      flex: 1,
-      marginTop: 5,
       fontSize: 14,
     },
     modalView: {

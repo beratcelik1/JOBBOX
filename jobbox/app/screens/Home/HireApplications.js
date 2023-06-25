@@ -164,7 +164,7 @@ export function HireApplicationsScreen({ route, navigation }) {
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.button}
-              onPress={() => navigation.navigate('ApplicantProfile', { userId: item._id })}
+              onPress={() => navigation.navigate('Reviewing', { userId: item._id })}
             >
               <Ionicons name="eye" size={20} color="#4683fc" />
               <Text style={styles.buttonText}>Review</Text>
