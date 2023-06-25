@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from 'react';
-import { Alert, Button, View } from 'react-native';
+import { useState, useEffect } from 'react';
+import { Alert } from 'react-native';
 import { initStripe, useStripe } from '@stripe/stripe-react-native';
 
-export const PaymentEntryPoint = () => {
+const usePayment = ({ jobId }) => {
   const { initPaymentSheet, presentPaymentSheet } = useStripe();
   const [loading, setLoading] = useState(false);
+  const [paymentReady, setPaymentReady] = useState(false);
 
   const fetchPaymentSheetParams = async () => {
     const response = await fetch(
@@ -14,8 +15,15 @@ export const PaymentEntryPoint = () => {
         headers: {
           'Content-Type': 'application/json',
         },
+        body: JSON.stringify({ jobId })
       }
     );
+
+    // handle error
+    if (!response.ok) {
+      console.log(`Error: ${JSON.stringify(response.json())}`);
+      return;
+    }
 
     const { paymentIntent, ephemeralKey, customer, publishableKey } =
       await response.json();
@@ -41,20 +49,22 @@ export const PaymentEntryPoint = () => {
       customerId: customer,
       customerEphemeralKeySecret: ephemeralKey,
       paymentIntentClientSecret: paymentIntent,
-      // Set `allowsDelayedPaymentMethods` to true if your business can handle payment
-      //methods that complete payment after a delay, like SEPA Debit and Sofort.
-      allowsDelayedPaymentMethods: true,
-      defaultBillingDetails: {
-        name: 'Jane Doe',
-      },
+      allowsDelayedPaymentMethods: true
     });
     if (!error) {
-      setLoading(true);
+      setPaymentReady(true);
     }
   };
 
   const openPaymentSheet = async () => {
+    if (!paymentReady) {
+      Alert.alert('Error', 'Payment Sheet is not ready yet.');
+      return;
+    }
+    
+    setLoading(true);
     const { error } = await presentPaymentSheet();
+    setLoading(false);
 
     if (error) {
       Alert.alert(`Error code: ${error.code}`, error.message);
@@ -66,17 +76,8 @@ export const PaymentEntryPoint = () => {
   useEffect(() => {
     initializePaymentSheet();
   }, []);
-
-  return (
-    <View>
-      <Button
-        variant="primary"
-        disabled={!loading}
-        title="Checkout"
-        onPress={openPaymentSheet}
-      />
-    </View>
-  );
+  
+  return { loading, openPaymentSheet };
 };
 
-export default PaymentEntryPoint;
+export default usePayment;

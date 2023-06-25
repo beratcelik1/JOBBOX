@@ -7,16 +7,20 @@ import axios from 'axios';
 import LoadingScreen from '../../components/LoadingScreen'; 
 import { formatDateTime } from '../../utils/formatDateTime';
 import defaultImage from '../../assets/images/defaultimage3.png';
+import usePayment from '../../hooks/usePayment';
 
 export function HireApplicationsScreen({ route, navigation }) {
   const { job, isArchived = false } = route.params; 
   const [applicants, setApplicants] = useState();
   const [refreshing, setRefreshing] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [hiredApplicantId, setHiredApplicantId] = useState(null);  
+  const [hiredApplicantId, setHiredApplicantId] = useState(null);
 
   const [startDate, startTime] = formatDateTime(job.startDateTime);
   const [endDate, endTime] = formatDateTime(job.endDateTime);
+
+  // use hooks here
+  const { openPaymentSheet } = usePayment({ jobId: job._id });
   
 
   const fetchApplicants = async () => {
@@ -47,6 +51,7 @@ export function HireApplicationsScreen({ route, navigation }) {
   }, []); 
 
   const handleHire = async (applicantId) => {
+    await openPaymentSheet();
     const token = await AsyncStorage.getItem('token');
     try {
       const response = await axios.post(
@@ -266,7 +271,7 @@ export function HireApplicationsScreen({ route, navigation }) {
             
             </>
             )} 
-        </View>  
+        </View>
         
         {isArchived && 
         <View style={styles.timeContainer}>
