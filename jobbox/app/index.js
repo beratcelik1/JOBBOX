@@ -89,24 +89,6 @@ function MyTabs({handleSignOut}) {
     fetchUserData();
   }, []);
 
-  // useEffect(() => {
-  //   const fetchNotifications = async () => {
-  //     try {
-  //       const response = await axios.get(`https://tranquil-ocean-74659.herokuapp.com/auth/notifications/${user._id}`); 
-  //       if (response.data && response.data.length > 0) {
-  //         setHasNotifications(true);
-  //       }
-  //       // console.log(response.data);
-  //     } catch (err) {
-  //       console.error(err);
-  //     }
-  //   }
-  //   // Only call fetchNotifications if user._id exists (i.e., if the user data has been fetched)
-  //   if (user._id) {
-  //     fetchNotifications();
-  //   }
-  // }, [user]);
-
   useEffect(() => {
     const fetchNotifications = async () => {
       try {
@@ -127,7 +109,7 @@ function MyTabs({handleSignOut}) {
     // Only call fetchNotifications if user._id exists (i.e., if the user data has been fetched)
     if (user._id) {
       fetchNotifications();
-      intervalId = setInterval(fetchNotifications, 3000); // Fetch every 3 seconds
+      intervalId = setInterval(fetchNotifications, 600000); // Fetch every 3 seconds
     }
 
     // Clean up the interval on unmount
