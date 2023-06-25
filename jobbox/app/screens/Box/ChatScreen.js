@@ -1,11 +1,10 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { GiftedChat, Bubble, InputToolbar } from 'react-native-gifted-chat';
+import { GiftedChat, Bubble, InputToolbar} from 'react-native-gifted-chat';
 import axios from 'axios';
-import { View, StyleSheet, Text } from 'react-native';
+import { View, StyleSheet, Text, TouchableOpacity} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const ChatScreen = ({ route }) => {
-  const { jobId, senderId, conversationId } = route.params;
+const ChatScreen = ({ jobId, senderId, conversationId, closeModal }) => { 
 // take conversationId from params
   const [messages, setMessages] = useState([]);
   const [user, setUser] = useState({});
@@ -63,9 +62,9 @@ const ChatScreen = ({ route }) => {
     const message = {
       sender: user._id,
       text: newMessage,
-      conversationId: conversationId, // use conversationId here
+      conversationId: conversationId,
     };
-
+  
     try {
       const res = await axios.post('https://tranquil-ocean-74659.herokuapp.com/messages', message);
       const formattedMessage = {
@@ -77,6 +76,17 @@ const ChatScreen = ({ route }) => {
         },
       };
       setMessages(previousMessages => GiftedChat.append(previousMessages, formattedMessage));
+
+      // Create a notification
+      const notification = {
+        to: receiverId, 
+        from: user._id,
+        action: 'message',
+        conversationId: conversationId,
+        jobId: jobId,
+      };
+      await axios.post('https://tranquil-ocean-74659.herokuapp.com/auth/notifications', notification);
+  
     } catch (err) {
       console.log(err);
     }
@@ -112,37 +122,30 @@ const ChatScreen = ({ route }) => {
 
   return (
     <View style={styles.container}>
-    <GiftedChat
-      messages={messages}
-      onSend={messages => handleSend(messages)}
-      user={{ _id: user._id }}
-      renderAvatar={null}
-      renderInputToolbar={props => renderInputToolbar(props)}
-      renderBubble={props => {
-        return (
-          <Bubble
-            {...props}
-            textStyle={{
-              left: {
-                color: 'black', 
-              },
-            }}
-            timeTextStyle={{
-              left: {
-                color: 'black', 
-              },
-            }}
-            wrapperStyle={{
-              left: {
-                backgroundColor: 'white',
-                borderColor: '#F9F7F6',
-                borderWidth: 0,
-              },
-            }}
-          />
-        );
-      }}
-    />
+      <GiftedChat
+        messages={messages}
+        onSend={messages => handleSend(messages)}
+        user={{ _id: user._id }}
+        renderAvatar={null}
+        renderInputToolbar={props => renderInputToolbar(props)}
+        renderBubble={props => {
+          return (
+            <Bubble
+              {...props}
+              textStyle={{ left: { color: 'black' } }}
+              timeTextStyle={{ left: { color: 'black' } }}
+              wrapperStyle={{
+                left: {
+                  backgroundColor: 'white',
+                  borderColor: '#F9F7F6',
+                  borderWidth: 0,
+                },
+              }}
+            />
+          );
+        }}
+      /> 
+      
     </View>
   );
 };
@@ -155,3 +158,4 @@ const styles = StyleSheet.create({
 });
 
 export default ChatScreen;
+
