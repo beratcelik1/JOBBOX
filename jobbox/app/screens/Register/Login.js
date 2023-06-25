@@ -6,6 +6,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { showMessage } from 'react-native-flash-message';
 import Icon from 'react-native-vector-icons/Ionicons';
 
+
 const logo = require('../../assets/images/jobboxlogo2.png');
 
 export default function Login({ navigation, setIsAuthenticated }) {
@@ -108,7 +109,7 @@ export default function Login({ navigation, setIsAuthenticated }) {
                 right={
                     <TextInput.Icon
                     name={showPassword ? 'eye' : 'eye-off'}
-                    style = {{color: 'red'}}
+                    color="#4683FC"
                     onPress={() => setShowPassword(!showPassword)}
                     />
                 }
