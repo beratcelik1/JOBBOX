@@ -14,49 +14,50 @@ export default function Login({ navigation, setIsAuthenticated }) {
 
     const handleLogin = () => {
         fetch('https://tranquil-ocean-74659.herokuapp.com/auth/login', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ 
-                email: username, 
-                password: password 
-            })
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            email: username,
+            password: password
+          })
         })
-        .then(response => {
+          .then(response => {
             if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
+              throw new Error(`HTTP error! status: ${response.status}`);
             }
             return response.json();
-        })
-        .then(async data => {
-            console.log(data);
+          })
+          .then(async data => {
+            console.log('Data received from server:', data);
+    
             if (data.token) {
-                if (data.user.verified) {
-                    console.log(isRemembered);
-                    await AsyncStorage.setItem('remember', JSON.stringify(isRemembered));
-                    // Only save to AsyncStorage if "Remember Me" is checked
-                    if (isRemembered) {
-                        console.log(isRemembered);
-                        await AsyncStorage.setItem('token', data.token);
-                        await AsyncStorage.setItem('userId', data.user._id);
-                    }
-                    setIsAuthenticated(true);
-                } else {
-                    showMessage({
-                        message: 'Verify your email and try again!',
-                        type: 'info',
-                        floating: true,
-                        icon: 'success',
-                        duration: 4000,
-                    });
+              if (data.user.verified) {
+                console.log(isRemembered);
+                try {
+                  await AsyncStorage.setItem('remember', JSON.stringify(isRemembered));
+                    await AsyncStorage.setItem('token', data.token);
+                    await AsyncStorage.setItem('userId', data.user._id);
+                  setIsAuthenticated(true);
+                } catch (err) {
+                  console.error('Error storing data to AsyncStorage:', err);
                 }
+              } else {
+                showMessage({
+                  message: 'Verify your email and try again!',
+                  type: 'info',
+                  floating: true,
+                  icon: 'success',
+                  duration: 4000,
+                });
+              }
             } else {
-                Alert.alert('Login Failed', 'Invalid email or password');
+              Alert.alert('Login Failed', 'Invalid email or password');
             }
-        })
-        .catch(error => console.log('Error:', error));
-    };
+          })
+          .catch(error => console.log('Error:', error));
+      };
     
     
     useEffect(() => {
@@ -120,7 +121,7 @@ export default function Login({ navigation, setIsAuthenticated }) {
                             },
                             styles.pressable,
                         ]}
-                        onPress={handleLogin}
+                        onPress={() => handleLogin()}
                     >
                         <Button mode="contained" style={styles.button}>
                             <Text style={styles.Btn}>Login</Text>

@@ -5,7 +5,7 @@ import { View, StyleSheet, Text } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const ChatScreen = ({ route }) => {
-  const { jobId, senderId, conversationId } = route.params;
+  const { jobId, senderId, conversationId, receiverId } = route.params;
 // take conversationId from params
   const [messages, setMessages] = useState([]);
   const [user, setUser] = useState({});
@@ -63,9 +63,9 @@ const ChatScreen = ({ route }) => {
     const message = {
       sender: user._id,
       text: newMessage,
-      conversationId: conversationId, // use conversationId here
+      conversationId: conversationId,
     };
-
+  
     try {
       const res = await axios.post('https://tranquil-ocean-74659.herokuapp.com/messages', message);
       const formattedMessage = {
@@ -77,6 +77,17 @@ const ChatScreen = ({ route }) => {
         },
       };
       setMessages(previousMessages => GiftedChat.append(previousMessages, formattedMessage));
+
+      // Create a notification
+      const notification = {
+        to: receiverId, 
+        from: user._id,
+        action: 'message',
+        conversationId: conversationId,
+        jobId: jobId,
+      };
+      await axios.post('https://tranquil-ocean-74659.herokuapp.com/auth/notifications', notification);
+  
     } catch (err) {
       console.log(err);
     }
@@ -155,3 +166,4 @@ const styles = StyleSheet.create({
 });
 
 export default ChatScreen;
+

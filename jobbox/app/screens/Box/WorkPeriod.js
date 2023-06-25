@@ -103,7 +103,7 @@ const WorkPeriodDetails = () => {
       try {
         const conversationId = await fetchConversationId(firstUserId, secondUserId);
         console.log('converstaionID:', conversationId);  // Move this line here
-        navigation.navigate('ChatScreen', { jobId: job._id, senderId: user, conversationId });
+        navigation.navigate('ChatScreen', { jobId: job._id, senderId: user, conversationId,  receiverId: secondUserId});
       } catch (error) {
         // handle error here
         console.error('Failed to get conversation:', error);
