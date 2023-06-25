@@ -100,25 +100,20 @@ export default function Login({ navigation, setIsAuthenticated }) {
                     style={styles.input}
                 />
                 <TextInput
-                    label="Password"
-                    value={password}
-                    onChangeText={setPassword}
-                    secureTextEntry={!showPassword}
-                    style={styles.input}
-                    right={
-                        <TextInput.Icon
-                            name={showPassword ? 'eye' : 'eye-off'}
-                            onPress={() => setShowPassword(!showPassword)}
-                            style={{
-                                backgroundColor: '#eee',
-                                color: "#4683FC"
-                            }}
-                            iconColor="#ff0000"
-
-                        />
-
-                    }
+                label="Password"
+                value={password}
+                onChangeText={setPassword}
+                secureTextEntry={!showPassword}
+                style={styles.input}
+                right={
+                    <TextInput.Icon
+                    name={showPassword ? 'eye' : 'eye-off'}
+                    style = {{color: 'red'}}
+                    onPress={() => setShowPassword(!showPassword)}
+                    />
+                }
                 />
+
                 {loginError && <Text style={styles.errorText}>Invalid email or password</Text>}
                 
                 <View style={styles.rememberForgotContainer}>
@@ -133,8 +128,7 @@ export default function Login({ navigation, setIsAuthenticated }) {
                         <Text style={styles.forgotPassword}>Forgot password?</Text>
                     </TouchableOpacity>
                 </View>
-
-
+                <Pressable>
                     <Pressable
                         style={({ pressed }) => [
                             {
@@ -153,16 +147,9 @@ export default function Login({ navigation, setIsAuthenticated }) {
                         <Text style={styles.noBtn}>Don't have an account? 
                             <Text style={styles.forgotPassword}> Sign up.</Text> 
                         </Text>
-
                     </Button>
                 </Pressable>
 
-                <Button onPress={() => navigation.navigate('Signup')}>
-                    <Text style={styles.noBtn}>Don't have an account?
-                        <Text style={styles.forgotPassword}> Sign up.</Text>
-                    </Text>
-                </Button>
-                
             </View>
         </KeyboardAvoidingView>
 

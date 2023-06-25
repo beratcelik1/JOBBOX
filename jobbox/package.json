@@ -55,6 +55,7 @@
     "react-native-star-rating": "^1.1.0",
     "react-native-swipe-list-view": "^3.2.9",
     "react-native-tab-view": "^3.5.1",
+    "react-native-vector-icons": "^9.2.0",
     "react-native-web": "~0.18.7"
   },
   "devDependencies": {
