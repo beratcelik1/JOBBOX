@@ -62,9 +62,9 @@ const ChatScreen = ({ jobId, senderId, conversationId, closeModal }) => {
     const message = {
       sender: user._id,
       text: newMessage,
-      conversationId: conversationId, // use conversationId here
+      conversationId: conversationId,
     };
-
+  
     try {
       const res = await axios.post('https://tranquil-ocean-74659.herokuapp.com/messages', message);
       const formattedMessage = {
@@ -76,6 +76,17 @@ const ChatScreen = ({ jobId, senderId, conversationId, closeModal }) => {
         },
       };
       setMessages(previousMessages => GiftedChat.append(previousMessages, formattedMessage));
+
+      // Create a notification
+      const notification = {
+        to: receiverId, 
+        from: user._id,
+        action: 'message',
+        conversationId: conversationId,
+        jobId: jobId,
+      };
+      await axios.post('https://tranquil-ocean-74659.herokuapp.com/auth/notifications', notification);
+  
     } catch (err) {
       console.log(err);
     }
@@ -147,3 +158,4 @@ const styles = StyleSheet.create({
 });
 
 export default ChatScreen;
+

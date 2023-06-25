@@ -287,7 +287,36 @@ function JobDetailScreen({ route, navigation }) {
         try {
           // Fetch the token from the async storage
           const token = await AsyncStorage.getItem('token');
-      
+          const userId = await AsyncStorage.getItem('userId')
+    
+          console.log('User ID:', userId);
+          console.log('Job posted by:', job.postedBy._id);
+    
+          if (String(job.postedBy._id) === String(userId)) {
+            showMessage({
+                message: "You cannot apply to a job that you created.",
+                type: "danger",
+                icon: "danger",
+                duration: 3000,
+                hideOnPress: true,
+                floating: true,
+            });
+            return;
+          }
+    
+          // Check if the user has already applied
+          if (job.applicants.includes(userId)) {
+            showMessage({
+                message: "You have already applied for this job.",
+                type: "danger",
+                icon: "danger",
+                duration: 3000,
+                hideOnPress: true,
+                floating: true,
+            });
+            return;
+          }
+    
           // Send the POST request to apply for the job
           const response = await fetch(`http://tranquil-ocean-74659.herokuapp.com/jobs/apply/${job._id}`, {
             method: 'POST',
@@ -296,7 +325,7 @@ function JobDetailScreen({ route, navigation }) {
               'Authorization': `Bearer ${token}`,
             },
           });
-      
+    
           if (!response.ok) {
             // If server response is not ok, throw an error
             throw new Error(`HTTP error! status: ${response.status}`);
@@ -304,6 +333,15 @@ function JobDetailScreen({ route, navigation }) {
             const data = await response.json();
             console.log(data);
             
+            // Create a notification
+            const notification = {
+                to: job.postedBy._id, 
+                from: userId,
+                action: 'job_application',
+                jobId: job._id,
+            };
+            await axios.post('https://tranquil-ocean-74659.herokuapp.com/auth/notifications', notification);
+    
             // Show a success message if application is successful
             showMessage({
               message: "You have successfully applied for this job!",
@@ -317,7 +355,7 @@ function JobDetailScreen({ route, navigation }) {
         } catch (error) {
           // Display error message and log the error for debugging
           console.error('Error:', error);
-      
+    
           showMessage({
             message: "An error occurred while applying for the job. Please try again later.",
             type: "danger",
@@ -328,7 +366,7 @@ function JobDetailScreen({ route, navigation }) {
           });
         }
     };
-      
+          
     return (
         <View style={styles.container2}> 
             <View style={styles.jobCard2}> 
