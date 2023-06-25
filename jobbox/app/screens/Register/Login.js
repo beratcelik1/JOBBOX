@@ -4,7 +4,7 @@ import { StyleSheet, View, Image, Switch, TouchableOpacity, Pressable, KeyboardA
 import { TextInput, Button, Text } from 'react-native-paper';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { showMessage } from 'react-native-flash-message';
-import Icon from 'react-native-vector-icons/FontAwesome';
+import Icon from 'react-native-vector-icons/Ionicons';
 
 const logo = require('../../assets/images/jobboxlogo2.png');
 
@@ -113,6 +113,8 @@ export default function Login({ navigation, setIsAuthenticated }) {
                                 backgroundColor: '#eee',
                                 color: "#4683FC"
                             }}
+                            iconColor="#ff0000"
+
                         />
 
                     }
