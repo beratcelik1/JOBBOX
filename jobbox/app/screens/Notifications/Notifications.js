@@ -4,6 +4,77 @@ import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { SwipeListView } from 'react-native-swipe-list-view';
 
+function NotificationCard({ item, users }) {
+  const [jobTitle, setJobTitle] = useState("");
+  const [isLoading, setIsLoading] = useState(true);
+  const fromUser = users[item.from];
+  const jobId = item.jobId;
+
+  useEffect(() => {
+    AsyncStorage.getItem('token')
+      .then(token => {
+        fetch(`http://tranquil-ocean-74659.herokuapp.com/jobs/${jobId}`, {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+          },
+        })
+        .then(response => response.json())
+        .then(job => {
+          setJobTitle(job.title);
+          setIsLoading(false);
+        })
+        .catch(error => {
+          console.error('Error:', error);
+        });
+      })
+      .catch(err => console.log(err));
+  }, [jobId]);
+
+  // Don't render anything until the job title has loaded.
+  if (isLoading) {
+    return null;
+  }
+
+  // format the message based on the action type
+  let message;
+  switch (item.action) {
+    case 'message':
+      message = `${fromUser.firstname} messaged you`;
+      break;
+    case 'job_application':
+      message = `${jobTitle}: you have a new application`;
+      break;
+    case 'hired':
+      message = `${jobTitle}: you were hired ✅`;
+      break;
+    case 'rejected':
+      message = `${jobTitle}: you were rejected ❌`;
+      break;
+    default:
+      message = 'Unknown action';
+  }
+
+  // format the timestamp to show time in hours
+  const date = new Date(item.createdAt);
+  let hours = date.getHours();
+  const minutes = date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes();
+  const ampm = hours >= 12 ? 'PM' : 'AM';
+  hours = hours % 12;
+  hours = hours ? hours : 12; // the hour '0' should be '12'
+  const timeIn12Hours = `${hours}:${minutes} ${ampm}`;
+
+  return (
+    <View style={styles.notificationCard}>
+      <View style={styles.notificationContent}>
+        <Text style={styles.notificationText}>{message}</Text>
+      </View>
+      <View style={styles.timeRow}>
+        <Text style={styles.timeText}>{timeIn12Hours}</Text>
+      </View>
+    </View>
+  );
+};
+
 export default function Notifications() {
   const [user, setUser] = useState({});
   const [users, setUsers] = useState({});
@@ -49,6 +120,7 @@ export default function Notifications() {
   }, []);
 
   useEffect(() => {
+    let intervalId = null;
     const fetchNotifications = async () => {
       try {
         const response = await axios.get(`https://tranquil-ocean-74659.herokuapp.com/auth/notifications/${user._id}`); 
@@ -60,9 +132,10 @@ export default function Notifications() {
       }
     }
     // Only call fetchNotifications if user._id exists (i.e., if the user data has been fetched)
-
+    if (user._id) {
       fetchNotifications();
-      intervalId = setInterval(fetchNotifications, 3000);
+      intervalId = setInterval(fetchNotifications, 600000);
+    }
 
     return () => {
       if (intervalId) {
@@ -92,40 +165,12 @@ export default function Notifications() {
     </TouchableOpacity>
   );
 
-
-  const NotificationCard = ({ item }) => {
-    const fromUser = users[item.from];
-  
-    // format the message based on the action type
-    const message = item.action === 'message'
-      ? `${fromUser ? fromUser.firstname : 'Unknown'} messaged you`
-      : `${fromUser ? fromUser.firstname : 'Unknown'} applied to your job`
-  
-    // format the timestamp to show time in hours
-    const date = new Date(item.createdAt);
-    let hours = date.getHours();
-    const minutes = date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes();
-    const ampm = hours >= 12 ? 'PM' : 'AM';
-    hours = hours % 12;
-    hours = hours ? hours : 12; // the hour '0' should be '12'
-    const timeIn12Hours = `${hours}:${minutes} ${ampm}`;
-
-    return (
-      <View style={styles.notificationCard}>
-        <View style={styles.notificationContent}>
-          <Text style={styles.notificationText}>{message}</Text>
-          <Text style={styles.timeText}>{timeIn12Hours}</Text>
-        </View>
-      </View>
-    );
-  };
-
   return (
     <View style={styles.container}>
       <SwipeListView
         data={notifications}
         keyExtractor={item => item._id}
-        renderItem={NotificationCard}
+        renderItem={({item}) => <NotificationCard item={item} users={users} />} // Pass props to NotificationCard
         renderHiddenItem={renderHiddenItem}
         rightOpenValue={-75}
       />
@@ -142,7 +187,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     borderRadius: 5,
     marginHorizontal: 10,
-    marginBottom: 10,
+    marginBottom: 4,
     borderWidth: 0,
     elevation: 1, // for android shadow
     shadowColor: "#000", // for iOS shadow
@@ -154,18 +199,11 @@ const styles = StyleSheet.create({
     shadowRadius: 4.22,
     padding: 13,
     marginTop: 10, 
+    paddingBottom: 5,
   },
   notificationContent: {
-    flexDirection: 'row',
+    flexDirection: 'column',
     justifyContent: 'space-between',
-  },
-  notificationText: {
-    fontSize: 17,
-    color: 'black',
-  },
-  timeText: {
-    fontSize: 15,
-    color: 'grey',
   },
   rowBack: {
     alignItems: 'center',
@@ -183,5 +221,20 @@ const styles = StyleSheet.create({
     paddingRight: 15,
     paddingBottom: 7,
     color: 'red',
+  },
+  messageRow: {
+    flex: 1,
+  },
+  timeRow: {
+    marginTop: 10,
+    alignSelf: 'flex-end',
+  },
+  notificationText: {
+    fontSize: 17,
+    color: 'black',
+  },
+  timeText: {
+    fontSize: 13,
+    color: 'grey',
   },
 });

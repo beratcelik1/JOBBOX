@@ -290,7 +290,7 @@ function JobDetailScreen({ route, navigation }) {
           const userId = await AsyncStorage.getItem('userId')
     
           console.log('User ID:', userId);
-          console.log('Job posted by:', job.postedBy);
+          console.log('Job posted by:', job.postedBy._id);
     
           if (String(job.postedBy._id) === String(userId)) {
             showMessage({
@@ -332,6 +332,15 @@ function JobDetailScreen({ route, navigation }) {
           } else {
             const data = await response.json();
             console.log(data);
+            
+            // Create a notification
+            const notification = {
+                to: job.postedBy._id, 
+                from: userId,
+                action: 'job_application',
+                jobId: job._id,
+            };
+            await axios.post('https://tranquil-ocean-74659.herokuapp.com/auth/notifications', notification);
     
             // Show a success message if application is successful
             showMessage({
