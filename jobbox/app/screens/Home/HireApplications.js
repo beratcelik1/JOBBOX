@@ -1,22 +1,12 @@
 import React, { useState, useMemo, useEffect } from 'react';
-import {
-  View,
-  Text,
-  Image,
-  FlatList,
-  StyleSheet,
-  TouchableOpacity,
-  Alert,
-  RefreshControl,
-} from 'react-native';
+import {View,Text,Image,FlatList,StyleSheet,TouchableOpacity,Alert,RefreshControl} from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { createStackNavigator } from '@react-navigation/stack';
-
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import LoadingScreen from '../../components/LoadingScreen'; 
-
 import { formatDateTime } from '../../utils/formatDateTime';
+import defaultImage from '../../assets/images/defaultimage3.png';
 
 export function HireApplicationsScreen({ route, navigation }) {
   const { job, isArchived = false } = route.params; 
@@ -106,7 +96,7 @@ export function HireApplicationsScreen({ route, navigation }) {
     <View style={styles.applicantCard}>
       <View style={{ flexDirection: 'row' }}>
         <Image
-          source={{ uri: item.profilePic }}
+          source={item.profilePic ? {uri: item.profilePic} : defaultImage}
           style={styles.applicantImage}
         />
         <View style={{ flex: 1 }}>
@@ -156,7 +146,7 @@ export function HireApplicationsScreen({ route, navigation }) {
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.button}
-              onPress={() => navigation.navigate('Profile', { userId: item._id })}
+              onPress={() => navigation.navigate('ApplicantProfile', { userId: item._id })}
             >
               <Ionicons name="eye" size={20} color="#4683fc" />
               <Text style={styles.buttonText}>Review</Text>

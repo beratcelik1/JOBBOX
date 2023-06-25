@@ -34,6 +34,8 @@ import WorkHistoryScreen from './screens/Activity/WorkHistoryScreen';
 import HireHistoryScreen from './screens/Activity/HireHistoryScreen';
 import EditTargetsScreen from './screens/Activity/EditTargetsScreen'; 
 import Box from './screens/Box/Box'; 
+import ApplicantProfile from './screens/Home/ApplicantProfile';
+
 
 import Login from './screens/Register/Login'; 
 import Signup from './screens/Register/Signup';
@@ -397,6 +399,11 @@ export default function App() {
         component={ContactUsScreen}
         options={{ headerTitle: 'Contact Us' }}
       />
+      <Stack.Screen 
+      name="ApplicantProfile" 
+      component={ApplicantProfile} 
+      options={{headerBackTitle: '', headerBackTitleVisible: false}} 
+    />
     </Stack.Navigator>
   );
 
