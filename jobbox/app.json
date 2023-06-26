@@ -5,6 +5,14 @@
       "bundler": "metro"
     },
     "name": "jobbox",
-    "slug": "jobbox"
+    "slug": "jobbox",
+    "plugins": [
+      [
+        "@stripe/stripe-react-native",
+        {
+          "enableGooglePay": false
+        }
+      ]
+    ]
   }
 }
