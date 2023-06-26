@@ -1,5 +1,77 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, FlatList, Text, StyleSheet } from 'react-native';
+import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { ActivityIndicator } from 'react-native';
+
+const renderWorkHistoryItem = ({ item }) => {
+  return (
+    <View style={styles.card}>
+      <Text style={styles.cardTitle}>{item.title}</Text>
+      <View style={styles.cardDetails}>
+        <Text style={styles.cardLabel}>Earned:</Text>
+        <Text>${item.pay}</Text> 
+      </View>
+      <View style={styles.cardDetails}>
+        <Text style={styles.cardLabel}>Date:</Text>
+        <Text>{new Date(item.endDateTime).toLocaleDateString().toString()}</Text>
+      </View>
+    </View>
+  );
+};
+
+const WorkHistoryScreen = () => {
+  const [workHistory, setWorkHistory] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchHiredJobs = async () => {
+      try {
+        setIsLoading(true);
+        const userId = await AsyncStorage.getItem('userId');
+        const token = await AsyncStorage.getItem('token');
+        
+        const response = await axios.get(`http://tranquil-ocean-74659.herokuapp.com/jobs/user/${userId}/hiredJobs/completed`, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        if (response.data.length > 0) {
+          const sortedJobs = response.data.sort((a, b) => new Date(b.endDateTime) - new Date(a.endDateTime));
+          setWorkHistory(sortedJobs);
+        }
+        else {
+          setWorkHistory([]);
+        }
+        setIsLoading(false);
+      } catch (error) {
+        console.error(error);
+        setIsLoading(false);
+      }
+    };
+
+    fetchHiredJobs();
+  }, []);
+
+
+  return (
+    <View style={styles.container}>
+      {isLoading ? <ActivityIndicator size="large" color="#0000ff" /> : (
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Work History</Text>
+        <FlatList
+          data={workHistory}
+          keyExtractor={item => item._id}
+          renderItem={renderWorkHistoryItem}
+          style = {{paddingVertical: 5}}
+        />
+        </View>
+    )}
+  </View>
+  );
+};
+
+export default WorkHistoryScreen;
 
 const styles = StyleSheet.create({
   container: {
@@ -46,42 +118,3 @@ const styles = StyleSheet.create({
     color: 'gray',
   },
 });
-
-const workHistory = [ /*...your work history data...*/ 
-{ id: '1', title: 'Work 1', earnings: '$100', date: 'May 1, 2023' },
-  { id: '2', title: 'Work 2', earnings: '$150', date: 'May 3, 2023' },
-  { id: '3', title: 'Work 3', earnings: '$120', date: 'May 5, 2023' },
-];
-
-const renderWorkHistoryItem = ({ item }) => (
-  /*...your item rendering...*/
-  <View style={styles.card}>
-  <Text style={styles.cardTitle}>{item.title}</Text>
-  <View style={styles.cardDetails}>
-    <Text style={styles.cardLabel}>Earnings:</Text>
-    <Text>{item.earnings}</Text>
-  </View>
-  <View style={styles.cardDetails}>
-    <Text style={styles.cardLabel}>Date:</Text>
-    <Text>{item.date}</Text>
-  </View>
-</View>
-);
-
-const WorkHistoryScreen = () => {
-  return (
-    <View style={styles.container}>
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Work History</Text>
-        <FlatList
-          data={workHistory}
-          keyExtractor={item => item.id}
-          renderItem={renderWorkHistoryItem}
-          style = {{paddingVertical: 5}}
-        />
-      </View>
-    </View>
-  );
-};
-
-export default WorkHistoryScreen;
