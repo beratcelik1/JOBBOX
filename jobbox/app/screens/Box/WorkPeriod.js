@@ -231,6 +231,24 @@ const handleConfirmMarkAsComplete = async () => {
 
   patchStatusComplete();
   setAlertModalVisible(false);
+
+  // offer if user wants to give recommendation
+  Alert.alert(
+    "Recommendation",
+    "Would you like to recommend this worker to other employers?",
+    [
+      {
+        text: "Yes",
+        onPress: () => navigation.navigate('Recommendation', { job: job }),
+        style: "cancel"
+      },
+      {
+        text: "No",
+        style: "cancel"
+      },
+    ],
+    { cancelable: false }
+  );
 };
 
 
