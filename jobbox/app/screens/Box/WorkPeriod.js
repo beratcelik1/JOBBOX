@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { View, Text, TouchableOpacity, Modal, StyleSheet, ScrollView, Button } from 'react-native';
+import { View, Text, TouchableOpacity, Modal, StyleSheet, ScrollView, Button, TextInput } from 'react-native';
 import { useRoute } from '@react-navigation/native';
 import { Marker } from 'react-native-maps'; 
 import MapView from 'react-native-maps';
@@ -14,33 +14,102 @@ import { FlatList } from 'react-native';
 
 import { PanGestureHandler, State } from 'react-native-gesture-handler';
 
-const WorkPeriodDetails = ({ job, closeModal }) => {  
+const WorkPeriodDetails = ({ job: jobProp, closeModal }) => {  
   const navigation = useNavigation();
-
-  // Extract the date and time from the startDateTime and endDateTime
+  const [job, setJob] = useState(jobProp);
   const [startDate, startTime] = formatDateTime(job.startDateTime);
   const [endDate, endTime] = formatDateTime(job.endDateTime);
-
   const [isModalVisible, setModalVisible] = useState(false);
   const [modalContent, setModalContent] = useState('');
   const [starCount, setStarCount] = useState(4.3); // Replace 5 with actual job rating
   const [user, setUser] = useState(null); 
-
   const [chatModalVisible, setChatModalVisible] = useState(false);
   const [conversationId, setConversationId] = useState(null);
+  const [isJobPoster, setIsJobPoster] = useState(false);
+  const [editModalVisible, setEditModalVisible] = useState(false);
+  const [jobDescription, setJobDescription] = useState(job.description);
+  const [editableJobDescription, setEditableJobDescription] = useState(job.description);
+  const [hiredApplicant, setHiredApplicant] = useState();
 
+  
 
   useEffect(() => {
     const fetchUser = async () => {
       const user = await AsyncStorage.getItem('userId');
-      console.log('user:', user);
+      console.log('AsyncStorage user:', user); // This will log the result of AsyncStorage.getItem('userId')
+      
+      // User id should be a string, no need to parse
+      console.log('Parsed user:', user); // This will log the parsed user
       setUser(user);
     }
-  
+    
     console.log('job:', job._id);
-  
     fetchUser();
   }, []);
+  
+  useEffect(() => {
+    const checkUser = async () => {
+      const user = await AsyncStorage.getItem('userId');
+      console.log('AsyncStorage user:', user); // This will log the result of AsyncStorage.getItem('userId')
+      
+      // User id should be a string, no need to parse
+      console.log('Parsed user:', user); // This will log the parsed user
+      setIsJobPoster(String(user) === String(job.postedBy._id));
+    }
+  
+    checkUser();
+  }, []);  
+
+  const handleEdit = () => {
+    setEditModalVisible(true);
+  };
+
+  const fetchJob = async () => {
+    const response = await fetch('https://tranquil-ocean-74659.herokuapp.com/jobs/' + job._id);
+    const data = await response.json();
+    if (response.ok) {
+        setJob(data); // set the fetched job
+    } else {
+        throw new Error(data.error);
+    }
+}
+
+  useEffect(() => {
+    fetchJob(); // fetch job details when the component mounts
+    }, []);
+
+
+
+  const saveEditedJobDescription = async () => {
+    const token = await AsyncStorage.getItem('token');
+    const userId = await AsyncStorage.getItem('userId');
+    try {
+      const response = await fetch('https://tranquil-ocean-74659.herokuapp.com/jobs/' + job._id, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`, // replace token with your actual token
+        },
+        body: JSON.stringify({
+          description: editableJobDescription,
+        }),
+      });
+  
+      const responseData = await response.json();
+  
+      if (!response.ok) {
+        throw new Error(responseData.error);
+      }
+  
+      // If save successful, update the jobDescription state
+      setJobDescription(editableJobDescription);
+      setEditModalVisible(false);
+      fetchJob();
+    } catch (error) {
+      console.log('Failed to save job description:', error);
+    }
+  };
+  
   
   const handlePress = (title, content) => {
     setModalContent({title, content});
@@ -97,8 +166,7 @@ const WorkPeriodDetails = ({ job, closeModal }) => {
 const handleChatNavigation = async () => {
   if (user && job) {
     let firstUserId = user;
-    let secondUserObj = job.postedBy && job.postedBy._id === user ? job.hiredApplicant : job.postedBy;
-    let secondUserId = secondUserObj && secondUserObj._id;
+    let secondUserId = job.postedBy._id && job.postedBy._id === user ? job.hiredApplicant._id : job.postedBy._id;
 
     if (firstUserId === secondUserId) {
       // You can handle this error however you want, maybe show a message to the user
@@ -111,7 +179,7 @@ const handleChatNavigation = async () => {
       console.log('converstaionID:', convId); // Move this line here
       setConversationId(convId); // Store the conversationId in the state
       setChatModalVisible(true); // Open the chat modal
-      setSecondUser(secondUserObj); // Set the second user
+      setSecondUser(secondUserId); // Set the second user
     } catch (error) {
       // handle error here
       console.error('Failed to get conversation:', error);
@@ -167,28 +235,68 @@ const handleChatNavigation = async () => {
         </View>
       </View> 
       
-     {/* Start of Job Description */}
-      <TouchableOpacity onPress={() => handlePress('Job Description', 'This is a sample job description... ')}>
-        <View style={styles.infoCard}>
-          <Ionicons name="information-circle" size={24} color="#4683fc" marginLeft ="2%" marginRight ="2%" />
-          <View style={styles.infoTextContainer}>
-            <Text style={styles.infoTitle}>Job Description</Text>
-            <Text style={styles.infoText}>This is a sample job description...</Text>
+      {/* Start of Job Description */}
+      <TouchableOpacity onPress={() => handlePress('Job Description', job.description)}>
+          <View style={styles.infoCard}>
+              <Ionicons name="information-circle" size={24} color="#4683fc"/>
+              <View style={{...styles.infoTextContainer, flexDirection: 'row', alignItems: 'center'}}>
+                  <View style={{flex: 1}}>
+                      <Text style={styles.infoTitle}>Job Description</Text>
+                      <Text style={styles.infoText}>
+                      {job.description.length > 20 
+                        ? `${job.description.substring(0, 20)}...` 
+                        : job.description}
+                      </Text>
+                  </View>
+                  {isJobPoster && 
+                      <View>
+                          <TouchableOpacity onPress={handleEdit}>
+                              <Ionicons name="pencil-outline" size={24} color="#4683fc" />
+                          </TouchableOpacity>
+                      </View>
+                  }
+              </View>
           </View>
-        </View>
       </TouchableOpacity>
       {/* End of Job Description */}
 
-      {/* Start of Message your Employer */}
-      <TouchableOpacity onPress={handleChatNavigation}>
-        <View style={styles.infoCard}>
-          <Ionicons name="chatbubble" size={24} color="#4683fc" marginLeft ="2%" marginRight ="2%" />
-          <View style={styles.infoTextContainer}>
-            <Text style={styles.infoTitle}>Message your employer</Text>
-            <Text style={styles.infoText}>John Doe</Text>
+      {/* Edit Job Description Modal */}
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={editModalVisible}
+        onRequestClose={() => setEditModalVisible(false)}
+      >
+        <View style={styles.modalContainer}>
+          <View style={styles.modalView}>
+            <Text style={styles.modalTitle}>Edit Job Description</Text>
+            <TextInput 
+              style={styles.input}
+              multiline
+              value={editableJobDescription}
+              onChangeText={setEditableJobDescription}
+            />
+            <Button title="Save" onPress={saveEditedJobDescription} />
+            <Button title="Cancel" onPress={() => setEditModalVisible(false)} />
           </View>
         </View>
-      </TouchableOpacity>
+      </Modal>
+      {/* End of Edit Job Description Modal */}
+
+      {/* Start of Message your Employer */}
+      <TouchableOpacity onPress={handleChatNavigation}>
+      <View style={styles.infoCard}>
+        <Ionicons name="chatbubble" size={24} color="#4683fc" marginLeft ="2%" marginRight ="2%" />
+        <View style={styles.infoTextContainer}>
+          <Text style={styles.infoTitle}>
+            {user === job.postedBy._id ? 'Message your Employee' : 'Message your Employer'}
+          </Text>
+          <Text style={styles.infoText}>
+            {user === job.postedBy._id ? `${String(job.hiredApplicant.firstname)} ${String(job.hiredApplicant.lastname)}` :`${String(job.postedBy.firstname)} ${String(job.postedBy.lastname)}`}
+          </Text>
+        </View>
+      </View>
+    </TouchableOpacity>
       {/* End of Message your Employer/EMPLOYEE */}
 
       {/* Modal */}
@@ -212,29 +320,64 @@ const handleChatNavigation = async () => {
       {/*End of Modal*/}
 
       {/* Start of Employer Info */}
-      
-      {/* Start of Employer Info */}
-      <View style={styles.infoCard2}>
-        <View><Text style={styles.infoTitle}>Employed By: John Doe</Text></View>
-        <View><Text style={styles.infoSubtitle}>About Employer</Text></View>
-        <View><Text style={styles.infoText}>This is a brief about for the dummy employer... the dummy employer is not a dummy employer</Text></View>
-        <View style = {{flexDirection: 'row', marginTop: 10}}> 
-          <Text>Employer Rating:  4.3  </Text>
-          <StarRating
-              // disabled={false}
-              maxStars={5}
-              rating={starCount}
-              selectedStar={(rating) => onStarRatingPress(rating)}
-              starSize={17}
-              fullStarColor='#4683fc'
-          />
+      {user === job.postedBy._id ? 
+        // Show Employee Information
+        <View style={styles.infoCard2}>
+          <View><Text style={styles.infoTitle}>Employee: {job.hiredApplicant?.firstname} {job.hiredApplicant?.lastname}</Text></View>
+          <View><Text style={styles.infoSubtitle}>About Employee</Text></View>
+          <View><View>
+                {job.hiredApplicant.about.map((item, index) => (
+                  <Text key={index} style={styles.infoText}>{item.description}</Text>
+                ))}
+              </View>
+            </View>
+          <View style = {{flexDirection: 'row', marginTop: 10}}> 
+            <Text>Employee Rating:  4.3  </Text>
+            <StarRating
+                // disabled={false}
+                maxStars={5}
+                rating={starCount}
+                selectedStar={(rating) => onStarRatingPress(rating)}
+                starSize={17}
+                fullStarColor='#4683fc'
+            />
 
-        </View> 
+          </View> 
           <TouchableOpacity style={styles.buttonClose2} onPress={() => { console.log("Button Pressed!") }}>
             <Text style={{ color: 'white', marginLeft: 5 }}>Mark as Complete</Text>
           </TouchableOpacity>
-      </View> 
-      {/* End of Employer Info */}     
+        </View> 
+      :
+        // Show Employer Information
+        <View style={styles.infoCard2}>
+          <View><Text style={styles.infoTitle}>Employer: {job.postedBy.firstname} {job.postedBy.lastname}</Text></View>
+          <View><Text style={styles.infoSubtitle}>About Employer</Text></View>
+          <View>
+          <View>
+          {job.postedBy.about.map((item, index) => (
+            <Text key={index} style={styles.infoText}>{item.description}</Text>
+          ))}
+        </View>
+            </View>
+          <View style = {{flexDirection: 'row', marginTop: 10}}> 
+            <Text>Employer Rating:  4.3  </Text>
+            <StarRating
+                // disabled={false}
+                maxStars={5}
+                rating={starCount}
+                selectedStar={(rating) => onStarRatingPress(rating)}
+                starSize={17}
+                fullStarColor='#4683fc'
+            />
+
+          </View> 
+          <TouchableOpacity style={styles.buttonClose2} onPress={() => { console.log("Button Pressed!") }}>
+            <Text style={{ color: 'white', marginLeft: 5 }}>Mark as Complete</Text>
+          </TouchableOpacity>
+        </View> 
+      }
+      {/* End of Employer Info */}  
+
       <View style = {{flex:1}}> 
       </View>
         <TouchableOpacity style={styles.closeBtn} onPress={closeModal}>
