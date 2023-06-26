@@ -4,6 +4,10 @@ import { StyleSheet, View, Image, Switch, TouchableOpacity, Pressable, KeyboardA
 import { TextInput, Button, Text } from 'react-native-paper';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { showMessage } from 'react-native-flash-message';
+import Icon from 'react-native-vector-icons/Ionicons';
+import PasswordInput from '../../components/PasswordInput';
+import { useForm, Controller } from 'react-hook-form';
+
 
 const logo = require('../../assets/images/jobboxlogo2.png');
 
@@ -11,17 +15,17 @@ export default function Login({ navigation, setIsAuthenticated }) {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [isRemembered, setIsRemembered] = useState(false);
+    const [loginError, setLoginError] = useState(false);
+    const [showPassword, setShowPassword] = useState(false); 
 
-    const handleLogin = () => {
+    const { control, handleSubmit } = useForm();
+
+
+    const handleLogin = (email, password) => {
         fetch('https://tranquil-ocean-74659.herokuapp.com/auth/login', {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            email: username,
-            password: password
-          })
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({ email, password })
         })
           .then(response => {
             if (!response.ok) {
@@ -59,6 +63,9 @@ export default function Login({ navigation, setIsAuthenticated }) {
           .catch(error => console.log('Error:', error));
       };
     
+      const onSubmit = data => {
+        handleLogin(data.email, data.password);
+      };
     
     useEffect(() => {
         const checkRememberedUser = async () => {
@@ -66,78 +73,68 @@ export default function Login({ navigation, setIsAuthenticated }) {
             const storedUserId = await AsyncStorage.getItem('userId');
             const remember = JSON.parse(await AsyncStorage.getItem('remember')); // retrieve 'remember' flag
 
-        if (remember && storedToken && storedUserId) {
-            // User data found in AsyncStorage, authenticate the user
-            setIsAuthenticated(true);
-        }
+            if (remember && storedToken && storedUserId) {
+                // User data found in AsyncStorage, authenticate the user
+                setIsAuthenticated(true);
+            }
         };
 
         checkRememberedUser();
     }, [setIsAuthenticated]);
-    
-      
-    return ( 
 
-        <KeyboardAvoidingView 
-            behavior={Platform.OS === 'ios' ? 'padding' : null}
-            style={{ flex: 1, padding: 15, justifyContent: 'center',}}
+
+    return (
+        <KeyboardAvoidingView
+          behavior={Platform.OS === 'ios' ? 'padding' : null}
+          style={{ flex: 1, padding: 15, justifyContent: 'center', }}
         >
-                <View style={styles.container}>
-                    <View style={styles.logoContainer}>
-                        <Image source={logo} style={styles.logo} />
-                    </View>
-
-                    <TextInput
-                        label="Email"
-                        value={username}
-                        onChangeText={setUsername}
-                        style={styles.input}
-                    />
-                    <TextInput
-                        label="Password"
-                        value={password}
-                        onChangeText={setPassword}
-                        secureTextEntry
-                        style={styles.input}
-                    />
-
-                    <View style={styles.rememberForgotContainer}>
-                        <View style={styles.rememberContainer}>
-                            <Switch
-                                value={isRemembered}
-                                onValueChange={setIsRemembered}
-                            />
-                            <Text style={styles.noBtn}> Remember me</Text>
-                        </View>
-                        <TouchableOpacity onPress={() => navigation.navigate('ForgotPassword')}>
-                            <Text style={styles.forgotPassword}>Forgot password?</Text>
-                        </TouchableOpacity>
-                    </View>
-
-                    <Pressable
-                        style={({ pressed }) => [
-                            {
-                                opacity: pressed ? 0.5 : 1,
-                            },
-                            styles.pressable,
-                        ]}
-                        onPress={() => handleLogin()}
-                    >
-                        <Button mode="contained" style={styles.button}>
-                            <Text style={styles.Btn}>Login</Text>
-                        </Button>
-                    </Pressable>
-
-                    <Button onPress={() => navigation.navigate('Signup')}>
-                        <Text style={styles.noBtn}>Don't have an account? 
-                            <Text style={styles.forgotPassword}> Sign up.</Text> 
-                        </Text>
-                    </Button>
-                </View>
+          <View style={styles.container}>
+            <View style={styles.logoContainer}>
+              <Image source={logo} style={styles.logo} />
+            </View>
+            <Controller 
+              control={control} 
+              render={({ field: { onChange, onBlur, value } }) => (
+                <TextInput
+                  label="Email"
+                  onBlur={onBlur}
+                  onChangeText={value => onChange(value)}
+                  value={value}
+                  style={{ marginBottom: 10, backgroundColor: '#fff' }}
+                />
+              )}
+              name="email"
+              rules={{ required: true }}
+              defaultValue=""
+            />
+            <PasswordInput control={control} name="password" />
+            {loginError && <Text style={styles.errorText}>Invalid email or password</Text>}
+            <View style={styles.rememberForgotContainer}>
+              <View style={styles.rememberContainer}>
+                <Switch
+                  value={isRemembered}
+                  onValueChange={setIsRemembered}
+                />
+                <Text style={styles.noBtn}> Remember me</Text>
+              </View>
+              <TouchableOpacity onPress={() => navigation.navigate('ForgotPassword')}>
+                <Text style={styles.forgotPassword}>Forgot password?</Text>
+              </TouchableOpacity>
+            </View>
+            <Pressable>
+              <Pressable
+                style={({ pressed }) => [{opacity: pressed ? 0.5 : 1,},styles.pressable,]}
+                onPress={handleSubmit(onSubmit)}
+              >
+                <Button mode="contained" style={styles.button}><Text style={styles.Btn}>Login</Text></Button>
+              </Pressable>
+              <Button onPress={() => navigation.navigate('Signup')}>
+                <Text style={styles.noBtn}>Don't have an account?<Text style={styles.forgotPassword}> Sign up.</Text></Text>
+              </Button>
+            </Pressable>
+          </View>
         </KeyboardAvoidingView>
-    
-        
-    );
+      );
 }
 
 const styles = StyleSheet.create({
@@ -145,7 +142,7 @@ const styles = StyleSheet.create({
         padding: 15,
         flex: 1,
         justifyContent: 'center',
-        backgroundColor: '#4683FC', 
+        backgroundColor: '#4683FC',
     },
     input: {
         marginBottom: 10,
@@ -153,7 +150,7 @@ const styles = StyleSheet.create({
     },
     button: {
         marginTop: 10,
-        backgroundColor: '#fff', 
+        backgroundColor: '#fff',
     },
     Btn: {
         color: '#4683FC',
@@ -186,4 +183,11 @@ const styles = StyleSheet.create({
         color: '#fff',
         fontWeight: 'bold',
     },
+    errorText: {
+        color: 'red',
+        marginBottom: 10,
+    },
+
+
+
 });
