@@ -36,23 +36,29 @@ const WorkPeriodDetails = ({ job: jobProp, closeModal }) => {
   useEffect(() => {
     const fetchUser = async () => {
       const user = await AsyncStorage.getItem('userId');
-      console.log('user:', user);
+      console.log('AsyncStorage user:', user); // This will log the result of AsyncStorage.getItem('userId')
+      
+      // User id should be a string, no need to parse
+      console.log('Parsed user:', user); // This will log the parsed user
       setUser(user);
     }
+    
     console.log('job:', job._id);
-  
     fetchUser();
   }, []);
-
-
+  
   useEffect(() => {
     const checkUser = async () => {
       const user = await AsyncStorage.getItem('userId');
+      console.log('AsyncStorage user:', user); // This will log the result of AsyncStorage.getItem('userId')
+      
+      // User id should be a string, no need to parse
+      console.log('Parsed user:', user); // This will log the parsed user
       setIsJobPoster(String(user) === String(job.postedBy._id));
     }
-    
+  
     checkUser();
-  }, []);
+  }, []);  
 
   const handleEdit = () => {
     setEditModalVisible(true);
@@ -231,22 +237,29 @@ const handleChatNavigation = async () => {
       
       {/* Start of Job Description */}
       <TouchableOpacity onPress={() => handlePress('Job Description', job.description)}>
-        <View style={styles.infoCard}>
-            <Ionicons name="information-circle" size={24} color="#4683fc" marginLeft="2%" marginRight="2%" />
-            <View style={{...styles.infoTextContainer, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
-                <View>
-                    <Text style={styles.infoTitle}>Job Description</Text>
-                    <Text style={styles.infoText}>{job.description}</Text>
-                </View>
-                {isJobPoster && 
-                    <TouchableOpacity onPress={handleEdit}>
-                        <Ionicons name="pencil-outline" size={24} color="#4683fc" marginLeft="57%" />
-                    </TouchableOpacity>
-                }
-            </View>
-        </View>
-    </TouchableOpacity>
+          <View style={styles.infoCard}>
+              <Ionicons name="information-circle" size={24} color="#4683fc"/>
+              <View style={{...styles.infoTextContainer, flexDirection: 'row', alignItems: 'center'}}>
+                  <View style={{flex: 1}}>
+                      <Text style={styles.infoTitle}>Job Description</Text>
+                      <Text style={styles.infoText}>
+                      {job.description.length > 20 
+                        ? `${job.description.substring(0, 20)}...` 
+                        : job.description}
+                      </Text>
+                  </View>
+                  {isJobPoster && 
+                      <View>
+                          <TouchableOpacity onPress={handleEdit}>
+                              <Ionicons name="pencil-outline" size={24} color="#4683fc" />
+                          </TouchableOpacity>
+                      </View>
+                  }
+              </View>
+          </View>
+      </TouchableOpacity>
       {/* End of Job Description */}
+
       {/* Edit Job Description Modal */}
       <Modal
         animationType="slide"
@@ -307,29 +320,64 @@ const handleChatNavigation = async () => {
       {/*End of Modal*/}
 
       {/* Start of Employer Info */}
-      
-      {/* Start of Employer Info */}
-      <View style={styles.infoCard2}>
-        <View><Text style={styles.infoTitle}>Employer: {job.postedBy.firstname} {job.postedBy.lastname}</Text></View>
-        <View><Text style={styles.infoSubtitle}>About Employer</Text></View>
-        <View><Text style={styles.infoText}>This is a brief about for the dummy employer... the dummy employer is not a dummy employer</Text></View>
-        <View style = {{flexDirection: 'row', marginTop: 10}}> 
-          <Text>Employer Rating:  4.3  </Text>
-          <StarRating
-              // disabled={false}
-              maxStars={5}
-              rating={starCount}
-              selectedStar={(rating) => onStarRatingPress(rating)}
-              starSize={17}
-              fullStarColor='#4683fc'
-          />
+      {user === job.postedBy._id ? 
+        // Show Employee Information
+        <View style={styles.infoCard2}>
+          <View><Text style={styles.infoTitle}>Employee: {job.hiredApplicant?.firstname} {job.hiredApplicant?.lastname}</Text></View>
+          <View><Text style={styles.infoSubtitle}>About Employee</Text></View>
+          <View><View>
+                {job.hiredApplicant.about.map((item, index) => (
+                  <Text key={index} style={styles.infoText}>{item.description}</Text>
+                ))}
+              </View>
+            </View>
+          <View style = {{flexDirection: 'row', marginTop: 10}}> 
+            <Text>Employee Rating:  4.3  </Text>
+            <StarRating
+                // disabled={false}
+                maxStars={5}
+                rating={starCount}
+                selectedStar={(rating) => onStarRatingPress(rating)}
+                starSize={17}
+                fullStarColor='#4683fc'
+            />
 
-        </View> 
+          </View> 
           <TouchableOpacity style={styles.buttonClose2} onPress={() => { console.log("Button Pressed!") }}>
             <Text style={{ color: 'white', marginLeft: 5 }}>Mark as Complete</Text>
           </TouchableOpacity>
-      </View> 
-      {/* End of Employer Info */}     
+        </View> 
+      :
+        // Show Employer Information
+        <View style={styles.infoCard2}>
+          <View><Text style={styles.infoTitle}>Employer: {job.postedBy.firstname} {job.postedBy.lastname}</Text></View>
+          <View><Text style={styles.infoSubtitle}>About Employer</Text></View>
+          <View>
+          <View>
+          {job.postedBy.about.map((item, index) => (
+            <Text key={index} style={styles.infoText}>{item.description}</Text>
+          ))}
+        </View>
+            </View>
+          <View style = {{flexDirection: 'row', marginTop: 10}}> 
+            <Text>Employer Rating:  4.3  </Text>
+            <StarRating
+                // disabled={false}
+                maxStars={5}
+                rating={starCount}
+                selectedStar={(rating) => onStarRatingPress(rating)}
+                starSize={17}
+                fullStarColor='#4683fc'
+            />
+
+          </View> 
+          <TouchableOpacity style={styles.buttonClose2} onPress={() => { console.log("Button Pressed!") }}>
+            <Text style={{ color: 'white', marginLeft: 5 }}>Mark as Complete</Text>
+          </TouchableOpacity>
+        </View> 
+      }
+      {/* End of Employer Info */}  
+
       <View style = {{flex:1}}> 
       </View>
         <TouchableOpacity style={styles.closeBtn} onPress={closeModal}>
