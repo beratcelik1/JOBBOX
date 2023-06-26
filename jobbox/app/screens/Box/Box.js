@@ -9,6 +9,8 @@ import { createMaterialTopTabNavigator } from '@react-navigation/material-top-ta
 import ChatScreen from './ChatScreen';  
 import { formatDateTime } from '../../utils/formatDateTime'; 
 import WorkPeriodDetails from './WorkPeriod';  
+import { Ionicons } from '@expo/vector-icons';
+
 
 const MyTheme = {
   ...DefaultTheme,
@@ -31,20 +33,70 @@ const BoxHiring = ({ hiringJobs }) => {
   }; 
 
   
-  const renderItem = ({ item }) => ( 
-    <TouchableOpacity style={styles.jobCard} onPress={() => handleJobPress(item)}>
-      <Text style={styles.jobTitle}>{item.title}</Text>
-      <View style={[
-        styles.jobStatusContainer,
-        item.status === 'Applied' && { backgroundColor: '#5ec949' },
-        item.status === 'in progress' && { backgroundColor: '#4683fc' },
-        item.status === 'Completed' && { backgroundColor: '#c7c7c7'}
-      ]}>
-        <Text style={styles.jobStatus}>{item.status}</Text>
-      </View>
-    </TouchableOpacity>
-  );
+  const renderItem = ({ item }) => {
+    const [startDate, startTime] = formatDateTime(item.startDateTime);
+    const [endDate, endTime] = formatDateTime(item.endDateTime);
+    
+    return (
+      <TouchableOpacity style={styles.jobCard} onPress={() => handleJobPress(item)}>
+      <View style= {{flexDirection: 'row', justifyContent: 'space-between',}}>
+        <Text style={{...styles.jobTitle, color: '#fff'} }>{item.title}</Text>
+        <View style={[
+          styles.jobStatusContainer,
+          item.status === 'Applied' && { backgroundColor: '#5ec949' },
+          item.status === 'in progress' && { backgroundColor: '#fff' },
+          item.status === 'Completed' && { backgroundColor: '#c7c7c7'}
+        ]}>
+          <Text style={{...styles.jobStatus, color: '#4683fc'}}>{item.status}</Text>
+        </View>
+      </View> 
+      <View
+        style={{
+        borderBottomColor: '#fff',
+        borderBottomWidth: 1.5,
+        marginBottom: 10,
+        marginTop: 5, 
+        }}/> 
 
+    <View style = {{ flexDirection: 'row', justifyContent: 'flex-start', marginLeft: 5}}> 
+        <View style = {{ width: '60%'}} > 
+            <View style={styles.jobDetails}>
+                <Text style={styles.jobDescriptionH}>Employee: {item.hiredApplicant.firstname} {item.hiredApplicant.lastname}</Text>
+            </View>
+            <View style={styles.jobDetails}>
+                <Text style={styles.jobDescriptionH}>Category: {item.category}</Text>
+            </View>
+        </View> 
+
+        <View style = {{ width: '40%'}}> 
+            <View style={{flexDirection: 'row', justifyContent: 'flex-start', marginBottom: 5}}> 
+                <Ionicons name="md-cash" size={20} color="#fff" /> 
+                <Text style={styles.jobDescriptionH}>  {item.pay} $ </Text>
+            </View> 
+
+            <View style={{flexDirection: 'row', justifyContent: 'flex-start'}}>
+                <Ionicons name="md-time" size={20} color="#fff" />
+                <Text style={styles.jobDescriptionH}>  {item.estimatedTime}</Text>
+                <Text style={styles.jobDescriptionH}>  {item.estimatedTimeUnit}</Text>
+            </View> 
+        </View>
+    </View> 
+    <View style={styles.timeContainer}>
+          <View style={styles.timeBoxH}>
+            <Text style={styles.timeTitleH}>Start</Text>
+            <Text style={styles.timeTextH}>{startDate}</Text>
+            <Text style={styles.timeTextH}>{startTime}</Text>
+          </View>
+          <View style={styles.timeBoxH} marginLeft='2%'>
+            <Text style={styles.timeTitleH}>End</Text>
+            <Text style={styles.timeTextH}>{endDate}</Text>
+            <Text style={styles.timeTextH}>{endTime}</Text>
+          </View>
+        </View>
+
+      </TouchableOpacity>
+    );
+  };
   return (
     <View style={{flex: 1}}>
       <FlatList 
@@ -80,20 +132,71 @@ const BoxWorking = ({ workingJobs }) => {
     setModalVisible(true);
   }; 
 
- 
-  const renderItem = ({ item }) => ( 
-    <TouchableOpacity style={styles.jobCard} onPress={() => handleJobPress(item)}>
-      <Text style={styles.jobTitle}>{item.title}</Text>
-      <View style={[
-        styles.jobStatusContainer,
-        item.status === 'Applied' && { backgroundColor: '#5ec949' },
-        item.status === 'in progress' && { backgroundColor: '#4683fc' },
-        item.status === 'Completed' && { backgroundColor: '#c7c7c7'}
-      ]}>
-        <Text style={styles.jobStatus}>{item.status}</Text>
-      </View>
-    </TouchableOpacity>
-  );
+  const renderItem = ({ item }) => {
+    const [startDate, startTime] = formatDateTime(item.startDateTime);
+    const [endDate, endTime] = formatDateTime(item.endDateTime);
+    
+    return (
+      <TouchableOpacity style={styles.jobCardWork} onPress={() => handleJobPress(item)}>
+      <View style= {{flexDirection: 'row', justifyContent: 'space-between',}}>
+        <Text style={styles.jobTitle}>{item.title}</Text>
+        <View style={[
+          styles.jobStatusContainer,
+          item.status === 'Applied' && { backgroundColor: '#5ec949' },
+          item.status === 'in progress' && { backgroundColor: '#4683fc' },
+          item.status === 'Completed' && { backgroundColor: '#c7c7c7'}
+        ]}>
+          <Text style={styles.jobStatus}>{item.status}</Text>
+        </View>
+      </View> 
+      <View
+        style={{
+        borderBottomColor: '#4683fc',
+        borderBottomWidth: 1.5,
+        marginBottom: 10,
+        marginTop: 5, 
+        }}/> 
+
+    <View style = {{ flexDirection: 'row', justifyContent: 'flex-start', marginLeft: 5}}> 
+        <View style = {{ width: '60%'}} > 
+            <View style={styles.jobDetails}>
+                <Text style={styles.jobDescription}>Employer: {item.postedBy.firstname} {item.postedBy.lastname}</Text>
+            </View>
+            <View style={styles.jobDetails}>
+                <Text style={styles.jobDescription}>Category: {item.category}</Text>
+            </View>
+        </View> 
+
+        <View style = {{ width: '40%'}}> 
+            <View style={{flexDirection: 'row', justifyContent: 'flex-start', marginBottom: 5}}> 
+                <Ionicons name="md-cash" size={20} color="#4683fc" /> 
+                <Text style={styles.jobDescription}>  {item.pay} $ </Text>
+            </View> 
+
+            <View style={{flexDirection: 'row', justifyContent: 'flex-start'}}>
+                <Ionicons name="md-time" size={20} color="#4683fc" />
+                <Text style={styles.jobDescription}>  {item.estimatedTime}</Text>
+                <Text style={styles.jobDescription}>  {item.estimatedTimeUnit}</Text>
+            </View> 
+        </View>
+    </View> 
+    <View style={styles.timeContainer}>
+          <View style={styles.timeBox}>
+            <Text style={styles.timeTitle}>Start</Text>
+            <Text style={styles.timeText}>{startDate}</Text>
+            <Text style={styles.timeText}>{startTime}</Text>
+          </View>
+          <View style={styles.timeBox} marginLeft='2%'>
+            <Text style={styles.timeTitle}>End</Text>
+            <Text style={styles.timeText}>{endDate}</Text>
+            <Text style={styles.timeText}>{endTime}</Text>
+          </View>
+        </View>
+
+      </TouchableOpacity>
+    );
+  };
+  
 
   return (
     <View style={{flex: 1}}>
@@ -219,7 +322,62 @@ const Box = () => {
   );
 };
 
-const styles = {
+const styles = {  
+  timeContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: -5,
+    marginBottom: 5
+  },
+  timeBox: {
+    flex: 1,
+    alignItems: 'center',
+    backgroundColor: '#fff',
+    paddingVertical: 7, 
+    borderRadius: 10, 
+    marginTop: 10, 
+  },
+  timeTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#000',
+  },
+  timeText: {
+    fontSize: 13,
+    color: '#000',
+  },
+  jobDescription: {
+    fontSize: 14,
+    color: '#000',
+  }, 
+   
+  timeBoxH: {
+    flex: 1,
+    alignItems: 'center',
+    backgroundColor: '#4683fc',
+    paddingVertical: 7, 
+    borderRadius: 10, 
+    marginTop: 10, 
+  },
+  timeTitleH: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#fff',
+  },
+  timeTextH: {
+    fontSize: 13,
+    color: '#fff',
+  },
+  jobDescriptionH: {
+    fontSize: 14,
+    color: '#fff',
+  },
+
+  jobDetails: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      marginBottom: 5,
+  }, 
   container: {
     flex: 1,
     padding: 10,
@@ -231,9 +389,22 @@ const styles = {
     marginVertical: 10,
   },
   jobCard: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    padding: 10,
+    marginVertical: 8,
+    marginHorizontal: 20,
+    backgroundColor: '#4683fc',
+    borderRadius: 10,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.5,
+    shadowRadius: 6.84, 
+    borderWidth: 5, // Specify the width of the border
+    borderColor: '#fff', // Specify the color of the border
+  }, 
+  jobCardWork: {
     padding: 10,
     marginVertical: 8,
     marginHorizontal: 20,
@@ -244,11 +415,14 @@ const styles = {
       width: 0,
       height: 2,
     },
-    shadowOpacity: 0.25,
-    shadowRadius: 6.84,
+    shadowOpacity: 0.,
+    shadowRadius: 6.84, 
+    borderWidth: 5, // Specify the width of the border
+    borderColor: '#4683fc', // Specify the color of the border
   },
   jobTitle: {
     fontSize: 18,
+    marginHorizontal: 5,
   },
   jobStatus: {
     fontSize: 16,

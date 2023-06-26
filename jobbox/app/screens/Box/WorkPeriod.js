@@ -18,9 +18,12 @@ const WorkPeriodDetails = ({ job: jobProp, closeModal }) => {
   const navigation = useNavigation();
   const [job, setJob] = useState(jobProp);
   const [startDate, startTime] = formatDateTime(job.startDateTime);
-  const [endDate, endTime] = formatDateTime(job.endDateTime);
+  const [endDate, endTime] = formatDateTime(job.endDateTime); 
   const [isModalVisible, setModalVisible] = useState(false);
-  const [modalContent, setModalContent] = useState('');
+  const [modalContent, setModalContent] = useState('');  
+  const [aboutModalVisible, setAboutModalVisible] = useState(false); 
+  const [aboutModalVisibleEmp, setAboutModalVisibleEmp] = useState(false);
+  const [aboutModalContent, setAboutModalContent] = useState('');
   const [starCount, setStarCount] = useState(4.3); // Replace 5 with actual job rating
   const [user, setUser] = useState(null); 
   const [chatModalVisible, setChatModalVisible] = useState(false);
@@ -30,8 +33,6 @@ const WorkPeriodDetails = ({ job: jobProp, closeModal }) => {
   const [jobDescription, setJobDescription] = useState(job.description);
   const [editableJobDescription, setEditableJobDescription] = useState(job.description);
   const [hiredApplicant, setHiredApplicant] = useState();
-
-  
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -114,11 +115,22 @@ const WorkPeriodDetails = ({ job: jobProp, closeModal }) => {
   const handlePress = (title, content) => {
     setModalContent({title, content});
     setModalVisible(true);
-  }
+  } 
 
+  const handleAboutPress = () => {
+    setAboutModalVisible(true);
+  };
+  const handleAboutPressEmp = () => {
+    setAboutModalVisibleEmp(true);
+  };
   const closeModalFun = () => {
     setModalVisible(false);
-  }
+  } 
+  const closeModalChat = () => {
+    setChatModalVisible(false);
+  } 
+
+  
 
   const onStarRatingPress = (rating) => {
     setStarCount(rating);
@@ -208,7 +220,6 @@ const handleChatNavigation = async () => {
           title="Employer Location"
         />
       </MapView> 
-      <ScrollView> 
 
       <View style={styles.jobCard}> 
         <Text style={styles.jobTitle}>{job.title}</Text>
@@ -325,16 +336,24 @@ const handleChatNavigation = async () => {
 
       {/* Start of Employer Info */}
       {user === job.postedBy._id ? 
-        // Show Employee Information
-        <View style={styles.infoCard2}>
+        // Show Employee Information 
+        <TouchableOpacity style={styles.infoCard2} onPress={() => handleAboutPressEmp()}>
           <View><Text style={styles.infoTitle}>Employee: {job.hiredApplicant?.firstname} {job.hiredApplicant?.lastname}</Text></View>
           <View><Text style={styles.infoSubtitle}>About Employee</Text></View>
-          <View><View>
-                {job.hiredApplicant.about.map((item, index) => (
-                  <Text key={index} style={styles.infoText}>{item.description}</Text>
+          
+          <View>
+            <View>
+              {job.hiredApplicant.about.map((item, index) => (
+                  <Text key={index} style={styles.infoText}>
+                    {index === 0 
+                      ? (item.description.length > 50 
+                          ? `${item.description.substring(0, 50)}...` 
+                          : item.description)
+                      : ''}
+                  </Text>
                 ))}
-              </View>
             </View>
+          </View>
           <View style = {{flexDirection: 'row', marginTop: 10}}> 
             <Text>Employee Rating:  4.3  </Text>
             <StarRating
@@ -350,19 +369,26 @@ const handleChatNavigation = async () => {
           <TouchableOpacity style={styles.buttonClose2} onPress={() => { console.log("Button Pressed!") }}>
             <Text style={{ color: 'white', marginLeft: 5 }}>Mark as Complete</Text>
           </TouchableOpacity>
-        </View> 
+        </TouchableOpacity>
       :
-        // Show Employer Information
-        <View style={styles.infoCard2}>
+        // Show Employer Information 
+        <TouchableOpacity style={styles.infoCard2} onPress={() => handleAboutPress()}>
           <View><Text style={styles.infoTitle}>Employer: {job.postedBy.firstname} {job.postedBy.lastname}</Text></View>
           <View><Text style={styles.infoSubtitle}>About Employer</Text></View>
           <View>
           <View>
-          {job.postedBy.about.map((item, index) => (
-            <Text key={index} style={styles.infoText}>{item.description}</Text>
-          ))}
-        </View>
-            </View>
+            {job.postedBy.about.map((item, index) => (
+              <Text key={index} style={styles.infoText}>
+                {index === 0 
+                  ? (item.description.length > 50 
+                      ? `${item.description.substring(0, 50)}...` 
+                      : item.description)
+                  : ''}
+              </Text>
+            ))}
+          </View>
+
+          </View>
           <View style = {{flexDirection: 'row', marginTop: 10}}> 
             <Text>Employer Rating:  4.3  </Text>
             <StarRating
@@ -378,11 +404,52 @@ const handleChatNavigation = async () => {
           <TouchableOpacity style={styles.buttonClose2} onPress={() => { console.log("Button Pressed!") }}>
             <Text style={{ color: 'white', marginLeft: 5 }}>Mark as Complete</Text>
           </TouchableOpacity>
-        </View> 
+        </TouchableOpacity>
       }
       {/* End of Employer Info */}  
 
-      </ScrollView> 
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={aboutModalVisible}
+        onRequestClose={() => setAboutModalVisible(false)}
+      >
+        <View style={styles.modalContainer}>
+          <View style={styles.modalView}>
+            <Text style={styles.modalTitle}>About {job.postedBy.firstname} {job.postedBy.lastname}</Text>
+            <View> 
+              {job.postedBy.about.map((item, index) => (
+                <Text key={index} style={styles.infoText}>{item.description}</Text>
+              ))}
+            </View>
+            <TouchableOpacity style={styles.buttonClose} onPress={() => setAboutModalVisible(false)}>
+              <Text style={{ color: 'white', marginLeft: 5 }}>Close</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal> 
+
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={aboutModalVisibleEmp}
+        onRequestClose={() => setAboutModalVisibleEmp(false)}
+      >
+        <View style={styles.modalContainer}>
+          <View style={styles.modalView}>
+            <Text style={styles.modalTitle}>About {job.hiredApplicant.firstname} {job.hiredApplicant.lastname}</Text>
+            <View> 
+              {job.hiredApplicant.about.map((item, index) => (
+                <Text key={index} style={styles.infoText}>{item.description}</Text>
+              ))}
+            </View>
+            <TouchableOpacity style={styles.buttonClose} onPress={() => setAboutModalVisibleEmp(false)}>
+              <Text style={{ color: 'white', marginLeft: 5 }}>Close</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+
 
       <TouchableOpacity style={styles.closeBtn} onPress={closeModal}>
         <Text style={{ color: '#4683fc', fontWeight: '600'}}>Close</Text>
@@ -430,8 +497,8 @@ const handleChatNavigation = async () => {
           shadowOpacity: 0.25,
           shadowRadius: 6.84,
           elevation: 5, borderRadius: 10 }}>
-            <View style = {{height: 55, marginTop: 10}}>
-              <TouchableOpacity style={styles.closeBtn2} onPress={closeModal}>
+            <View style = {{height: 55, marginTop: 30, flex: 1}}>
+              <TouchableOpacity style={styles.closeBtn2} onPress={closeModalChat}>
                 <Ionicons name="close-circle" size={24} color="#4683fc" marginLeft = "1%"/>
               </TouchableOpacity>
             </View>
@@ -512,7 +579,7 @@ const styles = {
     padding: 10,
     marginVertical: 8,
     marginLeft: 5,
-    marginTop: 5,
+    marginTop: 10,
     marginRight: 5,
     backgroundColor: '#fff',
     borderRadius: 10,
@@ -673,8 +740,6 @@ const styles = {
     marginBottom: 10, 
   }, 
   closeBtn2: { 
-    flex: 1,
-    flexDirection: 'row',
     alignItems: 'center',
     marginHorizontal: 5,
     marginLeft: 10,
@@ -682,7 +747,7 @@ const styles = {
     paddingTop: 8,
     paddingBottom: 8,
     paddingLeft: 10,
-    paddingRight: 15,
+    paddingRight: 10,
     borderRadius: 10,
     shadowColor: '#000',
     shadowOffset: {
@@ -695,7 +760,7 @@ const styles = {
     bottom: 40,
     marginBottom: -5, 
     marginTop: 20,
-    alignSelf: 'center'
+    width: 45
   }, 
   closeBtn: {  
     position: 'absolute', 
