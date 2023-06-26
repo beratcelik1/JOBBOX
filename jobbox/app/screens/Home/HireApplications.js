@@ -7,16 +7,21 @@ import axios from 'axios';
 import LoadingScreen from '../../components/LoadingScreen'; 
 import { formatDateTime } from '../../utils/formatDateTime';
 import defaultImage from '../../assets/images/defaultimage3.png';
+import usePayment from '../../hooks/usePayment';
+import { showMessage } from "react-native-flash-message";
 
 export function HireApplicationsScreen({ route, navigation }) {
   const { job, isArchived = false } = route.params; 
   const [applicants, setApplicants] = useState();
   const [refreshing, setRefreshing] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [hiredApplicantId, setHiredApplicantId] = useState(null);  
+  const [hiredApplicantId, setHiredApplicantId] = useState(null);
 
   const [startDate, startTime] = formatDateTime(job.startDateTime);
   const [endDate, endTime] = formatDateTime(job.endDateTime);
+
+  // use hooks here
+  const { openPaymentSheet } = usePayment({ jobId: job._id });
   
 
   const fetchApplicants = async () => {
@@ -47,6 +52,12 @@ export function HireApplicationsScreen({ route, navigation }) {
   }, []); 
 
   const handleHire = async (applicantId) => {
+    const paymentResult = await openPaymentSheet();
+    if (paymentResult.error) {
+      Alert.alert('Error', 'Payment failed. The hiring process has been stopped. Please try again.');
+      return; // If payment fails, don't proceed with the rest of the code
+    }
+
     const token = await AsyncStorage.getItem('token');
     try {
       const response = await axios.post(
@@ -80,6 +91,16 @@ export function HireApplicationsScreen({ route, navigation }) {
       console.error(error.response.data);
       Alert.alert('Error', 'Something went wrong while hiring the user');
     }
+
+    showMessage({
+      message: "Your new hire is now available in the BOX tab!",
+      type: "success",
+      icon: "success",
+      duration: 3000,
+      hideOnPress: true,
+      floating: true,
+    });
+    navigation.navigate('HireScreen');
   };
   
   const handleReject = async (applicantId) => {
@@ -266,7 +287,7 @@ export function HireApplicationsScreen({ route, navigation }) {
             
             </>
             )} 
-        </View>  
+        </View>
         
         {isArchived && 
         <View style={styles.timeContainer}>
