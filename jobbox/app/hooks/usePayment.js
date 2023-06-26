@@ -59,17 +59,19 @@ const usePayment = ({ jobId }) => {
   const openPaymentSheet = async () => {
     if (!paymentReady) {
       Alert.alert('Error', 'Payment Sheet is not ready yet.');
-      return;
+      return { error: 'Payment Sheet is not ready yet.' }; // return error
     }
-    
+  
     setLoading(true);
     const { error } = await presentPaymentSheet();
     setLoading(false);
-
+  
     if (error) {
       Alert.alert(`Error code: ${error.code}`, error.message);
+      return { error }; // return error
     } else {
       Alert.alert('Success', 'Your payment is confirmed!');
+      return { error: null }; // return null error
     }
   };
 

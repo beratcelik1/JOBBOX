@@ -52,7 +52,12 @@ export function HireApplicationsScreen({ route, navigation }) {
   }, []); 
 
   const handleHire = async (applicantId) => {
-    await openPaymentSheet();
+    const paymentResult = await openPaymentSheet();
+    if (paymentResult.error) {
+      Alert.alert('Error', 'Payment failed. The hiring process has been stopped. Please try again.');
+      return; // If payment fails, don't proceed with the rest of the code
+    }
+
     const token = await AsyncStorage.getItem('token');
     try {
       const response = await axios.post(
