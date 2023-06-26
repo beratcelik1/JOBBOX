@@ -2,9 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { View, FlatList, Text, StyleSheet } from 'react-native';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { ActivityIndicator } from 'react-native';
 
 const renderWorkHistoryItem = ({ item }) => {
-  // console.log(item);
   return (
     <View style={styles.card}>
       <Text style={styles.cardTitle}>{item.title}</Text>
@@ -22,10 +22,12 @@ const renderWorkHistoryItem = ({ item }) => {
 
 const WorkHistoryScreen = () => {
   const [workHistory, setWorkHistory] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const fetchHiredJobs = async () => {
       try {
+        setIsLoading(true);
         const userId = await AsyncStorage.getItem('userId');
         const token = await AsyncStorage.getItem('token');
         
@@ -34,28 +36,38 @@ const WorkHistoryScreen = () => {
             'Authorization': `Bearer ${token}`
           }
         });
-
-        setWorkHistory(response.data);
+        if (response.data.length > 0) {
+          const sortedJobs = response.data.sort((a, b) => new Date(b.endDateTime) - new Date(a.endDateTime));
+          setWorkHistory(sortedJobs);
+        }
+        else {
+          setWorkHistory([]);
+        }
+        setIsLoading(false);
       } catch (error) {
         console.error(error);
+        setIsLoading(false);
       }
     };
 
     fetchHiredJobs();
   }, []);
 
+
   return (
     <View style={styles.container}>
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Work History</Text>
+      {isLoading ? <ActivityIndicator size="large" color="#0000ff" /> : (
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Work History</Text>
         <FlatList
           data={workHistory}
-          keyExtractor={item => item.id}
+          keyExtractor={item => item._id}
           renderItem={renderWorkHistoryItem}
           style = {{paddingVertical: 5}}
         />
-      </View>
-    </View>
+        </View>
+    )}
+  </View>
   );
 };
 

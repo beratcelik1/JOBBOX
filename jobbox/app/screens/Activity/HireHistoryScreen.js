@@ -2,9 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { View, FlatList, Text, StyleSheet } from 'react-native';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { ActivityIndicator } from 'react-native';
 
 const renderHireHistoryItem = ({ item }) => {
-  // console.log(item);
   return (
     <View style={styles.card}>
       <Text style={styles.cardTitle}>{item.title}</Text>
@@ -22,10 +22,12 @@ const renderHireHistoryItem = ({ item }) => {
 
 const HireHistoryScreen = () => {
   const [hireHistory, setHireHistory] = useState([]);
-  
+  const [isLoading, setIsLoading] = useState(true);
+
   useEffect(() => {
     const fetchPostedJobs = async () => {
       try {
+        setIsLoading(true);
         const userId = await AsyncStorage.getItem('userId');
         const token = await AsyncStorage.getItem('token');
         
@@ -35,9 +37,17 @@ const HireHistoryScreen = () => {
           }
         });
 
-        setHireHistory(response.data);
+        if (response.data.length > 0) {
+          const sortedJobs = response.data.sort((a, b) => new Date(b.endDateTime) - new Date(a.endDateTime));
+          setHireHistory(sortedJobs);
+        }
+        else {
+          setHireHistory([]);
+        }
+        setIsLoading(false);
       } catch (error) {
         console.error(error);
+        setIsLoading(false);
       }
     };
 
@@ -46,15 +56,17 @@ const HireHistoryScreen = () => {
 
   return (
     <View style={styles.container}>
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Hire History</Text>
+      {isLoading ? <ActivityIndicator size="large" color="#0000ff" /> : (
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Hire History</Text>
         <FlatList
           data={hireHistory}
           keyExtractor={item => item._id}
           renderItem={renderHireHistoryItem}
           style = {{paddingVertical: 5}}
         />
-      </View>
+        </View>
+      )}
     </View>
   );
 };

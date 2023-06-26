@@ -6,6 +6,228 @@ import PieChart from 'react-native-pie-chart'
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useFocusEffect } from '@react-navigation/native';
+import { ActivityIndicator } from 'react-native';
+
+const WalletDetail = ({ label, value, onEdit }) => (
+  <View style={styles.walletDetail}>
+    <Text style={styles.walletDetailLabel}>{label}</Text>
+    <Text style={styles.walletDetailValue}>{value}</Text>
+    {onEdit && <Button title="Edit" onPress={onEdit} />}
+  </View>
+);
+
+const renderWorkHistoryItem = ({ item }) => {
+  return (
+    <View style={styles.card}>
+      <Text style={styles.cardTitle}>{item.title}</Text>
+      <View style={styles.cardDetails}>
+        <Text style={styles.cardLabel}>Earned:</Text>
+        <Text>${item.pay}</Text> 
+      </View>
+      <View style={styles.cardDetails}>
+        <Text style={styles.cardLabel}>Date:</Text>
+        <Text>{new Date(item.endDateTime).toLocaleDateString().toString()}</Text>
+      </View>
+    </View>
+  );
+};
+
+const renderHireHistoryItem = ({ item }) => {
+  return (
+    <View style={styles.card}>
+      <Text style={styles.cardTitle}>{item.title}</Text>
+      <View style={styles.cardDetails}>
+        <Text style={styles.cardLabel}>Spent:</Text>
+        <Text>${item.pay}</Text> 
+      </View>
+      <View style={styles.cardDetails}>
+        <Text style={styles.cardLabel}>Date:</Text>
+        <Text>{new Date(item.endDateTime).toLocaleDateString().toString()}</Text>
+      </View>
+    </View>
+  );
+};
+
+const Activity = () => {
+  const [earningTarget, setTargetEarning] = useState(50);
+  const [spendingTarget, setTargetSpent] = useState(50);
+  const [hireHistory, setHireHistory] = useState([]);
+  const [workHistory, setWorkHistory] = useState([]);
+  const [totalEarnings, setTotalEarnings] = useState(0);
+  const [totalSpent, setTotalSpent] = useState(0);
+  const [isFetchingTargets, setIsFetchingTargets] = useState(true);
+  const [isFetchingPostedJobs, setIsFetchingPostedJobs] = useState(true);
+  const [isFetchingHiredJobs, setIsFetchingHiredJobs] = useState(true);
+
+  const isLoading = isFetchingTargets || isFetchingPostedJobs || isFetchingHiredJobs;
+
+
+  useFocusEffect (
+    React.useCallback(() => {
+      const fetchTargets = async () => {
+        const token = await AsyncStorage.getItem('token');
+        axios.get('https://tranquil-ocean-74659.herokuapp.com/auth/user/me', { headers: { Authorization: `Bearer ${token}` } })
+          .then((res) => {
+            console.log('Response from server: ', res.data);
+            setTargetEarning(res.data.earningTarget);
+            setTargetSpent(res.data.spendingTarget);
+            setIsFetchingTargets(false);
+          })
+          .catch((err) => console.error(err));
+      };
+  
+      fetchTargets();
+    }, [])
+  );
+
+  useEffect(() => {
+    const fetchPostedJobs = async () => {
+      try {
+        const userId = await AsyncStorage.getItem('userId');
+        const token = await AsyncStorage.getItem('token');
+        
+        const response = await axios.get(`http://tranquil-ocean-74659.herokuapp.com/jobs/user/${userId}/postedJobs/completed`, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+
+        if (response.data.length > 0) {
+          const sortedJobs = response.data.sort((a, b) => new Date(b.endDateTime) - new Date(a.endDateTime));
+          const totalSpent = sortedJobs.reduce((acc, currJob) => acc + currJob.pay, 0);
+          setHireHistory([sortedJobs[0]]);
+          setTotalSpent(totalSpent);
+        } else {
+          setHireHistory([]);
+          setTotalSpent(0);
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    fetchPostedJobs().then(() => setIsFetchingPostedJobs(false));
+  }, []);
+
+  useEffect(() => {
+    const fetchHiredJobs = async () => {
+      try {
+        const userId = await AsyncStorage.getItem('userId');
+        const token = await AsyncStorage.getItem('token');
+        
+        const response = await axios.get(`http://tranquil-ocean-74659.herokuapp.com/jobs/user/${userId}/hiredJobs/completed`, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        
+        if (response.data.length > 0) {
+          const sortedJobs = response.data.sort((a, b) => new Date(b.endDateTime) - new Date(a.endDateTime));
+          const totalEarnings = sortedJobs.reduce((acc, currJob) => acc + currJob.pay, 0);
+          setWorkHistory([sortedJobs[0]]);
+          setTotalEarnings(totalEarnings);
+        } else {
+          setWorkHistory([]);
+          setTotalEarnings(0);
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    
+    fetchHiredJobs().then(() => setIsFetchingHiredJobs(false));
+  }, []);
+  
+  let earnCalc;
+  if (earningTarget !== 0 && earningTarget != null && earningTarget != '') {
+    earnCalc = Math.min((totalEarnings / earningTarget) * 100, 100);
+  } else {
+    earnCalc = 100;
+  }
+
+  let spentCalc;
+  if (spendingTarget !== 0 && spendingTarget != null && spendingTarget != '') {
+    spentCalc = Math.min((totalSpent / spendingTarget) * 100, 100);
+  } else {
+    spentCalc = 100;
+  }
+
+  
+  const navigation = useNavigation();
+  const widthAndHeight = 150
+  const seriesEarn = [earnCalc > 0 ? earnCalc : 0.3, earnCalc > 0 ? 100-earnCalc : 100]
+  const seriesSpent = [spentCalc > 0 ? spentCalc : 0.3, spentCalc > 0 ? 100-spentCalc : 100]
+
+  return (
+    <ScrollView style={styles.container}>
+      {isLoading ? (
+        <View style={{flex: 1, justifyContent: 'center'}}>
+          <ActivityIndicator size="large" color="#0000ff" /> 
+        </View>
+      ) : (
+        <>
+          <Text style={styles.sectionTitle}>Wallet</Text>
+          <View style={styles.wallet}>
+            <View style={{flexDirection: 'row', justifyContent:'space-around'}}> 
+              <Text style={styles.sectionTitle}>Earning</Text>
+              <Text style={styles.sectionTitle}>Spending</Text>
+            </View>
+            <View style={styles.piContainer}>
+                <PieChart
+                  widthAndHeight={widthAndHeight}
+                  series={seriesEarn}
+                  sliceColor={['#4683fc','#fff']}
+                
+                />
+                <PieChart
+                  widthAndHeight={widthAndHeight}
+                  series={seriesSpent}
+                  sliceColor={['#c0c2c7','#fff']}
+                />
+            </View>
+  
+            <WalletDetail label="Total Earnings" value={`$${totalEarnings}`} />
+            <WalletDetail label="Total Spent" value={`$${totalSpent}`} />
+          
+            <View
+            style={{
+              borderBottomColor: 'black',
+              borderBottomWidth: 1.5,
+              marginBottom: 10,
+            }}/>
+            
+            <WalletDetail label="Monthly Earning Target" value={`$${earningTarget}`} />
+            <WalletDetail label="Monthly Spending Target" value={`$${spendingTarget}`} /> 
+  
+            <TouchableOpacity style={styles.button2} onPress={() => navigation.navigate('EditTargetsScreen')} >
+              <Text style = {{fontWeight: '700', color: '#4683fc'}}>Edit Targets </Text>
+            </TouchableOpacity>
+          </View>
+  
+          <View style={styles.section}>
+            <TouchableOpacity
+              style={styles.button}
+              onPress={() => navigation.navigate('WorkHistoryScreen')}>
+              <Text style={styles.buttonText}>Work History</Text>
+              {workHistory.map(item => <View key={item._id}>{renderWorkHistoryItem({item})}</View>)}
+            </TouchableOpacity>
+          </View>
+  
+          <View style={styles.section} >
+            <TouchableOpacity
+              style={styles.button}
+              onPress={() => navigation.navigate('HireHistoryScreen')}>
+              <Text style={styles.buttonText}>Hire History</Text>
+              {hireHistory.map(item => <View key={item._id}>{renderHireHistoryItem({item})}</View>)}
+            </TouchableOpacity>
+          </View> 
+          <View style= {{marginBottom: 30}}> 
+          </View>
+        </>
+      )}
+    </ScrollView>
+  );  
+}
+export default Activity;
 
 const styles = StyleSheet.create({
   container: {
@@ -110,160 +332,3 @@ const styles = StyleSheet.create({
     margin:10,
 },
 });
-
-const workHistory = [ /*...your work history data...*/ 
-  { id: '3', title: 'Work 3', earnings: '$120', date: 'May 5, 2023' },
-];
-
-const hireHistory = [ /*...your hire history data...*/ 
- { id: '3', title: 'Hire 3', spent: '$220', date: 'May 6, 2023' },
-];
-
-const WalletDetail = ({ label, value, onEdit }) => (
-  <View style={styles.walletDetail}>
-    <Text style={styles.walletDetailLabel}>{label}</Text>
-    <Text style={styles.walletDetailValue}>{value}</Text>
-    {onEdit && <Button title="Edit" onPress={onEdit} />}
-  </View>
-);
-
-const renderWorkHistoryItem = ({ item }) => (
-  /*...your item rendering...*/
-  <View style={styles.card}>
-  <Text style={styles.cardTitle}>{item.title}</Text>
-  <View style={styles.cardDetails}>
-    <Text style={styles.cardLabel}>Earnings:</Text>
-    <Text>{item.earnings}</Text>
-  </View>
-  <View style={styles.cardDetails}>
-    <Text style={styles.cardLabel}>Date:</Text>
-    <Text>{item.date}</Text>
-  </View>
-</View>
-);
-
-const renderHireHistoryItem = ({ item }) => (
-  /*...your item rendering...*/
-  <View style={styles.card}>
-    <Text style={styles.cardTitle}>{item.title}</Text>
-    <View style={styles.cardDetails}>
-      <Text style={styles.cardLabel}>Spent:</Text>
-      <Text>{item.spent}</Text>
-    </View>
-    <View style={styles.cardDetails}>
-      <Text style={styles.cardLabel}>Date:</Text>
-      <Text>{item.date}</Text>
-    </View>
-  </View>
-);
-
-const Activity = () => {
-  const [earningTarget, setTargetEarning] = useState(50);
-  const [spendingTarget, setTargetSpent] = useState(50);
-
-  useFocusEffect (
-    React.useCallback(() => {
-      const fetchTargets = async () => {
-        const token = await AsyncStorage.getItem('token');
-        axios.get('https://tranquil-ocean-74659.herokuapp.com/auth/user/me', { headers: { Authorization: `Bearer ${token}` } })
-          .then((res) => {
-            console.log('Response from server: ', res.data);
-            setTargetEarning(res.data.earningTarget);
-            setTargetSpent(res.data.spendingTarget);
-          })
-          .catch((err) => console.error(err));
-      };
-  
-      fetchTargets();
-    }, [])
-  );
-  
-  const totalEarnings = 10; 
-  const totalSpent = 20; 
-
-  let earnCalc;
-  if (earningTarget !== 0 && earningTarget != null && earningTarget != '') {
-    earnCalc = Math.min((totalEarnings / earningTarget) * 100, 100);
-  } else {
-    earnCalc = 100;
-  }
-
-  let spentCalc;
-  if (spendingTarget !== 0 && spendingTarget != null && spendingTarget != '') {
-    spentCalc = Math.min((totalSpent / spendingTarget) * 100, 100);
-  } else {
-    spentCalc = 100;
-  }
-
-  
-  const navigation = useNavigation();
-  const widthAndHeight = 150
-  const seriesEarn = [earnCalc > 0 ? earnCalc : 0.3, earnCalc > 0 ? 100-earnCalc : 100]
-  const seriesSpent = [spentCalc > 0 ? spentCalc : 0.3, spentCalc > 0 ? 100-spentCalc : 100]
-
-  return (
-    <ScrollView style={styles.container}>
-      <Text style={styles.sectionTitle}>Wallet</Text>
-      <View style={styles.wallet}>
-        <View style={{flexDirection: 'row', justifyContent:'space-around'}}> 
-          <Text style={styles.sectionTitle}>Earning</Text>
-          <Text style={styles.sectionTitle}>Spending</Text>
-        </View>
-        <View style={styles.piContainer}>
-            <PieChart
-              widthAndHeight={widthAndHeight}
-              series={seriesEarn}
-              sliceColor={['#4683fc','#fff']}
-            
-            />
-            <PieChart
-              widthAndHeight={widthAndHeight}
-              series={seriesSpent}
-              sliceColor={['#c0c2c7','#fff']}
-
-            />
-        </View>
-
-        <WalletDetail label="Total Earnings" value={`$${totalEarnings}`} />
-        <WalletDetail label="Total Spent" value={`$${totalSpent}`} />
-      
-        <View
-        style={{
-          borderBottomColor: 'black',
-          borderBottomWidth: 1.5,
-          marginBottom: 10,
-        }}/>
-        
-        <WalletDetail label="Monthly Earning Target" value={`$${earningTarget}`} />
-        <WalletDetail label="Monthly Spending Target" value={`$${spendingTarget}`} /> 
-
-        <TouchableOpacity style={styles.button2} onPress={() => navigation.navigate('EditTargetsScreen')} >
-          <Text style = {{fontWeight: '700', color: '#4683fc'}}>Edit Targets </Text>
-        </TouchableOpacity>
-  
-      </View>
-   
-      <View style={styles.section}>
-        <TouchableOpacity
-          style={styles.button}
-          onPress={() => navigation.navigate('WorkHistoryScreen')}>
-          <Text style={styles.buttonText}>Work History</Text>
-          {workHistory.map(item => <View key={item.id}>{renderWorkHistoryItem({item})}</View>)}
-        </TouchableOpacity>
-      </View>
-
-      <View style={styles.section} >
-        <TouchableOpacity
-          style={styles.button}
-          onPress={() => navigation.navigate('HireHistoryScreen')}>
-          <Text style={styles.buttonText}>Hire History</Text>
-          {hireHistory.map(item => <View key={item.id}>{renderHireHistoryItem({item})}</View>)}
-        </TouchableOpacity>
-      </View> 
-      <View style= {{marginBottom: 30}}> 
-      </View>
-    </ScrollView>
-  );
-};
-
-export default Activity;
