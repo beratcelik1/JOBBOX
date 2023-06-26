@@ -6,13 +6,11 @@ import MapView from 'react-native-maps';
 import { Ionicons } from '@expo/vector-icons';
 import StarRating from 'react-native-star-rating'; // Remember to install this package
 import { formatDateTime } from '../../utils/formatDateTime';
-import Icon from 'react-native-vector-icons/MaterialIcons'; 
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import ChatScreen from './ChatScreen'; 
-import { FlatList } from 'react-native'; 
-
+import ChatScreen from './ChatScreen';
 import { PanGestureHandler, State } from 'react-native-gesture-handler';
+import { showMessage } from "react-native-flash-message";
 
 const WorkPeriodDetails = ({ job: jobProp, closeModal }) => {  
   const navigation = useNavigation();
@@ -21,6 +19,9 @@ const WorkPeriodDetails = ({ job: jobProp, closeModal }) => {
   const [endDate, endTime] = formatDateTime(job.endDateTime);
   const [isModalVisible, setModalVisible] = useState(false);
   const [modalContent, setModalContent] = useState('');
+  const [alertModalVisible, setAlertModalVisible] = useState(false);
+  const [starCountRating, setStarCountRating] = useState(0);
+
   const [starCount, setStarCount] = useState(4.3); // Replace 5 with actual job rating
   const [user, setUser] = useState(null); 
   const [chatModalVisible, setChatModalVisible] = useState(false);
@@ -187,6 +188,51 @@ const handleChatNavigation = async () => {
   }
 };
 
+const patchStatusComplete = async () => {
+  try {
+    const response = await fetch(`https://tranquil-ocean-74659.herokuapp.com/jobs/${job._id}`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        status: 'Completed',
+      }),
+    });
+    const data = await response.json();
+    if (response.ok) {
+      console.log('Job marked as completed:', data);
+      navigation.navigate('Box');
+    } else {
+      throw new Error(data.error);
+    }
+  } catch (error) {
+    console.error('Failed to mark job as completed:', error);
+  }
+};
+
+const handleConfirmMarkAsComplete = async () => {
+  setStarCountRating(0);
+
+  if(starCountRating === 0) {
+    Alert.alert(
+      "Please rate the job",
+      "Please rate the job before marking it as complete",
+      [
+        {
+          text: "Cancel",
+          style: "cancel"
+        },
+      ],
+      { cancelable: false }
+    );
+    return;
+  } 
+
+  patchStatusComplete();
+  setAlertModalVisible(false);
+};
+
 
   return (
     <View style={styles.container}>
@@ -342,8 +388,8 @@ const handleChatNavigation = async () => {
                 fullStarColor='#4683fc'
             />
 
-          </View> 
-          <TouchableOpacity style={styles.buttonClose2} onPress={() => { console.log("Button Pressed!") }}>
+        </View> 
+          <TouchableOpacity style={styles.buttonClose2} onPress={() => setAlertModalVisible(true)}>
             <Text style={{ color: 'white', marginLeft: 5 }}>Mark as Complete</Text>
           </TouchableOpacity>
         </View> 
@@ -438,6 +484,35 @@ const handleChatNavigation = async () => {
   </Modal>
 
       {/*End of Modal*/}
+
+      {/* Start of Mark as Complete Alert */}
+      <Modal
+        animationType="fade"
+        transparent={true}
+        visible={alertModalVisible}
+      >
+        <View style={styles.alertModal}>
+          <View style={styles.alertModalView}>
+            <Text style={styles.alertModalText}>Mark as complete</Text>
+            <Text style={styles.alertModalSubText}>Please rate your employer before marking the job as complete.</Text>
+            <StarRating
+              disabled={false}
+              maxStars={5}
+              rating={starCountRating}
+              selectedStar={(rating) => setStarCountRating(rating)}
+            />
+            <View style={styles.alertModalActionButtons}>
+              <TouchableOpacity style={styles.alertModalButton} onPress={() => setAlertModalVisible(false)}>
+                <Text style={styles.alertModalTextStyle}>Cancel</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.alertModalButton} onPress={handleConfirmMarkAsComplete}>
+                <Text style={styles.alertModalTextStyle}>Yes</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
+      {/* End of Mark as Complete Alert */}
 
     </View> 
   );
@@ -714,8 +789,55 @@ const styles = {
     marginTop: 15
   },
   
-  
-  
+  // alert modal
+  alertModal: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 22,
+  },
+  alertModalView: {
+    margin: 20,
+    backgroundColor: 'white',
+    borderRadius: 20,
+    padding: 35,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  alertModalButton: {
+    borderRadius: 20,
+    padding: 10,
+    elevation: 2,
+    backgroundColor: '#2196F3',
+    marginTop: 15,
+  },
+  alertModalTextStyle: {
+    color: 'white',
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
+  alertModalText: {
+    marginBottom: 15,
+    textAlign: 'center',
+    fontSize: 18,
+    fontWeight: 'bold'
+  },
+  alertModalSubText: {
+    marginBottom: 15,
+    textAlign: 'center',
+  },
+  alertModalActionButtons: {
+    flexDirection: 'row',
+    justifyContent: 'space-evenly',
+    width: '50%'
+  }
 };
 export default WorkPeriodDetails;
 
