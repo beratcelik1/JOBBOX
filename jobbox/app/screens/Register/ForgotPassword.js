@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
-import { StyleSheet, View, Alert, KeyboardAvoidingView, Platform } from 'react-native';
+import { StyleSheet, View, Image, Alert, KeyboardAvoidingView, Platform } from 'react-native';
 import axios from 'axios';
-import { TextInput, Text, Button } from 'react-native-paper'; // import Button from 'react-native-paper'
+import { TextInput, Text, Button } from 'react-native-paper'; // import Button from 'react-native-paper' 
+
+const logo = require('../../assets/images/jobboxlogo2.png');
 
 const ForgotPassword = ({ navigation }) => {
   const [email, setEmail] = useState('');
@@ -46,7 +48,10 @@ const ForgotPassword = ({ navigation }) => {
         behavior={Platform.OS === 'ios' ? 'padding' : null}
         style={{ flex: 1, padding: 15, justifyContent: 'center',}}
     >
-        <View style={styles.container}>
+        <View style={styles.container}> 
+            <View style={styles.logoContainer}>
+                <Image source={logo} style={styles.logo} />
+            </View>
             <TextInput
                 label="Email"
                 value={email}

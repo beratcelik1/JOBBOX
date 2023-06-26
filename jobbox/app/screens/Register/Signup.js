@@ -3,28 +3,20 @@ import { StyleSheet, View, Image, Pressable, KeyboardAvoidingView, Platform, Scr
 import { TextInput, Button, Text } from 'react-native-paper';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { showMessage } from 'react-native-flash-message';
+import { useForm, Controller } from 'react-hook-form';
+import PasswordInput from '../../components/PasswordInput'; // import your PasswordInput component
 
 const logo = require('../../assets/images/jobboxlogo2.png');
 
 export default function Signup({ navigation }) {
-    const [firstname, setFirstName] = useState('');
-    const [lastname, setLastName] = useState('');
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
+  const { control, handleSubmit } = useForm();
 
-    const handleSignup = () => {
-        fetch('https://tranquil-ocean-74659.herokuapp.com/auth/signup', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                firstname: firstname,
-                lastname: lastname,
-                email: email,
-                password: password
-            })
-        })
+  const handleSignup = (data) => {
+    fetch('https://tranquil-ocean-74659.herokuapp.com/auth/signup', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify(data)
+    })
         .then(response => {
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
@@ -51,68 +43,78 @@ export default function Signup({ navigation }) {
         })
         .catch(error => console.log('Error:', error));
     };
+    const onSubmit = data => {
+        handleSignup(data);
+    };
     
     return (
-            <KeyboardAvoidingView 
-                behavior={Platform.OS === 'ios' ? 'padding' : null}
-                style={{ flex: 1, padding: 15, justifyContent: 'center', }}
-            >
-               <View style={styles.container}>
-                    <View style={styles.logoContainer}>
-                        <Image source={logo} style={styles.logo} />
-                    </View>
-                    
-                    <View style={styles.firstLastNameContainer}> 
-                        <TextInput
-                            label="First Name"
-                            value={firstname}
-                            onChangeText={setFirstName}
-                            style={styles.input2}
-                        />
-                        <TextInput
-                            label="Last Name"
-                            value={lastname}
-                            onChangeText={setLastName}
-                            style={styles.input2}
-                        />
-                    </View>
-
-                    <TextInput
-                        label="Email"
-                        value={email}
-                        onChangeText={setEmail}
-                        style={styles.input}
-                    />
-                    <TextInput
-                        label="Password"
-                        value={password}
-                        onChangeText={setPassword}
-                        secureTextEntry
-                        style={styles.input}
-                    />
-
-                <Pressable
-                    style={({ pressed }) => [
-                        {
-                            opacity: pressed ? 0.5 : 1,
-                        },
-                        styles.pressable,
-                    ]}
-                    onPress={handleSignup}
-                >
-                    <Button mode="contained" style={styles.button}>
-                        <Text style={styles.Btn}>Sign Up</Text>
-                    </Button>
-                </Pressable>
-
-
-                    <Button onPress={() => navigation.navigate('Login')} >
-                        <Text style={styles.noBtn}>Already have an account? 
-                            <Text style={styles.noBtnBold}> Login.</Text> 
-                        </Text>
-                    </Button>
-                </View>
-            </KeyboardAvoidingView> 
+    <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : null}
+        style={{ flex: 1, padding: 15, justifyContent: 'center', }}
+    >
+        <View style={styles.container}>
+        <View style={styles.logoContainer}>
+            <Image source={logo} style={styles.logo} />
+        </View>
+        <View style={styles.firstLastNameContainer}>
+            <Controller 
+            control={control} 
+            render={({ field: { onChange, onBlur, value } }) => (
+                <TextInput
+                label="First Name"
+                onBlur={onBlur}
+                onChangeText={value => onChange(value)}
+                value={value}
+                style={styles.input2}
+                />
+            )}
+            name="firstname"
+            rules={{ required: true }}
+            defaultValue=""
+            />
+            <Controller 
+            control={control} 
+            render={({ field: { onChange, onBlur, value } }) => (
+                <TextInput
+                label="Last Name"
+                onBlur={onBlur}
+                onChangeText={value => onChange(value)}
+                value={value}
+                style={styles.input2}
+                />
+            )}
+            name="lastname"
+            rules={{ required: true }}
+            defaultValue=""
+            />
+        </View>
+        <Controller 
+            control={control} 
+            render={({ field: { onChange, onBlur, value } }) => (
+            <TextInput
+                label="Email"
+                onBlur={onBlur}
+                onChangeText={value => onChange(value)}
+                value={value}
+                style={styles.input}
+            />
+            )}
+            name="email"
+            rules={{ required: true }}
+            defaultValue=""
+        />
+        <PasswordInput control={control} name="password" />
+        <Pressable
+            style={({ pressed }) => [{opacity: pressed ? 0.5 : 1,},styles.pressable,]}
+            onPress={handleSubmit(onSubmit)}
+        >
+            <Button mode="contained" style={styles.button}><Text style={styles.Btn}>Sign Up</Text></Button>
+        </Pressable>
+        <Button onPress={() => navigation.navigate('Login')} >
+            <Text style={styles.noBtn}>Already have an account?<Text style={styles.noBtnBold}> Login.</Text></Text>
+        </Button>
+        </View>
+    </KeyboardAvoidingView>
     );
 }
 
