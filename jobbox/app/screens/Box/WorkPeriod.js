@@ -16,12 +16,12 @@ const WorkPeriodDetails = ({ job: jobProp, closeModal }) => {
   const navigation = useNavigation();
   const [job, setJob] = useState(jobProp);
   const [startDate, startTime] = formatDateTime(job.startDateTime);
-  const [endDate, endTime] = formatDateTime(job.endDateTime);
+  const [endDate, endTime] = formatDateTime(job.endDateTime); 
   const [isModalVisible, setModalVisible] = useState(false);
-  const [modalContent, setModalContent] = useState('');
-  const [alertModalVisible, setAlertModalVisible] = useState(false);
-  const [starCountRating, setStarCountRating] = useState(0);
-
+  const [modalContent, setModalContent] = useState('');  
+  const [aboutModalVisible, setAboutModalVisible] = useState(false); 
+  const [aboutModalVisibleEmp, setAboutModalVisibleEmp] = useState(false);
+  const [aboutModalContent, setAboutModalContent] = useState('');
   const [starCount, setStarCount] = useState(4.3); // Replace 5 with actual job rating
   const [user, setUser] = useState(null); 
   const [chatModalVisible, setChatModalVisible] = useState(false);
@@ -31,8 +31,6 @@ const WorkPeriodDetails = ({ job: jobProp, closeModal }) => {
   const [jobDescription, setJobDescription] = useState(job.description);
   const [editableJobDescription, setEditableJobDescription] = useState(job.description);
   const [hiredApplicant, setHiredApplicant] = useState();
-
-  
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -115,11 +113,22 @@ const WorkPeriodDetails = ({ job: jobProp, closeModal }) => {
   const handlePress = (title, content) => {
     setModalContent({title, content});
     setModalVisible(true);
-  }
+  } 
 
+  const handleAboutPress = () => {
+    setAboutModalVisible(true);
+  };
+  const handleAboutPressEmp = () => {
+    setAboutModalVisibleEmp(true);
+  };
   const closeModalFun = () => {
     setModalVisible(false);
-  }
+  } 
+  const closeModalChat = () => {
+    setChatModalVisible(false);
+  } 
+
+  
 
   const onStarRatingPress = (rating) => {
     setStarCount(rating);
@@ -254,17 +263,6 @@ const handleConfirmMarkAsComplete = async () => {
 
   return (
     <View style={styles.container}>
-        <View style={styles.jobCard}> 
-        <Text style={styles.jobTitle}>{job.title}</Text>
-          <View style={[
-              styles.jobStatusContainer,
-              job.status === 'Applied' && { backgroundColor: '#5ec949' },
-              job.status === 'in progress' && { backgroundColor: '#4683fc' },
-              job.status === 'Completed' && { backgroundColor: '#c7c7c7'}
-          ]}>
-              <Text style={styles.jobStatus}>{job.status}</Text>
-          </View>
-      </View> 
       <MapView 
         style={styles.map}
         initialRegion={{ 
@@ -282,7 +280,19 @@ const handleConfirmMarkAsComplete = async () => {
           coordinate={job.employerLocation}
           title="Employer Location"
         />
-      </MapView>
+      </MapView> 
+
+      <View style={styles.jobCard}> 
+        <Text style={styles.jobTitle}>{job.title}</Text>
+          <View style={[
+              styles.jobStatusContainer,
+              job.status === 'Applied' && { backgroundColor: '#5ec949' },
+              job.status === 'in progress' && { backgroundColor: '#4683fc' },
+              job.status === 'Completed' && { backgroundColor: '#c7c7c7'}
+          ]}>
+              <Text style={styles.jobStatus}>{job.status}</Text>
+          </View>
+      </View> 
       
        {/* Start and End Times */} 
 
@@ -301,26 +311,28 @@ const handleConfirmMarkAsComplete = async () => {
       
       {/* Start of Job Description */}
       <TouchableOpacity onPress={() => handlePress('Job Description', job.description)}>
-          <View style={styles.infoCard}>
-              <Ionicons name="information-circle" size={24} color="#4683fc"/>
-              <View style={{...styles.infoTextContainer, flexDirection: 'row', alignItems: 'center'}}>
-                  <View style={{flex: 1}}>
-                      <Text style={styles.infoTitle}>Job Description</Text>
-                      <Text style={styles.infoText}>
-                      {job.description.length > 20 
-                        ? `${job.description.substring(0, 20)}...` 
-                        : job.description}
-                      </Text>
-                  </View>
-                  {isJobPoster && 
-                      <View>
-                          <TouchableOpacity onPress={handleEdit}>
-                              <Ionicons name="pencil-outline" size={24} color="#4683fc" />
-                          </TouchableOpacity>
-                      </View>
-                  }
-              </View>
+          <View style={styles.infoCard}>  
+            <View style = {{flexDirection: 'row'}}>  
+              <Ionicons name="information-circle" size={26} color="#4683fc" style ={{marginLeft: 5, marginTop: 2.5}}/>
+                <View style={{...styles.infoTextContainer, flexDirection: 'row', alignItems: 'center'}}>
+                  <Text style={{...styles.infoTitle, marginLeft: 10}}>Job Description </Text>
+                </View> 
+
+                {isJobPoster && 
+                  <TouchableOpacity onPress={handleEdit} style = {styles.editBtn}>
+                      <Ionicons name="create-outline" size={21} color="#4683fc" fontWeight = "700" /> 
+                      <Text style={{fontSize: 15, color:'#4683fc', fontWeight: '700', marginTop: 3}}> Edit</Text>
+                  </TouchableOpacity>
+              
+            }
+            </View>
+            <Text style={{...styles.infoText, marginLeft: 50, marginTop: 5}}>
+            {job.description.length > 20 
+              ? `${job.description.substring(0, 20)}...` 
+              : job.description}  
+            </Text> 
           </View>
+          
       </TouchableOpacity>
       {/* End of Job Description */}
 
@@ -349,7 +361,7 @@ const handleConfirmMarkAsComplete = async () => {
 
       {/* Start of Message your Employer */}
       <TouchableOpacity onPress={handleChatNavigation}>
-      <View style={styles.infoCard}>
+      <View style={{...styles.infoCard, flexDirection: 'row'}}>
         <Ionicons name="chatbubble" size={24} color="#4683fc" marginLeft ="2%" marginRight ="2%" />
         <View style={styles.infoTextContainer}>
           <Text style={styles.infoTitle}>
@@ -385,16 +397,24 @@ const handleConfirmMarkAsComplete = async () => {
 
       {/* Start of Employer Info */}
       {user === job.postedBy._id ? 
-        // Show Employee Information
-        <View style={styles.infoCard2}>
+        // Show Employee Information 
+        <TouchableOpacity style={styles.infoCard2} onPress={() => handleAboutPressEmp()}>
           <View><Text style={styles.infoTitle}>Employee: {job.hiredApplicant?.firstname} {job.hiredApplicant?.lastname}</Text></View>
           <View><Text style={styles.infoSubtitle}>About Employee</Text></View>
-          <View><View>
-                {job.hiredApplicant.about.map((item, index) => (
-                  <Text key={index} style={styles.infoText}>{item.description}</Text>
+          
+          <View>
+            <View>
+              {job.hiredApplicant.about.map((item, index) => (
+                  <Text key={index} style={styles.infoText}>
+                    {index === 0 
+                      ? (item.description.length > 50 
+                          ? `${item.description.substring(0, 50)}...` 
+                          : item.description)
+                      : ''}
+                  </Text>
                 ))}
-              </View>
             </View>
+          </View>
           <View style = {{flexDirection: 'row', marginTop: 10}}> 
             <Text>Employee Rating:  4.3  </Text>
             <StarRating
@@ -410,19 +430,26 @@ const handleConfirmMarkAsComplete = async () => {
           <TouchableOpacity style={styles.buttonClose2} onPress={() => setAlertModalVisible(true)}>
             <Text style={{ color: 'white', marginLeft: 5 }}>Mark as Complete</Text>
           </TouchableOpacity>
-        </View> 
+        </TouchableOpacity>
       :
-        // Show Employer Information
-        <View style={styles.infoCard2}>
+        // Show Employer Information 
+        <TouchableOpacity style={styles.infoCard2} onPress={() => handleAboutPress()}>
           <View><Text style={styles.infoTitle}>Employer: {job.postedBy.firstname} {job.postedBy.lastname}</Text></View>
           <View><Text style={styles.infoSubtitle}>About Employer</Text></View>
           <View>
           <View>
-          {job.postedBy.about.map((item, index) => (
-            <Text key={index} style={styles.infoText}>{item.description}</Text>
-          ))}
-        </View>
-            </View>
+            {job.postedBy.about.map((item, index) => (
+              <Text key={index} style={styles.infoText}>
+                {index === 0 
+                  ? (item.description.length > 50 
+                      ? `${item.description.substring(0, 50)}...` 
+                      : item.description)
+                  : ''}
+              </Text>
+            ))}
+          </View>
+
+          </View>
           <View style = {{flexDirection: 'row', marginTop: 10}}> 
             <Text>Employer Rating:  4.3  </Text>
             <StarRating
@@ -438,16 +465,57 @@ const handleConfirmMarkAsComplete = async () => {
           <TouchableOpacity style={styles.buttonClose2} onPress={() => { console.log("Button Pressed!") }}>
             <Text style={{ color: 'white', marginLeft: 5 }}>Mark as Complete</Text>
           </TouchableOpacity>
-        </View> 
+        </TouchableOpacity>
       }
       {/* End of Employer Info */}  
 
-      <View style = {{flex:1}}> 
-      </View>
-        <TouchableOpacity style={styles.closeBtn} onPress={closeModal}>
-            <Text style={{ color: '#4683fc', marginLeft: 5 }}>Close</Text>
-        </TouchableOpacity>
-      
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={aboutModalVisible}
+        onRequestClose={() => setAboutModalVisible(false)}
+      >
+        <View style={styles.modalContainer}>
+          <View style={styles.modalView}>
+            <Text style={styles.modalTitle}>About {job.postedBy.firstname} {job.postedBy.lastname}</Text>
+            <View> 
+              {job.postedBy.about.map((item, index) => (
+                <Text key={index} style={styles.infoText}>{item.description}</Text>
+              ))}
+            </View>
+            <TouchableOpacity style={styles.buttonClose} onPress={() => setAboutModalVisible(false)}>
+              <Text style={{ color: 'white', marginLeft: 5 }}>Close</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal> 
+
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={aboutModalVisibleEmp}
+        onRequestClose={() => setAboutModalVisibleEmp(false)}
+      >
+        <View style={styles.modalContainer}>
+          <View style={styles.modalView}>
+            <Text style={styles.modalTitle}>About {job.hiredApplicant.firstname} {job.hiredApplicant.lastname}</Text>
+            <View> 
+              {job.hiredApplicant.about.map((item, index) => (
+                <Text key={index} style={styles.infoText}>{item.description}</Text>
+              ))}
+            </View>
+            <TouchableOpacity style={styles.buttonClose} onPress={() => setAboutModalVisibleEmp(false)}>
+              <Text style={{ color: 'white', marginLeft: 5 }}>Close</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+
+
+      <TouchableOpacity style={styles.closeBtn} onPress={closeModal}>
+        <Text style={{ color: '#4683fc', fontWeight: '600'}}>Close</Text>
+      </TouchableOpacity>
+
       {/* Modal */}
       <Modal
         animationType="slide"
@@ -470,36 +538,36 @@ const handleConfirmMarkAsComplete = async () => {
 
       {/* chat Modal */}
       
-  <Modal
-    animationType="slide"
-    transparent={true}
-    visible={chatModalVisible}
-    onRequestClose={() => setChatModalVisible(false)} // This will close the modal when back is pressed
-  >
-    <View style={{ flex: 1, justifyContent: 'flex-end' }}>
-      <PanGestureHandler
-        onHandlerStateChange={({ nativeEvent }) => {
-          if (nativeEvent.oldState === State.ACTIVE) {
-            setChatModalVisible(false);
-          }
-        }}
-        direction="down"
-      >
-        <View style={{ height: '92%', backgroundColor: 'white', shadowColor: '#000',
-        shadowOffset: {width: 0,height: 2,},
-        shadowOpacity: 0.25,
-        shadowRadius: 6.84,
-        elevation: 5, borderRadius: 10 }}>
-          <View style = {{height: 55, marginTop: 10}}>
-            <TouchableOpacity style={styles.closeBtn2} onPress={closeModal}>
-               <Ionicons name="close-circle" size={24} color="#4683fc" marginLeft = "1%"/>
-            </TouchableOpacity>
+    <Modal
+      animationType="slide"
+      transparent={true}
+      visible={chatModalVisible}
+      onRequestClose={() => setChatModalVisible(false)} // This will close the modal when back is pressed
+    >
+      <View style={{ flex: 1, justifyContent: 'flex-end' }}>
+        <PanGestureHandler
+          onHandlerStateChange={({ nativeEvent }) => {
+            if (nativeEvent.oldState === State.ACTIVE) {
+              setChatModalVisible(false);
+            }
+          }}
+          direction="down"
+        >
+          <View style={{ height: '92%', backgroundColor: 'white', shadowColor: '#000',
+          shadowOffset: {width: 0,height: 2,},
+          shadowOpacity: 0.25,
+          shadowRadius: 6.84,
+          elevation: 5, borderRadius: 10 }}>
+            <View style = {{height: 55, marginTop: 30, flex: 1}}>
+              <TouchableOpacity style={styles.closeBtn2} onPress={closeModalChat}>
+                <Ionicons name="close-circle" size={24} color="#4683fc" marginLeft = "1%"/>
+              </TouchableOpacity>
+            </View>
+            <ChatScreen jobId={job._id} senderId={user} conversationId={conversationId} closeModal={() => setChatModalVisible(false)} />
           </View>
-          <ChatScreen jobId={job._id} senderId={user} conversationId={conversationId} closeModal={() => setChatModalVisible(false)} />
-        </View>
-      </PanGestureHandler>
-    </View>
-  </Modal>
+        </PanGestureHandler>
+      </View>
+    </Modal>
 
       {/*End of Modal*/}
 
@@ -601,7 +669,7 @@ const styles = {
     padding: 10,
     marginVertical: 8,
     marginLeft: 5,
-    marginTop: 0,
+    marginTop: 10,
     marginRight: 5,
     backgroundColor: '#fff',
     borderRadius: 10,
@@ -609,6 +677,19 @@ const styles = {
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
+  }, 
+  editBtn: {
+    flexDirection: 'row',
+    borderRadius: 10,
+    backgroundColor: '#fff',
+    paddingRight: 10,
+    paddingLeft: 8,
+    paddingVertical: 4,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    marginLeft: 70,
   },
   jobTitle: {
     fontSize: 18,
@@ -645,8 +726,6 @@ const styles = {
     fontSize: 16,
   },
   infoCard: {
-    flexDirection: 'row', // updated from 'row'
-    alignItems: 'flex-start', // updated from 'center'
     padding: 10,
     marginTop: 10,
     backgroundColor: '#fff',
@@ -676,6 +755,7 @@ const styles = {
   },
   infoTitle: {
     fontSize: 18,
+    
   },
   infoText: {
     fontSize: 16,
@@ -750,8 +830,6 @@ const styles = {
     marginBottom: 10, 
   }, 
   closeBtn2: { 
-    flex: 1,
-    flexDirection: 'row',
     alignItems: 'center',
     marginHorizontal: 5,
     marginLeft: 10,
@@ -759,7 +837,7 @@ const styles = {
     paddingTop: 8,
     paddingBottom: 8,
     paddingLeft: 10,
-    paddingRight: 15,
+    paddingRight: 10,
     borderRadius: 10,
     shadowColor: '#000',
     shadowOffset: {
@@ -772,19 +850,17 @@ const styles = {
     bottom: 40,
     marginBottom: -5, 
     marginTop: 20,
-    alignSelf: 'center'
+    width: 45
   }, 
-  closeBtn: { 
-    flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginHorizontal: 5,
-    marginLeft: 10,
+  closeBtn: {  
+    position: 'absolute', 
+    top: 5, 
+    left: 15, 
     backgroundColor: '#fff',
     paddingTop: 8,
     paddingBottom: 8,
     paddingLeft: 10,
-    paddingRight: 15,
+    paddingRight: 10,
     borderRadius: 10,
     shadowColor: '#000',
     shadowOffset: {
@@ -793,11 +869,7 @@ const styles = {
     },
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
-    elevation: 5,
-    bottom: 40,
-    marginBottom: -5, 
-    marginTop: 20,
-    alignSelf: 'center',
+  
   },
   modalTitle: {
     fontSize: 20,
