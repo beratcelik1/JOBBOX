@@ -1,5 +1,65 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, FlatList, Text, StyleSheet } from 'react-native';
+import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+const renderHireHistoryItem = ({ item }) => {
+  // console.log(item);
+  return (
+    <View style={styles.card}>
+      <Text style={styles.cardTitle}>{item.title}</Text>
+      <View style={styles.cardDetails}>
+        <Text style={styles.cardLabel}>Spent:</Text>
+        <Text>${item.pay}</Text> 
+      </View>
+      <View style={styles.cardDetails}>
+        <Text style={styles.cardLabel}>Date:</Text>
+        <Text>{new Date(item.endDateTime).toLocaleDateString().toString()}</Text>
+      </View>
+    </View>
+  );
+};
+
+const HireHistoryScreen = () => {
+  const [hireHistory, setHireHistory] = useState([]);
+  
+  useEffect(() => {
+    const fetchPostedJobs = async () => {
+      try {
+        const userId = await AsyncStorage.getItem('userId');
+        const token = await AsyncStorage.getItem('token');
+        
+        const response = await axios.get(`http://tranquil-ocean-74659.herokuapp.com/jobs/user/${userId}/postedJobs/completed`, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+
+        setHireHistory(response.data);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    fetchPostedJobs();
+  }, []);
+
+  return (
+    <View style={styles.container}>
+      <View style={styles.section}>
+        <Text style={styles.sectionTitle}>Hire History</Text>
+        <FlatList
+          data={hireHistory}
+          keyExtractor={item => item._id}
+          renderItem={renderHireHistoryItem}
+          style = {{paddingVertical: 5}}
+        />
+      </View>
+    </View>
+  );
+};
+
+export default HireHistoryScreen;
 
 const styles = StyleSheet.create({
   container: {
@@ -46,43 +106,3 @@ const styles = StyleSheet.create({
     color: 'gray',
   },
 });
-
-
-const hireHistory = [
-  { id: '1', title: 'Hire 1', spent: '$200', date: 'May 2, 2023' },
-  { id: '2', title: 'Hire 2', spent: '$180', date: 'May 4, 2023' },
-  { id: '3', title: 'Hire 3', spent: '$220', date: 'May 6, 2023' },
-];
-
-const renderHireHistoryItem = ({ item }) => (
-  /*...your item rendering...*/
-  <View style={styles.card}>
-    <Text style={styles.cardTitle}>{item.title}</Text>
-    <View style={styles.cardDetails}>
-      <Text style={styles.cardLabel}>Spent:</Text>
-      <Text>{item.spent}</Text>
-    </View>
-    <View style={styles.cardDetails}>
-      <Text style={styles.cardLabel}>Date:</Text>
-      <Text>{item.date}</Text>
-    </View>
-  </View>
-);
-
-const HireHistoryScreen = () => {
-  return (
-    <View style={styles.container}>
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Hire History</Text>
-        <FlatList
-          data={hireHistory}
-          keyExtractor={item => item.id}
-          renderItem={renderHireHistoryItem}
-          style = {{paddingVertical: 5}}
-        />
-      </View>
-    </View>
-  );
-};
-
-export default HireHistoryScreen;
