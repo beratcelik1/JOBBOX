@@ -8,6 +8,7 @@ import LoadingScreen from '../../components/LoadingScreen';
 import { formatDateTime } from '../../utils/formatDateTime';
 import defaultImage from '../../assets/images/defaultimage3.png';
 import usePayment from '../../hooks/usePayment';
+import { showMessage } from "react-native-flash-message";
 
 export function HireApplicationsScreen({ route, navigation }) {
   const { job, isArchived = false } = route.params; 
@@ -85,6 +86,16 @@ export function HireApplicationsScreen({ route, navigation }) {
       console.error(error.response.data);
       Alert.alert('Error', 'Something went wrong while hiring the user');
     }
+
+    showMessage({
+      message: "Your new hire is now available in the BOX tab!",
+      type: "success",
+      icon: "success",
+      duration: 3000,
+      hideOnPress: true,
+      floating: true,
+    });
+    navigation.navigate('HireScreen');
   };
   
   const handleReject = async (applicantId) => {
