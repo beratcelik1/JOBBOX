@@ -190,17 +190,6 @@ const handleChatNavigation = async () => {
 
   return (
     <View style={styles.container}>
-        <View style={styles.jobCard}> 
-        <Text style={styles.jobTitle}>{job.title}</Text>
-          <View style={[
-              styles.jobStatusContainer,
-              job.status === 'Applied' && { backgroundColor: '#5ec949' },
-              job.status === 'in progress' && { backgroundColor: '#4683fc' },
-              job.status === 'Completed' && { backgroundColor: '#c7c7c7'}
-          ]}>
-              <Text style={styles.jobStatus}>{job.status}</Text>
-          </View>
-      </View> 
       <MapView 
         style={styles.map}
         initialRegion={{ 
@@ -218,7 +207,20 @@ const handleChatNavigation = async () => {
           coordinate={job.employerLocation}
           title="Employer Location"
         />
-      </MapView>
+      </MapView> 
+      <ScrollView> 
+
+      <View style={styles.jobCard}> 
+        <Text style={styles.jobTitle}>{job.title}</Text>
+          <View style={[
+              styles.jobStatusContainer,
+              job.status === 'Applied' && { backgroundColor: '#5ec949' },
+              job.status === 'in progress' && { backgroundColor: '#4683fc' },
+              job.status === 'Completed' && { backgroundColor: '#c7c7c7'}
+          ]}>
+              <Text style={styles.jobStatus}>{job.status}</Text>
+          </View>
+      </View> 
       
        {/* Start and End Times */} 
 
@@ -237,26 +239,28 @@ const handleChatNavigation = async () => {
       
       {/* Start of Job Description */}
       <TouchableOpacity onPress={() => handlePress('Job Description', job.description)}>
-          <View style={styles.infoCard}>
-              <Ionicons name="information-circle" size={24} color="#4683fc"/>
-              <View style={{...styles.infoTextContainer, flexDirection: 'row', alignItems: 'center'}}>
-                  <View style={{flex: 1}}>
-                      <Text style={styles.infoTitle}>Job Description</Text>
-                      <Text style={styles.infoText}>
-                      {job.description.length > 20 
-                        ? `${job.description.substring(0, 20)}...` 
-                        : job.description}
-                      </Text>
-                  </View>
-                  {isJobPoster && 
-                      <View>
-                          <TouchableOpacity onPress={handleEdit}>
-                              <Ionicons name="pencil-outline" size={24} color="#4683fc" />
-                          </TouchableOpacity>
-                      </View>
-                  }
-              </View>
+          <View style={styles.infoCard}>  
+            <View style = {{flexDirection: 'row'}}>  
+              <Ionicons name="information-circle" size={26} color="#4683fc" style ={{marginLeft: 5, marginTop: 2.5}}/>
+                <View style={{...styles.infoTextContainer, flexDirection: 'row', alignItems: 'center'}}>
+                  <Text style={{...styles.infoTitle, marginLeft: 10}}>Job Description </Text>
+                </View> 
+
+                {isJobPoster && 
+                  <TouchableOpacity onPress={handleEdit} style = {styles.editBtn}>
+                      <Ionicons name="create-outline" size={21} color="#4683fc" fontWeight = "700" /> 
+                      <Text style={{fontSize: 15, color:'#4683fc', fontWeight: '700', marginTop: 3}}> Edit</Text>
+                  </TouchableOpacity>
+              
+            }
+            </View>
+            <Text style={{...styles.infoText, marginLeft: 50, marginTop: 5}}>
+            {job.description.length > 20 
+              ? `${job.description.substring(0, 20)}...` 
+              : job.description}  
+            </Text> 
           </View>
+          
       </TouchableOpacity>
       {/* End of Job Description */}
 
@@ -285,7 +289,7 @@ const handleChatNavigation = async () => {
 
       {/* Start of Message your Employer */}
       <TouchableOpacity onPress={handleChatNavigation}>
-      <View style={styles.infoCard}>
+      <View style={{...styles.infoCard, flexDirection: 'row'}}>
         <Ionicons name="chatbubble" size={24} color="#4683fc" marginLeft ="2%" marginRight ="2%" />
         <View style={styles.infoTextContainer}>
           <Text style={styles.infoTitle}>
@@ -378,12 +382,12 @@ const handleChatNavigation = async () => {
       }
       {/* End of Employer Info */}  
 
-      <View style = {{flex:1}}> 
-      </View>
-        <TouchableOpacity style={styles.closeBtn} onPress={closeModal}>
-            <Text style={{ color: '#4683fc', marginLeft: 5 }}>Close</Text>
-        </TouchableOpacity>
-      
+      </ScrollView> 
+
+      <TouchableOpacity style={styles.closeBtn} onPress={closeModal}>
+        <Text style={{ color: '#4683fc', fontWeight: '600'}}>Close</Text>
+      </TouchableOpacity>
+
       {/* Modal */}
       <Modal
         animationType="slide"
@@ -406,36 +410,36 @@ const handleChatNavigation = async () => {
 
       {/* chat Modal */}
       
-  <Modal
-    animationType="slide"
-    transparent={true}
-    visible={chatModalVisible}
-    onRequestClose={() => setChatModalVisible(false)} // This will close the modal when back is pressed
-  >
-    <View style={{ flex: 1, justifyContent: 'flex-end' }}>
-      <PanGestureHandler
-        onHandlerStateChange={({ nativeEvent }) => {
-          if (nativeEvent.oldState === State.ACTIVE) {
-            setChatModalVisible(false);
-          }
-        }}
-        direction="down"
-      >
-        <View style={{ height: '92%', backgroundColor: 'white', shadowColor: '#000',
-        shadowOffset: {width: 0,height: 2,},
-        shadowOpacity: 0.25,
-        shadowRadius: 6.84,
-        elevation: 5, borderRadius: 10 }}>
-          <View style = {{height: 55, marginTop: 10}}>
-            <TouchableOpacity style={styles.closeBtn2} onPress={closeModal}>
-               <Ionicons name="close-circle" size={24} color="#4683fc" marginLeft = "1%"/>
-            </TouchableOpacity>
+    <Modal
+      animationType="slide"
+      transparent={true}
+      visible={chatModalVisible}
+      onRequestClose={() => setChatModalVisible(false)} // This will close the modal when back is pressed
+    >
+      <View style={{ flex: 1, justifyContent: 'flex-end' }}>
+        <PanGestureHandler
+          onHandlerStateChange={({ nativeEvent }) => {
+            if (nativeEvent.oldState === State.ACTIVE) {
+              setChatModalVisible(false);
+            }
+          }}
+          direction="down"
+        >
+          <View style={{ height: '92%', backgroundColor: 'white', shadowColor: '#000',
+          shadowOffset: {width: 0,height: 2,},
+          shadowOpacity: 0.25,
+          shadowRadius: 6.84,
+          elevation: 5, borderRadius: 10 }}>
+            <View style = {{height: 55, marginTop: 10}}>
+              <TouchableOpacity style={styles.closeBtn2} onPress={closeModal}>
+                <Ionicons name="close-circle" size={24} color="#4683fc" marginLeft = "1%"/>
+              </TouchableOpacity>
+            </View>
+            <ChatScreen jobId={job._id} senderId={user} conversationId={conversationId} closeModal={() => setChatModalVisible(false)} />
           </View>
-          <ChatScreen jobId={job._id} senderId={user} conversationId={conversationId} closeModal={() => setChatModalVisible(false)} />
-        </View>
-      </PanGestureHandler>
-    </View>
-  </Modal>
+        </PanGestureHandler>
+      </View>
+    </Modal>
 
       {/*End of Modal*/}
 
@@ -508,7 +512,7 @@ const styles = {
     padding: 10,
     marginVertical: 8,
     marginLeft: 5,
-    marginTop: 0,
+    marginTop: 5,
     marginRight: 5,
     backgroundColor: '#fff',
     borderRadius: 10,
@@ -516,6 +520,19 @@ const styles = {
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
+  }, 
+  editBtn: {
+    flexDirection: 'row',
+    borderRadius: 10,
+    backgroundColor: '#fff',
+    paddingRight: 10,
+    paddingLeft: 8,
+    paddingVertical: 4,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    marginLeft: 70,
   },
   jobTitle: {
     fontSize: 18,
@@ -552,8 +569,6 @@ const styles = {
     fontSize: 16,
   },
   infoCard: {
-    flexDirection: 'row', // updated from 'row'
-    alignItems: 'flex-start', // updated from 'center'
     padding: 10,
     marginTop: 10,
     backgroundColor: '#fff',
@@ -583,6 +598,7 @@ const styles = {
   },
   infoTitle: {
     fontSize: 18,
+    
   },
   infoText: {
     fontSize: 16,
@@ -681,17 +697,15 @@ const styles = {
     marginTop: 20,
     alignSelf: 'center'
   }, 
-  closeBtn: { 
-    flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginHorizontal: 5,
-    marginLeft: 10,
+  closeBtn: {  
+    position: 'absolute', 
+    top: 5, 
+    left: 15, 
     backgroundColor: '#fff',
     paddingTop: 8,
     paddingBottom: 8,
     paddingLeft: 10,
-    paddingRight: 15,
+    paddingRight: 10,
     borderRadius: 10,
     shadowColor: '#000',
     shadowOffset: {
@@ -700,11 +714,7 @@ const styles = {
     },
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
-    elevation: 5,
-    bottom: 40,
-    marginBottom: -5, 
-    marginTop: 20,
-    alignSelf: 'center',
+  
   },
   modalTitle: {
     fontSize: 20,
