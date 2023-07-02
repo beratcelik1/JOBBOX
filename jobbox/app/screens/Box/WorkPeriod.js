@@ -25,8 +25,8 @@ const WorkPeriodDetails = ({ job: jobProp, closeModal }) => {
   const [aboutModalContent, setAboutModalContent] = useState('');
   const [displayStarCount, setDisplayStarCount] = useState(0); // Replace 5 with actual job rating
   const [starCountRating, setStarCountRating] = useState(0); // Replace 5 with actual job rating
+  const [reviewText, setReviewText] = useState('');
   const [alertModalVisible, setAlertModalVisible] = useState(false);
-  const [recommendationModalVisible, setRecommendationModalVisible] = useState(false);
   const [user, setUser] = useState(null); 
   const [chatModalVisible, setChatModalVisible] = useState(false);
   const [conversationId, setConversationId] = useState(null);
@@ -256,7 +256,8 @@ const handleChatNavigation = async () => {
         `https://tranquil-ocean-74659.herokuapp.com/users/reviews/`,
         'POST',
         { rating: starCountRating, reviewer: user, jobId: job._id, isWorkReview: true,
-          reviewed: user === job.hiredApplicant._id ? job.postedBy._id : job.hiredApplicant._id }
+          reviewed: user === job.hiredApplicant._id ? job.postedBy._id : job.hiredApplicant._id,
+          reviewText: reviewText }
       );
       console.log('Rating added to database:', data);
     } catch (error) {
@@ -279,25 +280,10 @@ const handleChatNavigation = async () => {
     }
 
     try {
-      // await patchStatusComplete();
+      await patchStatusComplete();
       await postRatingToDatabase();
 
       setAlertModalVisible(false);
-
-      // offer if user wants to give recommendation
-      Alert.alert(
-        'Recommendation',
-        'Would you like to give your recommendation for this user?',
-        [
-          {
-            text: 'Yes',
-            onPress: () => setRecommendationModalVisible(true),
-            style: 'cancel',
-          },
-          { text: 'No', onPress: () => closeModal(), style: 'cancel' },
-        ],
-        { cancelable: false }
-      );
     } catch (error) {
       Alert.alert(
         'Error',
@@ -635,6 +621,7 @@ const handleChatNavigation = async () => {
               rating={starCountRating}
               selectedStar={(rating) => setStarCountRating(rating)}
             />
+            <TextInput placeholder='Leave a comment...' style={styles.alertModalTextInput} onChangeText={setReviewText} value={reviewText} multiline={true} />
             <View style={styles.alertModalActionButtons}>
               <TouchableOpacity
                 style={styles.alertModalButton}
@@ -653,36 +640,6 @@ const handleChatNavigation = async () => {
         </View>
       </Modal>
       {/* End of Mark as Complete Alert */}
-
-      {/* Start give recommendation modal */}
-      <Modal
-        animationType="fade"
-        transparent={true}
-        visible={recommendationModalVisible}
-      >
-        <View style={styles.alertModal}>
-          <View style={styles.alertModalView}>
-            <Text style={styles.alertModalText}>Recommendation</Text>
-            <TextInput style={{backgroundColor: 'grey', fontSize: 18}} placeholder='Relationship'/>
-            <View style={styles.alertModalActionButtons}>
-              <TouchableOpacity
-                style={styles.alertModalButton}
-                onPress={() => setRecommendationModalVisible(false)}
-              >
-                <Text style={styles.alertModalTextStyle}>Cancel</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={styles.alertModalButton}
-                onPress={() => setRecommendationModalVisible(false)}
-              >
-                <Text style={styles.alertModalTextStyle}>Send</Text>
-              </TouchableOpacity>
-              
-            </View>
-          </View>
-        </View>
-      </Modal>
-      {/* End of give recommendation modal */}
     </View> 
   );
 };
@@ -970,6 +927,7 @@ const styles = {
   },
   alertModalView: {
     margin: 20,
+    width: '80%',
     backgroundColor: 'white',
     borderRadius: 20,
     padding: 35,
@@ -1004,6 +962,19 @@ const styles = {
   alertModalSubText: {
     marginBottom: 15,
     textAlign: 'center',
+  },
+  alertModalTextInput: {
+    width: '100%',
+    borderColor: 'gray',
+    borderWidth: 1,
+    borderRadius: 5,
+    marginBottom: 15,
+    textAlign: 'left',
+    textAlignVertical: 'top',
+    flexWrap: 'wrap',
+    fontSize: 18,
+    paddingHorizontal: 10, // additional padding for better visuals
+    maxHeight: 80, // limit the growth to 80
   },
   alertModalActionButtons: {
     flexDirection: 'row',
