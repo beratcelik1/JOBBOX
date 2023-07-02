@@ -424,10 +424,6 @@ const styles = {
     fontSize: 18,
     marginHorizontal: 5,
   },
-  jobStatus: {
-    fontSize: 16,
-    fontWeight: '500',
-  }, 
   jobStatusContainer: {
     borderRadius: 20,
     paddingHorizontal: 20,
