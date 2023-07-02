@@ -61,7 +61,7 @@ const BoxHiring = ({ hiringJobs }) => {
     <View style = {{ flexDirection: 'row', justifyContent: 'flex-start', marginLeft: 5}}> 
         <View style = {{ width: '60%'}} > 
             <View style={styles.jobDetails}>
-                <Text style={styles.jobDescriptionH}>Employee: {item.hiredApplicant.firstname} {item.hiredApplicant.lastname}</Text>
+                {/* <Text style={styles.jobDescriptionH}>Employee: {item.hiredApplicant.firstname} {item.hiredApplicant.lastname}</Text> */}
             </View>
             <View style={styles.jobDetails}>
                 <Text style={styles.jobDescriptionH}>Category: {item.category}</Text>

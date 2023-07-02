@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { View, Text, TouchableOpacity, Modal, StyleSheet, ScrollView, Button, TextInput } from 'react-native';
+import { View, Text, TouchableOpacity, Modal, StyleSheet, ScrollView, Button, TextInput, Alert } from 'react-native';
 import { useRoute } from '@react-navigation/native';
 import { Marker } from 'react-native-maps'; 
 import MapView from 'react-native-maps';
@@ -11,6 +11,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import ChatScreen from './ChatScreen';
 import { PanGestureHandler, State } from 'react-native-gesture-handler';
 import { showMessage } from "react-native-flash-message";
+import { showLoading, hideLoading } from '../../components/LoadingScreen';
 
 const WorkPeriodDetails = ({ job: jobProp, closeModal }) => {  
   const navigation = useNavigation();
@@ -22,7 +23,10 @@ const WorkPeriodDetails = ({ job: jobProp, closeModal }) => {
   const [aboutModalVisible, setAboutModalVisible] = useState(false); 
   const [aboutModalVisibleEmp, setAboutModalVisibleEmp] = useState(false);
   const [aboutModalContent, setAboutModalContent] = useState('');
-  const [starCount, setStarCount] = useState(4.3); // Replace 5 with actual job rating
+  const [displayStarCount, setDisplayStarCount] = useState(0); // Replace 5 with actual job rating
+  const [starCountRating, setStarCountRating] = useState(0); // Replace 5 with actual job rating
+  const [alertModalVisible, setAlertModalVisible] = useState(false);
+  const [recommendationModalVisible, setRecommendationModalVisible] = useState(false);
   const [user, setUser] = useState(null); 
   const [chatModalVisible, setChatModalVisible] = useState(false);
   const [conversationId, setConversationId] = useState(null);
@@ -45,6 +49,22 @@ const WorkPeriodDetails = ({ job: jobProp, closeModal }) => {
     console.log('job:', job._id);
     fetchUser();
   }, []);
+
+  // fetch user rating
+  useEffect(() => {
+    const fetchRating = async () => {
+      const response = await fetch(`https://tranquil-ocean-74659.herokuapp.com/users/reviews/${user === job.postedBy._id ? job.hiredApplicant._id : job.postedBy._id}/rating?isWorkReview=true`);
+      // console.log('response:', response);
+      const data = await response.json();
+      if (response.ok) {
+          setDisplayStarCount(data.averageRating);
+      } else {
+          throw new Error(data.error);
+      }
+    }
+    console.log('user fetched:', user);
+    !!user && fetchRating();
+  }, [user]);
   
   useEffect(() => {
     const checkUser = async () => {
@@ -131,7 +151,7 @@ const WorkPeriodDetails = ({ job: jobProp, closeModal }) => {
   
 
   const onStarRatingPress = (rating) => {
-    setStarCount(rating);
+    setDisplayStarCount(rating);
   }
 
   const scrollRef = useRef();
@@ -197,69 +217,97 @@ const handleChatNavigation = async () => {
   }
 };
 
-const patchStatusComplete = async () => {
-  try {
-    const response = await fetch(`https://tranquil-ocean-74659.herokuapp.com/jobs/${job._id}`, {
-      method: 'PATCH',
+  const makeRequest = async (url, method, body) => {
+    const token = await AsyncStorage.getItem('token');
+    const response = await fetch(url, {
+      method: method,
       headers: {
         'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify({
-        status: 'Completed',
-      }),
+      body: JSON.stringify(body),
     });
+
     const data = await response.json();
+
     if (response.ok) {
-      console.log('Job marked as completed:', data);
-      navigation.navigate('Box');
+      return data;
     } else {
       throw new Error(data.error);
     }
-  } catch (error) {
-    console.error('Failed to mark job as completed:', error);
-  }
-};
+  };
 
-const handleConfirmMarkAsComplete = async () => {
-  setStarCountRating(0);
+  const patchStatusComplete = async () => {
+    try {
+      const data = await makeRequest(
+        `https://tranquil-ocean-74659.herokuapp.com/jobs/complete/${job._id}`,
+        'PATCH'
+      );
+      console.log('Job marked as completed:', data);
+    } catch (error) {
+      console.error('Failed to mark job as completed:', error);
+      throw error;
+    }
+  };
 
-  if(starCountRating === 0) {
-    Alert.alert(
-      "Please rate the job",
-      "Please rate the job before marking it as complete",
-      [
-        {
-          text: "Cancel",
-          style: "cancel"
-        },
-      ],
-      { cancelable: false }
-    );
-    return;
-  } 
+  const postRatingToDatabase = async () => {
+    try {
+      const data = await makeRequest(
+        `https://tranquil-ocean-74659.herokuapp.com/users/reviews/`,
+        'POST',
+        { rating: starCountRating, reviewer: user, jobId: job._id, isWorkReview: true,
+          reviewed: user === job.hiredApplicant._id ? job.postedBy._id : job.hiredApplicant._id }
+      );
+      console.log('Rating added to database:', data);
+    } catch (error) {
+      console.error('Failed to add rating to database:', error.message);
+      throw error;
+    }
+  };
 
-  patchStatusComplete();
-  setAlertModalVisible(false);
+  const handleConfirmMarkAsComplete = async () => {
+    setStarCountRating(0);
 
-  // offer if user wants to give recommendation
-  Alert.alert(
-    "Recommendation",
-    "Would you like to recommend this worker to other employers?",
-    [
-      {
-        text: "Yes",
-        onPress: () => navigation.navigate('Recommendation', { job: job }),
-        style: "cancel"
-      },
-      {
-        text: "No",
-        style: "cancel"
-      },
-    ],
-    { cancelable: false }
-  );
-};
+    if (starCountRating === 0) {
+      Alert.alert(
+        'Please rate the job',
+        'Please rate the job before marking it as complete',
+        [{ text: 'Cancel', style: 'cancel' }],
+        { cancelable: false }
+      );
+      return;
+    }
 
+    try {
+      // await patchStatusComplete();
+      await postRatingToDatabase();
+
+      setAlertModalVisible(false);
+
+      // offer if user wants to give recommendation
+      Alert.alert(
+        'Recommendation',
+        'Would you like to give your recommendation for this user?',
+        [
+          {
+            text: 'Yes',
+            onPress: () => setRecommendationModalVisible(true),
+            style: 'cancel',
+          },
+          { text: 'No', onPress: () => closeModal(), style: 'cancel' },
+        ],
+        { cancelable: false }
+      );
+    } catch (error) {
+      Alert.alert(
+        'Error',
+        'An error occurred. Please try again.',
+        [{ text: 'Cancel', style: 'cancel' }],
+        { cancelable: false }
+      );
+      setAlertModalVisible(false);
+    }
+  };
 
   return (
     <View style={styles.container}>
@@ -368,7 +416,7 @@ const handleConfirmMarkAsComplete = async () => {
             {user === job.postedBy._id ? 'Message your Employee' : 'Message your Employer'}
           </Text>
           <Text style={styles.infoText}>
-            {user === job.postedBy._id ? `${String(job.hiredApplicant.firstname)} ${String(job.hiredApplicant.lastname)}` :`${String(job.postedBy.firstname)} ${String(job.postedBy.lastname)}`}
+            {user === job.postedBy._id ? `${String(job.hiredApplicant?.firstname)} ${String(job.hiredApplicant.lastname)}` :`${String(job.postedBy.firstname)} ${String(job.postedBy.lastname)}`}
           </Text>
         </View>
       </View>
@@ -416,16 +464,15 @@ const handleConfirmMarkAsComplete = async () => {
             </View>
           </View>
           <View style = {{flexDirection: 'row', marginTop: 10}}> 
-            <Text>Employee Rating:  4.3  </Text>
+            <Text>Employee Rating: </Text>
             <StarRating
-                // disabled={false}
+                disabled={true}
                 maxStars={5}
-                rating={starCount}
+                rating={displayStarCount}
                 selectedStar={(rating) => onStarRatingPress(rating)}
                 starSize={17}
                 fullStarColor='#4683fc'
             />
-
         </View> 
           <TouchableOpacity style={styles.buttonClose2} onPress={() => setAlertModalVisible(true)}>
             <Text style={{ color: 'white', marginLeft: 5 }}>Mark as Complete</Text>
@@ -451,16 +498,15 @@ const handleConfirmMarkAsComplete = async () => {
 
           </View>
           <View style = {{flexDirection: 'row', marginTop: 10}}> 
-            <Text>Employer Rating:  4.3  </Text>
+            <Text>Employer Rating: </Text>
             <StarRating
                 // disabled={false}
                 maxStars={5}
-                rating={starCount}
+                rating={displayStarCount}
                 selectedStar={(rating) => onStarRatingPress(rating)}
                 starSize={17}
                 fullStarColor='#4683fc'
             />
-
           </View> 
           <TouchableOpacity style={styles.buttonClose2} onPress={() => { console.log("Button Pressed!") }}>
             <Text style={{ color: 'white', marginLeft: 5 }}>Mark as Complete</Text>
@@ -580,7 +626,9 @@ const handleConfirmMarkAsComplete = async () => {
         <View style={styles.alertModal}>
           <View style={styles.alertModalView}>
             <Text style={styles.alertModalText}>Mark as complete</Text>
-            <Text style={styles.alertModalSubText}>Please rate your employer before marking the job as complete.</Text>
+            <Text style={styles.alertModalSubText}>
+              Please rate your employer before marking the job as complete.
+            </Text>
             <StarRating
               disabled={false}
               maxStars={5}
@@ -588,10 +636,16 @@ const handleConfirmMarkAsComplete = async () => {
               selectedStar={(rating) => setStarCountRating(rating)}
             />
             <View style={styles.alertModalActionButtons}>
-              <TouchableOpacity style={styles.alertModalButton} onPress={() => setAlertModalVisible(false)}>
+              <TouchableOpacity
+                style={styles.alertModalButton}
+                onPress={() => setAlertModalVisible(false)}
+              >
                 <Text style={styles.alertModalTextStyle}>Cancel</Text>
               </TouchableOpacity>
-              <TouchableOpacity style={styles.alertModalButton} onPress={handleConfirmMarkAsComplete}>
+              <TouchableOpacity
+                style={styles.alertModalButton}
+                onPress={handleConfirmMarkAsComplete}
+              >
                 <Text style={styles.alertModalTextStyle}>Yes</Text>
               </TouchableOpacity>
             </View>
@@ -600,6 +654,35 @@ const handleConfirmMarkAsComplete = async () => {
       </Modal>
       {/* End of Mark as Complete Alert */}
 
+      {/* Start give recommendation modal */}
+      <Modal
+        animationType="fade"
+        transparent={true}
+        visible={recommendationModalVisible}
+      >
+        <View style={styles.alertModal}>
+          <View style={styles.alertModalView}>
+            <Text style={styles.alertModalText}>Recommendation</Text>
+            <TextInput style={{backgroundColor: 'grey', fontSize: 18}} placeholder='Relationship'/>
+            <View style={styles.alertModalActionButtons}>
+              <TouchableOpacity
+                style={styles.alertModalButton}
+                onPress={() => setRecommendationModalVisible(false)}
+              >
+                <Text style={styles.alertModalTextStyle}>Cancel</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.alertModalButton}
+                onPress={() => setRecommendationModalVisible(false)}
+              >
+                <Text style={styles.alertModalTextStyle}>Send</Text>
+              </TouchableOpacity>
+              
+            </View>
+          </View>
+        </View>
+      </Modal>
+      {/* End of give recommendation modal */}
     </View> 
   );
 };
@@ -765,7 +848,6 @@ const styles = {
   modalContainer: {
     flex: 1,
     justifyContent: 'flex-end',
-    
   },
   modalView: {
     height: '80%', // This will cover 80% of the screen height
@@ -930,4 +1012,3 @@ const styles = {
   }
 };
 export default WorkPeriodDetails;
-
