@@ -284,6 +284,18 @@ const handleChatNavigation = async () => {
       await postRatingToDatabase();
 
       setAlertModalVisible(false);
+      closeModal();
+      if(user === job.postedBy._id)
+        navigation.navigate('Hiring');
+      else
+        navigation.navigate('Working');
+
+      Alert.alert(
+        'Success',
+        'Job marked as complete',
+        [{ text: 'OK', style: 'cancel' }],
+        { cancelable: false }
+      );
     } catch (error) {
       Alert.alert(
         'Error',
@@ -402,7 +414,7 @@ const handleChatNavigation = async () => {
             {user === job.postedBy._id ? 'Message your Employee' : 'Message your Employer'}
           </Text>
           <Text style={styles.infoText}>
-            {user === job.postedBy._id ? `${String(job.hiredApplicant?.firstname)} ${String(job.hiredApplicant.lastname)}` :`${String(job.postedBy.firstname)} ${String(job.postedBy.lastname)}`}
+            {user === job.postedBy._id ? `${String(job.hiredApplicant?.firstname)} ${String(job.hiredApplicant?.lastname)}` :`${String(job.postedBy?.firstname)} ${String(job.postedBy.lastname)}`}
           </Text>
         </View>
       </View>
@@ -438,7 +450,7 @@ const handleChatNavigation = async () => {
           
           <View>
             <View>
-              {job.hiredApplicant.about.map((item, index) => (
+              {job.hiredApplicant?.about.map((item, index) => (
                   <Text key={index} style={styles.infoText}>
                     {index === 0 
                       ? (item.description.length > 50 
@@ -467,11 +479,11 @@ const handleChatNavigation = async () => {
       :
         // Show Employer Information 
         <TouchableOpacity style={styles.infoCard2} onPress={() => handleAboutPress()}>
-          <View><Text style={styles.infoTitle}>Employer: {job.postedBy.firstname} {job.postedBy.lastname}</Text></View>
+          <View><Text style={styles.infoTitle}>Employer: {job.postedBy?.firstname} {job.postedBy?.lastname}</Text></View>
           <View><Text style={styles.infoSubtitle}>About Employer</Text></View>
           <View>
           <View>
-            {job.postedBy.about.map((item, index) => (
+            {job.postedBy?.about.map((item, index) => (
               <Text key={index} style={styles.infoText}>
                 {index === 0 
                   ? (item.description.length > 50 
@@ -494,7 +506,7 @@ const handleChatNavigation = async () => {
                 fullStarColor='#4683fc'
             />
           </View> 
-          <TouchableOpacity style={styles.buttonClose2} onPress={() => { console.log("Button Pressed!") }}>
+          <TouchableOpacity style={styles.buttonClose2} onPress={() => setAlertModalVisible(true)}>
             <Text style={{ color: 'white', marginLeft: 5 }}>Mark as Complete</Text>
           </TouchableOpacity>
         </TouchableOpacity>
@@ -509,9 +521,9 @@ const handleChatNavigation = async () => {
       >
         <View style={styles.modalContainer}>
           <View style={styles.modalView}>
-            <Text style={styles.modalTitle}>About {job.postedBy.firstname} {job.postedBy.lastname}</Text>
+            <Text style={styles.modalTitle}>About {job.postedBy?.firstname} {job.postedBy?.lastname}</Text>
             <View> 
-              {job.postedBy.about.map((item, index) => (
+              {job.postedBy?.about.map((item, index) => (
                 <Text key={index} style={styles.infoText}>{item.description}</Text>
               ))}
             </View>
@@ -530,9 +542,9 @@ const handleChatNavigation = async () => {
       >
         <View style={styles.modalContainer}>
           <View style={styles.modalView}>
-            <Text style={styles.modalTitle}>About {job.hiredApplicant.firstname} {job.hiredApplicant.lastname}</Text>
+            <Text style={styles.modalTitle}>About {job.hiredApplicant?.firstname} {job.hiredApplicant?.lastname}</Text>
             <View> 
-              {job.hiredApplicant.about.map((item, index) => (
+              {job.hiredApplicant?.about.map((item, index) => (
                 <Text key={index} style={styles.infoText}>{item.description}</Text>
               ))}
             </View>
