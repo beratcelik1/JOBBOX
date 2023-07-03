@@ -1,5 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import { View, FlatList, Text, TouchableOpacity, StyleSheet, Image, ActivityIndicator, RefreshControl, Modal, Pressable} from 'react-native';
+import {
+  View,
+  FlatList,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  Image,
+  ActivityIndicator,
+  RefreshControl,
+  Modal,
+  Pressable,
+} from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { TextInput, Button, List } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialIcons';
@@ -12,7 +23,6 @@ import { LOCATIONS } from '../constants';
 import { Colors } from 'react-native/Libraries/NewAppScreen';
 import defaultImage from '../../assets/images/defaultimage3.png';
 import * as FileSystem from 'expo-file-system';
-
 
 const styles = StyleSheet.create({
   button2: {
@@ -43,16 +53,16 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     marginLeft: 5,
-    marginRight: 5, 
-    margingTop: 10, 
+    marginRight: 5,
+    margingTop: 10,
     padding: 20,
     marginBottom: 7,
     borderRadius: 10,
     backgroundColor: '#f8f9fa',
-    shadowColor: "#000",
+    shadowColor: '#000',
     shadowOffset: {
-        width: 0,
-        height: 7,
+      width: 0,
+      height: 7,
     },
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
@@ -79,21 +89,21 @@ const styles = StyleSheet.create({
     marginTop: 20,
     padding: 15,
     borderRadius: 10,
-    marginRight:15,
-    marginLeft:15,
+    marginRight: 15,
+    marginLeft: 15,
     height: 75,
     backgroundColor: '#fff',
     // Android shadow properties
     elevation: 5,
     // iOS shadow properties
-    shadowColor: "#000",
+    shadowColor: '#000',
     shadowOffset: {
-        width: 0,
-        height: 3,
+      width: 0,
+      height: 3,
     },
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
-    elevation: 5, 
+    elevation: 5,
   },
   sectionIcon: {
     marginRight: 10,
@@ -117,15 +127,15 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 20,
     padding: 35,
     alignItems: 'center',
-    fontSize: 20, 
-    shadowColor: "#000",
+    fontSize: 20,
+    shadowColor: '#000',
     shadowOffset: {
-        width: 0,
-        height: -7,
+      width: 0,
+      height: -7,
     },
     shadowOpacity: 0.25,
     shadowRadius: 6.84,
-    elevation: 5, 
+    elevation: 5,
   },
   button: {
     borderRadius: 20,
@@ -154,71 +164,106 @@ const Profile = () => {
   const fetchUserData = async () => {
     try {
       const token = await AsyncStorage.getItem('token');
-      const response = await axios.get('https://tranquil-ocean-74659.herokuapp.com/auth/user/me', {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const response = await axios.get(
+        'https://tranquil-ocean-74659.herokuapp.com/auth/user/me',
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
 
       // console.log("Response data: ", response.data); // log the response data
-      // console.log("Profile pic path: ", response.data.profilePic); 
+      // console.log("Profile pic path: ", response.data.profilePic);
       setUser(response.data);
 
-          // Set the user's location
-    if (response.data && response.data.location) {
-      setSelectedLocation(response.data.location);
-    }
+      // Set the user's location
+      if (response.data && response.data.location) {
+        setSelectedLocation(response.data.location);
+      }
 
-      const about = Array.isArray(response.data.about) ? response.data.about : [];
-      const experience = Array.isArray(response.data.experience) ? response.data.experience : [];
-      const education = Array.isArray(response.data.education) ? response.data.education : [];
-      const skills = Array.isArray(response.data.skills) ? response.data.skills : [];
-      const recommendations = Array.isArray(response.data.recommendations) ? response.data.recommendations : [];
+      const about = Array.isArray(response.data.about)
+        ? response.data.about
+        : [];
+      const experience = Array.isArray(response.data.experience)
+        ? response.data.experience
+        : [];
+      const education = Array.isArray(response.data.education)
+        ? response.data.education
+        : [];
+      const skills = Array.isArray(response.data.skills)
+        ? response.data.skills
+        : [];
+      const recommendations = Array.isArray(response.data.recommendations)
+        ? response.data.recommendations
+        : [];
 
-      
       setSections([
         {
           id: '1',
           title: 'About',
           iconName: 'info',
           data: about,
-          text: about.length > 0 ? about.map(a => `${a.title} ${a.description}`).join(', ') : 'No information provided.'
+          text:
+            about.length > 0
+              ? about.map((a) => `${a.title} ${a.description}`).join(', ')
+              : 'No information provided.',
         },
         {
           id: '2',
           title: 'Experience',
           iconName: 'work',
           data: experience,
-          text: experience.length > 0 ? experience.map(e => ` - ${e.position} at ${e.company}`).join('\n') : 'No information provided.'
+          text:
+            experience.length > 0
+              ? experience
+                  .map((e) => ` - ${e.position} at ${e.company}`)
+                  .join('\n')
+              : 'No information provided.',
         },
         {
-          id: '3', 
-          title: 'Education', 
-          iconName: 'school', 
-          data: education, 
-          text: education.length > 0 ? 
-            education.map(e => ` ${e.degree || 'N/A'} ${e.major || 'N/A'} at ${e.university || 'N/A'}, ${e.date || 'N/A'}, `).join('\n') : 
-            'No information provided.'
+          id: '3',
+          title: 'Education',
+          iconName: 'school',
+          data: education,
+          text:
+            education.length > 0
+              ? education
+                  .map(
+                    (e) =>
+                      ` ${e.degree || 'N/A'} ${e.major || 'N/A'} at ${
+                        e.university || 'N/A'
+                      }, ${e.date || 'N/A'}, `
+                  )
+                  .join('\n')
+              : 'No information provided.',
         },
         {
           id: '4',
           title: 'Skills',
           iconName: 'star',
-          data: skills.map(skill => ({ title: skill })), // transform each skill to an object with 'title' property
-          text: skills.length > 0 ? skills.join(', ') : 'No information provided.',
-          skillList: skills
-        },          
+          data: skills.map((skill) => ({ title: skill })), // transform each skill to an object with 'title' property
+          text:
+            skills.length > 0 ? skills.join(', ') : 'No information provided.',
+          skillList: skills,
+        },
         {
           id: '5',
           title: 'Recommendations',
           iconName: 'thumb-up',
           data: recommendations,
-          text: recommendations.length > 0 ? recommendations.map(r => `${r.name} (${r.relationship}): ${r.recommendation}`).join(', ') : 'No information provided.'
+          text:
+            recommendations.length > 0
+              ? recommendations
+                  .map(
+                    (r) => `${r.name} (${r.relationship}): ${r.recommendation}`
+                  )
+                  .join(', ')
+              : 'No information provided.',
         },
-      ]);        
+      ]);
 
       setExperiences(experience);
-
     } catch (err) {
-      console.error("Failed to fetch user data: ", err);
+      console.error('Failed to fetch user data: ', err);
     }
   };
 
@@ -228,13 +273,12 @@ const Profile = () => {
   }, []);
 
   useEffect(() => {
-
     // Call fetchUserData once immediately
     fetchUserData();
-  
+
     // Then set it up to be called again every time the Profile screen comes into focus
     const unsubscribe = navigation.addListener('focus', fetchUserData);
-  
+
     // Clean up the listener when the component unmounts
     return unsubscribe;
   }, [navigation]);
@@ -247,142 +291,165 @@ const Profile = () => {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
+        Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify({ location }),
     })
-    .then(response => response.json())
-    .then(data => {
-      console.log(data);
-    })
-    .catch(error => console.error('Error:', error));
-  
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data);
+      })
+      .catch((error) => console.error('Error:', error));
+
     setIsLocationModalVisible(false);
   };
 
   const handleProfilePhotoPress = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.Images,
-        allowsEditing: true,
-        aspect: [4, 3],
-        quality: 1,
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
     });
 
     if (!result.canceled) {
       let localUri = result.assets[0].uri;
-  
+
       // Infer the type of the image
       let match = /\.(\w+)$/.exec(localUri);
       let type = match ? `image/${match[1]}` : `image`;
-  
+
       // Convert image to base64 string
-      let base64Image = await FileSystem.readAsStringAsync(localUri, { encoding: 'base64' });
-  
+      let base64Image = await FileSystem.readAsStringAsync(localUri, {
+        encoding: 'base64',
+      });
+
       // Include the MIME type in the base64 string
       let base64ImageWithType = `data:${type};base64,${base64Image}`;
-  
+
       const token = await AsyncStorage.getItem('token');
-  
+
       try {
-          let response = await axios.put(
-              'https://tranquil-ocean-74659.herokuapp.com/auth/user/me/profilePic',
-              { profilePic: base64ImageWithType },
-              { headers: { Authorization: `Bearer ${token}` }, }
-          );
-  
-          if (response.data) {
-              setUser((prevUser) => ({
-                  ...prevUser,
-                  profilePic: response.data.profilePic,
-              }));
-  
-              alert('Profile photo updated successfully!');
-          }
+        let response = await axios.put(
+          'https://tranquil-ocean-74659.herokuapp.com/auth/user/me/profilePic',
+          { profilePic: base64ImageWithType },
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+
+        if (response.data) {
+          setUser((prevUser) => ({
+            ...prevUser,
+            profilePic: response.data.profilePic,
+          }));
+
+          alert('Profile photo updated successfully!');
+        }
       } catch (err) {
-          console.error("Failed to update profile picture: ", err);
+        console.error('Failed to update profile picture: ', err);
       }
-  }
+    }
   };
 
-return (
-  <View style={styles.container}>
-    {user ? (
-      <>
-        <View style={styles.headerContainer}>
-          <TouchableOpacity onPress={handleProfilePhotoPress}>
-          <Image style={styles.profileImage} source={user && user.profilePic ? {uri: user.profilePic} : defaultImage} />
-            {loading && <LoadingScreen />}
-          </TouchableOpacity>
-          <View>
-            <Text style={styles.name}>{user.firstname} {user.lastname}</Text>
-            <View style={styles.reviews}>
-              <Icon name="star" size={20} color="#f1c40f" />
-              <Text>{user.hireRating === 0 ? "-" : user.hireRating}</Text>
-            </View>
-            <View style={styles.reviews}>
-              <Icon name="star" size={20} color="#4683fc" />
-              <Text>{user.workRating === 0 ? "-" : user.workRating}</Text>
-            </View>
-            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-            <Text>{selectedLocation}</Text>
-            <TouchableOpacity style={styles.button2} onPress={() => setIsLocationModalVisible(true)}>
-              <Icon name="edit" size={15} color="#fff" />
-              <Text style={{ color: 'white', marginLeft: 5 }}>Edit Location</Text>
-            </TouchableOpacity>
-            </View>
-            <Modal
-          animationType="slide"
-          transparent={true}
-          visible={isLocationModalVisible}
-          onRequestClose={() => setIsLocationModalVisible(false)}
-          presentationStyle='overFullScreen'
-        >
-          <View style={styles.modalView}>
-            {LOCATIONS.map((location, index) => (
-              <List.Item
-                key={index}
-                title={location}
-                onPress={() => handleLocationSelect(location)}
+  return (
+    <View style={styles.container}>
+      {user ? (
+        <>
+          <View style={styles.headerContainer}>
+            <TouchableOpacity onPress={handleProfilePhotoPress}>
+              <Image
+                style={styles.profileImage}
+                source={
+                  user && user.profilePic
+                    ? { uri: user.profilePic }
+                    : defaultImage
+                }
               />
-            ))} 
-
-            <TouchableOpacity style={styles.button2} onPress={() => setIsLocationModalVisible(false)}>
-              <Text style={{ color: 'white', marginLeft: 5 }}>Close</Text>
-            </TouchableOpacity> 
-          </View>
-        </Modal>
-          </View>
-        </View>
-        <FlatList 
-          data={sections}
-          keyExtractor={item => item.id}
-          contentContainerStyle={{ paddingBottom: 5 }} // adjust this value as needed
-          renderItem={({ item }) => (
-            <TouchableOpacity
-              style={styles.sectionContainer}
-              onPress={() => navigation.navigate('ProfileSection', { section: item })}
-            >
-              <Icon name={item.iconName} size={24} color="#4683fc" style={styles.sectionIcon} />
-              <Text>
-                <Text style={styles.sectionTitle}>{item.title}</Text>
-              </Text>
+              {loading && <LoadingScreen />}
             </TouchableOpacity>
-          )}  
-          numColumns={1}
-          refreshControl={
-            <RefreshControl
-              refreshing={refreshing}
-              onRefresh={onRefresh}
-            />
-          }
-        />
-      </>
-    ) : (
-      <ActivityIndicator size="large" color="#0000ff" />
-    )}
-  </View>
-);
+
+            <View>
+              <Text style={styles.name}>
+                {user.firstname} {user.lastname}
+              </Text>
+              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                <Text>{selectedLocation}</Text>
+                <TouchableOpacity
+                  style={styles.button2}
+                  onPress={() => setIsLocationModalVisible(true)}
+                >
+                  <Icon name="edit" size={15} color="#fff" />
+                  <Text style={{ color: 'white', marginLeft: 5 }}>
+                    Edit Location
+                  </Text>
+                </TouchableOpacity>
+              </View>
+              <View style={styles.reviews}>
+                <Icon name="star" size={20} color="#f1c40f" />
+                <Text>{user.hireRating === 0 ? '-' : user.hireRating}</Text>
+              </View>
+              <View style={styles.reviews}>
+                <Icon name="star" size={20} color="#4683fc" />
+                <Text>{user.workRating === 0 ? '-' : user.workRating}</Text>
+              </View>
+              <Modal
+                animationType="slide"
+                transparent={true}
+                visible={isLocationModalVisible}
+                onRequestClose={() => setIsLocationModalVisible(false)}
+                presentationStyle="overFullScreen"
+              >
+                <View style={styles.modalView}>
+                  {LOCATIONS.map((location, index) => (
+                    <List.Item
+                      key={index}
+                      title={location}
+                      onPress={() => handleLocationSelect(location)}
+                    />
+                  ))}
+
+                  <TouchableOpacity
+                    style={styles.button2}
+                    onPress={() => setIsLocationModalVisible(false)}
+                  >
+                    <Text style={{ color: 'white', marginLeft: 5 }}>Close</Text>
+                  </TouchableOpacity>
+                </View>
+              </Modal>
+            </View>
+          </View>
+          <FlatList
+            data={sections}
+            keyExtractor={(item) => item.id}
+            contentContainerStyle={{ paddingBottom: 5 }} // adjust this value as needed
+            renderItem={({ item }) => (
+              <TouchableOpacity
+                style={styles.sectionContainer}
+                onPress={() =>
+                  navigation.navigate('ProfileSection', { section: item })
+                }
+              >
+                <Icon
+                  name={item.iconName}
+                  size={24}
+                  color="#4683fc"
+                  style={styles.sectionIcon}
+                />
+                <Text>
+                  <Text style={styles.sectionTitle}>{item.title}</Text>
+                </Text>
+              </TouchableOpacity>
+            )}
+            numColumns={1}
+            refreshControl={
+              <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+            }
+          />
+        </>
+      ) : (
+        <ActivityIndicator size="large" color="#0000ff" />
+      )}
+    </View>
+  );
 };
 
 export default Profile;
-
