@@ -1,4 +1,4 @@
-export const TIME_UNITS = ['Minutes', 'Hours', 'Weeks'];
+export const TIME_UNITS = ['Minutes', 'Hours', 'Days', 'Weeks', 'Months'];
 
 export const CATEGORIES = [
   { id: '1', title: 'Software Development', iconName: 'web' },
