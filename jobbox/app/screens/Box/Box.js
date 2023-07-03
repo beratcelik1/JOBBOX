@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import axios from 'axios';
 import { View, Text, FlatList, TouchableOpacity, Modal} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useNavigation } from '@react-navigation/native';
+import { useIsFocused, useNavigation } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { NavigationContainer, DefaultTheme } from '@react-navigation/native';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
@@ -61,7 +61,7 @@ const BoxHiring = ({ hiringJobs }) => {
     <View style = {{ flexDirection: 'row', justifyContent: 'flex-start', marginLeft: 5}}> 
         <View style = {{ width: '60%'}} > 
             <View style={styles.jobDetails}>
-                <Text style={styles.jobDescriptionH}>Employee: {item.hiredApplicant.firstname} {item.hiredApplicant.lastname}</Text>
+                <Text style={styles.jobDescriptionH}>Employee: {item.hiredApplicant?.firstname} {item.hiredApplicant?.lastname}</Text>
             </View>
             <View style={styles.jobDetails}>
                 <Text style={styles.jobDescriptionH}>Category: {item.category}</Text>
@@ -282,6 +282,8 @@ const Box = () => {
   const [hiringJobs, setHiringJobs] = useState([]);
   const [workingJobs, setWorkingJobs] = useState([]);
 
+  const isFocused = useIsFocused();
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -309,8 +311,9 @@ const Box = () => {
       }
     };
 
-    fetchData();
-  }, []);
+    if(isFocused)
+      fetchData();
+  }, [isFocused]);
 
   return (
     <NavigationContainer independent={true} theme={MyTheme}>
@@ -424,10 +427,6 @@ const styles = {
     fontSize: 18,
     marginHorizontal: 5,
   },
-  jobStatus: {
-    fontSize: 16,
-    fontWeight: '500',
-  }, 
   jobStatusContainer: {
     borderRadius: 20,
     paddingHorizontal: 20,
