@@ -317,7 +317,11 @@ return (
             <Text style={styles.name}>{user.firstname} {user.lastname}</Text>
             <View style={styles.reviews}>
               <Icon name="star" size={20} color="#f1c40f" />
-              <Text>4.5</Text>
+              <Text>{user.hireRating === 0 ? "-" : user.hireRating}</Text>
+            </View>
+            <View style={styles.reviews}>
+              <Icon name="star" size={20} color="#4683fc" />
+              <Text>{user.workRating === 0 ? "-" : user.workRating}</Text>
             </View>
             <View style={{ flexDirection: 'row', alignItems: 'center' }}>
             <Text>{selectedLocation}</Text>
