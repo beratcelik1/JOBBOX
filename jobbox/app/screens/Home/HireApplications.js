@@ -151,7 +151,7 @@ export function HireApplicationsScreen({ route, navigation }) {
                 style={styles.applicantName}
               >{`${item.firstname} ${item.lastname}`}</Text>
               <View style={styles.ratingContainer}>
-                <Text style={styles.applicantRating}>{item.rating}</Text>
+                <Text style={styles.applicantRating}>{item.workRating === 0 ? '-' : item.workRating}</Text>
                 <Ionicons
                   style={styles.applicantStar}
                   name="star"
