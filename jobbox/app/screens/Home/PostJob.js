@@ -21,7 +21,7 @@ export default function PostJob({ navigation, route }) {
   const [isModalVisible, setModalVisible] = useState(false);
   const [isCategoryModalVisible, setIsCategoryModalVisible] = useState(false);
   const [category, setCategory] = useState('');
-  const selectedCategory = CATEGORIES.find(c => c.id === category);
+  const selectedCategory = CATEGORIES.find(c => c.title === category);
   const [isSkillsModalVisible, setIsSkillsModalVisible] = useState(false);
   const [selectedSkills, setSelectedSkills] = useState(new Set());
   const [selectedLocation, setSelectedLocation] = useState('');
@@ -46,6 +46,7 @@ export default function PostJob({ navigation, route }) {
         setJobTitle(template.title);
         setJobDescription(template.description);
         setSkills(template.skills);
+        setSelectedSkills(new Set(template.skills));
         setPay(template.pay?.toString());
         setEstimatedTime(template.estimatedTime?.toString());
         setEstimatedTimeUnit(template.estimatedTimeUnit);

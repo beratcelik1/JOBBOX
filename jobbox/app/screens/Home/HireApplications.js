@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useEffect } from 'react';
-import {View,Text,Image,FlatList,StyleSheet,TouchableOpacity,Alert,RefreshControl} from 'react-native';
+import {View,Text,Image,FlatList,StyleSheet,TouchableOpacity,Alert,RefreshControl, ScrollView} from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { createStackNavigator } from '@react-navigation/stack';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -245,7 +245,7 @@ export function HireApplicationsScreen({ route, navigation }) {
   
 
   return (
-    <View style={styles.container}> 
+    <ScrollView style={styles.container}> 
       <View style={[styles.jobCard, {backgroundColor: isArchived ? '#b8b8b8' : '#4683fc'}]}> 
         <Text style={styles.title}>{job.title}</Text> 
         <View style={{ borderBottomColor: '#fff', borderBottomWidth: 1.5, marginBottom: 5, marginTop: 5, }}/>  
@@ -264,7 +264,12 @@ export function HireApplicationsScreen({ route, navigation }) {
 
         <View style = {{ justifyContent: 'flex-start', marginBottom:5}}>
           <Text style ={{fontWeight: 'bold',fontSize: 15, color: '#fff',}}>Skills:</Text>  
-          <Text style={styles.description}>{job.skills}  </Text>  
+          <Text style={styles.description}> 
+            {Array.isArray(job.skills) && job.skills.length > 0 
+              ? job.skills.join(', ') 
+              : "No skills listed"} 
+          </Text>
+
         </View> 
         <View style = {{ justifyContent: 'flex-start' }}>
           <Text style ={{fontWeight: 'bold',fontSize: 15, color: '#fff',}}>Description:</Text>  
@@ -330,7 +335,7 @@ export function HireApplicationsScreen({ route, navigation }) {
         />
       )}
       {loading && <LoadingScreen />}
-    </View>
+    </ScrollView>
   );
 }
 

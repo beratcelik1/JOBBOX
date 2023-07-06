@@ -433,7 +433,11 @@ function JobDetailScreen({ route, navigation }) {
                     
                 <View style = {{alignItems: 'center'}}> 
                     <Text style={{color: '#4683fc', fontWeight: '700', marginBottom: 5}}>Skills </Text>
-                    <Text style={styles.jobDescription}>{job.skills}</Text>
+                    <Text style={styles.description}> 
+                        {Array.isArray(job.skills) && job.skills.length > 0 
+                        ? job.skills.join(', ') 
+                        : "No skills listed"} 
+                    </Text>
 
                     <Text style={{color: '#4683fc', fontWeight: '700', marginBottom: 5, marginTop: 15}}>Description</Text>
                     <Text style={styles.jobDescription}>{job.description}</Text>
