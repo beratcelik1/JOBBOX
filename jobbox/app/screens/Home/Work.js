@@ -167,8 +167,9 @@ function WorkScreen({ navigation }) {
             <View style={styles.jobHeader}>  
                 <Text style={styles.jobTitle}>{item.title}</Text>
                 <View style = {{ flexDirection: 'row',justifyContent: 'space-between'}}>
-                    <Text style={styles.jobTitle2}>{item.postedBy?.firstname} {item.postedBy?.lastname} - 4.3 </Text>
-                    <Ionicons name="star" size={13} color="#4683fc" /> 
+                    <Text style={styles.jobTitle2}>{item.postedBy?.firstname} {item.postedBy?.lastname} {' '}
+                        <Ionicons name="star" size={13} color="#4683fc" /> {item.postedBy.hireRating == 0 ? '-' : item.hireRating}
+                    </Text>
                 </View>
             </View>     
             <View
