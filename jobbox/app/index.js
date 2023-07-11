@@ -1,7 +1,8 @@
 import React, { useRef, useState, useEffect } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
-import { Image, Text, View, TouchableOpacity } from 'react-native';
+import { Image, Text, View, TouchableOpacity,StyleSheet } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import { NavigationContainer, useNavigation ,DefaultTheme} from '@react-navigation/native';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -49,7 +50,27 @@ import DeleteAccountScreen from './screens/Settings/DeleteAccount';
 import AccountSecurityScreen from './screens/Settings/AccountSecurity';
 import FAQScreen from './screens/Settings/FAQ';
 import PushNotificationsComponent from './screens/Settings/PushNotifications';
-import ContactUsScreen from './screens/Settings/ContactUs';
+import ContactUsScreen from './screens/Settings/ContactUs'; 
+
+const styles = StyleSheet.create({
+  button: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginLeft: 10, 
+    marginTop: 20,
+    paddingVertical: 15,
+    borderRadius: 10,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+  }
+})
 
 const logo = require('./assets/images/jobboxlogo4.png');
 const logo2 = require('./assets/images/jobboxlogotek.png');
@@ -141,10 +162,10 @@ function MyTabs({handleSignOut}) {
           {hasNotifications && (
             <View style={{ position: 'absolute', right: -2, top: -2, backgroundColor: 'red', borderRadius: 6, width: 12, height: 12, justifyContent: 'center', alignItems: 'center' }} />
           )}
-          <Icon name="notifications-outline" size={24} style={{ marginLeft: 0 }} />
+          <Icon name="notifications-outline" size={24} />
         </TouchableOpacity>
-        <TouchableOpacity onPress={handleMenu}>
-          <Icon name="ellipsis-vertical-outline" size={24} />
+        <TouchableOpacity onPress={handleMenu} style={{ marginLeft: 7 }} >
+          <Icon name="ellipsis-vertical-outline" size={24} /> 
         </TouchableOpacity>
       </View>
     ),
@@ -237,12 +258,15 @@ function MyTabs({handleSignOut}) {
       modalHeight={Dimensions.get('window').height * 0.8}
     >
       <View style={{ padding: 20 }}>
-        <TouchableOpacity onPress={() => {
-    modalizeRef.current?.close();navigation.navigate('Settings')}}>
-          <Text style={{ fontSize: 20, marginBottom: 20 }}>Settings</Text>
+        <TouchableOpacity style={{...styles.button, backgroundColor: '#4683fc'}} onPress={() => {
+          modalizeRef.current?.close();navigation.navigate('Settings')}}> 
+          <Ionicons name="settings" size={24} color="#fff" />
+          <Text style={{ fontSize: 20, color: '#fff', marginLeft: 15, fontWeight: '600'}}>Settings</Text>
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => {console.log('Sign Out');modalizeRef.current?.close();handleSignOut()}}>
-          <Text style={{ fontSize: 20 }}>Sign Out</Text>
+
+        <TouchableOpacity style={{...styles.button, backgroundColor:  '#eb5c52'}} onPress={() => {console.log('Sign Out');modalizeRef.current?.close();handleSignOut()}}> 
+          <Ionicons name="log-out" size={24} color="#fff" />
+          <Text style={{ fontSize: 20, color: '#fff' , marginLeft: 15, fontWeight: '600'}}>Sign Out</Text>
         </TouchableOpacity>
       </View>
     </Modalize>
