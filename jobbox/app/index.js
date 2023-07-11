@@ -144,7 +144,7 @@ function MyTabs({handleSignOut}) {
           <Icon name="notifications-outline" size={24} style={{ marginLeft: 0 }} />
         </TouchableOpacity>
         <TouchableOpacity onPress={handleMenu}>
-          <Icon name="ellipsis-vertical-outline" size={24} />
+          <Icon name="ellipsis-vertical-outline" size={24} /> 
         </TouchableOpacity>
       </View>
     ),
