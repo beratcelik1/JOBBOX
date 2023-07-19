@@ -10,7 +10,7 @@ import defaultImage from '../../assets/images/defaultimage3.png';
 import usePayment from '../../hooks/usePayment';
 import { showMessage } from "react-native-flash-message";
 
-export function HireApplicationsScreen({ route, navigation }) {
+function HireApplicationsScreen({ route, navigation }) {
   const { job, isArchived = false } = route.params; 
   const [applicants, setApplicants] = useState();
   const [refreshing, setRefreshing] = useState(false);
@@ -553,3 +553,5 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
 });
+
+export default HireApplicationsScreen;
