@@ -21,7 +21,7 @@ export default function PostJob({ navigation, route }) {
   const [isModalVisible, setModalVisible] = useState(false);
   const [isCategoryModalVisible, setIsCategoryModalVisible] = useState(false);
   const [category, setCategory] = useState('');
-  const selectedCategory = CATEGORIES.find(c => c.title === category);
+  const selectedCategory = CATEGORIES.find(c => c.id === category);
   const [isSkillsModalVisible, setIsSkillsModalVisible] = useState(false);
   const [selectedSkills, setSelectedSkills] = useState(new Set());
   const [selectedLocation, setSelectedLocation] = useState('');
@@ -65,7 +65,7 @@ export default function PostJob({ navigation, route }) {
   const isFormValid = () => {
     return (
       jobTitle !== '' &&
-      !!selectedCategory &&
+      selectedCategory !== ''&&
       !!selectedSkills &&
       !!selectedLocation && // Add this line
       estimatedTime !== '' &&
@@ -246,9 +246,9 @@ export default function PostJob({ navigation, route }) {
           <View style={styles.overlayContainer}>
             <TextInput
             label="Category"
-            value={selectedCategory ? selectedCategory.title : ''}
+            value={selectedCategory ? selectedCategory.title: ''}
             style={styles.input}
-            editable={!template}
+            editable={template}
           />
             {!template && (
               <TouchableOpacity
